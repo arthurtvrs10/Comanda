@@ -1,5 +1,7 @@
 # Contratos da aplicação
 
+Contratos do MVP. A evolução exigirá confirmar pedido, consultar fila e registrar transição/correção. Não definir API pública ou migração antes de resolver as regras abertas. Em P3, incluir identificação de solicitação, resultado persistido e controle de concorrência. Ver [plano](21-evolucao-atendimento.md).
+
 Os nomes são sugestões. A implementação pode adaptá-los sem alterar comportamento.
 
 > **Correspondência com o código (2026-09-21).** O comportamento dos contratos abaixo foi mantido, mas as interfaces foram organizadas assim:

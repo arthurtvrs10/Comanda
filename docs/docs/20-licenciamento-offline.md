@@ -1,5 +1,7 @@
 # Licenciamento offline
 
+O APK Android atual é um emissor administrativo de licenças, não o futuro aplicativo de atendimento. O emissor permite importar o arquivo PEM ou colar seu conteúdo completo. O código do computador não é a chave privada. Ver [instruções do APK](../../mobile/licencas/README.md).
+
 Decisão autorizada pelo responsável em 29/09/2026. O licenciamento comercial
 é separado das vendas de comandas: não integra cobrança nem registra pagamentos
 dos consumidores. Mantém RN11 e RNF01.

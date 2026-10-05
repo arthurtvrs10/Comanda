@@ -4,13 +4,19 @@ Repositório documental do **Varthex Comanda — Sistema Local de Controle de Co
 
 O MVP não processa pagamentos, não se comunica com a maquininha e não registra forma de pagamento, valor recebido, troco, cartão ou autorização da adquirente.
 
+## Planejamento atual
+
+- [Evolução do atendimento](docs/21-evolucao-atendimento.md): inventário, etapas P1–P5, fluxo, requisitos EV, regras RE, casos UCE, aceitação CTE e decisões QVE.
+- [Banco de ideias](docs/22-banco-ideias.md): sugestões sem compromisso de implementação.
+- [Arquitetura atual e futura](docs/06-arquitetura.md): separação entre o produto e a proposta.
+
 ## Comece aqui
 
 1. Leia [Visão e decisões](docs/00-visao-e-decisoes.md).
 2. Confirme o [escopo do MVP](docs/01-escopo-mvp.md).
 3. Implemente na ordem definida no [guia de implementação](docs/14-guia-implementacao.md).
 4. Consulte os [requisitos](docs/02-requisitos.md), as [regras de negócio](docs/03-regras-negocio.md) e os [casos de uso](docs/04-casos-de-uso.md) durante o desenvolvimento.
-5. Crie o banco com [database/schema.sql](database/schema.sql) e valide com [database/seed.sql](database/seed.sql).
+5. Use migrações do aplicativo para o banco real; database/schema.sql e seed.sql são referências iniciais de teste.
 6. Execute os cenários de [testes e aceitação](docs/09-testes-aceitacao.md) antes de considerar uma entrega concluída.
 
 Para desenvolvimento assistido por IA, o arquivo [AGENTS.md](AGENTS.md) define a fonte de verdade e os limites que não podem ser ultrapassados.
@@ -38,6 +44,9 @@ Para desenvolvimento assistido por IA, o arquivo [AGENTS.md](AGENTS.md) define a
 | [16 Referências técnicas](docs/16-referencias-tecnicas.md) | Fontes sobre integrações futuras |
 | [17 Glossário](docs/17-glossario.md) | Termos funcionais e técnicos |
 | [18 Histórias de usuário](docs/18-historias-usuario.md) | Backlog funcional derivado dos requisitos |
+| [20 Licenciamento](docs/20-licenciamento-offline.md) | Ativação e emissão de licenças |
+| [21 Evolução](docs/21-evolucao-atendimento.md) | Requisitos das próximas entregas |
+| [22 Ideias](docs/22-banco-ideias.md) | Possibilidades sem escopo aprovado |
 | [19 Plataforma Windows e .NET](docs/19-plataforma-windows-dotnet.md) | Estrutura da solução, comandos, persistência e publicação |
 
 ## Artefatos adicionais
@@ -83,4 +92,4 @@ Nenhuma licença de código foi escolhida. Antes de publicar o futuro código-fo
 
 ## Status
 
-Versão documental 1.3, de 13 de setembro de 2026. Escopo preparado para implementação do MVP em um único computador Windows.
+Revisão documental de 05/10/2026. Produto atual e evolução planejada são apresentados separadamente. DOCX, PDF, PNG e evidências antigas permanecem históricos.

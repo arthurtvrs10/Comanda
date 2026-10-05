@@ -1,5 +1,7 @@
 # Rastreabilidade
 
+Matriz do MVP preservada. A cadeia EV → RE → UCE → CTE e a etapa de cada entrega estão no [plano de evolução](21-evolucao-atendimento.md). Não atribuir aprovação aos testes planejados.
+
 Identificação por nome: RF29 → RN28/RNF13 → CT24 (`DefinirNomeClienteTests`,
 `EfComandaRepositoryTests` e `AtendimentoViewModelTests`).
 

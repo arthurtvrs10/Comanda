@@ -1,5 +1,7 @@
 # Operação e implantação
 
+Downloads atuais: [normal e demonstração](../../downloads/README.md). Os procedimentos abaixo preservam a operação do MVP; a evolução P1–P5 ainda não tem instalador. Referências datadas de pacotes anteriores são históricas.
+
 ## Instalador EXE (2026-09-29)
 
 A distribuição principal agora usa `artifacts\VarthexComanda-1.0.0-Setup-win-x64.exe`.

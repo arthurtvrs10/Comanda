@@ -1,5 +1,7 @@
 # Referências técnicas
 
+Referências para pesquisa; não comprovam compatibilidade comercial nem representam integrações existentes. Revalidar documentação oficial, equipamento e condições do fornecedor antes de especificar P5.
+
 ## Formatação documental
 
 - ABNT NBR 14724:2024, documentação acadêmica e apresentação de trabalhos;

@@ -1,5 +1,7 @@
 # Plataforma Windows e .NET
 
+Plataforma atual preservada. API local, cozinha e atendimento móvel pertencem a P3 e ainda não estão implementados. Consulte a [arquitetura](06-arquitetura.md) e o [ADR proposto](adr/0005-evolucao-pedidos-rede-local.md).
+
 ## Edição de demonstração (2026-10-01)
 
 Solicitada pelo responsável para testar um catálogo ilustrado. `scripts/gerar-demo.ps1`

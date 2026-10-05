@@ -1,6 +1,18 @@
 # Roadmap e riscos
 
-## Ordem de entregas do MVP
+## Próximas entregas — planejamento
+
+| Ordem | Escopo | Condição para avançar |
+| --- | --- | --- |
+| P1 | Pedido numerado, observação e confirmação no Windows | Resolver QVE01–QVE06; validar CTE01–CTE05 e CTE10 |
+| P2 | Preparo, chamada verbal e entrega | P1 validado; CTE06 e CTE07 |
+| P3 | API local, móvel e cozinha | Definir QVE07–QVE09; CTE08, CTE09 e CTE11 |
+| P4 | Recursos operacionais conforme demanda | Escopo e aceitação por recurso |
+| P5 | Integrações e expansão | Fornecedor, equipamento e piloto confirmados |
+
+[Detalhamento e decisões abertas](21-evolucao-atendimento.md). Cada ciclo: necessidade → entrega pequena → testes → uso controlado → ajustes. Backup, logs, migração segura e versões identificadas acompanham todas as entregas.
+
+## Sequência histórica de construção do MVP
 
 | Entrega | Conteúdo | Saída verificável |
 | --- | --- | --- |

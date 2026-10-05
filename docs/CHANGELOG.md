@@ -1,5 +1,13 @@
 # Histórico de alterações
 
+## Documentação - 2026-10-05 - Análise de requisitos
+
+- README reorganizado com recursos atuais, dois downloads Windows, APK, fluxo e arquitetura planejada.
+- Evolução P1–P5 com EV01–EV12, RE01–RE10, UCE01–UCE06, CTE01–CTE11 e QVE01–QVE09.
+- Guias alinhados, propostas separadas do MVP e banco de ideias preservado.
+- Exportações e evidências anteriores identificadas como históricas; sem alteração de código ou banco.
+
+
 ## Não lançado
 
 - A janela da edição com catálogo de apresentação usa o título padrão **Varthex Comanda**, removendo o aviso de demonstração da barra de título.

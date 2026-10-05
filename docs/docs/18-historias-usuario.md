@@ -99,3 +99,15 @@ Como atendente, quero reencontrar as comandas abertas após uma interrupção pa
 Como responsável, quero que o sistema impeça duas instâncias usando a mesma base para reduzir risco de bloqueios e inconsistências.
 
 **Aceite:** a segunda execução mostra aviso, não abre conexão operacional e termina com segurança.
+
+
+## Histórias planejadas — não implementadas
+
+| ID | Como / quero / para | Requisitos | Aceitação |
+| --- | --- | --- | --- |
+| USE01 | Atendente: confirmar pedido numerado para identificar a retirada | EV01–EV05 | CTE01–CTE05 |
+| USE02 | Preparo: consultar fila e registrar andamento para organizar produção | EV06 | CTE06 |
+| USE03 | Atendente: localizar prontos e entregar ao cliente correto | EV07, EV08 | CTE06, CTE07 |
+| USE04 | Atendente móvel: confirmar envio sem perder ou duplicar pedido | EV09–EV12 | CTE04, CTE08, CTE09, CTE11 |
+
+Detalhamento e dependências no [plano de evolução](21-evolucao-atendimento.md).

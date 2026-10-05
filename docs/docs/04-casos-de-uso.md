@@ -1,5 +1,7 @@
 # Casos de uso
 
+UC01–UC10 descrevem o MVP. Os fluxos futuros UCE01–UCE06 estão no [plano de evolução](21-evolucao-atendimento.md).
+
 ## UC01 Manter categorias e produtos
 
 **Ator:** responsável pelo negócio.

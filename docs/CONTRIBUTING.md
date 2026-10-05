@@ -34,3 +34,5 @@ Não inclua estoque, integração de pagamento, cozinha, nuvem, emissão fiscal 
 
 `scripts/validate.sh` confere estrutura, banco e cobertura documental. Ele precisa de `ripgrep` (`rg`) e `sqlite3` instalados; sem `sqlite3` a checagem do banco é apenas ignorada com aviso, mas sem `rg` o script falha.
 
+
+Para evolução: EV (requisito), RE (regra), UCE (caso), CTE (aceitação) e QVE (decisão aberta). Resolver pendências bloqueadoras antes de implementar. Ver docs/21-evolucao-atendimento.md.

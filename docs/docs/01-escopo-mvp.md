@@ -1,5 +1,7 @@
 # Escopo do MVP
 
+Escopo da versão atual em um Windows. Recursos existentes incluem nome opcional, foto de produto e licença offline. As exclusões abaixo valem para o MVP; prioridades posteriores estão no [plano P1–P5](21-evolucao-atendimento.md).
+
 ## Incluído
 
 - cadastro, alteração e desativação de categorias;

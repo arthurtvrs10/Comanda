@@ -1,5 +1,7 @@
 # Visão e decisões
 
+Referência do produto atual. A evolução por pedidos, preparo e dispositivos está em [Planejamento](21-evolucao-atendimento.md); não é funcionalidade já entregue.
+
 ## Problema
 
 A lanchonete não registra formalmente o consumo durante o atendimento. No caixa, o cliente relata o que consumiu e o valor é calculado naquele momento. O processo depende de memória, boa-fé e conferência manual, causando risco de itens esquecidos, preços incorretos, demora e ausência de histórico gerencial.

@@ -1,5 +1,7 @@
 # Experiência do usuário
 
+Esta seção descreve o MVP. A próxima entrega acrescentará confirmação e identificação de pedido; P2 acrescentará fila de preparo. Protótipos novos não aprovam automaticamente mudança de cores ou layout. Preservar legibilidade, controles para toque e total visível. Ver [plano](21-evolucao-atendimento.md).
+
 ## Navegação
 
 | Área | Objetivo | Elementos essenciais |

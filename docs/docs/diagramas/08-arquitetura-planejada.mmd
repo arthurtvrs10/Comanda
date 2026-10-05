@@ -1,0 +1,12 @@
+flowchart TB
+    WIN[Windows — atendimento] --> API[API local]
+    MOB[Celular ou tablet] -->|Rede local| API
+    KDS[Tela da cozinha] -->|Rede local| API
+    subgraph PC[Computador principal]
+        API --> APP[Application]
+        APP --> DOM[Domain]
+        APP --> PORT[Contratos de persistência]
+        PORT --> INF[Infrastructure]
+        INF --> DB[(Banco local)]
+        INF --> BACK[Backup e logs]
+    end

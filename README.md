@@ -1,28 +1,21 @@
-<div align="center">
-
 # Varthex Comanda
 
-![Plataforma](https://img.shields.io/badge/plataforma-Windows-blue)
-![.NET](https://img.shields.io/badge/.NET-10-512BD4)
-![WPF](https://img.shields.io/badge/UI-WPF-5C2D91)
-![SQLite](https://img.shields.io/badge/banco-SQLite-003B57)
-![Testes](https://img.shields.io/badge/testes-593%20passando-brightgreen)
-![Licen%C3%A7a](https://img.shields.io/badge/licen%C3%A7a-n%C3%A3o%20definida-lightgrey)
+Sistema para pequenos estabelecimentos de alimentação. Registra consumo em comandas, calcula o total e mantém histórico local. Funciona em um computador Windows, sem internet.
 
-**Um aplicativo desktop para Windows que controla o consumo por comandas
-numeradas: você lança os itens, ele calcula o total e mostra o valor para você
-digitar na maquininha — sem nunca tocar em pagamento.**
+**Situação:** produto atual disponível; evolução para pedidos, preparo e rede local em planejamento. Esta revisão altera somente documentação.
 
-<img src="docs/design/atendimento-grade.png" alt="Grade de comandas" width="900">
+## Recursos atuais
 
-</div>
+| Área | Função |
+| --- | --- |
+| Produtos | Categorias, preços, fotos opcionais e desativação |
+| Atendimento | Comandas numeradas, nome opcional do cliente, itens, quantidades e total |
+| Encerramento | Confirmação do operador após cobrança realizada fora do sistema |
+| Histórico | Consulta de vendas e resumo diário |
+| Continuidade | Backup, restauração, recuperação de comandas e logs |
+| Licenciamento | Ativação offline vinculada ao computador |
 
-Pensado para o balcão de um pequeno negócio: uma grade com todas as comandas
-(livres ou abertas), um menu de produtos com foto e um carrinho em tabela, tudo
-com botões grandes o bastante para o toque. Funciona 100% offline, com os dados
-num banco SQLite local.
-
-[Abrir design no Canva](https://www.canva.com/design/DAHWxyICQfE/IsxM-jV_WbNmWiN2n2sUjQ/edit?ui=eyJFIjp7Im0iOnRydWUsIkE_IjoibiJ9LCJLIjp7IkEiOiIyZjNkNGUzNC1jMjE1LTRiMTQtYjI0Ni05ODU0Mjc5NjI3MjAifX0)
+Não há pagamento integrado, emissão fiscal, cozinha conectada ou atendimento móvel nas versões abaixo. O APK Android é exclusivo para gerar licenças.
 
 ## Windows — versão normal 1.2.2
 
@@ -68,307 +61,102 @@ A compatibilidade das licenças com o Windows foi validada; a instalação e a i
 
 [Instruções completas](mobile/licencas/README.md) · [Verificar integridade (SHA-256)](downloads/android/Varthex-Licencas-1.0.1.apk.sha256)
 
-## Telas
 
-Telas do código atual, com cores originais, controles quadrados e marca no rodapé. Renderizadas diretamente pelo WPF com dados fictícios em memória, sem acessar o banco do usuário. O instalador 1.2.2 inclui este layout.
+## Instalar e usar
 
-<img src="docs/design/atendimento-comanda.png" alt="Comanda com nome do cliente, catálogo e itens selecionados na nova identidade visual" width="900">
+1. Escolha a versão normal ou demonstração acima e execute o instalador.
+2. Ative com a licença fornecida pelo responsável.
+3. Cadastre produtos na versão normal; a demonstração traz produtos fictícios.
+4. Abra uma comanda, informe o nome opcional e registre o consumo.
+5. Confira o total, realize a cobrança fora do sistema e confirme o encerramento.
 
-Dentro da comanda: nome do cliente, catálogo à esquerda e itens com total à direita. Os exemplos também mostram produtos sem foto.
+Atualizar ou reinstalar preserva os dados existentes. O instalador inclui .NET e instala por usuário. Não possui assinatura de código; pode haver aviso do Windows.
 
-<img src="docs/design/produtos.png" alt="Cadastro de produtos no modo de edição, com preço, categoria e foto opcional" width="900">
+Dados normais: `%LOCALAPPDATA%\VarthexComanda`. Demonstração: `%LOCALAPPDATA%\VarthexComandaDemo`. Mantenha backup externo e valide a restauração antes de depender dele.
 
-Produtos: edição de nome, categoria, preço e foto opcional.
+[Operação e recuperação](docs/docs/12-operacao-implantacao.md) · [Licenciamento](docs/docs/20-licenciamento-offline.md)
 
-<img src="docs/design/historico.png" alt="Histórico com vendas fictícias, resumo do dia e detalhes dos itens" width="900">
+## Evolução planejada
 
-Histórico: vendas do dia, resumo e detalhe dos itens.
+| Ordem | Entrega |
+| --- | --- |
+| P1 | Pedido numerado dentro da comanda, observações e confirmação |
+| P2 | Preparo, pronto, chamada verbal e entrega no Windows |
+| P3 | Servidor local, atendimento móvel e tela da cozinha |
+| P4 | Adicionais, impressão, mesas, permissões e gestão conforme o piloto |
+| P5 | Pagamentos, fiscal, SmartPOS e integrações validadas |
 
-## Instalação
+Uma comanda poderá conter vários pedidos. Entregar um pedido não encerrará a comanda automaticamente. Regras ainda abertas estão registradas antes da implementação.
 
-1. [Baixe o Varthex Comanda para Windows 64 bits](https://github.com/arthurtvrs10/Varthex-Orders/releases/download/v1.2.2/VarthexComanda-1.2.2-Setup-win-x64.exe).
-2. Execute o `.exe` e siga o assistente em português; não é necessário instalar .NET ou usar administrador.
-3. Abra **Varthex Comanda**. Se solicitado, envie o código do computador ao responsável e informe a chave recebida.
-
-**Atualizar:** feche o aplicativo e execute o novo instalador. Licença e dados são
-preservados. **Desinstalar:** use Aplicativos Instalados do Windows; os dados são mantidos.
-
-Para identificar o cliente, abra a comanda, preencha **Nome do cliente (opcional)**
-e clique em **Salvar nome** (ou Enter). Para remover, deixe vazio e salve.
-O nome aparece na grade, encerramento e histórico. Atualizar mantém a licença e os dados.
-
-A ativação offline é obrigatória. O emissor de licenças e a chave
-privada são exclusivos do responsável e nunca devem ser enviados ao cliente.
-Veja [como emitir, ativar e renovar licenças](docs/docs/20-licenciamento-offline.md).
-
-### Gerar o instalador Windows
-
-Com SDK .NET 10 e Inno Setup 6 instalados, execute `.\scripts\gerar-instalador.ps1`.
-O `.exe` e seu SHA-256 ficam em `artifacts`. A cópia versionada para distribuição
-fica em `downloads/windows`. Não distribua a pasta `artifacts` inteira, pois ela
-também pode conter a chave privada do emissor.
-
-### ZIP alternativo para instalação manual
-
-O script abaixo também gera um ZIP autocontido com scripts de instalação.
-As instruções desta subseção referem-se somente a esse pacote alternativo.
-
-**Gerar o pacote** (na máquina de desenvolvimento, que precisa do SDK do .NET 10):
-
-```powershell
-.\scripts\publicar.ps1
+```mermaid
+flowchart LR
+    A[Comanda] --> B[Produtos e observações]
+    B --> C[Confirmar pedido numerado]
+    C --> D[Aguardando preparo]
+    D --> E[Em preparo]
+    E --> F[Pronto]
+    F --> G[Chamar e entregar]
 ```
 
-Isso lê a versão do `<Version>` do `VarthexComanda.Desktop.csproj`, publica em
-`artifacts\publish\win-x64` e gera `artifacts\VarthexComanda-<versão>-win-x64.zip`
-(hoje `VarthexComanda-1.2.2-win-x64.zip`, cerca de 66 MB). O parâmetro opcional
-`-Saida <pasta>` troca a pasta `artifacts`. A pasta `artifacts\publish\win-x64`
-é apagada a cada publicação; já os `.zip` de versões anteriores **acumulam** em
-`artifacts` (apague os antigos à mão). Os arquivos `.pdb` não entram no pacote.
-
-**Instalar** (no computador do balcão):
-
-1. Extraia o `.zip` **inteiro** numa pasta (não execute de dentro do zip).
-2. Dê dois cliques em `Instalar.cmd`.
-3. O programa vai para `%LOCALAPPDATA%\Programs\VarthexComanda` e são criados
-   os atalhos "Varthex Comanda" na Área de Trabalho e no Menu Iniciar. Para outra
-   pasta ou sem atalhos, use no PowerShell:
-   `.\Instalar.cmd -Destino "C:\Pasta\Outra" -SemAtalhos` (também aceita
-   `-WhatIf`, para simular sem alterar nada).
-
-**Atualizar:** feche o app, extraia o pacote novo e execute `Instalar.cmd`
-de novo. Só os arquivos do programa são trocados; a versão anterior fica em
-`%LOCALAPPDATA%\Programs\VarthexComanda.anterior` para o retorno manual.
-
-**Desinstalar:** dê dois cliques em `Desinstalar.cmd` (na pasta do programa ou do
-pacote; para outro destino, `.\Desinstalar.cmd -Destino "C:\Pasta\Outra"`). Remove
-a pasta do programa **inteira** (não guarde arquivos seus ali), a cópia `.anterior`
-e os atalhos.
-
-**Os dados ficam separados do programa** (veja [Onde ficam os
-dados](#onde-ficam-os-dados)): atualizar e desinstalar **nunca** apagam
-`%LOCALAPPDATA%\VarthexComanda`. A variável de ambiente `VARTHEX_COMANDA_DADOS`
-redireciona essa pasta (demonstrações e testes) e os scripts de instalação a
-respeitam ao recusar destinos perigosos.
-
-O passo a passo completo, o retorno à versão anterior e o diagnóstico estão em
-[Operação e implantação](docs/docs/12-operacao-implantacao.md); as decisões de
-publicação, em [Plataforma Windows e .NET](docs/docs/19-plataforma-windows-dotnet.md).
-
-> **Para desenvolvedores:** rodar a partir do código exige o SDK do .NET 10 —
-> `dotnet run --project backend/src/VarthexComanda.Desktop` (veja
-> [Compilando](#compilando)).
-
-## O que ele faz
-
-| Tela | O que resolve |
-|---|---|
-| **Atendimento** | Grade fixa de comandas numeradas (20 por padrão, configurável). Cada card mostra se está **livre** ou **aberta**, há quanto tempo e o total parcial. Clicar abre a comanda; dentro dela, o **menu** (cards de produto com foto, filtrados por categoria) fica à esquerda e o **carrinho** em tabela à direita, com `−` / `+` / `Excluir` por linha. |
-| **Encerramento** | **Finalizar comanda (F4)** mostra o total para digitar na maquininha e só encerra depois que você confirma que a cobrança foi aprovada fora do sistema. Se der erro na maquininha, a comanda continua aberta. |
-| **Produtos** | Cadastro em dois modos (**novo** / **edição**) com foto, nome, categoria e preço. Desativar em vez de apagar, para não quebrar o histórico. |
-| **Histórico** | Vendas por dia, busca por número, detalhe dos itens e resumo do dia (quantidade, total e ticket médio). |
-| **Backup** | Cópia automática na primeira abertura do dia e ao fechar o app, cópia manual (inclusive numa pasta externa), validação e restauração. |
-| **Configurações** | Nome do estabelecimento, quantidade de comandas e pasta de backup externa. |
-
-### Foto do produto
-
-Cada produto pode ter uma foto (JPG, PNG ou BMP, até 10 MB). O app **copia** a
-imagem para a própria pasta de dados — o arquivo original nunca é alterado — e o
-banco guarda só o nome do arquivo. Arquivos que não são imagem de verdade são
-recusados antes de qualquer cópia, e trocar ou remover a foto apaga o arquivo
-antigo.
-
-### Backup e recuperação
-
-- Usa a API de snapshot nativa do SQLite (nunca uma cópia crua do arquivo), com
-  checagem de integridade e checksum SHA-256.
-- Mantém as **30 cópias mais recentes** na pasta gerenciada.
-- **Restaurar** valida formato, versão do esquema, integridade e checksum, faz
-  uma cópia preventiva do banco atual antes de tocar em qualquer coisa e reinicia
-  o aplicativo ao terminar.
-
-## Onde ficam os dados
-
-Tudo em `%LOCALAPPDATA%\VarthexComanda\`:
-
-| Pasta | Conteúdo |
-|---|---|
-| `data\` | o banco `varthex-comanda.db` |
-| `backups\` | cópias gerenciadas (`.db` + `.sha256`) |
-| `fotos\` | fotos dos produtos |
-| `logs\` | logs técnicos (Serilog), sem dados sensíveis |
-
-Valores são guardados em **centavos** e datas em **UTC**; a tela converte para o
-horário de Brasília (UTC−3, fixo) só na exibição. Só uma instância do app roda
-por vez. A pasta de dados pode ser redirecionada com a variável de ambiente
-`VARTHEX_COMANDA_DADOS` (útil para demonstrações e testes sem tocar nos dados
-reais).
-
-## O que ele não faz
-
-Não processa pagamentos, não integra com a maquininha e não registra forma de
-pagamento, valor recebido, troco, cartão ou autorização da adquirente. É de
-propósito: o operador digita o total na maquininha, e o sistema só guarda que a
-comanda foi encerrada.
-
-## Compilando
-
-Requer Windows e o [SDK do .NET 10](https://dotnet.microsoft.com/download).
-
-```sh
-dotnet build backend/VarthexComanda.slnx
-dotnet test  backend/VarthexComanda.slnx --configuration Release
-dotnet run --project backend/src/VarthexComanda.Desktop
-```
-
-O banco é criado e migrado sozinho na primeira execução; se houver migrações
-pendentes, o app faz uma cópia preventiva antes de aplicá-las.
+[Requisitos, aceitação e decisões abertas](docs/docs/21-evolucao-atendimento.md) · [Roadmap](docs/docs/11-roadmap-riscos.md)
 
 ## Arquitetura
 
-Camadas com dependência sempre para dentro, e cada capacidade de negócio em sua
-própria pasta/namespace em todas as camadas (`Atendimento`, `Catalogo`,
-`Backup`, `Configuracao`):
+Atual: **C# e .NET 10 LTS, WPF/MVVM, SQLite e Entity Framework Core**. Camadas: Domain, Application, Infrastructure e Desktop.
 
+Planejada para P3:
+
+```mermaid
+flowchart TB
+    W[Windows] --> API[API local no computador principal]
+    M[Celular ou tablet] --> API
+    K[Cozinha] --> API
+    API --> A[Aplicação e regras de negócio]
+    A --> I[Infraestrutura]
+    I --> DB[(Banco local)]
+    I --> B[Backup e logs]
 ```
-Desktop (WPF, MVVM)  →  Application (casos de uso, Resultado<T>)  →  Domain (entidades)
-        └────────────→  Infrastructure (EF Core/SQLite, arquivos, backup)  ──┘
+
+Os dispositivos precisarão alcançar o servidor local. Sem resposta, o pedido não será mostrado como confirmado. Navegador ou app Android ainda será decidido.
+
+[Arquitetura atual e futura](docs/docs/06-arquitetura.md)
+
+## Telas atuais
+
+Imagens de referência com dados fictícios. Não representam os recursos planejados de cozinha ou atendimento móvel.
+
+<img src="docs/design/atendimento-grade.png" alt="Grade de comandas" width="900">
+<img src="docs/design/atendimento-comanda.png" alt="Itens de uma comanda" width="900">
+<img src="docs/design/produtos.png" alt="Cadastro de produtos" width="900">
+<img src="docs/design/historico.png" alt="Histórico" width="900">
+
+[Identidade no Canva](https://www.canva.com/design/DAHWxyICQfE/IsxM-jV_WbNmWiN2n2sUjQ/edit)
+
+## Desenvolvimento
+
+No Windows, com SDK .NET 10:
+
+```powershell
+dotnet build backend/VarthexComanda.slnx
+dotnet test backend/VarthexComanda.slnx --configuration Release
+dotnet run --project backend/src/VarthexComanda.Desktop
 ```
 
-| Camada | Papel |
-|---|---|
-| `VarthexComanda.Domain` | Entidades puras, sem dependências |
-| `VarthexComanda.Application` | Casos de uso e interfaces de repositório; erros esperados viram `Resultado<T>` |
-| `VarthexComanda.Infrastructure` | Repositórios EF Core, armazenamento de fotos, motor de backup, logs |
-| `VarthexComanda.Desktop` | Telas WPF e ViewModels (sem `System.Windows` nos ViewModels) |
+Instalador normal: `scripts/gerar-instalador.ps1`. Demonstração: `scripts/gerar-demo.ps1`. Exigem Inno Setup 6. ZIP alternativo: `scripts/publicar.ps1`. APK: `mobile/licencas/build.ps1`.
 
-Cada operação que muda dados abre um único contexto e salva uma única vez — a
-atomicidade vem da construção, sem camada de unit-of-work. Os testes (xUnit)
-ficam em `backend/tests/`, um projeto por camada.
+Distribua somente os pacotes preparados. A pasta `artifacts` pode conter segredos do emissor.
 
-## Documentação
+## Documentação e validação
 
-A documentação em [`docs/`](docs/README.md) é a fonte de verdade (requisitos
-`RF`, regras `RN`, casos de uso `UC` e testes de aceitação `CT`):
-
-- [Visão e decisões](docs/docs/00-visao-e-decisoes.md) e
-  [Escopo do MVP](docs/docs/01-escopo-mvp.md)
-- [Guia de implementação](docs/docs/14-guia-implementacao.md)
+- [Índice completo](docs/README.md)
+- [Escopo atual](docs/docs/01-escopo-mvp.md)
+- [Requisitos atuais](docs/docs/02-requisitos.md)
+- [Plano de evolução](docs/docs/21-evolucao-atendimento.md)
+- [Homologação e evidências](docs/homologacao/README.md)
 - [Histórico de alterações](docs/CHANGELOG.md)
-- [`specs/`](specs/): o design e o plano de cada fatia entregue
-- [AGENTS.md](docs/AGENTS.md): leia antes de qualquer alteração assistida por IA
 
-## Status
+Testes automatizados não substituem validação no estabelecimento. Instalação em Windows limpo, equipamento do piloto e interface Android precisam de evidência específica. Esta revisão documental não executou testes do aplicativo.
 
-Etapas de catálogo, comandas, encerramento, histórico, backup/recuperação e
-configurações estão entregues e cobertas por testes automatizados.
+## Licença do código
 
-### Próximos passos
-
-- Validar o pacote autocontido num Windows limpo, sem nenhum .NET instalado
-  (CT21), e testar antivírus, a versão/arquitetura do Windows-alvo (RNF17) e a
-  instalação com atalhos no computador do balcão.
-- Validar o instalador Inno Setup no computador do balcão.
-- Navegação completa por teclado com foco visível (RNF18); hoje só o **F4** existe.
-- Rotação e limite de tamanho dos logs (RNF21).
-- Homologação no computador real (CT01–CT22, teste sem internet, treinamento).
-
-### Limitações conhecidas
-
-- O pacote autocontido ainda **não foi validado num Windows limpo** sem .NET
-  (CT21 pendente): só foi verificado numa máquina de desenvolvimento, iniciando
-  a cópia instalada sem `dotnet` no `PATH`.
-- Sem assinatura de código (o Windows pode exibir aviso de aplicativo
-  desconhecido), sem atualização automática e com retorno à versão anterior
-  manual.
-- A versão e a arquitetura exatas do Windows-alvo ainda estão pendentes
-  (QV07 em [pendências](docs/docs/13-pendencias-validacao.md)).
-
-
-## RAMO X — Restaurantes e Lanchonetes
-
-O Varthex Orders foi pensado como um sistema **local-first**, modular e evolutivo para pequenos restaurantes, lanchonetes, cafeterias e operações similares.
-
-A proposta é manter o núcleo do sistema simples e permitir que novas funcionalidades sejam adicionadas conforme as necessidades do estabelecimento, formando gradualmente o ecossistema Varthex.
-
-| Evolução | Objetivo resumido | Referência / conceito |
-|---|---|---|
-| **Varthex KDS** | Enviar pedidos diretamente para telas da cozinha, organizados por estação, status e tempo de preparo. | Toast KDS / QSR |
-| **Varthex Call** | Permitir que clientes chamem garçom, peçam atendimento ou solicitem a conta por botão, QR ou NFC. | Aceno / GPTRONICS / Nurse Call |
-| **Varthex Ready** | Exibir pedidos prontos em TV ou monitor e avisar clientes para retirada. | McDonald's / sistemas QSR |
-| **Varthex Queue** | Criar fila digital e controle de senhas para atendimento ou retirada. | Sistemas de filas / fast-food |
-| **Varthex Table** | Usar QR Code ou NFC na mesa para cardápio, atendimento, conta e futuras interações. | Table Ordering / QR Ordering |
-| **Varthex Self-Service** | Permitir que o próprio cliente monte e envie o pedido através de tablet ou totem. | McDonald's / Toast Kiosk |
-| **Varthex Runner** | Avisar automaticamente garçons ou atendentes quando um pedido estiver pronto para entrega. | Food Runner / KDS |
-| **Praças de Produção** | Direcionar automaticamente itens para chapa, fritura, bar, sobremesas ou outras estações. | KDS / Kitchen Routing |
-| **Temporizador de Pedidos** | Monitorar tempo de espera e preparo, destacando pedidos atrasados. | Toast KDS |
-| **Status da Comanda** | Controlar etapas como aberta, enviada, preparando, pronta, entregue, pagamento e encerrada. | POS de restaurantes |
-| **Modificadores de Produto** | Permitir adicionais, remoções, observações, tamanho e ponto de preparo. | Toast / Oracle MICROS |
-| **Combos** | Criar combinações de produtos com opções obrigatórias ou adicionais. | POS de fast-food |
-| **Divisão de Conta** | Dividir pagamento por pessoa, item, quantidade ou valor. | Toast / Lightspeed |
-| **Mapa de Mesas** | Mostrar visualmente mesas livres, ocupadas, aguardando atendimento ou pagamento. | Oracle MICROS / Lightspeed |
-| **Transferência de Mesa** | Transferir uma comanda completa entre mesas. | POS de restaurantes |
-| **Junção de Mesas** | Agrupar mesas e comandas em uma única conta. | Oracle MICROS |
-| **Histórico de Operações** | Registrar alterações importantes realizadas em pedidos, comandas e pagamentos. | Audit Log |
-| **Cancelamento Controlado** | Registrar motivo, horário e responsável por cancelamentos ou exclusões. | POS / controle gerencial |
-| **Controle de Permissões** | Separar funções e acessos entre administrador, gerente, caixa, garçom e cozinha. | RBAC / sistemas POS |
-| **Fechamento de Caixa** | Controlar abertura, entradas, retiradas, sangrias e fechamento diário. | Sistemas POS |
-| **Dashboard Local** | Mostrar vendas, ticket médio, pedidos, produtos e horários de pico. | Toast Analytics |
-| **Curva ABC** | Identificar produtos com maior participação nas vendas e faturamento. | ERP / gestão de estoque |
-| **Varthex Stock** | Controlar estoque e realizar baixas conforme produtos são vendidos. | ERP / Inventory Management |
-| **Ficha Técnica** | Relacionar produtos vendidos aos ingredientes realmente consumidos. | Food Cost / Recipe Management |
-| **Estoque Mínimo** | Alertar automaticamente quando determinado produto ou ingrediente estiver acabando. | ERP / e-Kanban |
-| **Varthex Refill** | Permitir solicitação rápida de reposição de insumos entre setores. | Andon / e-Kanban industrial |
-| **Varthex Waste** | Registrar perdas, desperdícios, erros de produção e produtos vencidos. | Food Waste Management |
-| **Previsão de Demanda** | Utilizar histórico para estimar quantidade de produtos necessária por período. | Demand Forecasting |
-| **CMV / Food Cost** | Calcular custo dos produtos vendidos e estimar margem de cada item. | Gestão de custos |
-| **Cardápio por Horário** | Alterar disponibilidade, preço ou produtos conforme período do dia. | Toast / QSR |
-| **Promoções** | Criar descontos, combos, horários promocionais e regras comerciais. | POS / Pricing Engine |
-| **Fidelidade** | Oferecer pontos, benefícios ou cashback para estimular recorrência. | Loyalty Systems |
-| **Cadastro de Clientes** | Permitir identificação opcional de clientes para histórico e relacionamento. | CRM |
-| **Histórico do Cliente** | Exibir frequência, compras anteriores e produtos mais consumidos. | CRM / POS |
-| **Avaliação de Atendimento** | Coletar avaliação rápida após atendimento ou fechamento da conta. | Customer Experience |
-| **Varthex Analytics** | Consolidar indicadores de vendas, operação, cozinha e atendimento. | BI / Analytics |
-| **Multiunidade** | Permitir futuramente gerenciamento de várias lojas pelo mesmo proprietário. | Toast / Oracle MICROS |
-| **Backup Automático** | Criar backups locais periódicos com possibilidade de cópia externa ou cloud opcional. | Local-first |
-| **Modo Offline** | Manter vendas e operação principal funcionando mesmo sem internet. | Offline-first POS |
-| **Sincronização Opcional** | Sincronizar backups, configurações e indicadores quando houver internet. | Local-first + cloud |
-| **API de Integrações** | Criar camada para integração futura com delivery, fiscal, pagamentos e parceiros. | Toast API / Oracle API |
-
-### Diretriz de arquitetura
-
-As evoluções devem seguir os seguintes princípios:
-
-- operação principal funcionando localmente;
-- internet como recurso opcional, e não dependência;
-- arquitetura modular;
-- baixo custo de implantação;
-- reaproveitamento da infraestrutura existente no estabelecimento;
-- simplicidade para funcionários e clientes;
-- integração entre os módulos Varthex;
-- novas funcionalidades somente quando resolverem problemas reais;
-- evitar transformar o Varthex Orders em um ERP monolítico;
-- permitir que cada estabelecimento utilize apenas os módulos necessários.
-
-### Ecossistema proposto
-
-```text
-VARTHEX LOCAL CORE
-        │
-        ├── Varthex Orders
-        ├── Varthex KDS
-        ├── Varthex Call
-        ├── Varthex Ready
-        ├── Varthex Queue
-        ├── Varthex Table
-        ├── Varthex Stock
-        ├── Varthex Refill
-        ├── Varthex Waste
-        └── Varthex Analytics
-```
-
-O **Varthex Orders** permanece como núcleo operacional do ramo de restaurantes e lanchonetes, enquanto funcionalidades mais específicas podem evoluir para módulos independentes conectados ao mesmo ecossistema.
-
-## Licença
-
-Nenhuma licença definida. Repositório privado até decisão do proprietário.
+Nenhuma licença de uso do código foi definida. A licença comercial de ativação do aplicativo é um assunto separado.

@@ -1,0 +1,15 @@
+flowchart TD
+    A[Abrir comanda] --> B[Identificar por número e nome opcional]
+    B --> C[Adicionar produtos e observações]
+    C --> D[Confirmar pedido]
+    D --> E[Salvar pedido e gerar número]
+    E --> F[Aguardando preparo]
+    F --> G[Em preparo]
+    G --> H[Pronto]
+    H --> I[Chamar cliente]
+    I --> J[Confirmar entrega]
+    J --> K{Novo consumo?}
+    K -- Sim --> C
+    K -- Não --> L[Encerramento conforme regra da comanda]
+    F -. Cancelamento controlado .-> X[Cancelado]
+    G -. Cancelamento controlado .-> X

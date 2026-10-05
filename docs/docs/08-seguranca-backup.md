@@ -1,5 +1,7 @@
 # Segurança, privacidade e backup
 
+Aplicável ao terminal atual. Antes de P3, definir autorização de dispositivos, proteção da comunicação, perfis e recuperação do servidor (QVE09). Não expor o banco diretamente à rede. A chave privada do emissor não deve ser incluída em instaladores, logs ou backup operacional distribuído.
+
 ## Privacidade
 
 O MVP não cadastra cliente. Não solicitar nome, CPF, telefone, endereço ou dados do cartão. Observações aceitam somente informação operacional.

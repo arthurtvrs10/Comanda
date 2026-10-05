@@ -1,5 +1,7 @@
 # Regras de negócio
 
+Regras do produto atual. Regras futuras RE01–RE10 estão no [plano de evolução](21-evolucao-atendimento.md); não alteram os fluxos publicados até uma entrega validada.
+
 | Código | Regra |
 | --- | --- |
 | RN01 | Somente uma comanda aberta pode usar determinado número |
@@ -21,7 +23,7 @@
 | RN17 | Produto com histórico não pode ser excluído fisicamente |
 | RN18 | Cancelar comanda com itens exige confirmação e não gera venda |
 | RN19 | Restaurar backup exige confirmação e cópia preventiva da base atual |
-| RN20 | Datas usam relógio local e são exibidas no padrão brasileiro |
+| RN20 | Datas operacionais são persistidas em UTC e exibidas no horário de Brasília, em padrão brasileiro |
 | RN21 | Uma segunda instância do aplicativo não pode acessar a mesma base enquanto a primeira estiver ativa |
 | RN22 | Reiniciar o aplicativo não fecha cancela nem altera uma comanda que estava aberta |
 | RN23 | Cada alteração confirmada de item deve ser persistida antes de a interface indicar sucesso |

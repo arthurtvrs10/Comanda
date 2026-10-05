@@ -1,5 +1,7 @@
 # Requisitos
 
+RF01–RF29 e RNF01–RNF21 descrevem a base atual. Existência de requisito não comprova homologação. Novos requisitos EV01–EV12, ainda planejados, estão no [plano de evolução](21-evolucao-atendimento.md).
+
 ## Requisitos funcionais
 
 | Código | Prioridade | Requisito | Comportamento esperado |

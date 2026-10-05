@@ -1,13 +1,7 @@
 flowchart TB
-    UI[Interface WPF e MVVM]
-    APP[Aplicação e casos de uso]
-    DOM[Domínio]
-    PERSIST[EF Core e SQLite]
-    DB[(SQLite)]
-    FILES[Backups e logs]
-
-    UI --> APP
-    APP --> DOM
-    APP --> PERSIST
-    PERSIST --> DB
-    APP --> FILES
+    UI[Desktop WPF] --> APP[Application]
+    APP --> DOM[Domain]
+    UI --> INF[Infrastructure — composição]
+    INF --> APP
+    INF --> DB[(SQLite local)]
+    INF --> FS[Fotos, backup e logs]

@@ -1,5 +1,7 @@
 # Instruções para agentes de desenvolvimento
 
+Revisão de planejamento em 05/10/2026: as restrições abaixo valem para o MVP atual. Consultar docs/21-evolucao-atendimento.md para P1–P5 e pendências QVE. Documentar planejamento não autoriza implementar API, pagamentos ou alterar a stack. Não tratar protótipos como funcionalidades entregues.
+
 ## Fonte de verdade
 
 Antes de alterar código, leia nesta ordem:

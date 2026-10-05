@@ -1,5 +1,7 @@
 # Testes e aceitação
 
+CT01–CT24 são critérios da base atual; resultados dependem de evidências na homologação. CTE01–CTE11 são cenários futuros ainda não executados, definidos no [plano de evolução](21-evolucao-atendimento.md).
+
 ## Cenários essenciais
 
 | Código | Cenário | Critério de aceitação |

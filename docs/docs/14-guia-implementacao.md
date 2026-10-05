@@ -1,5 +1,7 @@
 # Guia de implementação
 
+As etapas 0–8 abaixo registram a construção do MVP. Não reiniciar o projeto nem executar reestruturação geral. Próximo ciclo: resolver QVE01–QVE06 → especificar P1 → implementar pequeno → testar → usar no piloto → ajustar. P2 e P3 vêm depois; ver [plano](21-evolucao-atendimento.md).
+
 Este é o documento operacional para construir o MVP somente com base no repositório.
 
 ## Etapa 0 Validar ambiente

@@ -13,3 +13,10 @@ A pasta `renderizados/` contém versões PNG para visualização imediata.
 | `05-modelo-er.mmd` | Entidades e cardinalidades |
 | `06-arquitetura.mmd` | Componentes técnicos |
 
+
+## Evolução planejada
+
+- [Fluxo de pedidos](07-fluxo-pedidos-planejado.mmd).
+- [Arquitetura futura](08-arquitetura-planejada.mmd).
+
+Os PNG de renderizados/ são históricos e não incluem os novos diagramas. As fontes vigentes estão nos arquivos Mermaid e nos documentos de arquitetura e evolução.

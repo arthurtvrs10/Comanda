@@ -1,5 +1,7 @@
 # Homologação (Etapa 8)
 
+Evidências históricas da versão e data indicadas abaixo. Não representam homologação das versões posteriores nem dos requisitos EV. A revisão documental de 05/10/2026 não reexecutou os testes do aplicativo.
+
 Esta pasta reúne tudo o que a Etapa 8 do [guia de implementação](../docs/14-guia-implementacao.md) produziu **sem depender de terceiros**: a evidência que uma máquina de desenvolvimento consegue gerar, e os roteiros para o que só uma pessoa, no computador da loja, pode fechar.
 
 Versão do aplicativo homologada: **1.0.0** (pacote `VarthexComanda-1.0.0-win-x64.zip`, cerca de 64 MB, autocontido). Data das evidências: 2026-09-21.

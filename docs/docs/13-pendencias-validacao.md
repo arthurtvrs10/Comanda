@@ -1,5 +1,7 @@
 # Pendências de validação
 
+Para a evolução, resolver também QVE01–QVE09 do [planejamento](21-evolucao-atendimento.md). QVE01–QVE06 bloqueiam a especificação final de P1. Esta revisão não presume respostas do estabelecimento.
+
 Estas decisões devem ser respondidas antes da homologação.
 
 Situação real de cada pendência (decidida no código, comportamento existente sem decisão registrada ou sem rastro), quem responde e o que falta: [homologacao/pendencias.md](../homologacao/pendencias.md).

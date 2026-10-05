@@ -21,3 +21,18 @@
 | Transação | Conjunto de gravações confirmado por inteiro ou totalmente desfeito |
 | Venda | Registro histórico do encerramento e total da comanda; não é pagamento no MVP |
 | WPF | Tecnologia .NET para construir a interface desktop no Windows |
+
+
+## Evolução planejada
+
+| Termo | Definição |
+| --- | --- |
+| Pedido | Um conjunto confirmado de itens dentro de uma comanda |
+| Senha de retirada | Número visível do pedido; política de numeração ainda a definir |
+| KDS | Tela de acompanhamento da cozinha |
+| Pronto | Preparo concluído, aguardando retirada/entrega |
+| Entregue | Entrega confirmada; não significa comanda encerrada |
+| Sem internet | Operação local possível sem serviços externos |
+| Sem servidor | Dispositivo não consegue confirmar novos pedidos |
+| Reenvio sem duplicação | Repetir a mesma solicitação retorna o pedido já criado |
+| Rascunho | Preenchimento ainda não confirmado pelo servidor |

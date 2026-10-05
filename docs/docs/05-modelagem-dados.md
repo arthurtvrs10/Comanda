@@ -1,5 +1,7 @@
 # Modelagem de dados
 
+Modelo de referência do MVP, não um script para substituir banco existente. O esquema executado é mantido nas migrações de backend/src/VarthexComanda.Infrastructure/Persistence/Migrations. Pedido e evento de pedido são conceitos futuros definidos no [planejamento](21-evolucao-atendimento.md).
+
 ## Modelo conceitual
 
 ```mermaid
@@ -59,8 +61,8 @@ Não existe entidade de pagamento no MVP.
 | id | INTEGER | Sim | Chave primária |
 | nome | TEXT | Sim | Único sem diferenciar maiúsculas |
 | ativo | INTEGER | Sim | `0` ou `1` |
-| criado_em | TEXT | Sim | ISO 8601 local |
-| atualizado_em | TEXT | Sim | ISO 8601 local |
+| criado_em | TEXT | Sim | UTC |
+| atualizado_em | TEXT | Sim | UTC |
 
 ### PRODUTO
 
@@ -85,6 +87,7 @@ Não existe entidade de pagamento no MVP.
 | aberta_em | TEXT | Sim | Abertura |
 | fechada_em | TEXT | Não | Encerramento ou cancelamento |
 | total_centavos | INTEGER | Sim | Soma materializada dos itens |
+| nome_cliente | TEXT | Não | Nome opcional, até 80 caracteres; RF29/RN28 |
 | observacao | TEXT | Não | Nota operacional sem dado pessoal obrigatório |
 
 ### ITEM_COMANDA
@@ -146,4 +149,3 @@ VENDA registra o encerramento comercial, não o pagamento.
 ## Exclusão
 
 Registros históricos não são excluídos em cascata. Produto e categoria com uso anterior devem ser desativados. A implementação deve usar `ON DELETE RESTRICT` nas referências históricas.
-
