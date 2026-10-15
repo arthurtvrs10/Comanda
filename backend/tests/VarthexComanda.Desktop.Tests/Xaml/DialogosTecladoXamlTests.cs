@@ -28,6 +28,39 @@ public class DialogosTecladoXamlTests
     }
 
     [Fact]
+    public void Pagamento_AtalhosNumericosEEspaco_SelecionamEExigemNovaConfirmacaoAoTrocar()
+    {
+        ThreadingHelper.EmSta(() =>
+        {
+            CarregamentoDeXamlTests.GarantirApp();
+            var janela = CriarEncerramento(out var vm, out var repo);
+            using var source = new System.Windows.Interop.HwndSource(new System.Windows.Interop.HwndSourceParameters("Teste pagamento") { Width = 1, Height = 1, WindowStyle = 0 });
+            void Teclar(System.Windows.Input.Key key)
+            {
+                var e = new System.Windows.Input.KeyEventArgs(System.Windows.Input.Keyboard.PrimaryDevice, source, 0, key)
+                { RoutedEvent = System.Windows.Input.Keyboard.PreviewKeyDownEvent };
+                janela.RaiseEvent(e);
+                Assert.True(e.Handled);
+            }
+            Teclar(System.Windows.Input.Key.Space);
+            Assert.False(vm.PagamentoRecebido);
+            Teclar(System.Windows.Input.Key.D2);
+            Assert.Equal(FormaPagamento.Pix, vm.FormaSelecionada);
+            Assert.True(((RadioButton)janela.FindName("FormaPix")).IsChecked);
+            Assert.False(vm.ConfirmarEncerrarCommand.CanExecute(null));
+            Teclar(System.Windows.Input.Key.Space);
+            Assert.True(vm.ConfirmarEncerrarCommand.CanExecute(null));
+            Teclar(System.Windows.Input.Key.NumPad4);
+            Assert.Equal(FormaPagamento.Credito, vm.FormaSelecionada);
+            Assert.True(((RadioButton)janela.FindName("FormaCredito")).IsChecked);
+            Assert.False(vm.PagamentoRecebido);
+            Assert.False(vm.ConfirmarEncerrarCommand.CanExecute(null));
+            Assert.Single(repo.ListarAbertas());
+            janela.Close();
+        });
+    }
+
+    [Fact]
     [Trait("Caso", "CT17")]
     public void EncerramentoView_EscVoltaEEnterConfirma_ConfirmarSoHabilitadoComCobrancaAprovada()
     {
@@ -54,6 +87,9 @@ public class DialogosTecladoXamlTests
 
             viewModel.SelecionarFormaCommand.Execute(FormaPagamento.Pix);
             Assert.Equal(FormaPagamento.Pix, viewModel.FormaSelecionada);
+            Assert.False(confirmar.IsEnabled);
+            var recebido = (CheckBox)janela.FindName("CaixaPagamentoRecebido");
+            recebido.IsChecked = true;
             Assert.True(confirmar.IsEnabled);
 
             viewModel.FormaSelecionada = null;

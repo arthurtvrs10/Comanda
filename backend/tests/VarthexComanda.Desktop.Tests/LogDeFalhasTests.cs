@@ -166,6 +166,7 @@ public class LogDeFalhasTests
         var viewModel = new EncerramentoViewModel(new EncerrarComanda(comandas, relogio), comandas, coletor?.Logger);
         viewModel.Carregar(comanda.Id);
         viewModel.FormaSelecionada = VarthexComanda.Domain.FormaPagamento.Pix;
+        viewModel.PagamentoRecebido = true;
         return (viewModel, comandas);
     }
 

@@ -41,6 +41,10 @@ public partial class EncerramentoViewModel : ObservableObject
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(ConfirmarEncerrarCommand))]
     private bool processando;
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(ConfirmarEncerrarCommand))]
+    private bool pagamentoRecebido;
     private bool _registrado;
     public string Identificador => $"Comanda #{_comandaId:0000}";
     public string FormaSelecionadaDescricao => FormaSelecionada switch
@@ -48,7 +52,11 @@ public partial class EncerramentoViewModel : ObservableObject
         FormaPagamento.Dinheiro => "Dinheiro", FormaPagamento.Pix => "Pix",
         FormaPagamento.Debito => "Débito", FormaPagamento.Credito => "Crédito", _ => "Escolha a forma de pagamento"
     };
-    partial void OnFormaSelecionadaChanged(FormaPagamento? value) => OnPropertyChanged(nameof(FormaSelecionadaDescricao));
+    partial void OnFormaSelecionadaChanged(FormaPagamento? value)
+    {
+        PagamentoRecebido = false;
+        OnPropertyChanged(nameof(FormaSelecionadaDescricao));
+    }
 
     [RelayCommand]
     private void SelecionarForma(FormaPagamento forma)
@@ -61,6 +69,7 @@ public partial class EncerramentoViewModel : ObservableObject
 
     public void Carregar(int comandaId)
     {
+        PagamentoRecebido = false;
         FormaSelecionada = null;
         Processando = false;
         _registrado = false;
@@ -122,7 +131,7 @@ public partial class EncerramentoViewModel : ObservableObject
         }
     }
 
-    private bool PodeConfirmarEncerrar() => FormaSelecionada.HasValue && Enum.IsDefined(FormaSelecionada.Value) && !Processando && !_registrado;
+    private bool PodeConfirmarEncerrar() => PagamentoRecebido && FormaSelecionada.HasValue && Enum.IsDefined(FormaSelecionada.Value) && !Processando && !_registrado;
 
     [RelayCommand]
     private void Voltar() => Concluido?.Invoke(this, false);

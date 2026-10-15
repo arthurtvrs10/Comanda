@@ -52,6 +52,7 @@ public sealed class CriteriosDeTelaComBancoRealTests : IDisposable
         // e a comanda segue utilizavel: com a cobranca refeita, o encerramento conclui
         viewModel.Carregar(comanda.Id);
         viewModel.FormaSelecionada = VarthexComanda.Domain.FormaPagamento.Pix;
+        viewModel.PagamentoRecebido = true;
         viewModel.ConfirmarEncerrarCommand.Execute(null);
         Assert.True(resultadoDoDialogo);
         using var contextoFinal = _banco.Fabrica.CreateDbContext();

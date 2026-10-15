@@ -32,6 +32,8 @@ public class EncerramentoViewModelTests
         var conclusoes = 0;
         vm.Concluido += (_, sucesso) => { if (sucesso) conclusoes++; };
         vm.SelecionarFormaCommand.Execute(FormaPagamento.Debito);
+        Assert.False(vm.ConfirmarEncerrarCommand.CanExecute(null));
+        vm.PagamentoRecebido = true;
         Assert.Single(repo.ListarAbertas());
         Assert.Equal("Débito", vm.FormaSelecionadaDescricao);
         vm.ConfirmarEncerrarCommand.Execute(null);
@@ -98,11 +100,12 @@ public class EncerramentoViewModelTests
         viewModel.ConfirmarEncerrarCommand.CanExecuteChanged += (_, __) => mudancas++;
 
         viewModel.FormaSelecionada = VarthexComanda.Domain.FormaPagamento.Pix;
+        viewModel.PagamentoRecebido = true;
         Assert.True(viewModel.ConfirmarEncerrarCommand.CanExecute(null));
         viewModel.FormaSelecionada = null;
         Assert.False(viewModel.ConfirmarEncerrarCommand.CanExecute(null));
 
-        Assert.Equal(2, mudancas);
+        Assert.Equal(4, mudancas);
     }
 
     [Fact]
@@ -113,6 +116,7 @@ public class EncerramentoViewModelTests
         bool? resultadoEvento = null;
         viewModel.Concluido += (_, sucesso) => resultadoEvento = sucesso;
         viewModel.FormaSelecionada = VarthexComanda.Domain.FormaPagamento.Pix;
+        viewModel.PagamentoRecebido = true;
 
         viewModel.ConfirmarEncerrarCommand.Execute(null);
 
@@ -128,6 +132,7 @@ public class EncerramentoViewModelTests
         bool eventoDisparado = false;
         viewModel.Concluido += (_, __) => eventoDisparado = true;
         viewModel.FormaSelecionada = VarthexComanda.Domain.FormaPagamento.Pix;
+        viewModel.PagamentoRecebido = true;
 
         viewModel.ConfirmarEncerrarCommand.Execute(null);
 
@@ -141,6 +146,7 @@ public class EncerramentoViewModelTests
     {
         var (viewModel, comandas, _) = CriarViewModel();
         viewModel.FormaSelecionada = VarthexComanda.Domain.FormaPagamento.Pix;
+        viewModel.PagamentoRecebido = true;
 
         var relogio = new FakeClock();
         var produto = new Produto { Id = 2, CategoriaId = 1, Nome = "Água", PrecoCentavos = 300, Ativo = true, CriadoEm = relogio.UtcNow, AtualizadoEm = relogio.UtcNow };

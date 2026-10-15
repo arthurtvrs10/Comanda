@@ -7,12 +7,12 @@
         xmlns:local="clr-namespace:VarthexComanda.Desktop.Atendimento"
         mc:Ignorable="d"
         Title="Pagamento" Background="#F3F5F2" Icon="pack://application:,,,/VarthexComanda;component/Assets/VarthexComanda.ico" Width="600" MaxHeight="580" SizeToContent="Height"
-        WindowStartupLocation="CenterOwner" ResizeMode="NoResize"
+        PreviewKeyDown="Pagamento_PreviewKeyDown" WindowStartupLocation="CenterOwner" ResizeMode="NoResize"
         FocusManager.FocusedElement="{Binding ElementName=FormaDinheiro}">
     <Window.Resources>
         <local:CentavosParaMoedaConverter x:Key="Moeda" />
         <Style x:Key="Forma" TargetType="RadioButton">
-            <Setter Property="Height" Value="64" />
+            <Setter Property="Height" Value="56" />
             <Setter Property="Margin" Value="4" />
             <Setter Property="FontSize" Value="17" />
             <Setter Property="FontWeight" Value="SemiBold" />
@@ -34,7 +34,7 @@
         </Style>
     </Window.Resources>
     <ScrollViewer VerticalScrollBarVisibility="Auto" Background="#F3F5F2">
-    <StackPanel Margin="24">
+    <StackPanel Margin="16">
         <TextBlock Text="{Binding NumeroComanda, StringFormat='Comanda {0}'}" FontWeight="Bold" FontSize="22" Margin="0,0,0,4" />
         <TextBlock Text="{Binding NomeCliente}" FontSize="16" TextWrapping="Wrap" Margin="0,0,0,8" />
 
@@ -43,16 +43,22 @@
             <TextBlock Text="Total a pagar: " FontWeight="Bold" FontSize="24" />
             <TextBlock Text="{Binding TotalCentavos, Converter={StaticResource Moeda}}" FontWeight="Bold" FontSize="24" />
         </StackPanel>
-        <TextBlock Text="Escolha a forma de pagamento" FontSize="17" FontWeight="SemiBold" Margin="0,24,0,8" />
+        <TextBlock Text="Escolha a forma de pagamento" FontSize="17" FontWeight="SemiBold" Margin="0,12,0,8" />
         <UniformGrid Columns="2">
-            <RadioButton x:Name="FormaDinheiro" GroupName="Pagamento" Content="Dinheiro" Style="{StaticResource Forma}" Command="{Binding SelecionarFormaCommand}" CommandParameter="{x:Static domain:FormaPagamento.Dinheiro}" />
-            <RadioButton x:Name="FormaPix" GroupName="Pagamento" Content="Pix" Style="{StaticResource Forma}" Command="{Binding SelecionarFormaCommand}" CommandParameter="{x:Static domain:FormaPagamento.Pix}" />
-            <RadioButton x:Name="FormaDebito" GroupName="Pagamento" Content="Débito" Style="{StaticResource Forma}" Command="{Binding SelecionarFormaCommand}" CommandParameter="{x:Static domain:FormaPagamento.Debito}" />
-            <RadioButton x:Name="FormaCredito" GroupName="Pagamento" Content="Crédito" Style="{StaticResource Forma}" Command="{Binding SelecionarFormaCommand}" CommandParameter="{x:Static domain:FormaPagamento.Credito}" />
+            <RadioButton x:Name="FormaDinheiro" GroupName="Pagamento" Content="1 · Dinheiro" Checked="Forma_Checked" Style="{StaticResource Forma}" Command="{Binding SelecionarFormaCommand}" CommandParameter="{x:Static domain:FormaPagamento.Dinheiro}" />
+            <RadioButton x:Name="FormaPix" GroupName="Pagamento" Content="2 · Pix" Checked="Forma_Checked" Style="{StaticResource Forma}" Command="{Binding SelecionarFormaCommand}" CommandParameter="{x:Static domain:FormaPagamento.Pix}" />
+            <RadioButton x:Name="FormaDebito" GroupName="Pagamento" Content="3 · Débito" Checked="Forma_Checked" Style="{StaticResource Forma}" Command="{Binding SelecionarFormaCommand}" CommandParameter="{x:Static domain:FormaPagamento.Debito}" />
+            <RadioButton x:Name="FormaCredito" GroupName="Pagamento" Content="4 · Crédito" Checked="Forma_Checked" Style="{StaticResource Forma}" Command="{Binding SelecionarFormaCommand}" CommandParameter="{x:Static domain:FormaPagamento.Credito}" />
         </UniformGrid>
-        <TextBlock Text="{Binding FormaSelecionadaDescricao, StringFormat='Forma: {0}'}" FontWeight="SemiBold" Margin="0,16,0,4" />
-        <TextBlock Text="Confirme somente depois de receber o pagamento." Foreground="#596D61" TextWrapping="Wrap" Margin="0,0,0,16" />
+        <TextBlock Text="{Binding FormaSelecionadaDescricao, StringFormat='Forma: {0}'}" FontWeight="SemiBold" Margin="0,8,0,4" />
+        <TextBlock Text="Confirme somente depois de receber o pagamento." Foreground="#596D61" TextWrapping="Wrap" Margin="0,0,0,8" />
 
+        <CheckBox x:Name="CaixaPagamentoRecebido" IsChecked="{Binding PagamentoRecebido}" Content="Pagamento recebido / aprovado (Espaço)" MinHeight="46" Margin="0,0,0,8">
+            <CheckBox.Style><Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
+                <Style.Triggers><DataTrigger Binding="{Binding FormaSelecionada}" Value="{x:Null}"><Setter Property="IsEnabled" Value="False" /></DataTrigger></Style.Triggers>
+            </Style></CheckBox.Style>
+        </CheckBox>
+        <TextBlock Text="Tab: navegar · 1–4: forma · Espaço: recebido · Enter: confirmar · Esc: voltar" FontSize="12" Foreground="#596D61" TextWrapping="Wrap" Margin="0,0,0,12" />
         <TextBlock Text="{Binding Mensagem}" Foreground="Red" TextWrapping="Wrap" Margin="0,0,0,12" />
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
