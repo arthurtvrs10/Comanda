@@ -22,9 +22,27 @@ public partial class AtendimentoView : UserControl
         var botao = (Button)sender;
         var menu = new ContextMenu { PlacementTarget = botao, Placement = PlacementMode.Top };
         foreach (var prioridade in Enum.GetValues<PrioridadeComanda>())
-            menu.Items.Add(new MenuItem { Header = prioridade.ToString(), IsCheckable = true,
+        {
+            var cor = prioridade switch
+            {
+                PrioridadeComanda.Alta => "#925600",
+                PrioridadeComanda.Urgente => "#B71C1C",
+                _ => "#28653F"
+            };
+            var cabecalho = new StackPanel { Orientation = Orientation.Horizontal };
+            cabecalho.Children.Add(new System.Windows.Shapes.Ellipse
+            {
+                Width = 10, Height = 10, Margin = new Thickness(0, 0, 10, 0),
+                VerticalAlignment = VerticalAlignment.Center,
+                Fill = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFromString(cor)!
+            });
+            cabecalho.Children.Add(new TextBlock { Text = prioridade.ToString(), VerticalAlignment = VerticalAlignment.Center });
+            var item = new MenuItem { Header = cabecalho, IsCheckable = true,
                 IsChecked = ViewModel.ComandaAtual?.Prioridade == prioridade,
-                Command = ViewModel.AlterarPrioridadeCommand, CommandParameter = prioridade, Padding = new Thickness(16,10,16,10) });
+                Command = ViewModel.AlterarPrioridadeCommand, CommandParameter = prioridade, Padding = new Thickness(16,10,16,10) };
+            System.Windows.Automation.AutomationProperties.SetName(item, prioridade.ToString());
+            menu.Items.Add(item);
+        }
         botao.ContextMenu = menu;
         menu.IsOpen = true;
     }

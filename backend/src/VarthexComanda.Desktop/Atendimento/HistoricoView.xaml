@@ -61,6 +61,7 @@
                     </ListView.ItemContainerStyle>
                     <ListView.View>
                         <GridView>
+                            <GridViewColumn Header="Identificador" DisplayMemberBinding="{Binding Venda.ComandaId, StringFormat='#{0:0000}'}" Width="100" />
                             <GridViewColumn Header="Comanda" DisplayMemberBinding="{Binding NumeroComanda}" Width="80" />
                             <GridViewColumn Header="Cliente" DisplayMemberBinding="{Binding NomeCliente}" Width="150" />
                             <GridViewColumn Header="Total" DisplayMemberBinding="{Binding Venda.TotalCentavos, Converter={StaticResource Moeda}}" Width="90" />
@@ -72,6 +73,8 @@
 
             <StackPanel Grid.Column="2">
                 <TextBlock Text="Detalhe da venda" FontWeight="Bold" Margin="0,0,0,4" />
+                <TextBlock Text="{Binding VendaSelecionada.Venda.ComandaId, StringFormat='Comanda #{0:0000}', TargetNullValue=''}"
+                           FontWeight="Bold" Margin="0,0,0,8" />
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
                     <TextBlock Text="Total: " FontWeight="Bold" />
                     <TextBlock Text="{Binding VendaSelecionada.Venda.TotalCentavos, Converter={StaticResource Moeda}}" Margin="0,0,16,0" />
