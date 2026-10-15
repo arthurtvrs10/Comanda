@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:VarthexComanda.Desktop"
         mc:Ignorable="d"
-        Title="Varthex Comanda" Icon="pack://application:,,,/VarthexComanda;component/Assets/VarthexComanda.ico" Height="700" Width="1200">
+        Title="Varthex Comanda" Icon="pack://application:,,,/VarthexComanda;component/Assets/VarthexComanda.ico" Height="780" Width="1280" MinHeight="600" MinWidth="800">
     <Window.InputBindings>
         <KeyBinding Key="D1" Modifiers="Control" Command="{x:Static local:MainWindow.IrParaAtendimentoCommand}" />
         <KeyBinding Key="NumPad1" Modifiers="Control" Command="{x:Static local:MainWindow.IrParaAtendimentoCommand}" />
@@ -34,6 +34,7 @@
         <WrapPanel DockPanel.Dock="Top" Margin="8">
             <TextBlock x:Name="RotuloPerfil" VerticalAlignment="Center" FontWeight="Bold" Margin="8,0,16,0" />
             <Button x:Name="BotaoPerfil" Click="AlternarPerfil_Click" Padding="18,8" Margin="0,0,16,0" />
+            <Button Content="Menu principal" Click="MenuPrincipal_Click" Padding="18,8" Margin="0,0,8,0" />
             <Button Content="Bloquear" Click="Bloquear_Click" Padding="18,8" Margin="0,0,8,0" />
             <Button x:Name="BotaoAtendimento" Content="Atendimento" ToolTip="Ctrl+1" AutomationProperties.AccessKey="Ctrl+1" Padding="18,8" FontSize="15" Margin="0,0,8,0" Click="MostrarAtendimento_Click" />
             <Button x:Name="BotaoProdutos" Content="Produtos" ToolTip="Ctrl+2" AutomationProperties.AccessKey="Ctrl+2" Padding="18,8" FontSize="15" Margin="0,0,8,0" Click="MostrarProdutos_Click" />
@@ -44,6 +45,7 @@
         </WrapPanel>
         <ContentControl x:Name="ConteudoPrincipal" />
     </DockPanel>
+    <ContentControl x:Name="MenuInicial" Panel.ZIndex="5" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
     <ContentControl x:Name="CamadaBloqueio" Panel.ZIndex="10" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
     </Grid>
 </Window>

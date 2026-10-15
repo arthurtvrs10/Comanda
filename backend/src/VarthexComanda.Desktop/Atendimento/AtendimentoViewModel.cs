@@ -88,6 +88,10 @@ public partial class AtendimentoViewModel : ObservableObject
 
     public event Action? AtendimentoConcluido;
 
+    public IReadOnlyList<ComandaComItens> ConsultarCozinha() => _comandas.ListarAbertas()
+        .OrderByDescending(c => c.Prioridade).ThenBy(c => c.AbertaEm)
+        .Select(c => _comandas.BuscarComItens(c.Id)).OfType<ComandaComItens>().ToList();
+
     public ObservableCollection<Comanda> ComandasAbertas { get; }
     public ObservableCollection<Categoria> Categorias { get; }
     public ObservableCollection<ItemComanda> Itens { get; }

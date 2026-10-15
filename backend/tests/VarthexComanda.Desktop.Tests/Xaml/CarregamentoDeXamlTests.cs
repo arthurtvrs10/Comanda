@@ -381,6 +381,17 @@ public class CarregamentoDeXamlTests
                 var conteudo = (ContentControl)janela.FindName("ConteudoPrincipal");
                 var raizVisual = (FrameworkElement)janela.Content;
                 MedirEOrganizar(raizVisual);
+                var inicioHost = (ContentControl)janela.FindName("MenuInicial");
+                Assert.Equal(Visibility.Visible, inicioHost.Visibility);
+                Assert.Equal(Visibility.Collapsed, camada.Visibility);
+                SalvarPrevia(raizVisual, "inicio-vcomanda-1200");
+                raizVisual.Measure(new Size(800, 600));
+                raizVisual.Arrange(new Rect(0,0,800,600));
+                raizVisual.UpdateLayout();
+                SalvarPrevia(raizVisual, "inicio-vcomanda-800");
+                var inicio = Assert.IsType<InicioView>(inicioHost.Content);
+                ((Button)inicio.FindName("BotaoGarcom")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                MedirEOrganizar(raizVisual);
                 Assert.False(area.IsEnabled);
                 Assert.Null(conteudo.Content);
                 Assert.False(MainWindow.IrParaAtendimentoCommand.CanExecute(null, janela));
@@ -408,6 +419,20 @@ public class CarregamentoDeXamlTests
                 Assert.Equal(Visibility.Visible, camada.Visibility);
                 Assert.Null(conteudo.Content);
                 Assert.Contains(atendimento.ViewModel.ComandasAbertas, c => c.Id == id);
+                Descendentes(bloqueio).OfType<Button>().Single(b => Equals(b.Content, "Voltar ao início")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                Assert.True(inicioHost.IsEnabled);
+                Assert.False(area.IsEnabled);
+                ((Button)inicio.FindName("BotaoCozinha")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                foreach (var digito in "0123")
+                    botoes.Single(b => Equals(b.Content, digito.ToString())).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                ((Button)bloqueio.FindName("BotaoEntrar")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                var cozinha = Assert.IsType<CozinhaView>(conteudo.Content);
+                Assert.False(MainWindow.IrParaAtendimentoCommand.CanExecute(null, janela));
+                Assert.False(MainWindow.IrParaProdutosCommand.CanExecute(null, janela));
+                Assert.False(MainWindow.IrParaHistoricoCommand.CanExecute(null, janela));
+                Assert.Contains(atendimento.ViewModel.ComandasAbertas, c => c.Id == id);
+                MedirEOrganizar(raizVisual);
+                SalvarPrevia(raizVisual, "cozinha-consulta");
             });
         }
         finally { if (File.Exists(arquivo)) File.Delete(arquivo); if (Directory.Exists(raiz)) Directory.Delete(raiz); }

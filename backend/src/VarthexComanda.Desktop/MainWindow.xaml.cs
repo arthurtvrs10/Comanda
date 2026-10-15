@@ -20,6 +20,10 @@ public partial class MainWindow : Window
     private readonly AcessoGestor _acesso;
     private bool _restauracao;
     private bool _bloqueado = true;
+    private bool _cozinhaAtiva;
+    private string _areaPendente = "garcom";
+    private readonly InicioView _inicioView;
+    private readonly CozinhaView _cozinhaView;
     private readonly AcessoAtendimento _acessoAtendimento;
     private readonly BloqueioAtendimentoView _bloqueioView;
     private readonly AtendimentoView _atendimentoView;
@@ -37,6 +41,11 @@ public partial class MainWindow : Window
         CamadaBloqueio.Content = _bloqueioView;
         _bloqueioView.Desbloqueado += DesbloquearAtendimento;
         _bloqueioView.ConfiguracaoSolicitada += ConfigurarPin;
+        _bloqueioView.VoltarSolicitado += MostrarInicio;
+        _inicioView = new InicioView();
+        MenuInicial.Content = _inicioView;
+        _inicioView.AreaSolicitada += EscolherArea;
+        _cozinhaView = new CozinhaView(atendimentoView.ViewModel.ConsultarCozinha);
         RegistrarAtalho(IrParaAtendimentoCommand, BotaoAtendimento, IrParaAtendimento);
         RegistrarAtalho(IrParaProdutosCommand, BotaoProdutos, IrParaProdutos);
         RegistrarAtalho(IrParaHistoricoCommand, BotaoHistorico, IrParaHistorico);
@@ -48,7 +57,7 @@ public partial class MainWindow : Window
         _backupView = backupView;
         _configuracaoView = configuracaoView;
         _atendimentoView.ViewModel.AtendimentoConcluido += BloquearAtendimento;
-        BloquearAtendimento();
+        MostrarInicio();
     }
 
     /// <summary>
@@ -66,7 +75,7 @@ public partial class MainWindow : Window
 
         _backupView.ViewModel.ModoRestauracao = true;
         ConteudoPrincipal.Content = null;
-        AtualizarPerfil();
+        MostrarInicio();
     }
 
     // Atalhos Ctrl+1..5 seguem o estado do botao correspondente: no modo de restauracao as abas
@@ -92,7 +101,7 @@ public partial class MainWindow : Window
 
     private void IrParaAtendimento()
     {
-        if (_bloqueado || _restauracao) return;
+        if (_bloqueado || _cozinhaAtiva || _restauracao) return;
         _atendimentoView.ViewModel.AtualizarCategorias();
         _atendimentoView.ViewModel.AtualizarComandasAbertas();
         MostrarConteudo(_atendimentoView);
@@ -102,7 +111,7 @@ public partial class MainWindow : Window
 
     private void IrParaHistorico()
     {
-        if (_bloqueado || _restauracao) return;
+        if (_bloqueado || _cozinhaAtiva || _restauracao) return;
         _historicoView.ViewModel.AtualizarVendas();
         MostrarConteudo(_historicoView);
     }
@@ -123,7 +132,7 @@ public partial class MainWindow : Window
 
     private void AlternarPerfil_Click(object sender, RoutedEventArgs e)
     {
-        if (_bloqueado) return;
+        if (_bloqueado || _cozinhaAtiva) return;
         if (_acesso.Autenticado)
         {
             _acesso.Sair();
@@ -147,11 +156,15 @@ public partial class MainWindow : Window
         _acesso.Sair();
         _acessoAtendimento.Bloquear();
         ConteudoPrincipal.Content = null;
+        _cozinhaAtiva = false;
         AreaSistema.IsEnabled = false;
+        AreaSistema.Visibility = Visibility.Collapsed;
+        MenuInicial.Visibility = Visibility.Visible;
+        MenuInicial.IsEnabled = false;
         CamadaBloqueio.Visibility = Visibility.Visible;
         _bloqueioView.Reiniciar();
         AtualizarPerfil();
-        Dispatcher.BeginInvoke(new Action(() => { if (_bloqueado) _bloqueioView.Focus(); }));
+        Dispatcher.BeginInvoke(new Action(() => { if (_bloqueado && CamadaBloqueio.Visibility == Visibility.Visible) _bloqueioView.Focus(); }));
     }
 
     private void DesbloquearAtendimento()
@@ -167,8 +180,12 @@ public partial class MainWindow : Window
             }
             _bloqueado = false;
             AreaSistema.IsEnabled = true;
+            AreaSistema.Visibility = Visibility.Visible;
             CamadaBloqueio.Visibility = Visibility.Collapsed;
-            ConteudoPrincipal.Content = _restauracao ? null : _atendimentoView;
+            MenuInicial.Visibility = Visibility.Collapsed;
+            _cozinhaAtiva = _areaPendente == "cozinha";
+            if (_cozinhaAtiva) _cozinhaView.Atualizar();
+            ConteudoPrincipal.Content = _restauracao ? null : _cozinhaAtiva ? _cozinhaView : _atendimentoView;
             AtualizarPerfil();
         }
         catch
@@ -176,6 +193,70 @@ public partial class MainWindow : Window
             BloquearAtendimento();
             throw;
         }
+    }
+
+    private void MostrarInicio()
+    {
+        BloquearAtendimento();
+        CamadaBloqueio.Visibility = Visibility.Collapsed;
+        MenuInicial.IsEnabled = true;
+        _inicioView.MostrarAviso(_restauracao ? "Banco indisponível. Entre como gestor para restaurar um backup." : "");
+    }
+
+    private void MenuPrincipal_Click(object sender, RoutedEventArgs e)
+    {
+        if (_atendimentoView.ViewModel.ComandaAtual is not null)
+            _atendimentoView.ViewModel.FecharEdicaoCommand.Execute(null);
+        MostrarInicio();
+    }
+
+    private void EscolherArea(string area)
+    {
+        if (MenuInicial.Visibility != Visibility.Visible || !MenuInicial.IsEnabled) return;
+        _inicioView.MostrarAviso("");
+        if (area is "garcom" or "cozinha")
+        {
+            if (_restauracao) { _inicioView.MostrarAviso("Entre como gestor para restaurar o banco antes de iniciar a operação."); return; }
+            _areaPendente = area;
+            BloquearAtendimento();
+            return;
+        }
+        if (_restauracao && area is not ("gestor" or "backup"))
+        { _inicioView.MostrarAviso("Somente a restauração de backup está disponível."); return; }
+        if (new JanelaAcessoGestor(_acesso) { Owner = this }.ShowDialog() != true) return;
+        _bloqueado = false;
+        _cozinhaAtiva = false;
+        MenuInicial.Visibility = Visibility.Collapsed;
+        CamadaBloqueio.Visibility = Visibility.Collapsed;
+        AreaSistema.Visibility = Visibility.Visible;
+        AreaSistema.IsEnabled = true;
+        AtualizarPerfil();
+        try
+        {
+            switch (_restauracao ? "backup" : area)
+            {
+                case "backup": IrParaBackup(); break;
+                case "historico": IrParaHistorico(); break;
+                case "configuracoes": IrParaConfiguracoes(); break;
+                case "licenca": IrParaProdutos(); ((App)System.Windows.Application.Current).RenovarLicenca(); break;
+                default: IrParaProdutos(); break;
+            }
+        }
+        catch
+        {
+            MostrarInicio();
+            _inicioView.MostrarAviso("Não foi possível abrir essa área. Tente novamente.");
+        }
+    }
+
+    protected override void OnPreviewKeyDown(KeyEventArgs e)
+    {
+        base.OnPreviewKeyDown(e);
+        if (e.Handled || e.IsRepeat || Keyboard.Modifiers != ModifierKeys.None || MenuInicial.Visibility != Visibility.Visible || !MenuInicial.IsEnabled) return;
+        var area = e.Key switch { Key.F1 => "garcom", Key.F2 => "cozinha", Key.F3 => "gestor", _ => null };
+        if (area is null) return;
+        e.Handled = true;
+        EscolherArea(area);
     }
 
     private void ConfigurarPin()
@@ -193,10 +274,13 @@ public partial class MainWindow : Window
             botao.Visibility = _acesso.Autenticado ? Visibility.Visible : Visibility.Collapsed;
             botao.IsEnabled = !_bloqueado && _acesso.Autenticado && (!_restauracao || botao == BotaoBackup);
         }
-        BotaoAtendimento.IsEnabled = !_bloqueado && !_restauracao;
-        BotaoHistorico.IsEnabled = !_bloqueado && !_restauracao;
-        BotaoPerfil.IsEnabled = !_bloqueado;
-        RotuloPerfil.Text = _acesso.Autenticado ? "Menu gestor" : "Menu garçom";
+        BotaoAtendimento.IsEnabled = !_bloqueado && !_cozinhaAtiva && !_restauracao;
+        BotaoHistorico.IsEnabled = !_bloqueado && !_cozinhaAtiva && !_restauracao;
+        BotaoPerfil.IsEnabled = !_bloqueado && !_cozinhaAtiva;
+        BotaoAtendimento.Visibility = _cozinhaAtiva ? Visibility.Collapsed : Visibility.Visible;
+        BotaoHistorico.Visibility = _cozinhaAtiva ? Visibility.Collapsed : Visibility.Visible;
+        BotaoPerfil.Visibility = _cozinhaAtiva ? Visibility.Collapsed : Visibility.Visible;
+        RotuloPerfil.Text = _cozinhaAtiva ? "Cozinha · consulta" : _acesso.Autenticado ? "Menu gestor" : "Menu garçom";
         BotaoPerfil.Content = _acesso.Autenticado ? "Voltar ao garçom" : "Entrar como gestor";
         CommandManager.InvalidateRequerySuggested();
     }

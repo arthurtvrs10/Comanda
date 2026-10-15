@@ -12,6 +12,8 @@ public partial class BloqueioAtendimentoView : UserControl
     private bool _configurando;
     public event Action? Desbloqueado;
     public event Action? ConfiguracaoSolicitada;
+    public event Action? VoltarSolicitado;
+    private void Voltar_Click(object sender, RoutedEventArgs e) { Reiniciar(); VoltarSolicitado?.Invoke(); }
 
     public BloqueioAtendimentoView(AcessoAtendimento acesso)
     {
