@@ -9,17 +9,39 @@
              mc:Ignorable="d"
              Background="#F2F2F0">
     <UserControl.Resources>
-        <Style x:Key="AcaoComanda" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-            <Setter Property="Background" Value="#C4C4C4" />
-            <Setter Property="Foreground" Value="#23252A" />
-            <Setter Property="BorderThickness" Value="0" />
+        <Style x:Key="BotaoPainelComanda" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="BorderBrush" Value="#87988E" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}" CornerRadius="0">
+                            <ContentPresenter x:Name="Label" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" RecognizesAccessKey="True" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="BorderBrush" Value="#1F5FBF" /><Setter TargetName="Surface" Property="BorderThickness" Value="2" /></Trigger>
+                            <Trigger Property="IsPressed" Value="True"><Setter TargetName="Surface" Property="Opacity" Value="0.85" /></Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Surface" Property="Background" Value="#E1E5E2" />
+                                <Setter TargetName="Surface" Property="BorderBrush" Value="#C4CCC6" />
+                                <Setter TargetName="Label" Property="TextElement.Foreground" Value="#59645D" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="AcaoComanda" TargetType="Button" BasedOn="{StaticResource BotaoPainelComanda}">
+            <Setter Property="Background" Value="#E1E8E4" />
+            <Setter Property="Foreground" Value="#263C32" />
+            <Setter Property="BorderThickness" Value="1" />
             <Setter Property="Height" Value="78" />
             <Setter Property="Padding" Value="4" />
             <Setter Property="FontSize" Value="14" />
             <Setter Property="FontWeight" Value="Bold" />
         </Style>
         <Style x:Key="IconeAcao" TargetType="Path">
-            <Setter Property="Stroke" Value="#23252A" />
+            <Setter Property="Stroke" Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
             <Setter Property="StrokeThickness" Value="1.7" />
             <Setter Property="Width" Value="22" />
             <Setter Property="Height" Value="22" />
@@ -213,7 +235,7 @@
                                             <RowDefinition Height="*" />
                                             <RowDefinition Height="Auto" />
                                         </Grid.RowDefinitions>
-                                        <Grid Grid.Row="0" Background="#EDEDEA" ClipToBounds="True">
+                                        <Grid Grid.Row="0" Background="#E1E8E4" ClipToBounds="True">
                                             <Image Source="{Binding FotoArquivo, Converter={StaticResource FotoImagem}}" Stretch="UniformToFill" />
                                         </Grid>
                                         <Border Grid.Row="1" BorderBrush="#C4C4C4" BorderThickness="0,1,0,0" Padding="8,6">
@@ -292,7 +314,7 @@
                 </Grid.RowDefinitions>
 
                 <StackPanel Grid.Row="0">
-                    <Border Background="#818181" Padding="10,7" Margin="0,0,0,8">
+                    <Border Background="#263C32" Padding="10,7" Margin="0,0,0,8">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
@@ -300,21 +322,21 @@
                                 <ColumnDefinition Width="70" />
                                 <ColumnDefinition Width="120" />
                             </Grid.ColumnDefinitions>
-                            <TextBlock Text="{Binding ComandaAtual.Numero, StringFormat='COMANDA {0}'}" Foreground="Black" FontWeight="Bold" VerticalAlignment="Center" />
+                            <TextBlock Text="{Binding ComandaAtual.Numero, StringFormat='COMANDA {0}'}" Foreground="White" FontWeight="Bold" VerticalAlignment="Center" />
                             <StackPanel Grid.Column="1">
                                 <StackPanel Orientation="Horizontal">
                                     <Ellipse Width="9" Height="9" Fill="{Binding CorPrioridadeAtual}" Stroke="White" StrokeThickness="1" Margin="0,0,4,0" />
-                                    <TextBlock Text="{Binding ComandaAtual.Prioridade}" Foreground="Black" FontWeight="Bold" />
+                                    <TextBlock Text="{Binding ComandaAtual.Prioridade}" Foreground="White" FontWeight="Bold" />
                                 </StackPanel>
-                                <TextBlock Text="{Binding TempoComandaAtual}" Foreground="Black" FontWeight="Bold" ToolTip="Tempo desde a abertura" AutomationProperties.Name="Tempo desde a abertura" />
+                                <TextBlock Text="{Binding TempoComandaAtual}" Foreground="White" FontWeight="Bold" ToolTip="Tempo desde a abertura" AutomationProperties.Name="Tempo desde a abertura" />
                             </StackPanel>
                             <StackPanel Grid.Column="2">
-                                <TextBlock Text="Pessoas" Foreground="Black" FontWeight="Bold" />
-                                <TextBlock Text="{Binding ComandaAtual.QuantidadePessoas}" Foreground="Black" FontWeight="Bold" />
+                                <TextBlock Text="Pessoas" Foreground="White" FontWeight="Bold" />
+                                <TextBlock Text="{Binding ComandaAtual.QuantidadePessoas}" Foreground="White" FontWeight="Bold" />
                             </StackPanel>
                             <StackPanel Grid.Column="3">
-                                <TextBlock Text="Cliente" Foreground="Black" FontWeight="Bold" />
-                                <TextBlock Text="{Binding ComandaAtual.NomeCliente, TargetNullValue='Não informado'}" ToolTip="{Binding ComandaAtual.NomeCliente}" TextTrimming="CharacterEllipsis" Foreground="Black" FontWeight="Bold" />
+                                <TextBlock Text="Cliente" Foreground="White" FontWeight="Bold" />
+                                <TextBlock Text="{Binding ComandaAtual.NomeCliente, TargetNullValue='Não informado'}" ToolTip="{Binding ComandaAtual.NomeCliente}" TextTrimming="CharacterEllipsis" Foreground="White" FontWeight="Bold" />
                             </StackPanel>
                         </Grid>
                     </Border>
@@ -324,14 +346,14 @@
                     </DockPanel>
                 </StackPanel>
 
-                <Border Grid.Row="1" BorderBrush="#C4C4C4" BorderThickness="1" Background="#F2F2F0">
+                <Border Grid.Row="1" BorderBrush="#C4CCC6" BorderThickness="1" Background="White">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
                     
-                        <Grid Grid.Row="0" Background="#EDEDEA" Margin="0,0,17,0">
+                        <Grid Grid.Row="0" Background="#E1E8E4" Margin="0,0,17,0">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="44" />
@@ -434,8 +456,8 @@
                 <StackPanel Grid.Row="3">
                     <Grid>
                         <Grid.ColumnDefinitions><ColumnDefinition /><ColumnDefinition /></Grid.ColumnDefinitions>
-                        <Button Content="Concluir lançamento" Command="{Binding FecharEdicaoCommand}" Background="#23262B" Foreground="White" Height="86" FontWeight="Bold" Margin="0,0,8,0" Padding="8" ToolTip="Manter a comanda aberta e bloquear o atendimento" />
-                        <Button Grid.Column="1" Content="Pagar" Command="{Binding VerTotalCommand}" Background="#408F63" Foreground="White" Height="86" FontWeight="Bold" Padding="8" ToolTip="Finalizar comanda (F4)" />
+                        <Button Style="{StaticResource BotaoPainelComanda}" Content="Concluir lançamento" Command="{Binding FecharEdicaoCommand}" Background="#23262B" Foreground="White" Height="86" FontWeight="Bold" Margin="0,0,8,0" Padding="8" ToolTip="Manter a comanda aberta e bloquear o atendimento" />
+                        <Button Style="{StaticResource BotaoPainelComanda}" Grid.Column="1" Content="Pagar" Command="{Binding VerTotalCommand}" Background="#245640" Foreground="White" Height="86" FontWeight="Bold" Padding="8" ToolTip="Finalizar comanda (F4)" />
                     </Grid>
 
                 </StackPanel>
