@@ -87,7 +87,7 @@
             </Grid>
 
             <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
-                <ItemsControl ItemsSource="{Binding Slots}">
+                <ItemsControl ItemsSource="{Binding Slots}" VerticalAlignment="Top">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <UniformGrid Columns="5" />
