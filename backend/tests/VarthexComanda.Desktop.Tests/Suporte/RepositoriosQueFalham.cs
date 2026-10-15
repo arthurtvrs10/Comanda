@@ -67,10 +67,10 @@ internal sealed class ComandaRepositoryQueFalha : IComandaRepository
         return _interno.CancelarComanda(comandaId, agora);
     }
 
-    public Venda EncerrarComanda(int comandaId, DateTime agora)
+    public Venda EncerrarComanda(int comandaId, DateTime agora, FormaPagamento? formaPagamento = null)
     {
         Verificar();
-        return _interno.EncerrarComanda(comandaId, agora);
+        return _interno.EncerrarComanda(comandaId, agora, formaPagamento);
     }
 }
 

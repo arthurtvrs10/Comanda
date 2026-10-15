@@ -26,6 +26,31 @@ public class EncerramentoViewModelTests
     }
 
     [Fact]
+    public void EscolherFormaNaoRegistraEConfirmarDuasVezesConcluiUmaVez()
+    {
+        var (vm, repo, _) = CriarViewModel();
+        var conclusoes = 0;
+        vm.Concluido += (_, sucesso) => { if (sucesso) conclusoes++; };
+        vm.SelecionarFormaCommand.Execute(FormaPagamento.Debito);
+        Assert.Single(repo.ListarAbertas());
+        Assert.Equal("Débito", vm.FormaSelecionadaDescricao);
+        vm.ConfirmarEncerrarCommand.Execute(null);
+        vm.ConfirmarEncerrarCommand.Execute(null);
+        Assert.Equal(1, conclusoes);
+        Assert.False(vm.ConfirmarEncerrarCommand.CanExecute(null));
+    }
+
+    [Fact]
+    public void FormaInvalidaNaoPermiteConfirmar()
+    {
+        var (vm, repo, _) = CriarViewModel();
+        vm.FormaSelecionada = (FormaPagamento)999;
+        vm.ConfirmarEncerrarCommand.Execute(null);
+        Assert.False(vm.ConfirmarEncerrarCommand.CanExecute(null));
+        Assert.Single(repo.ListarAbertas());
+    }
+
+    [Fact]
     [Trait("Caso", "CT08")]
     public void Carregar_ComandaComItens_PreencheNumeroTotalEItens()
     {
@@ -72,9 +97,9 @@ public class EncerramentoViewModelTests
         var mudancas = 0;
         viewModel.ConfirmarEncerrarCommand.CanExecuteChanged += (_, __) => mudancas++;
 
-        viewModel.CobrancaAprovada = true;
+        viewModel.FormaSelecionada = VarthexComanda.Domain.FormaPagamento.Pix;
         Assert.True(viewModel.ConfirmarEncerrarCommand.CanExecute(null));
-        viewModel.CobrancaAprovada = false;
+        viewModel.FormaSelecionada = null;
         Assert.False(viewModel.ConfirmarEncerrarCommand.CanExecute(null));
 
         Assert.Equal(2, mudancas);
@@ -87,7 +112,7 @@ public class EncerramentoViewModelTests
         var (viewModel, comandas, comandaId) = CriarViewModel();
         bool? resultadoEvento = null;
         viewModel.Concluido += (_, sucesso) => resultadoEvento = sucesso;
-        viewModel.CobrancaAprovada = true;
+        viewModel.FormaSelecionada = VarthexComanda.Domain.FormaPagamento.Pix;
 
         viewModel.ConfirmarEncerrarCommand.Execute(null);
 
@@ -102,7 +127,7 @@ public class EncerramentoViewModelTests
         var (viewModel, comandas, comandaId) = CriarViewModel(comItem: false);
         bool eventoDisparado = false;
         viewModel.Concluido += (_, __) => eventoDisparado = true;
-        viewModel.CobrancaAprovada = true;
+        viewModel.FormaSelecionada = VarthexComanda.Domain.FormaPagamento.Pix;
 
         viewModel.ConfirmarEncerrarCommand.Execute(null);
 
@@ -115,7 +140,7 @@ public class EncerramentoViewModelTests
     public void Carregar_SegundaVez_ResetaCobrancaAprovadaEMensagem()
     {
         var (viewModel, comandas, _) = CriarViewModel();
-        viewModel.CobrancaAprovada = true;
+        viewModel.FormaSelecionada = VarthexComanda.Domain.FormaPagamento.Pix;
 
         var relogio = new FakeClock();
         var produto = new Produto { Id = 2, CategoriaId = 1, Nome = "Água", PrecoCentavos = 300, Ativo = true, CriadoEm = relogio.UtcNow, AtualizadoEm = relogio.UtcNow };
@@ -124,7 +149,7 @@ public class EncerramentoViewModelTests
 
         viewModel.Carregar(outraComanda.Id);
 
-        Assert.False(viewModel.CobrancaAprovada);
+        Assert.Null(viewModel.FormaSelecionada);
         Assert.Equal(string.Empty, viewModel.Mensagem);
     }
 

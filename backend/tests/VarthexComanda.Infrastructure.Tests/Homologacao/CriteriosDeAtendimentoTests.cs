@@ -229,11 +229,10 @@ public sealed class CriteriosDeAtendimentoTests : IDisposable
         Assert.Equal(4200, new EncerrarComanda(_comandas, _relogio).Executar(comanda.Id).Valor!.TotalCentavos);
     }
 
-    // CT10 — criterio: encerrar apos a cobranca manual cria a venda, fecha a comanda e nao guarda
-    // dados de pagamento. A parte "sem dados de pagamento" e conferida no esquema real do banco.
+    // CT10: registrar a forma de pagamento sem armazenar dados de cartão ou autorização.
     [Fact]
     [Trait("Caso", "CT10")]
-    public void CT10_Encerrar_CriaVendaFechaComandaESemColunasDePagamento()
+    public void CT10_Encerrar_CriaVendaFechaComandaESalvaSomenteFormaDePagamento()
     {
         var produto = _banco.CriarProduto("Refrigerante", 500);
         var comanda = _comandas.AbrirComanda(10, _relogio.UtcNow);
@@ -248,13 +247,13 @@ public sealed class CriteriosDeAtendimentoTests : IDisposable
         Assert.NotNull(depois.FechadaEm);
 
         Assert.Equal(
-            new[] { "comanda_id", "finalizada_em", "id", "numero", "status", "total_centavos" },
+            new[] { "comanda_id", "finalizada_em", "forma_pagamento", "id", "numero", "status", "total_centavos" },
             Colunas("venda").OrderBy(c => c, StringComparer.Ordinal).ToArray());
 
         var termosDePagamento = new[] { "pag", "cartao", "card", "cpf", "cnpj", "bandeira", "nsu", "troco", "forma", "pix", "autoriza" };
         foreach (var tabela in new[] { "venda", "comanda", "item_comanda", "produto", "categoria", "configuracao" })
         {
-            foreach (var coluna in Colunas(tabela))
+            foreach (var coluna in Colunas(tabela).Where(c => tabela != "venda" || c != "forma_pagamento"))
             {
                 Assert.DoesNotContain(termosDePagamento, t => coluna.Contains(t, StringComparison.OrdinalIgnoreCase));
             }

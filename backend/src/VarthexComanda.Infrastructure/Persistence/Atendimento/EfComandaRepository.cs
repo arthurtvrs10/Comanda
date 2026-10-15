@@ -219,7 +219,7 @@ public class EfComandaRepository : IComandaRepository
         return comanda;
     }
 
-    public Venda EncerrarComanda(int comandaId, DateTime agora)
+    public Venda EncerrarComanda(int comandaId, DateTime agora, FormaPagamento? formaPagamento = null)
     {
         using var contexto = _fabricaContexto.CreateDbContext();
         var comanda = contexto.Comandas.SingleOrDefault(c => c.Id == comandaId)
@@ -234,6 +234,7 @@ public class EfComandaRepository : IComandaRepository
         {
             Id = 0,
             ComandaId = comanda.Id,
+            FormaPagamento = formaPagamento,
             Numero = proximoNumero,
             TotalCentavos = comanda.TotalCentavos,
             FinalizadaEm = agora,

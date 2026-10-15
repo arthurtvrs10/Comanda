@@ -22,7 +22,7 @@ internal sealed class ComandaRepositoryDeBancoCorrompido : IComandaRepository
     public ComandaComItens AlterarQuantidade(int itemId, int quantidade, DateTime agora) => throw Falha();
     public ComandaComItens RemoverItem(int itemId, DateTime agora) => throw Falha();
     public Comanda CancelarComanda(int comandaId, DateTime agora) => throw Falha();
-    public Venda EncerrarComanda(int comandaId, DateTime agora) => throw Falha();
+    public Venda EncerrarComanda(int comandaId, DateTime agora, FormaPagamento? formaPagamento = null) => throw Falha();
 }
 
 internal sealed class CategoriaRepositoryDeBancoCorrompido : ICategoriaRepository

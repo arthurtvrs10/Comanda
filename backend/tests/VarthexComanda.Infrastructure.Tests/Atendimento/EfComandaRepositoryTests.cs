@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -35,6 +36,45 @@ public class EfComandaRepositoryTests : IDisposable
         _provedor.Dispose();
         SqliteConnection.ClearAllPools();
         if (File.Exists(_dbPath)) File.Delete(_dbPath);
+    }
+
+    [Fact]
+    public void MigracaoPreservaVendaAntigaSemInventarFormaDePagamento()
+    {
+        var repo = new EfComandaRepository(_fabrica);
+        var (produto, id) = PrepararComandaEProduto(repo);
+        var agora = DateTime.UtcNow;
+        repo.AdicionarItem(id, produto, 1, agora);
+        repo.EncerrarComanda(id, agora);
+        using (var contexto = _fabrica.CreateDbContext())
+        {
+            var migrador = contexto.GetService<Microsoft.EntityFrameworkCore.Migrations.IMigrator>();
+            migrador.Migrate("20261012140331_AddQuantidadePessoasComanda");
+            contexto.Database.Migrate();
+        }
+        var venda = Assert.Single(new EfVendaRepository(_fabrica).ListarPorData(agora.AddMinutes(-1), agora.AddMinutes(1)));
+        Assert.Null(venda.Venda.FormaPagamento);
+        Assert.Equal("Não informado", venda.FormaPagamentoDescricao);
+        Assert.Equal(id, venda.Venda.ComandaId);
+        Assert.Equal(500, venda.Venda.TotalCentavos);
+    }
+
+    [Theory]
+    [InlineData(FormaPagamento.Dinheiro)]
+    [InlineData(FormaPagamento.Pix)]
+    [InlineData(FormaPagamento.Debito)]
+    [InlineData(FormaPagamento.Credito)]
+    public void PagamentoPersisteNaVendaENoHistorico(FormaPagamento forma)
+    {
+        var repo = new EfComandaRepository(_fabrica);
+        var (produto, id) = PrepararComandaEProduto(repo);
+        var agora = DateTime.UtcNow;
+        repo.AdicionarItem(id, produto, 1, agora);
+        repo.EncerrarComanda(id, agora, forma);
+        using var contexto = _fabrica.CreateDbContext();
+        Assert.Equal(forma, contexto.Vendas.Single(v => v.ComandaId == id).FormaPagamento);
+        var historico = new EfVendaRepository(_fabrica).ListarPorData(agora.AddMinutes(-1), agora.AddMinutes(1));
+        Assert.Equal(forma, Assert.Single(historico).Venda.FormaPagamento);
     }
 
     [Fact]

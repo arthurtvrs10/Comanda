@@ -298,7 +298,17 @@ public class CarregamentoDeXamlTests
 
             Assert.Same(viewModel, janela.DataContext);
             var conteudo = Assert.IsAssignableFrom<FrameworkElement>(janela.Content);
-            MedirEOrganizar(conteudo);
+            conteudo.Measure(new Size(580, 530));
+            conteudo.Arrange(new Rect(0, 0, 580, 530));
+            conteudo.UpdateLayout();
+            SalvarPrevia(conteudo, "pagamento-sem-selecao");
+            var pix = (RadioButton)janela.FindName("FormaPix");
+            pix.IsChecked = true;
+            viewModel.SelecionarFormaCommand.Execute(FormaPagamento.Pix);
+            conteudo.Measure(new Size(580, 530));
+            conteudo.Arrange(new Rect(0, 0, 580, 530));
+            conteudo.UpdateLayout();
+            SalvarPrevia(conteudo, "pagamento-pix");
             Assert.False(janela.IsVisible);
         });
     }

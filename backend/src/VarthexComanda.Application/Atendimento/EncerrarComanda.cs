@@ -15,8 +15,11 @@ public class EncerrarComanda
         _relogio = relogio;
     }
 
-    public Resultado<Venda> Executar(int comandaId)
+    public Resultado<Venda> Executar(int comandaId, FormaPagamento? formaPagamento = null)
     {
+        if (formaPagamento.HasValue && !Enum.IsDefined(formaPagamento.Value))
+            return Resultado<Venda>.Falha("Escolha uma forma de pagamento válida.");
+
         var detalhe = _comandas.BuscarComItens(comandaId);
         if (detalhe is null)
         {
@@ -29,7 +32,7 @@ public class EncerrarComanda
 
         try
         {
-            return Resultado<Venda>.Ok(_comandas.EncerrarComanda(comandaId, _relogio.UtcNow));
+            return Resultado<Venda>.Ok(_comandas.EncerrarComanda(comandaId, _relogio.UtcNow, formaPagamento));
         }
         catch (ComandaNaoAbertaException ex)
         {

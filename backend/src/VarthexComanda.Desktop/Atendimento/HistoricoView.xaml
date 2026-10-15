@@ -65,6 +65,7 @@
                             <GridViewColumn Header="Comanda" DisplayMemberBinding="{Binding NumeroComanda}" Width="80" />
                             <GridViewColumn Header="Cliente" DisplayMemberBinding="{Binding NomeCliente}" Width="150" />
                             <GridViewColumn Header="Total" DisplayMemberBinding="{Binding Venda.TotalCentavos, Converter={StaticResource Moeda}}" Width="90" />
+                            <GridViewColumn Header="Pagamento" DisplayMemberBinding="{Binding FormaPagamentoDescricao}" Width="110" />
                             <GridViewColumn Header="Horário" DisplayMemberBinding="{Binding Venda.FinalizadaEm, Converter={StaticResource Horario}}" Width="70" />
                         </GridView>
                     </ListView.View>
@@ -81,6 +82,7 @@
                     <TextBlock Text="Horário: " FontWeight="Bold" />
                     <TextBlock Text="{Binding VendaSelecionada.Venda.FinalizadaEm, Converter={StaticResource Horario}}" />
                 </StackPanel>
+                <TextBlock Text="{Binding VendaSelecionada.FormaPagamentoDescricao, StringFormat='Pagamento: {0}'}" Margin="0,0,0,8" />
                 <ListView ItemsSource="{Binding ItensDaVendaSelecionada}">
                     <ListView.View>
                         <GridView>

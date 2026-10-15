@@ -165,7 +165,7 @@ public class LogDeFalhasTests
 
         var viewModel = new EncerramentoViewModel(new EncerrarComanda(comandas, relogio), comandas, coletor?.Logger);
         viewModel.Carregar(comanda.Id);
-        viewModel.CobrancaAprovada = true;
+        viewModel.FormaSelecionada = VarthexComanda.Domain.FormaPagamento.Pix;
         return (viewModel, comandas);
     }
 
@@ -180,6 +180,12 @@ public class LogDeFalhasTests
 
         Assert.Equal("A venda não foi registrada e a comanda continua aberta.", viewModel.Mensagem);
         coletor.AfirmarFalhaTecnica(LogEventLevel.Error, "EncerrarComanda", DadosDeNegocio);
+        Assert.False(viewModel.Processando);
+        Assert.True(viewModel.ConfirmarEncerrarCommand.CanExecute(null));
+        Assert.Equal(FormaPagamento.Pix, viewModel.FormaSelecionada);
+        comandas.Falhar = false;
+        viewModel.ConfirmarEncerrarCommand.Execute(null);
+        Assert.Empty(comandas.ListarAbertas());
     }
 
     [Fact]

@@ -36,17 +36,42 @@ public partial class EncerramentoViewModel : ObservableObject
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(ConfirmarEncerrarCommand))]
-    private bool cobrancaAprovada;
+    private FormaPagamento? formaSelecionada;
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(ConfirmarEncerrarCommand))]
+    private bool processando;
+    private bool _registrado;
+    public string Identificador => $"Comanda #{_comandaId:0000}";
+    public string FormaSelecionadaDescricao => FormaSelecionada switch
+    {
+        FormaPagamento.Dinheiro => "Dinheiro", FormaPagamento.Pix => "Pix",
+        FormaPagamento.Debito => "Débito", FormaPagamento.Credito => "Crédito", _ => "Escolha a forma de pagamento"
+    };
+    partial void OnFormaSelecionadaChanged(FormaPagamento? value) => OnPropertyChanged(nameof(FormaSelecionadaDescricao));
+
+    [RelayCommand]
+    private void SelecionarForma(FormaPagamento forma)
+    {
+        if (!Processando && !_registrado && Enum.IsDefined(forma)) FormaSelecionada = forma;
+    }
 
     [ObservableProperty]
     private string mensagem = string.Empty;
 
     public void Carregar(int comandaId)
     {
-        CobrancaAprovada = false;
+        FormaSelecionada = null;
+        Processando = false;
+        _registrado = false;
+        Itens.Clear();
+        NumeroComanda = 0;
+        NomeCliente = null;
+        TotalCentavos = 0;
         Mensagem = string.Empty;
 
         _comandaId = comandaId;
+        OnPropertyChanged(nameof(Identificador));
         var detalhe = _comandas.BuscarComItens(comandaId);
         if (detalhe is null)
         {
@@ -67,21 +92,23 @@ public partial class EncerramentoViewModel : ObservableObject
     [RelayCommand(CanExecute = nameof(PodeConfirmarEncerrar))]
     private void ConfirmarEncerrar()
     {
-        if (!CobrancaAprovada)
+        if (!PodeConfirmarEncerrar())
         {
             return;
         }
 
+        Processando = true;
         try
         {
-            var resultado = _encerrarComanda.Executar(_comandaId);
+            var resultado = _encerrarComanda.Executar(_comandaId, FormaSelecionada);
             if (!resultado.Sucesso)
             {
                 Mensagem = string.Join(" ", resultado.Erros);
                 return;
             }
 
-            Mensagem = string.Empty;
+            _registrado = true;
+            Mensagem = "Pagamento registrado com sucesso.";
             Concluido?.Invoke(this, true);
         }
         catch (Exception ex)
@@ -89,9 +116,13 @@ public partial class EncerramentoViewModel : ObservableObject
             _logger?.Error(ex, "Falha em {Operacao}", "EncerrarComanda");
             Mensagem = "A venda não foi registrada e a comanda continua aberta.";
         }
+        finally
+        {
+            Processando = false;
+        }
     }
 
-    private bool PodeConfirmarEncerrar() => CobrancaAprovada;
+    private bool PodeConfirmarEncerrar() => FormaSelecionada.HasValue && Enum.IsDefined(FormaSelecionada.Value) && !Processando && !_registrado;
 
     [RelayCommand]
     private void Voltar() => Concluido?.Invoke(this, false);

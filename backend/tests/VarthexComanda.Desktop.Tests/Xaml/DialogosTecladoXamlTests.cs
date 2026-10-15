@@ -39,7 +39,7 @@ public class DialogosTecladoXamlTests
 
             var voltar = Assert.IsType<Button>(janela.FindName("BotaoVoltar"));
             var confirmar = Assert.IsType<Button>(janela.FindName("BotaoConfirmarEncerrar"));
-            var caixa = Assert.IsType<CheckBox>(janela.FindName("CaixaCobrancaAprovada"));
+            var caixa = Assert.IsType<RadioButton>(janela.FindName("FormaDinheiro"));
 
             Assert.True(voltar.IsCancel);
             Assert.False(voltar.IsDefault);
@@ -52,11 +52,11 @@ public class DialogosTecladoXamlTests
             Assert.False(caixa.IsChecked);
             Assert.Single(comandas.ListarAbertas());
 
-            caixa.IsChecked = true;
-            Assert.True(viewModel.CobrancaAprovada);
+            viewModel.SelecionarFormaCommand.Execute(FormaPagamento.Pix);
+            Assert.Equal(FormaPagamento.Pix, viewModel.FormaSelecionada);
             Assert.True(confirmar.IsEnabled);
 
-            caixa.IsChecked = false;
+            viewModel.FormaSelecionada = null;
             Assert.False(confirmar.IsEnabled);
         });
     }

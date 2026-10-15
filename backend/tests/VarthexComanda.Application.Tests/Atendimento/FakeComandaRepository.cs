@@ -168,7 +168,7 @@ public class FakeComandaRepository : IComandaRepository
     private readonly List<Venda> _vendas = new();
     private int _proximoVendaId = 1;
 
-    public Venda EncerrarComanda(int comandaId, DateTime agora)
+    public Venda EncerrarComanda(int comandaId, DateTime agora, FormaPagamento? formaPagamento = null)
     {
         var comanda = _comandas.FirstOrDefault(c => c.Id == comandaId)
             ?? throw new InvalidOperationException("Comanda não encontrada.");
@@ -182,6 +182,7 @@ public class FakeComandaRepository : IComandaRepository
         {
             Id = _proximoVendaId++,
             ComandaId = comanda.Id,
+            FormaPagamento = formaPagamento,
             Numero = proximoNumero,
             TotalCentavos = comanda.TotalCentavos,
             FinalizadaEm = agora,

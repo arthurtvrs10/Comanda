@@ -32,3 +32,8 @@ Ao responder uma pendência:
 3. atualizar testes e rastreabilidade;
 4. registrar a mudança no `CHANGELOG.md`;
 5. criar ADR se houver impacto arquitetural duradouro.
+
+
+## Decisão aprovada — forma de pagamento (15/10/2026)
+
+O usuário aprovou abrir o modal, escolher Dinheiro, Pix, Débito ou Crédito e somente então confirmar o registro da venda. Uma forma por comanda; sem seleção inicial, troco ou divisão. Voltar não registra; erro mantém a comanda aberta; sucesso confirma e retorna ao bloqueio por senha. Guardar apenas a forma na venda e exibi-la no histórico, preservando registros antigos como “Não informado”. Esta decisão substitui, neste fluxo, a restrição anterior de não adicionar forma de pagamento. Não há processamento ou integração com adquirentes. Aceitação: CT08, CT09, CT10, CT12, CT17; escolha sem gravação, confirmação única, persistência, desistência, recuperação de falha e migração preservando dados.

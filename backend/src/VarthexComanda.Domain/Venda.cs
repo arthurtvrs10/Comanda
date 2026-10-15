@@ -2,6 +2,7 @@ namespace VarthexComanda.Domain;
 
 public class Venda
 {
+    public FormaPagamento? FormaPagamento { get; set; }
     public required int Id { get; set; }
     public required int ComandaId { get; set; }
     public required int Numero { get; set; }

@@ -14,6 +14,9 @@ public class EncerramentoDialog : IEncerramentoDialog
         var viewModel = _fabricaViewModel();
         viewModel.Carregar(comandaId);
         var view = new EncerramentoView(viewModel) { Owner = System.Windows.Application.Current.MainWindow };
-        return view.ShowDialog() == true;
+        var concluido = view.ShowDialog() == true;
+        if (concluido)
+            JanelaAviso.Mostrar("Pagamento", "Pagamento registrado com sucesso.");
+        return concluido;
     }
 }

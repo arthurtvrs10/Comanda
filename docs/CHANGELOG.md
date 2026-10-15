@@ -10,6 +10,9 @@
 
 ## Não lançado
 
+- Pagamento: modal com Dinheiro, Pix, Débito e Crédito, sem seleção inicial. Confirmar registra uma única venda; voltar mantém a comanda aberta. Forma exibida no histórico; vendas anteriores permanecem sem forma informada.
+- Fluxo aprovado pelo usuário em 15/10/2026, substituindo a restrição anterior de não armazenar forma de pagamento. Cobrança continua externa, sem integração financeira. Casos afetados: CT08, CT09, CT10, CT12 e CT17.
+
 - A janela da edição com catálogo de apresentação usa o título padrão **Varthex Comanda**, removendo o aviso de demonstração da barra de título.
 
 ## Android 1.0.1 - 2026-10-01 - Colar chave privada

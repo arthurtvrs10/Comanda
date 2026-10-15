@@ -13,6 +13,7 @@ public class VendaConfiguration : IEntityTypeConfiguration<Venda>
             t.HasCheckConstraint("CK_venda_total_centavos_positivo", "total_centavos > 0");
             t.HasCheckConstraint("CK_venda_status_concluida", "status = 'CONCLUIDA'");
         });
+        builder.Property(v => v.FormaPagamento).HasColumnName("forma_pagamento").HasConversion<string>().HasMaxLength(20);
         builder.HasKey(v => v.Id);
         builder.Property(v => v.Id).HasColumnName("id");
         builder.Property(v => v.ComandaId).HasColumnName("comanda_id").IsRequired();
