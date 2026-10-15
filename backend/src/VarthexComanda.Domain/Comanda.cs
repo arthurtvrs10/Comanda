@@ -10,4 +10,6 @@ public class Comanda
     public required long TotalCentavos { get; set; }
     public string? Observacao { get; set; }
     public string? NomeCliente { get; set; }
+    public PrioridadeComanda Prioridade { get; set; }
+    public int QuantidadePessoas { get; set; } = 1;
 }

@@ -32,6 +32,8 @@ public class ComandaConfiguration : IEntityTypeConfiguration<Comanda>
         builder.Property(c => c.TotalCentavos).HasColumnName("total_centavos").HasDefaultValue(0L).IsRequired();
         builder.Property(c => c.Observacao).HasColumnName("observacao");
         builder.Property(c => c.NomeCliente).HasColumnName("nome_cliente").HasMaxLength(80);
+        builder.Property(c => c.Prioridade).HasColumnName("prioridade").HasDefaultValue(PrioridadeComanda.Normal);
+        builder.Property(c => c.QuantidadePessoas).HasColumnName("quantidade_pessoas").HasDefaultValue(1);
 
         builder.HasIndex(c => c.Numero)
             .IsUnique()

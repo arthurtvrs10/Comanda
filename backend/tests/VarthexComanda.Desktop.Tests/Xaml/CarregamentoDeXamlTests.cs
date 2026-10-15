@@ -49,6 +49,7 @@ public class CarregamentoDeXamlTests
 
             _app = WpfApp.Current as App ?? new App();
             _app.InitializeComponent();
+            _app.ShutdownMode = ShutdownMode.OnExplicitShutdown;
         }
     }
 
@@ -154,7 +155,7 @@ public class CarregamentoDeXamlTests
         return new ConfiguracaoViewModel(new ObterConfiguracao(repositorio), new SalvarConfiguracao(repositorio, new FakeClock()));
     }
 
-    private static MainWindow CriarMainWindow()
+    private static MainWindow CriarMainWindow(VarthexComanda.Infrastructure.Storage.AppPaths? paths = null)
     {
         var (atendimento, _) = CriarAtendimento();
         return new MainWindow(
@@ -162,7 +163,7 @@ public class CarregamentoDeXamlTests
             new ProdutosView(CriarProdutos()),
             new HistoricoView(CriarHistorico()),
             new BackupView(CriarBackup()),
-            new ConfiguracaoView(CriarConfiguracao()));
+            new ConfiguracaoView(CriarConfiguracao()), paths);
     }
 
     // ---- testes ----
@@ -201,6 +202,10 @@ public class CarregamentoDeXamlTests
             Assert.Same(viewModel, view.DataContext);
             Assert.NotNull(view.Content);
             MedirEOrganizar(view);
+            SalvarPrevia(view, "comanda-painel");
+            viewModel.FecharEdicaoCommand.Execute(null);
+            MedirEOrganizar(view);
+            SalvarPrevia(view, "comanda-grade");
         });
     }
 
@@ -328,6 +333,15 @@ public class CarregamentoDeXamlTests
             var conteudo = Assert.IsAssignableFrom<FrameworkElement>(janela.Content);
             Assert.NotNull(janela.FindName("ConteudoPrincipal"));
             MedirEOrganizar(conteudo);
+            foreach (var nome in new[] { "BotaoProdutos", "BotaoBackup", "BotaoConfiguracoes", "BotaoLicenca" })
+            {
+                var botao = Assert.IsType<Button>(janela.FindName(nome));
+                Assert.False(botao.IsEnabled);
+                Assert.Equal(Visibility.Collapsed, botao.Visibility);
+            }
+            foreach (var comando in new[] { MainWindow.IrParaProdutosCommand, MainWindow.IrParaBackupCommand, MainWindow.IrParaConfiguracoesCommand })
+                Assert.False(comando.CanExecute(null, janela));
+            SalvarPrevia(conteudo, "menu-garcom");
             Assert.False(janela.IsVisible);
         });
     }
@@ -347,5 +361,79 @@ public class CarregamentoDeXamlTests
             MedirEOrganizar(conteudo);
             Assert.False(janela.IsVisible);
         });
+    }
+
+    [Fact]
+    public void PinBloqueiaMenusEDesbloqueiaPorToqueESaidaBloqueiaNovamente()
+    {
+        var raiz = Path.Combine(Path.GetTempPath(), "pin-ui-" + Guid.NewGuid());
+        var arquivo = Path.Combine(raiz, "atendimento.credencial");
+        try
+        {
+            new AcessoAtendimento(arquivo).DefinirPin("0123");
+            ThreadingHelper.EmSta(() =>
+            {
+                GarantirApp();
+                var janela = CriarMainWindow(new VarthexComanda.Infrastructure.Storage.AppPaths(raiz));
+                var area = (DockPanel)janela.FindName("AreaSistema");
+                var camada = (ContentControl)janela.FindName("CamadaBloqueio");
+                var bloqueio = Assert.IsType<BloqueioAtendimentoView>(camada.Content);
+                var conteudo = (ContentControl)janela.FindName("ConteudoPrincipal");
+                var raizVisual = (FrameworkElement)janela.Content;
+                MedirEOrganizar(raizVisual);
+                Assert.False(area.IsEnabled);
+                Assert.Null(conteudo.Content);
+                Assert.False(MainWindow.IrParaAtendimentoCommand.CanExecute(null, janela));
+                Assert.False(MainWindow.IrParaHistoricoCommand.CanExecute(null, janela));
+                SalvarPrevia(raizVisual, "bloqueio-pin-1200");
+                raizVisual.Measure(new Size(800, 600));
+                raizVisual.Arrange(new Rect(0,0,800,600));
+                raizVisual.UpdateLayout();
+                SalvarPrevia(raizVisual, "bloqueio-pin-800");
+                var botoes = Descendentes(bloqueio).OfType<Button>().ToArray();
+                foreach (var digito in "9999")
+                    botoes.Single(b => Equals(b.Content, digito.ToString())).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                ((Button)bloqueio.FindName("BotaoEntrar")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                Assert.False(area.IsEnabled);
+                foreach (var digito in "0123")
+                    botoes.Single(b => Equals(b.Content, digito.ToString())).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                ((Button)bloqueio.FindName("BotaoEntrar")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                Assert.True(area.IsEnabled);
+                Assert.Equal(Visibility.Collapsed, camada.Visibility);
+                Assert.False(MainWindow.IrParaProdutosCommand.CanExecute(null, janela));
+                var atendimento = Assert.IsType<AtendimentoView>(conteudo.Content);
+                var id = atendimento.ViewModel.ComandaAtual!.Id;
+                atendimento.ViewModel.FecharEdicaoCommand.Execute(null);
+                Assert.False(area.IsEnabled);
+                Assert.Equal(Visibility.Visible, camada.Visibility);
+                Assert.Null(conteudo.Content);
+                Assert.Contains(atendimento.ViewModel.ComandasAbertas, c => c.Id == id);
+            });
+        }
+        finally { if (File.Exists(arquivo)) File.Delete(arquivo); if (Directory.Exists(raiz)) Directory.Delete(raiz); }
+    }
+
+    private static IEnumerable<DependencyObject> Descendentes(DependencyObject raiz)
+    {
+        for (int i = 0; i < System.Windows.Media.VisualTreeHelper.GetChildrenCount(raiz); i++)
+        {
+            var filho = System.Windows.Media.VisualTreeHelper.GetChild(raiz, i);
+            yield return filho;
+            foreach (var neto in Descendentes(filho)) yield return neto;
+        }
+    }
+
+    private static void SalvarPrevia(FrameworkElement elemento, string nome)
+    {
+        var pasta = Environment.GetEnvironmentVariable("VARTHEX_PREVIAS_TESTE");
+        if (string.IsNullOrWhiteSpace(pasta)) return;
+        Directory.CreateDirectory(pasta);
+        var bitmap = new System.Windows.Media.Imaging.RenderTargetBitmap(
+            (int)elemento.ActualWidth, (int)elemento.ActualHeight, 96, 96, System.Windows.Media.PixelFormats.Pbgra32);
+        bitmap.Render(elemento);
+        var encoder = new System.Windows.Media.Imaging.PngBitmapEncoder();
+        encoder.Frames.Add(System.Windows.Media.Imaging.BitmapFrame.Create(bitmap));
+        using var arquivo = File.Create(Path.Combine(pasta, nome + ".png"));
+        encoder.Save(arquivo);
     }
 }

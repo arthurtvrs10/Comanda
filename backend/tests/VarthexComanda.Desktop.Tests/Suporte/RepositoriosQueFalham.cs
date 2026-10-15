@@ -16,6 +16,9 @@ internal sealed class FalhaTecnicaSimuladaException : Exception
 internal sealed class ComandaRepositoryQueFalha : IComandaRepository
 {
     private readonly IComandaRepository _interno;
+    public Comanda MoverPara(int id, int numero) { Verificar(); return _interno.MoverPara(id, numero); }
+    public Comanda DefinirQuantidadePessoas(int id, int quantidade) { Verificar(); return _interno.DefinirQuantidadePessoas(id, quantidade); }
+    public Comanda DefinirPrioridade(int comandaId, PrioridadeComanda prioridade) { Verificar(); return _interno.DefinirPrioridade(comandaId, prioridade); }
     public Comanda DefinirNomeCliente(int comandaId, string? nome) { Verificar(); return _interno.DefinirNomeCliente(comandaId, nome); }
 
     public ComandaRepositoryQueFalha(IComandaRepository interno) => _interno = interno;

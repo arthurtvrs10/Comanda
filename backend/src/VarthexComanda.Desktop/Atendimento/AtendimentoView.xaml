@@ -4,10 +4,29 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:local="clr-namespace:VarthexComanda.Desktop.Atendimento"
+             xmlns:domain="clr-namespace:VarthexComanda.Domain;assembly=VarthexComanda.Domain"
              xmlns:catalogo="clr-namespace:VarthexComanda.Desktop.Catalogo"
              mc:Ignorable="d"
              Background="#F2F2F0">
     <UserControl.Resources>
+        <Style x:Key="AcaoComanda" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Background" Value="#C4C4C4" />
+            <Setter Property="Foreground" Value="#23252A" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Height" Value="78" />
+            <Setter Property="Padding" Value="4" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontWeight" Value="Bold" />
+        </Style>
+        <Style x:Key="IconeAcao" TargetType="Path">
+            <Setter Property="Stroke" Value="#23252A" />
+            <Setter Property="StrokeThickness" Value="1.7" />
+            <Setter Property="Width" Value="22" />
+            <Setter Property="Height" Value="22" />
+            <Setter Property="Stretch" Value="Uniform" />
+            <Setter Property="Margin" Value="0,0,0,3" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+        </Style>
         <local:NuloParaVisibilidadeConverter x:Key="VisivelSeComandaAberta" />
         <local:NuloParaVisibilidadeInversoConverter x:Key="VisivelSeGrade" />
         <local:CentavosParaMoedaConverter x:Key="Moeda" />
@@ -102,7 +121,8 @@
                                         <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
                                     <DockPanel Grid.Row="0">
-                                        <TextBlock Text="COMANDA" FontSize="10" FontWeight="Bold" />
+                                        <Ellipse DockPanel.Dock="Right" Width="10" Height="10" Margin="6,0,0,0" Fill="{Binding CorPrioridade}" ToolTip="{Binding PrioridadeTexto}" AutomationProperties.Name="{Binding PrioridadeTexto}" />
+                                        <TextBlock Text="{Binding PrioridadeTexto}" FontSize="11" FontWeight="Bold" />
                                         <TextBlock Text="{Binding TempoFormatado}" FontSize="10" DockPanel.Dock="Right" HorizontalAlignment="Right" />
                                     </DockPanel>
                                     <StackPanel Grid.Row="1" VerticalAlignment="Center">
@@ -135,15 +155,28 @@
 
         <Grid x:Name="PainelEdicao" IsVisibleChanged="PainelEdicao_IsVisibleChanged"
               Visibility="{Binding ComandaAtual, Converter={StaticResource VisivelSeComandaAberta}}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1" />
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
+            <DockPanel Grid.Row="0" Grid.ColumnSpan="3" Margin="0,0,0,12" KeyboardNavigation.TabIndex="3">
+                <Button DockPanel.Dock="Left" Content="Voltar às comandas" Command="{Binding FecharEdicaoCommand}"
+                        Padding="14,6" ToolTip="Voltar ao menu e bloquear o acesso (Esc). A comanda permanece aberta." />
+                <Button DockPanel.Dock="Right" Content="Cancelar comanda" Command="{Binding CancelarComandaAtualCommand}"
+                        Foreground="#B23B32" BorderBrush="#B23B32" BorderThickness="1" Background="Transparent"
+                        Padding="14,6" ToolTip="Cancelar o atendimento sem registrar pagamento. Requer confirmação." />
+                <TextBlock Text="Ao sair, o atendimento será bloqueado." Foreground="#666666" VerticalAlignment="Center" Margin="16,0" />
+            </DockPanel>
 
-            <Border Grid.Column="1" Background="#C4C4C4" />
+            <Border Grid.Row="1" Grid.Column="1" Background="#C4C4C4" />
 
-            <Grid x:Name="PainelMenu" Grid.Column="0" Margin="0,0,14,0">
+            <Grid x:Name="PainelMenu" Grid.Row="1" Grid.Column="0" KeyboardNavigation.TabIndex="0" Margin="0,0,14,0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -248,7 +281,7 @@
                 </DockPanel>
             </Grid>
 
-            <Grid Grid.Column="2" x:Name="PainelComanda" Focusable="True" KeyboardNavigation.IsTabStop="False"
+            <Grid Grid.Row="1" Grid.Column="2" KeyboardNavigation.TabIndex="1" x:Name="PainelComanda" Focusable="True" KeyboardNavigation.IsTabStop="False"
                   FocusVisualStyle="{StaticResource FocoVisivel}" Margin="14,0,0,0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -258,19 +291,40 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <StackPanel Grid.Row="0" Margin="0,0,0,8">
-                <TextBlock FontWeight="Bold" FontSize="12" Foreground="#4A4A47" Margin="0,0,0,8"
-                           Text="{Binding ComandaAtual.Numero, StringFormat='COMANDA #{0}'}" />
-                <TextBlock Text="Nome do cliente (opcional)" Margin="0,0,0,4" />
-                <DockPanel>
-                    <Button Content="Salvar nome" DockPanel.Dock="Right" Margin="8,0,0,0" Padding="12,6" Command="{Binding SalvarNomeClienteCommand}" />
-                    <TextBox x:Name="CampoNomeCliente" AutomationProperties.Name="Nome do cliente (opcional)" MaxLength="80" Text="{Binding NomeCliente, UpdateSourceTrigger=PropertyChanged}">
-                        <TextBox.InputBindings><KeyBinding Key="Enter" Command="{Binding SalvarNomeClienteCommand}" /></TextBox.InputBindings>
-                    </TextBox>
-                </DockPanel>
+                <StackPanel Grid.Row="0">
+                    <Border Background="#818181" Padding="10,7" Margin="0,0,0,8">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="90" />
+                                <ColumnDefinition Width="70" />
+                                <ColumnDefinition Width="120" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="{Binding ComandaAtual.Numero, StringFormat='COMANDA {0}'}" Foreground="Black" FontWeight="Bold" VerticalAlignment="Center" />
+                            <StackPanel Grid.Column="1">
+                                <StackPanel Orientation="Horizontal">
+                                    <Ellipse Width="9" Height="9" Fill="{Binding CorPrioridadeAtual}" Stroke="White" StrokeThickness="1" Margin="0,0,4,0" />
+                                    <TextBlock Text="{Binding ComandaAtual.Prioridade}" Foreground="Black" FontWeight="Bold" />
+                                </StackPanel>
+                                <TextBlock Text="{Binding TempoComandaAtual}" Foreground="Black" FontWeight="Bold" ToolTip="Tempo desde a abertura" AutomationProperties.Name="Tempo desde a abertura" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="Pessoas" Foreground="Black" FontWeight="Bold" />
+                                <TextBlock Text="{Binding ComandaAtual.QuantidadePessoas}" Foreground="Black" FontWeight="Bold" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="3">
+                                <TextBlock Text="Cliente" Foreground="Black" FontWeight="Bold" />
+                                <TextBlock Text="{Binding ComandaAtual.NomeCliente, TargetNullValue='Não informado'}" ToolTip="{Binding ComandaAtual.NomeCliente}" TextTrimming="CharacterEllipsis" Foreground="Black" FontWeight="Bold" />
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                    <DockPanel Margin="0,0,0,10">
+                        <TextBlock DockPanel.Dock="Right" Text="{Binding ComandaAtual.Id, StringFormat='Comanda #{0:0000}'}" FontWeight="Bold" Foreground="#666666" VerticalAlignment="Center" />
+                        <TextBlock Text="Consumo da mesa" FontSize="24" FontWeight="Bold" Foreground="#23252A" />
+                    </DockPanel>
                 </StackPanel>
 
-                <Border Grid.Row="1" BorderBrush="#C4C4C4" BorderThickness="1">
+                <Border Grid.Row="1" BorderBrush="#C4C4C4" BorderThickness="1" Background="#F2F2F0">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -281,9 +335,9 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="44" />
-                                <ColumnDefinition Width="84" />
-                                <ColumnDefinition Width="84" />
-                                <ColumnDefinition Width="184" />
+                                <ColumnDefinition Width="72" />
+                                <ColumnDefinition Width="72" />
+                                <ColumnDefinition Width="188" />
                             </Grid.ColumnDefinitions>
                             <TextBlock Grid.Column="0" Text="DESCRIÇÃO" FontSize="12" FontWeight="Bold" Foreground="#4A4A47"
                                        Margin="8,6" VerticalAlignment="Center" />
@@ -299,7 +353,7 @@
                             <ItemsControl ItemsSource="{Binding Itens}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <Border BorderBrush="#E4E4E1" BorderThickness="0,0,0,1" Padding="0,4"
+                                        <Border BorderThickness="0" Padding="0,4"
                                                 GotKeyboardFocus="LinhaItem_GotKeyboardFocus"
                                                 PreviewMouseLeftButtonDown="LinhaItem_PreviewMouseLeftButtonDown">
                                             <Border.Background>
@@ -312,19 +366,10 @@
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="*" />
                                                     <ColumnDefinition Width="44" />
-                                                    <ColumnDefinition Width="84" />
-                                                    <ColumnDefinition Width="84" />
-                                                    <ColumnDefinition Width="184" />
+                                                    <ColumnDefinition Width="72" />
+                                                    <ColumnDefinition Width="72" />
+                                                    <ColumnDefinition Width="188" />
                                                 </Grid.ColumnDefinitions>
-                                                <Border Grid.Column="0" Grid.ColumnSpan="5" Width="5" HorizontalAlignment="Left"
-                                                        IsHitTestVisible="False" Margin="0,-4">
-                                                    <Border.Background>
-                                                        <MultiBinding Converter="{StaticResource CorItemSelecionado}" ConverterParameter="Marca">
-                                                            <Binding Path="Id" />
-                                                            <Binding Path="DataContext.ItemSelecionadoId" RelativeSource="{RelativeSource AncestorType=ItemsControl}" />
-                                                        </MultiBinding>
-                                                    </Border.Background>
-                                                </Border>
                                                 <TextBlock Grid.Column="0" Text="{Binding NomeProduto}" FontSize="14"
                                                            TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Margin="8,0" />
                                                 <TextBlock Grid.Column="1" Text="{Binding Quantidade}" FontSize="14" FontWeight="Bold"
@@ -353,25 +398,47 @@
                     </Grid>
                 </Border>
 
-                <DockPanel Grid.Row="2" Margin="2,10,2,10">
-                    <TextBlock Text="TOTAL DA COMANDA" FontWeight="Bold" FontSize="12" Foreground="#4A4A47" VerticalAlignment="Bottom" />
-                    <TextBlock Text="{Binding ComandaAtual.TotalCentavos, Converter={StaticResource Moeda}}"
-                               FontWeight="Bold" FontSize="24" DockPanel.Dock="Right" HorizontalAlignment="Right" />
-                </DockPanel>
+                <StackPanel Grid.Row="2" Margin="0,8,0,6">
+                    <DockPanel Margin="4,0,4,10">
+                        <TextBlock Text="TOTAL DA COMANDA" FontWeight="Bold" FontSize="12" Foreground="#666666" VerticalAlignment="Center" />
+                        <TextBlock Text="{Binding ComandaAtual.TotalCentavos, Converter={StaticResource Moeda}}" FontWeight="Bold" FontSize="26" DockPanel.Dock="Right" HorizontalAlignment="Right" />
+                    </DockPanel>
+                    <UniformGrid Columns="4">
+                        <Button Click="AlterarPrioridade_Click" Style="{StaticResource AcaoComanda}" Margin="0,0,8,0" AutomationProperties.Name="Alterar prioridade">
+                            <StackPanel>
+                                <Path Data="M 6,17 L 7,15 L 7,9 C 7,3 17,3 17,9 L 17,15 L 19,17 Z M 10,20 L 15,20 M 12,2 L 12,4" Style="{StaticResource IconeAcao}" />
+                                <TextBlock Text="Alterar&#10;prioridade" TextAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <Button Tag="mover" Click="EditarDados_Click" Style="{StaticResource AcaoComanda}" Margin="0,0,8,0" AutomationProperties.Name="Mover para">
+                            <StackPanel>
+                                <Path Data="M 12,1 L 12,23 M 1,12 L 23,12 M 8,5 L 12,1 L 16,5 M 8,19 L 12,23 L 16,19 M 5,8 L 1,12 L 5,16 M 19,8 L 23,12 L 19,16" Style="{StaticResource IconeAcao}" />
+                                <TextBlock Text="Mover&#10;para" TextAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <Button Tag="pessoas" Click="EditarDados_Click" Style="{StaticResource AcaoComanda}" Margin="0,0,8,0" AutomationProperties.Name="Alterar quantidade de pessoas">
+                            <StackPanel>
+                                <Path Data="M 8,3 A 3,3 0 1 0 8,9 A 3,3 0 1 0 8,3 M 1,23 L 1,17 C 1,11 15,11 15,17 L 15,23 M 17,4 A 3,3 0 0 1 17,10 M 18,14 C 23,14 23,17 23,22" Style="{StaticResource IconeAcao}" />
+                                <TextBlock Text="Alterar&#10;pessoas" TextAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <Button Tag="cliente" Click="EditarDados_Click" Style="{StaticResource AcaoComanda}" AutomationProperties.Name="Adicionar ou alterar pessoa">
+                            <StackPanel>
+                                <Path Data="M 9,2 A 4,4 0 1 0 9,10 A 4,4 0 1 0 9,2 M 1,23 L 1,18 C 1,12 17,12 17,18 L 17,23 M 20,3 L 20,11 M 16,7 L 24,7" Style="{StaticResource IconeAcao}" />
+                                <TextBlock Text="Adicionar&#10;pessoa" TextAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                    </UniformGrid>
+                </StackPanel>
 
-                <DockPanel Grid.Row="3">
-                    <Button DockPanel.Dock="Right" Content="Finalizar comanda (F4)" Padding="20,0" Height="60" FontSize="16"
-                            Background="#3F8F5F" Foreground="White" FontWeight="Bold" ToolTip="Finalizar comanda (F4)"
-                            KeyboardNavigation.TabIndex="1"
-                            Command="{Binding VerTotalCommand}" />
-                    <StackPanel Orientation="Horizontal" KeyboardNavigation.TabIndex="0">
-                        <Button Content="Voltar" Padding="16,0" Height="60" FontSize="16" ToolTip="Voltar para as comandas (Esc)"
-                                Command="{Binding FecharEdicaoCommand}" Margin="0,0,8,0" />
-                        <Button Content="Cancelar comanda" Padding="16,0" Height="60" FontSize="16" Foreground="#B23B32"
-                                ToolTip="Cancelar comanda (sem atalho; alcance por Tab)"
-                                Command="{Binding CancelarComandaAtualCommand}" />
-                    </StackPanel>
-                </DockPanel>
+                <StackPanel Grid.Row="3">
+                    <Grid>
+                        <Grid.ColumnDefinitions><ColumnDefinition /><ColumnDefinition /></Grid.ColumnDefinitions>
+                        <Button Content="Concluir lançamento" Command="{Binding FecharEdicaoCommand}" Background="#23262B" Foreground="White" Height="86" FontWeight="Bold" Margin="0,0,8,0" Padding="8" ToolTip="Manter a comanda aberta e bloquear o atendimento" />
+                        <Button Grid.Column="1" Content="Pagar" Command="{Binding VerTotalCommand}" Background="#408F63" Foreground="White" Height="86" FontWeight="Bold" Padding="8" ToolTip="Finalizar comanda (F4)" />
+                    </Grid>
+
+                </StackPanel>
 
                 <TextBlock Grid.Row="4" Text="{Binding Mensagem}" Foreground="#B23B32" TextWrapping="Wrap" Margin="0,8,0,0" />
             </Grid>

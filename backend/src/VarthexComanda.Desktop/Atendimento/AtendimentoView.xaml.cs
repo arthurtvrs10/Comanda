@@ -11,11 +11,39 @@ public partial class AtendimentoView : UserControl
 {
     public AtendimentoViewModel ViewModel { get; }
 
+    private void EditarDados_Click(object sender, RoutedEventArgs e)
+    {
+        if (ViewModel.ComandaAtual is null || sender is not Button { Tag: string campo }) return;
+        new EditarDadosComandaView(ViewModel, campo) { Owner = Window.GetWindow(this) }.ShowDialog();
+    }
+
+    private void AlterarPrioridade_Click(object sender, RoutedEventArgs e)
+    {
+        var botao = (Button)sender;
+        var menu = new ContextMenu { PlacementTarget = botao, Placement = PlacementMode.Top };
+        foreach (var prioridade in Enum.GetValues<PrioridadeComanda>())
+            menu.Items.Add(new MenuItem { Header = prioridade.ToString(), IsCheckable = true,
+                IsChecked = ViewModel.ComandaAtual?.Prioridade == prioridade,
+                Command = ViewModel.AlterarPrioridadeCommand, CommandParameter = prioridade, Padding = new Thickness(16,10,16,10) });
+        botao.ContextMenu = menu;
+        menu.IsOpen = true;
+    }
+
+    private void AnotarPedido_Click(object sender, RoutedEventArgs e)
+    {
+        CampoBusca.Focus();
+        CampoBusca.SelectAll();
+    }
+
     public AtendimentoView(AtendimentoViewModel viewModel)
     {
         InitializeComponent();
         ViewModel = viewModel;
         DataContext = viewModel;
+        var cronometro = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
+        cronometro.Tick += (_, _) => ViewModel.AtualizarCronometros();
+        Loaded += (_, _) => { ViewModel.AtualizarCronometros(); cronometro.Start(); };
+        Unloaded += (_, _) => cronometro.Stop();
         DataObject.AddPastingHandler(CampoNumeroComanda, CampoNumero_Colar);
         // as linhas sao recriadas a cada alteracao; garante que o teclado continue chegando (F4/Esc)
         viewModel.Itens.CollectionChanged += (_, _) => RestaurarFocoSePerdido();

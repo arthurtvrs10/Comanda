@@ -11,6 +11,9 @@ internal sealed class ComandaRepositoryDeBancoCorrompido : IComandaRepository
 {
     private static Exception Falha() => new FalhaTecnicaSimuladaException();
     public Comanda DefinirNomeCliente(int comandaId, string? nome) => throw Falha();
+    public Comanda MoverPara(int id, int numero) => throw Falha();
+    public Comanda DefinirQuantidadePessoas(int id, int quantidade) => throw Falha();
+    public Comanda DefinirPrioridade(int comandaId, PrioridadeComanda prioridade) => throw Falha();
 
     public IReadOnlyList<Comanda> ListarAbertas() => throw Falha();
     public ComandaComItens? BuscarComItens(int comandaId) => throw Falha();

@@ -10,6 +10,28 @@ public class FakeComandaRepository : IComandaRepository
     private int _proximoComandaId = 1;
     private int _proximoItemId = 1;
 
+    public Comanda MoverPara(int comandaId, int numero)
+    {
+        var comanda = _comandas.Single(c => c.Id == comandaId);
+        if (comanda.Status != StatusComanda.Aberta) throw new ComandaNaoAbertaException();
+        if (_comandas.Any(c => c.Numero == numero && c.Status == StatusComanda.Aberta && c.Id != comandaId)) throw new NumeroComandaOcupadoException();
+        comanda.Numero = numero;
+        return comanda;
+    }
+    public Comanda DefinirQuantidadePessoas(int comandaId, int quantidade)
+    {
+        var comanda = _comandas.Single(c => c.Id == comandaId);
+        if (comanda.Status != StatusComanda.Aberta) throw new ComandaNaoAbertaException();
+        comanda.QuantidadePessoas = quantidade;
+        return comanda;
+    }
+    public Comanda DefinirPrioridade(int comandaId, PrioridadeComanda prioridade)
+    {
+        var comanda = _comandas.Single(c => c.Id == comandaId);
+        if (comanda.Status != StatusComanda.Aberta) throw new ComandaNaoAbertaException();
+        comanda.Prioridade = prioridade;
+        return comanda;
+    }
     public Comanda DefinirNomeCliente(int comandaId, string? nome)
     {
         var comanda = _comandas.Single(c => c.Id == comandaId);

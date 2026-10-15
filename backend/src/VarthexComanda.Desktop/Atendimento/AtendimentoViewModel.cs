@@ -86,6 +86,8 @@ public partial class AtendimentoViewModel : ObservableObject
         }
     }
 
+    public event Action? AtendimentoConcluido;
+
     public ObservableCollection<Comanda> ComandasAbertas { get; }
     public ObservableCollection<Categoria> Categorias { get; }
     public ObservableCollection<ItemComanda> Itens { get; }
@@ -225,6 +227,7 @@ public partial class AtendimentoViewModel : ObservableObject
             return;
         }
 
+        Mensagem = string.Empty;
         ComandaAtual = detalhe.Comanda;
         NomeCliente = ComandaAtual.NomeCliente ?? string.Empty;
         ItemSelecionadoId = null;
@@ -235,12 +238,15 @@ public partial class AtendimentoViewModel : ObservableObject
     [RelayCommand]
     private void FecharEdicao()
     {
+        var estavaEmAtendimento = ComandaAtual is not null;
+        Mensagem = string.Empty;
         ComandaAtual = null;
         NomeCliente = string.Empty;
         ItemSelecionadoId = null;
         TextoBuscaCatalogo = string.Empty;
         Itens.Clear();
         VerTotalCommand.NotifyCanExecuteChanged();
+        if (estavaEmAtendimento) AtendimentoConcluido?.Invoke();
     }
 
     [RelayCommand(CanExecute = nameof(PodeVerTotal))]
@@ -349,15 +355,11 @@ public partial class AtendimentoViewModel : ObservableObject
             return;
         }
 
-        if (Itens.Count > 0)
-        {
-            var mensagem = $"A comanda {ComandaAtual.Numero} possui {Itens.Count} item(ns) e total de " +
-                $"{CentavosParaMoedaConverter.Formatar(ComandaAtual.TotalCentavos)}. Deseja cancelar mesmo assim?";
-            if (!_confirmador.Confirmar("Cancelar comanda", mensagem))
-            {
-                return;
-            }
-        }
+        var numero = ComandaAtual.Numero;
+        var resumo = Itens.Count == 0 ? "Esta comanda está sem itens."
+            : $"Esta comanda possui {Itens.Sum(i => i.Quantidade)} produto(s), totalizando {CentavosParaMoedaConverter.Formatar(ComandaAtual.TotalCentavos)}.";
+        var mensagem = $"Cancelar a comanda {numero}?\n\n{resumo}\nO número ficará livre e nenhum pagamento será registrado. Para continuar depois, use Voltar às comandas.";
+        if (!_confirmador.Confirmar("Cancelar comanda", mensagem)) return;
 
         try
         {
@@ -371,6 +373,7 @@ public partial class AtendimentoViewModel : ObservableObject
             Mensagem = string.Empty;
             FecharEdicao();
             AtualizarComandasAbertas();
+            Mensagem = $"Comanda {numero} cancelada. O número está disponível novamente.";
         }
         catch (Exception ex)
         {
@@ -551,7 +554,7 @@ public partial class AtendimentoViewModel : ObservableObject
                     ComandaId = comanda.Id,
                     NomeCliente = comanda.NomeCliente,
                     TotalFormatado = CentavosParaMoedaConverter.Formatar(comanda.TotalCentavos),
-                    TempoFormatado = FormatarTempoAberta(comanda.AbertaEm, agora)
+                    AbertaEm = comanda.AbertaEm, Prioridade = comanda.Prioridade, TempoFormatado = ComandaSlotItem.FormatarTempo(comanda.AbertaEm, agora)
                 });
             }
             else
@@ -576,25 +579,91 @@ public partial class AtendimentoViewModel : ObservableObject
                 ComandaId = comanda.Id,
                 NomeCliente = comanda.NomeCliente,
                 TotalFormatado = CentavosParaMoedaConverter.Formatar(comanda.TotalCentavos),
-                TempoFormatado = FormatarTempoAberta(comanda.AbertaEm, agora)
+                AbertaEm = comanda.AbertaEm, Prioridade = comanda.Prioridade, TempoFormatado = ComandaSlotItem.FormatarTempo(comanda.AbertaEm, agora)
             });
         }
     }
 
-    private static string FormatarTempoAberta(DateTime abertaEmUtc, DateTime agoraUtc)
+    public string TempoComandaAtual => ComandaAtual is null ? string.Empty
+        : ComandaSlotItem.FormatarTempo(ComandaAtual.AbertaEm, _relogio.UtcNow);
+    public bool SalvarDadosComanda(string campo, string valor)
     {
-        var decorrido = agoraUtc - abertaEmUtc;
-        if (decorrido.TotalMinutes < 1)
+        if (ComandaAtual is null) return false;
+        try
         {
-            return "agora";
+            Comanda atualizada;
+            switch (campo)
+            {
+                case "mover":
+                    if (!int.TryParse(valor, out var numero) || numero <= 0)
+                    { Mensagem = "Informe o número de uma comanda livre."; return false; }
+                    var maximo = _obterConfiguracao.Executar().QuantidadeMaximaComandas;
+                    if (maximo is int limite && numero > limite)
+                    { Mensagem = $"O número da comanda deve ser no máximo {limite}."; return false; }
+                    atualizada = _comandas.MoverPara(ComandaAtual.Id, numero);
+                    break;
+                case "pessoas":
+                    if (!int.TryParse(valor, out var quantidade) || quantidade is < 1 or > 999)
+                    { Mensagem = "Informe uma quantidade de pessoas entre 1 e 999."; return false; }
+                    atualizada = _comandas.DefinirQuantidadePessoas(ComandaAtual.Id, quantidade);
+                    break;
+                case "cliente":
+                    var resultado = new DefinirNomeCliente(_comandas).Executar(ComandaAtual.Id, valor);
+                    if (!resultado.Sucesso) { Mensagem = string.Join(" ", resultado.Erros); return false; }
+                    atualizada = resultado.Valor!;
+                    break;
+                default: return false;
+            }
+            ComandaAtual = atualizada;
+            NomeCliente = atualizada.NomeCliente ?? string.Empty;
+            OnPropertyChanged(nameof(ComandaAtual));
+            AtualizarComandasAbertas();
+            Mensagem = "Comanda atualizada.";
+            return true;
         }
-        if (decorrido.TotalMinutes < 60)
+        catch (Exception ex) when (ex is NumeroComandaOcupadoException or ComandaNaoAbertaException)
+        { Mensagem = ex.Message; return false; }
+        catch (Exception ex)
         {
-            return $"há {(int)decorrido.TotalMinutes} min";
+            _logger?.Error(ex, "Falha ao atualizar dados da comanda");
+            Mensagem = "Não foi possível atualizar a comanda. Tente novamente.";
+            return false;
         }
-        return $"há {(int)decorrido.TotalHours} h";
     }
-
+    public string CorPrioridadeAtual => ComandaAtual?.Prioridade switch
+    {
+        PrioridadeComanda.Alta => "#925600", PrioridadeComanda.Urgente => "#B71C1C", _ => "#28653F"
+    };
+    partial void OnComandaAtualChanged(Comanda? value)
+    {
+        OnPropertyChanged(nameof(TempoComandaAtual));
+        OnPropertyChanged(nameof(CorPrioridadeAtual));
+    }
+    public void AtualizarCronometros()
+    {
+        var agora = _relogio.UtcNow;
+        foreach (var slot in Slots)
+            if (slot.AbertaEm is DateTime abertura) slot.TempoFormatado = ComandaSlotItem.FormatarTempo(abertura, agora);
+        OnPropertyChanged(nameof(TempoComandaAtual));
+    }
+    [RelayCommand]
+    private void AlterarPrioridade(PrioridadeComanda prioridade)
+    {
+        if (ComandaAtual is null) return;
+        try
+        {
+            ComandaAtual = _comandas.DefinirPrioridade(ComandaAtual.Id, prioridade);
+            OnPropertyChanged(nameof(ComandaAtual));
+            OnPropertyChanged(nameof(CorPrioridadeAtual));
+            AtualizarComandasAbertas();
+            Mensagem = "Prioridade alterada para " + prioridade + ".";
+        }
+        catch (Exception ex)
+        {
+            _logger?.Error(ex, "Falha ao alterar prioridade");
+            Mensagem = "Não foi possível alterar a prioridade. Tente novamente.";
+        }
+    }
     public void AtualizarCategorias() => CarregarCategorias();
 
     private void CarregarCategorias()

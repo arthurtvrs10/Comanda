@@ -73,6 +73,46 @@ public class EfComandaRepository : IComandaRepository
         return comanda;
     }
 
+    public Comanda DefinirPrioridade(int comandaId, PrioridadeComanda prioridade)
+    {
+        if (!Enum.IsDefined(prioridade)) throw new ArgumentOutOfRangeException(nameof(prioridade));
+        using var contexto = _fabricaContexto.CreateDbContext();
+        var comanda = contexto.Comandas.SingleOrDefault(c => c.Id == comandaId)
+            ?? throw new InvalidOperationException("Comanda não encontrada.");
+        if (comanda.Status != StatusComanda.Aberta) throw new ComandaNaoAbertaException();
+        comanda.Prioridade = prioridade;
+        contexto.SaveChanges();
+        return comanda;
+    }
+
+    public Comanda MoverPara(int comandaId, int numero)
+    {
+        if (numero <= 0) throw new ArgumentOutOfRangeException(nameof(numero));
+        using var contexto = _fabricaContexto.CreateDbContext();
+        var comanda = contexto.Comandas.SingleOrDefault(c => c.Id == comandaId)
+            ?? throw new InvalidOperationException("Comanda não encontrada.");
+        if (comanda.Status != StatusComanda.Aberta) throw new ComandaNaoAbertaException();
+        if (contexto.Comandas.Any(c => c.Numero == numero && c.Status == StatusComanda.Aberta && c.Id != comandaId))
+            throw new NumeroComandaOcupadoException();
+        comanda.Numero = numero;
+        try { contexto.SaveChanges(); }
+        catch (DbUpdateException ex) when (ex.InnerException is Microsoft.Data.Sqlite.SqliteException { SqliteExtendedErrorCode: 2067 })
+        { throw new NumeroComandaOcupadoException(); }
+        return comanda;
+    }
+
+    public Comanda DefinirQuantidadePessoas(int comandaId, int quantidade)
+    {
+        if (quantidade is < 1 or > 999) throw new ArgumentOutOfRangeException(nameof(quantidade));
+        using var contexto = _fabricaContexto.CreateDbContext();
+        var comanda = contexto.Comandas.SingleOrDefault(c => c.Id == comandaId)
+            ?? throw new InvalidOperationException("Comanda não encontrada.");
+        if (comanda.Status != StatusComanda.Aberta) throw new ComandaNaoAbertaException();
+        comanda.QuantidadePessoas = quantidade;
+        contexto.SaveChanges();
+        return comanda;
+    }
+
     public ComandaComItens AdicionarItem(int comandaId, Produto produto, int quantidade, DateTime agora)
     {
         using var contexto = _fabricaContexto.CreateDbContext();

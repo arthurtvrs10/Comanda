@@ -12,6 +12,90 @@ namespace VarthexComanda.Desktop.Tests.Atendimento;
 public class AtendimentoViewModelTests
 {
     [Fact]
+    public void SaidaNotificaBloqueioSomenteQuandoOAtendimentoTermina()
+    {
+        var (vm, produtos, confirmador, pagamento) = CriarViewModel();
+        var bloqueios = 0;
+        vm.AtendimentoConcluido += () => bloqueios++;
+        vm.NovoNumero = "1";
+        vm.AbrirCommand.Execute(null);
+        vm.AdicionarProdutoAoItemCommand.Execute(produtos.Pesquisar(null, null)[0]);
+        Assert.Equal(0, bloqueios);
+        confirmador.ProximaResposta = false;
+        vm.CancelarComandaAtualCommand.Execute(null);
+        pagamento.ProximaResposta = false;
+        vm.VerTotalCommand.Execute(null);
+        Assert.Equal(0, bloqueios);
+        vm.FecharEdicaoCommand.Execute(null);
+        Assert.Equal(1, bloqueios);
+        vm.FecharEdicaoCommand.Execute(null);
+        Assert.Equal(1, bloqueios);
+        vm.AbrirOuSelecionarSlotCommand.Execute(vm.Slots.Single(s => s.Numero == 1));
+        pagamento.ProximaResposta = true;
+        vm.VerTotalCommand.Execute(null);
+        Assert.Equal(2, bloqueios);
+        vm.NovoNumero = "2";
+        vm.AbrirCommand.Execute(null);
+        confirmador.ProximaResposta = true;
+        vm.CancelarComandaAtualCommand.Execute(null);
+        Assert.Equal(3, bloqueios);
+    }
+    [Fact]
+    public void VoltarPreservaComandaItensEPrioridadeAoReabrir()
+    {
+        var (vm, produtos, _, _) = CriarViewModel();
+        vm.NovoNumero = "1";
+        vm.AbrirCommand.Execute(null);
+        vm.AdicionarProdutoAoItemCommand.Execute(produtos.Pesquisar(null, null)[0]);
+        vm.AlterarPrioridadeCommand.Execute(VarthexComanda.Domain.PrioridadeComanda.Alta);
+        var id = vm.ComandaAtual!.Id;
+        var abertura = vm.ComandaAtual.AbertaEm;
+        vm.FecharEdicaoCommand.Execute(null);
+        Assert.Null(vm.ComandaAtual);
+        Assert.Empty(vm.Mensagem);
+        var slot = vm.Slots.Single(s => s.Numero == 1);
+        Assert.True(slot.Aberta);
+        vm.AbrirOuSelecionarSlotCommand.Execute(slot);
+        Assert.Equal(id, vm.ComandaAtual!.Id);
+        Assert.Equal(abertura, vm.ComandaAtual.AbertaEm);
+        Assert.Single(vm.Itens);
+        Assert.Equal(VarthexComanda.Domain.PrioridadeComanda.Alta, vm.ComandaAtual.Prioridade);
+    }
+
+    [Fact]
+    public void CancelarComandaVaziaTambemExigeConfirmacao()
+    {
+        var (vm, _, confirmador, _) = CriarViewModel(confirmar: false);
+        vm.NovoNumero = "1";
+        vm.AbrirCommand.Execute(null);
+        vm.CancelarComandaAtualCommand.Execute(null);
+        Assert.NotNull(vm.ComandaAtual);
+        Assert.True(vm.Slots.Single(s => s.Numero == 1).Aberta);
+        confirmador.ProximaResposta = true;
+        vm.CancelarComandaAtualCommand.Execute(null);
+        Assert.Null(vm.ComandaAtual);
+        Assert.False(vm.Slots.Single(s => s.Numero == 1).Aberta);
+        Assert.Contains("Comanda 1 cancelada", vm.Mensagem);
+    }
+    [Fact]
+    public void DadosDaMesaValidamEntradaEAtualizamGrade()
+    {
+        var (vm, _, _, _) = CriarViewModel();
+        vm.NovoNumero = "1";
+        vm.AbrirCommand.Execute(null);
+        Assert.False(vm.SalvarDadosComanda("mover", "0"));
+        Assert.False(vm.SalvarDadosComanda("pessoas", "1000"));
+        Assert.False(vm.SalvarDadosComanda("pessoas", "abc"));
+        Assert.True(vm.SalvarDadosComanda("pessoas", "4"));
+        Assert.True(vm.SalvarDadosComanda("cliente", "João"));
+        var id = vm.ComandaAtual!.Id;
+        Assert.True(vm.SalvarDadosComanda("mover", "2"));
+        Assert.False(vm.Slots.Single(s => s.Numero == 1).Aberta);
+        Assert.Equal(id, vm.Slots.Single(s => s.Numero == 2).ComandaId);
+        Assert.Equal(4, vm.ComandaAtual.QuantidadePessoas);
+        Assert.Equal("João", vm.Slots.Single(s => s.Numero == 2).NomeCliente);
+    }
+    [Fact]
     public void SalvarNomeAtualizaGradeERecarregaAoSelecionar()
     {
         var (vm, _, _, _) = CriarViewModel();
@@ -354,7 +438,14 @@ public class AtendimentoViewModelTests
         var slot = viewModel.Slots.Single(s => s.Numero == 7);
         Assert.True(slot.Aberta);
         Assert.Equal("R$ 5,00", slot.TotalFormatado);
-        Assert.Equal("há 5 min", slot.TempoFormatado);
+        Assert.Equal("00:05:00", slot.TempoFormatado);
+        relogio.UtcNow = relogio.UtcNow.AddSeconds(1);
+        viewModel.AtualizarCronometros();
+        Assert.Same(slot, viewModel.Slots.Single(s => s.Numero == 7));
+        Assert.Equal("00:05:01", slot.TempoFormatado);
+        Assert.Equal("00:05:01", viewModel.TempoComandaAtual);
+        viewModel.AlterarPrioridadeCommand.Execute(VarthexComanda.Domain.PrioridadeComanda.Urgente);
+        Assert.Equal(VarthexComanda.Domain.PrioridadeComanda.Urgente, viewModel.Slots.Single(s => s.Numero == 7).Prioridade);
     }
 
     [Fact]
@@ -405,7 +496,7 @@ public class AtendimentoViewModelTests
         viewModel.AbrirCommand.Execute(null);
 
         var slot = viewModel.Slots.Single(s => s.Numero == 7);
-        Assert.Equal("agora", slot.TempoFormatado);
+        Assert.Equal("00:00:00", slot.TempoFormatado);
     }
 
     [Fact]
@@ -438,6 +529,6 @@ public class AtendimentoViewModelTests
         viewModel.AtualizarComandasAbertas();
 
         var slot = viewModel.Slots.Single(s => s.Numero == 7);
-        Assert.Equal("há 1 h", slot.TempoFormatado);
+        Assert.Equal("01:30:00", slot.TempoFormatado);
     }
 }

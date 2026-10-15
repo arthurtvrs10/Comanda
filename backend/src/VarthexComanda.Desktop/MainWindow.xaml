@@ -18,7 +18,8 @@
         <KeyBinding Key="D5" Modifiers="Control" Command="{x:Static local:MainWindow.IrParaConfiguracoesCommand}" />
         <KeyBinding Key="NumPad5" Modifiers="Control" Command="{x:Static local:MainWindow.IrParaConfiguracoesCommand}" />
     </Window.InputBindings>
-    <DockPanel Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}">
+    <Grid>
+    <DockPanel x:Name="AreaSistema" Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}">
         <Border DockPanel.Dock="Bottom" Background="#F2F2F0" BorderBrush="#C4C4C4" BorderThickness="0,1,0,0" Padding="12,6">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <TextBlock Text="Desenvolvido pela Varthex" Foreground="#666666" FontSize="11" VerticalAlignment="Center" Margin="0,0,12,0" />
@@ -30,14 +31,19 @@
             <TextBlock Text="O banco de dados está corrompido. Restaure um backup para continuar. Nenhuma outra função está disponível."
                        Foreground="White" FontSize="16" FontWeight="SemiBold" TextWrapping="Wrap" />
         </Border>
-        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="8">
+        <WrapPanel DockPanel.Dock="Top" Margin="8">
+            <TextBlock x:Name="RotuloPerfil" VerticalAlignment="Center" FontWeight="Bold" Margin="8,0,16,0" />
+            <Button x:Name="BotaoPerfil" Click="AlternarPerfil_Click" Padding="18,8" Margin="0,0,16,0" />
+            <Button Content="Bloquear" Click="Bloquear_Click" Padding="18,8" Margin="0,0,8,0" />
             <Button x:Name="BotaoAtendimento" Content="Atendimento" ToolTip="Ctrl+1" AutomationProperties.AccessKey="Ctrl+1" Padding="18,8" FontSize="15" Margin="0,0,8,0" Click="MostrarAtendimento_Click" />
             <Button x:Name="BotaoProdutos" Content="Produtos" ToolTip="Ctrl+2" AutomationProperties.AccessKey="Ctrl+2" Padding="18,8" FontSize="15" Margin="0,0,8,0" Click="MostrarProdutos_Click" />
             <Button x:Name="BotaoHistorico" Content="Histórico" ToolTip="Ctrl+3" AutomationProperties.AccessKey="Ctrl+3" Padding="18,8" FontSize="15" Margin="0,0,8,0" Click="MostrarHistorico_Click" />
             <Button x:Name="BotaoBackup" Content="Backup" ToolTip="Ctrl+4" AutomationProperties.AccessKey="Ctrl+4" Padding="18,8" FontSize="15" Margin="0,0,8,0" Click="MostrarBackup_Click" />
             <Button x:Name="BotaoConfiguracoes" Content="Configurações" ToolTip="Ctrl+5" AutomationProperties.AccessKey="Ctrl+5" Padding="18,8" FontSize="15" Click="MostrarConfiguracao_Click" />
-            <Button Content="Licença" Padding="18,8" FontSize="15" Margin="8,0,0,0" Click="MostrarLicenca_Click" />
-        </StackPanel>
+            <Button x:Name="BotaoLicenca" Content="Licença" Padding="18,8" FontSize="15" Margin="8,0,0,0" Click="MostrarLicenca_Click" />
+        </WrapPanel>
         <ContentControl x:Name="ConteudoPrincipal" />
     </DockPanel>
+    <ContentControl x:Name="CamadaBloqueio" Panel.ZIndex="10" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
+    </Grid>
 </Window>

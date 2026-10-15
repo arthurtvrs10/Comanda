@@ -73,8 +73,8 @@ public class DialogosTecladoXamlTests
             var sim = Assert.IsType<Button>(janela.FindName("BotaoSim"));
             var nao = Assert.IsType<Button>(janela.FindName("BotaoNao"));
 
-            Assert.Equal("_Sim", sim.Content);
-            Assert.Equal("_Não", nao.Content);
+            Assert.Equal("_Cancelar comanda", sim.Content);
+            Assert.Equal("_Manter aberta", nao.Content);
             Assert.True(nao.IsDefault);
             Assert.True(nao.IsCancel);
             Assert.False(sim.IsDefault);

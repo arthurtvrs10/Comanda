@@ -51,6 +51,54 @@ public class EfComandaRepositoryTests : IDisposable
     }
 
     [Fact]
+    public void PrioridadePersisteEReaberturaComecaNormal()
+    {
+        var repo = new EfComandaRepository(_fabrica);
+        var comanda = repo.AbrirComanda(1, DateTime.UtcNow);
+        repo.DefinirPrioridade(comanda.Id, PrioridadeComanda.Urgente);
+        Assert.Equal(PrioridadeComanda.Urgente, new EfComandaRepository(_fabrica).BuscarComItens(comanda.Id)!.Comanda.Prioridade);
+        Assert.Throws<ArgumentOutOfRangeException>(() => repo.DefinirPrioridade(comanda.Id, (PrioridadeComanda)99));
+        repo.CancelarComanda(comanda.Id, DateTime.UtcNow);
+        Assert.Throws<VarthexComanda.Application.Atendimento.ComandaNaoAbertaException>(() => repo.DefinirPrioridade(comanda.Id, PrioridadeComanda.Alta));
+        Assert.Equal(PrioridadeComanda.Normal, repo.AbrirComanda(1, DateTime.UtcNow).Prioridade);
+    }
+
+    [Fact]
+    public void MoverPreservaIdentidadeTempoItensEPessoasERecusaDestinoOcupado()
+    {
+        var repo = new EfComandaRepository(_fabrica);
+        var inicio = new DateTime(2026, 10, 12, 12, 0, 0, DateTimeKind.Utc);
+        var comanda = repo.AbrirComanda(1, inicio);
+        repo.DefinirNomeCliente(comanda.Id, "João");
+        repo.DefinirPrioridade(comanda.Id, PrioridadeComanda.Alta);
+        repo.DefinirQuantidadePessoas(comanda.Id, 4);
+        using (var contexto = _fabrica.CreateDbContext())
+        {
+            contexto.Categorias.Add(new Categoria { Id = 1, Nome = "Bebidas", Ativo = true, CriadoEm = inicio, AtualizadoEm = inicio });
+            contexto.Produtos.Add(new Produto { Id = 1, Nome = "Água", CategoriaId = 1, PrecoCentavos = 500, Ativo = true, CriadoEm = inicio, AtualizadoEm = inicio });
+            contexto.SaveChanges();
+            repo.AdicionarItem(comanda.Id, contexto.Produtos.Single(), 2, inicio);
+        }
+        repo.AbrirComanda(2, inicio);
+        Assert.Throws<VarthexComanda.Application.Atendimento.NumeroComandaOcupadoException>(() => repo.MoverPara(comanda.Id, 2));
+        Assert.Equal(1, repo.BuscarComItens(comanda.Id)!.Comanda.Numero);
+        repo.MoverPara(comanda.Id, 3);
+        var detalhe = new EfComandaRepository(_fabrica).BuscarComItens(comanda.Id)!;
+        Assert.Equal(3, detalhe.Comanda.Numero);
+        Assert.Equal(inicio, detalhe.Comanda.AbertaEm);
+        Assert.Equal("João", detalhe.Comanda.NomeCliente);
+        Assert.Equal(PrioridadeComanda.Alta, detalhe.Comanda.Prioridade);
+        Assert.Equal(4, detalhe.Comanda.QuantidadePessoas);
+        Assert.Equal(1000, detalhe.Comanda.TotalCentavos);
+        Assert.Single(detalhe.Itens);
+        Assert.Equal(1, repo.AbrirComanda(1, inicio).QuantidadePessoas);
+        Assert.Throws<ArgumentOutOfRangeException>(() => repo.DefinirQuantidadePessoas(comanda.Id, 0));
+        repo.CancelarComanda(comanda.Id, inicio);
+        Assert.Throws<VarthexComanda.Application.Atendimento.ComandaNaoAbertaException>(() => repo.MoverPara(comanda.Id, 4));
+        Assert.Throws<VarthexComanda.Application.Atendimento.ComandaNaoAbertaException>(() => repo.DefinirQuantidadePessoas(comanda.Id, 2));
+    }
+
+    [Fact]
     [Trait("Caso", "CT01")]
     public void AbrirComanda_NumeroLivre_CriaComandaAberta()
     {
