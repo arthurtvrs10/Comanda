@@ -25,7 +25,7 @@
  <TextBlock x:Name="Titulo" FontSize="28" FontWeight="SemiBold" TextWrapping="Wrap"/>
  <TextBlock x:Name="Descricao" Foreground="#59665E" TextWrapping="Wrap" Margin="0,8,0,24"/>
  <Border Background="White" BorderBrush="#D5DED7" BorderThickness="1" Padding="24"><StackPanel x:Name="Formulario"/></Border>
- <WrapPanel x:Name="Acoes" Margin="0,20,0,12"><TextBlock Text="{Binding EstadoEdicao}" Foreground="#59665E" VerticalAlignment="Center" Margin="0,0,18,8"/><Button Content="Descartar alterações" Command="{Binding DescartarCommand}" IsEnabled="{Binding TemAlteracoes}" Margin="0,0,8,8"/><Button x:Name="BotaoSalvar" Content="Salvar alterações" IsDefault="True" Command="{Binding SalvarCommand}" IsEnabled="{Binding TemAlteracoes}" Background="#245640" Foreground="White" Margin="0,0,0,8"/></WrapPanel>
+ <WrapPanel x:Name="Acoes" Margin="0,20,0,12"><TextBlock Text="{Binding EstadoEdicao}" Foreground="#59665E" VerticalAlignment="Center" Margin="0,0,18,8"/><Button x:Name="BotaoSalvar" Content="Salvar alterações" IsDefault="True" Command="{Binding SalvarCommand}" IsEnabled="{Binding TemAlteracoes}" Background="#245640" Foreground="White" Margin="0,0,0,8"/></WrapPanel>
  <TextBlock Text="{Binding Mensagem}" TextWrapping="Wrap" Margin="0,10,0,0"><TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Foreground" Value="#245640"/><Style.Triggers><DataTrigger Binding="{Binding MensagemErro}" Value="True"><Setter Property="Foreground" Value="#A42B25"/></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock>
  <TextBlock Text="{Binding VersaoTexto}" Foreground="#59665E" FontSize="12" Margin="0,28,0,0"/>
  </StackPanel></ScrollViewer></Grid>

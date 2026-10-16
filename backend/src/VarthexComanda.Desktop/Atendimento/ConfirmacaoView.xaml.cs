@@ -9,6 +9,13 @@ public partial class ConfirmacaoView : Window
         InitializeComponent();
         Title = titulo;
         TextoMensagem.Text = mensagem;
+        if (titulo == "Descartar alterações?")
+        {
+            BotaoNao.Content = "Continuar editando";
+            BotaoSim.Content = "Descartar e sair";
+            BotaoNao.Width = 235;
+            BotaoSim.Width = 215;
+        }
         if (titulo == "Cancelar comanda")
         {
             BotaoNao.Content = "_Manter aberta";
