@@ -1,6 +1,9 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.varthex.licencas" android:versionCode="2" android:versionName="1.0.1">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.varthex.licencas" android:versionCode="3" android:versionName="1.1.0">
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
     <uses-sdk android:minSdkVersion="26" android:targetSdkVersion="34" />
     <application android:label="Varthex Licenças" android:icon="@drawable/icon" android:theme="@android:style/Theme.Material.Light.NoActionBar" android:allowBackup="false" android:fullBackupContent="false" android:usesCleartextTraffic="false" android:supportsRtl="true">
+        <activity android:name=".ScanActivity" android:exported="false" />
         <activity android:name=".MainActivity" android:exported="true" android:windowSoftInputMode="adjustResize">
             <intent-filter><action android:name="android.intent.action.MAIN" /><category android:name="android.intent.category.LAUNCHER" /></intent-filter>
         </activity>

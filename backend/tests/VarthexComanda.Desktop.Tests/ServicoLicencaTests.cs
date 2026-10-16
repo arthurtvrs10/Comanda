@@ -12,8 +12,8 @@ public class ServicoLicencaTests : IDisposable
 {
     private readonly string _pasta = Path.Combine(Path.GetTempPath(), "VarthexLicencaTest-" + Guid.NewGuid().ToString("N"));
     private readonly RSA _rsa = RSA.Create(2048);
-    private ServicoLicenca Servico => new(Path.Combine(_pasta, "estado.dat"), _rsa.ExportSubjectPublicKeyInfoPem(), "pc");
-    private string Chave(string pc = "pc") => LicencaOffline.Emitir(new DadosLicenca(1, "id", pc, "Teste", DateTimeOffset.UtcNow.AddDays(-1), DateTimeOffset.UtcNow.AddMonths(1)), _rsa.ExportPkcs8PrivateKeyPem());
+    private ServicoLicenca Servico => new(Path.Combine(_pasta, "estado.dat"), _rsa.ExportSubjectPublicKeyInfoPem(), "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+    private string Chave(string pc = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA") => LicencaOffline.Emitir(new DadosLicenca(1, "id", pc, "Teste", DateTimeOffset.UtcNow.AddDays(-1), DateTimeOffset.UtcNow.AddMonths(1)), _rsa.ExportPkcs8PrivateKeyPem());
 
     [Fact]
     public void AtivacaoPersisteProtegidaEReabre()
@@ -29,7 +29,7 @@ public class ServicoLicencaTests : IDisposable
     {
         Servico.Verificar(Chave());
         Assert.Throws<InvalidOperationException>(() => Servico.Verificar(Chave("outro")));
-        Assert.Equal("pc", Servico.Verificar().Computador);
+        Assert.Equal("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", Servico.Verificar().Computador);
     }
 
     [Fact]
@@ -52,7 +52,7 @@ public class ServicoLicencaTests : IDisposable
             var janela = new JanelaLicenca(Servico, "Ativação de teste");
             var painel = (StackPanel)((ScrollViewer)janela.Content).Content;
             var entrada = painel.Children.OfType<TextBox>().Single(t => !t.IsReadOnly);
-            var botao = painel.Children.OfType<Button>().Single(b => (string)b.Content == "Ativar licença");
+            var botao = painel.Children.OfType<Button>().Single(b => (string)b.Content == "Ativar sistema");
             janela.Loaded += (_, _) =>
             {
                 entrada.Text = Chave();

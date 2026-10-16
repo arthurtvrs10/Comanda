@@ -35,15 +35,25 @@ public final class LicenseIssuer {
 
     public static String issue(PrivateKey key, String computer, String client, int months, LocalDate start)
             throws GeneralSecurityException {
+        if (months < 0 || months > 3) throw new IllegalArgumentException("Plano inválido.");
+        if (start == null || start.getYear() < 2000 || start.getYear() > 9998)
+            throw new IllegalArgumentException("Data inicial inválida.");
+        return issueUntil(key, computer, client, start, months == 0 ? null : start.plusMonths(months));
+    }
+
+    /** End is exclusive, at midnight in Brasilia; null means lifetime. */
+    public static String issueUntil(PrivateKey key, String computer, String client, LocalDate start, LocalDate endExclusive)
+            throws GeneralSecurityException {
         if (key == null) throw new InvalidKeyException("Importe ou cole a chave privada primeiro.");
         computer = computer.trim().toUpperCase(Locale.ROOT);
         client = client.trim();
         if (!computer.matches("[0-9A-F]{64}")) throw new IllegalArgumentException("O código deve ter 64 caracteres, de 0 a 9 e A a F.");
         if (client.isEmpty() || client.length() > 200) throw new IllegalArgumentException("Informe o cliente (até 200 caracteres).");
-        if (months < 0 || months > 3) throw new IllegalArgumentException("Plano inválido.");
         if (start == null || start.getYear() < 2000 || start.getYear() > 9998)
             throw new IllegalArgumentException("Data inicial inválida.");
-        String end = months == 0 ? "null" : quote(start.plusMonths(months) + "T00:00:00-03:00");
+        if (endExclusive != null && (!endExclusive.isAfter(start) || endExclusive.getYear() > 9999))
+            throw new IllegalArgumentException("O vencimento deve ser posterior ao início.");
+        String end = endExclusive == null ? "null" : quote(endExclusive + "T00:00:00-03:00");
         String json = "{\"Versao\":1,\"Id\":" + quote(UUID.randomUUID().toString().replace("-", ""))
                 + ",\"Computador\":" + quote(computer) + ",\"Cliente\":" + quote(client)
                 + ",\"Inicio\":" + quote(start + "T00:00:00-03:00") + ",\"Vencimento\":" + end + "}";

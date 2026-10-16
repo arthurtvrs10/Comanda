@@ -12,11 +12,12 @@ New-Item -ItemType Directory -Force $out,$classes,$dex | Out-Null
 function Check { if ($LASTEXITCODE -ne 0) { throw "Falha no empacotamento: $LASTEXITCODE" } }
 & "$tools/aapt.exe" package -f -M "$PSScriptRoot/AndroidManifest.xml" -S "$PSScriptRoot/res" -A "$PSScriptRoot/assets" -I $platform -F "$out/unsigned.apk"
 Check
+$dependency = & "$PSScriptRoot/dependencies.ps1"
 $sources = @(Get-ChildItem "$PSScriptRoot/src" -Filter '*.java' -Recurse | Select-Object -ExpandProperty FullName)
-& "$Java/bin/javac.exe" --release 8 -encoding UTF-8 -classpath $platform -d $classes @sources
+& "$Java/bin/javac.exe" --release 8 -encoding UTF-8 -classpath "$platform;$dependency" -d $classes @sources
 Check
 $compiled = @(Get-ChildItem $classes -Filter '*.class' -Recurse | Select-Object -ExpandProperty FullName)
-& "$Java/bin/java.exe" -cp "$tools/lib/d8.jar" com.android.tools.r8.D8 --release --min-api 26 --lib $platform --output $dex @compiled
+& "$Java/bin/java.exe" -cp "$tools/lib/d8.jar" com.android.tools.r8.D8 --release --min-api 26 --lib $platform --output $dex @compiled $dependency
 Check
 Push-Location $dex
 try { & "$tools/aapt.exe" add "$out/unsigned.apk" classes.dex; Check } finally { Pop-Location }
@@ -36,11 +37,11 @@ if (-not (Test-Path $keystore)) {
     & "$Java/bin/keytool.exe" -genkeypair -keystore $keystore -storetype PKCS12 -storepass:file $password -alias emissor -keyalg RSA -keysize 3072 -validity 10000 -dname 'CN=Varthex Licencas, O=Varthex, C=BR'
     Check
 }
-$apk = Join-Path $out 'Varthex-Licencas-1.0.1.apk'
+$apk = Join-Path $out 'Varthex-Licencas-1.1.0.apk'
 & "$Java/bin/java.exe" -jar "$tools/lib/apksigner.jar" sign --ks $keystore --ks-pass "file:$password" --out $apk "$out/aligned.apk"
 Check
 & "$Java/bin/java.exe" -jar "$tools/lib/apksigner.jar" verify --verbose $apk
 Check
 $hash = (Get-FileHash $apk -Algorithm SHA256).Hash
-"$hash  Varthex-Licencas-1.0.1.apk" | Set-Content "$apk.sha256" -Encoding ascii
+"$hash  Varthex-Licencas-1.1.0.apk" | Set-Content "$apk.sha256" -Encoding ascii
 Write-Host "APK gerado: $apk"
