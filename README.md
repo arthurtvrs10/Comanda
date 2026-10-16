@@ -2,7 +2,7 @@
 
 Sistema para pequenos estabelecimentos de alimentação. Registra consumo em comandas, calcula o total e mantém histórico local. Funciona em um computador Windows, sem internet.
 
-**Situação:** produto atual disponível; evolução para pedidos, preparo e rede local em planejamento. Esta revisão altera somente documentação.
+**Situação:** produto atual disponível; evolução para pedidos, preparo e rede local em planejamento.
 
 ## Recursos atuais
 
@@ -17,9 +17,9 @@ Sistema para pequenos estabelecimentos de alimentação. Registra consumo em com
 
 Não há pagamento integrado, emissão fiscal, cozinha conectada ou atendimento móvel nas versões abaixo. O APK Android é exclusivo para gerar licenças.
 
-## Windows — versão normal 1.2.2
+## Windows — versão normal 1.3.0
 
-[![Baixar para Windows](docs/design/download-windows.svg)](https://github.com/arthurtvrs10/Varthex-Orders/releases/download/v1.2.2/VarthexComanda-1.2.2-Setup-win-x64.exe)
+[![Baixar para Windows](docs/design/download-windows.svg)](https://github.com/arthurtvrs10/VComanda/releases/download/v1.3.0/VarthexComanda-1.3.0-Setup-win-x64.exe)
 
 O download principal é o **Varthex Comanda para Windows 64 bits**, versão normal,
 **sem produtos pré-cadastrados e sem modo de demonstração**. Em uma instalação nova,
@@ -29,18 +29,18 @@ Instala para o usuário atual, sem administrador, e inclui o .NET. Funciona offl
 e requer ativação. Atualizar ou reinstalar preserva os produtos e a licença já existentes.
 Os dados ficam em `%LOCALAPPDATA%\VarthexComanda`.
 
-[Instruções](downloads/windows/README.md) · [SHA-256](downloads/windows/VarthexComanda-1.2.2-Setup-win-x64.exe.sha256)
+[Instruções](downloads/windows/README.md) · [SHA-256](downloads/windows/VarthexComanda-1.3.0-Setup-win-x64.exe.sha256)
 
-## Windows — versão demonstração 1.2.3
+## Windows — versão demonstração 1.3.0
 
-[![Baixar para Windows](docs/design/download-windows.svg)](https://github.com/arthurtvrs10/Varthex-Orders/releases/download/v1.2.3-demo/VarthexComanda-Demo-1.2.3-Setup-win-x64.exe)
+[![Baixar para Windows](docs/design/download-windows.svg)](https://github.com/arthurtvrs10/VComanda/releases/download/v1.3.0/VarthexComanda-Demo-1.3.0-Setup-win-x64.exe)
 
 Versão para conhecer o sistema, com **12 produtos de teste, fotos e preços fictícios**:
 pastéis, salgados, porção e bebidas. Instala separadamente da versão normal e requer ativação.
 Abra pelo atalho **Comanda Demonstração**. Os dados ficam em
 `%LOCALAPPDATA%\VarthexComandaDemo`; reinstalar preserva as alterações.
 
-[Instruções](downloads/demo/README.md) · [SHA-256](downloads/demo/VarthexComanda-Demo-1.2.3-Setup-win-x64.exe.sha256)
+[Instruções](downloads/demo/README.md) · [SHA-256](downloads/demo/VarthexComanda-Demo-1.3.0-Setup-win-x64.exe.sha256)
 
 ## Android — gerador de chaves
 

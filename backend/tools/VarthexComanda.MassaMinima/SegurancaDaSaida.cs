@@ -1,4 +1,4 @@
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 
 namespace VarthexComanda.MassaMinima;
 
@@ -84,7 +84,12 @@ public static class SegurancaDaSaida
         if (real.Length > 0)
         {
             var protegida = Canonico(real);
-            var comparavel = ExpandirAliasCurto(completo, protegida);
+            // Preserve a recusa textual mesmo se GetFullPath expandir um alias existente
+            // para outra pasta Varthex (por exemplo, a edição de demonstração).
+            var literal = pastaRaiz.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+            var expandido = ExpandirAliasCurto(literal, protegida);
+            var comparavel = !Igual(literal, expandido)
+                ? Canonico(expandido) : ExpandirAliasCurto(completo, protegida);
             if (Igual(comparavel, protegida) || DentroDe(comparavel, protegida))
             {
                 return "Recusado: a pasta de saida e (ou esta dentro de) a pasta real dos dados do aplicativo " +
