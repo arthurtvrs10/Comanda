@@ -88,6 +88,28 @@ public partial class MainWindow : Window
             (_, e) => { e.CanExecute = !_bloqueado && botao.IsEnabled; e.Handled = true; }));
     }
 
+    private void MostrarCozinha_Click(object sender, RoutedEventArgs e)
+    {
+        if (_bloqueado || !_cozinhaAtiva || _restauracao) return;
+        _cozinhaView.Atualizar();
+        MostrarConteudo(_cozinhaView);
+    }
+
+    private void AtualizarAbaAtiva()
+    {
+        foreach (var (botao, conteudo) in new (Button, object)[]
+        {
+            (BotaoAtendimento, _atendimentoView), (BotaoProdutos, _produtosView),
+            (BotaoHistorico, _historicoView), (BotaoBackup, _backupView),
+            (BotaoConfiguracoes, _configuracaoView), (BotaoCozinha, _cozinhaView)
+        })
+        {
+            var ativa = !_bloqueado && ReferenceEquals(ConteudoPrincipal.Content, conteudo);
+            botao.Tag = ativa ? "ativa" : null;
+            System.Windows.Automation.AutomationProperties.SetItemStatus(botao, ativa ? "Tela atual" : "");
+        }
+    }
+
     private void MostrarAtendimento_Click(object sender, RoutedEventArgs e) => IrParaAtendimento();
 
     private void MostrarProdutos_Click(object sender, RoutedEventArgs e) => IrParaProdutos();
@@ -280,7 +302,10 @@ public partial class MainWindow : Window
         BotaoAtendimento.Visibility = _cozinhaAtiva ? Visibility.Collapsed : Visibility.Visible;
         BotaoHistorico.Visibility = _cozinhaAtiva ? Visibility.Collapsed : Visibility.Visible;
         BotaoPerfil.Visibility = _cozinhaAtiva ? Visibility.Collapsed : Visibility.Visible;
-        RotuloPerfil.Text = _cozinhaAtiva ? "Cozinha · consulta" : _acesso.Autenticado ? "Menu gestor" : "Menu garçom";
+        BotaoCozinha.Visibility = _cozinhaAtiva ? Visibility.Visible : Visibility.Collapsed;
+        BotaoCozinha.IsEnabled = !_bloqueado && _cozinhaAtiva && !_restauracao;
+        RotuloPerfil.Text = _cozinhaAtiva ? "Cozinha · consulta" : _acesso.Autenticado ? "Gestor" : "Garçom";
+        AtualizarAbaAtiva();
         BotaoPerfil.Content = _acesso.Autenticado ? "Voltar ao garçom" : "Entrar como gestor";
         CommandManager.InvalidateRequerySuggested();
     }
@@ -289,6 +314,7 @@ public partial class MainWindow : Window
     {
         if (_bloqueado) return;
         ConteudoPrincipal.Content = view;
+        AtualizarAbaAtiva();
         // Foco no primeiro controle util da tela; adiado ate a nova tela ser carregada.
         Dispatcher.BeginInvoke(DispatcherPriority.Input, new Action(() =>
         {

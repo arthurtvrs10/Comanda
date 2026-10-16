@@ -422,6 +422,36 @@ public class CarregamentoDeXamlTests
                 Assert.True(area.IsEnabled);
                 Assert.Equal(Visibility.Collapsed, camada.Visibility);
                 Assert.False(MainWindow.IrParaProdutosCommand.CanExecute(null, janela));
+                var abaAtendimento = (Button)janela.FindName("BotaoAtendimento");
+                var abaHistorico = (Button)janela.FindName("BotaoHistorico");
+                Assert.Equal("ativa", abaAtendimento.Tag);
+                MainWindow.IrParaHistoricoCommand.Execute(null, janela);
+                Assert.Equal("ativa", abaHistorico.Tag);
+                Assert.Null(abaAtendimento.Tag);
+                abaAtendimento.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                Assert.Equal("ativa", abaAtendimento.Tag);
+                Assert.Null(abaHistorico.Tag);
+                MedirEOrganizar(raizVisual);
+                SalvarPrevia(raizVisual, "abas-garcom-1200");
+                raizVisual.Measure(new Size(800, 600));
+                raizVisual.Arrange(new Rect(0,0,800,600));
+                raizVisual.UpdateLayout();
+                SalvarPrevia(raizVisual, "abas-garcom-800");
+                var acesso = (AcessoGestor)typeof(MainWindow).GetField("_acesso", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.GetValue(janela)!;
+                acesso.Cadastrar("teste1234");
+                Assert.True(acesso.Entrar("teste1234"));
+                typeof(MainWindow).GetMethod("AtualizarPerfil", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(janela, null);
+                MainWindow.IrParaProdutosCommand.Execute(null, janela);
+                Assert.Equal("ativa", ((Button)janela.FindName("BotaoProdutos")).Tag);
+                MedirEOrganizar(raizVisual);
+                SalvarPrevia(raizVisual, "abas-gestor-1200");
+                raizVisual.Measure(new Size(800, 600));
+                raizVisual.Arrange(new Rect(0,0,800,600));
+                raizVisual.UpdateLayout();
+                SalvarPrevia(raizVisual, "abas-gestor-800");
+                ((Button)janela.FindName("BotaoPerfil")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                Assert.Equal("ativa", abaAtendimento.Tag);
+                Assert.Equal(Visibility.Collapsed, ((Button)janela.FindName("BotaoProdutos")).Visibility);
                 var atendimento = Assert.IsType<AtendimentoView>(conteudo.Content);
                 var id = atendimento.ViewModel.ComandaAtual!.Id;
                 atendimento.ViewModel.FecharEdicaoCommand.Execute(null);
@@ -437,6 +467,8 @@ public class CarregamentoDeXamlTests
                     botoes.Single(b => Equals(b.Content, digito.ToString())).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
                 ((Button)bloqueio.FindName("BotaoEntrar")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
                 var cozinha = Assert.IsType<CozinhaView>(conteudo.Content);
+                Assert.Equal("ativa", ((Button)janela.FindName("BotaoCozinha")).Tag);
+                Assert.Equal(Visibility.Collapsed, abaAtendimento.Visibility);
                 Assert.False(MainWindow.IrParaAtendimentoCommand.CanExecute(null, janela));
                 Assert.False(MainWindow.IrParaProdutosCommand.CanExecute(null, janela));
                 Assert.False(MainWindow.IrParaHistoricoCommand.CanExecute(null, janela));
@@ -445,7 +477,7 @@ public class CarregamentoDeXamlTests
                 SalvarPrevia(raizVisual, "cozinha-consulta");
             });
         }
-        finally { if (File.Exists(arquivo)) File.Delete(arquivo); if (Directory.Exists(raiz)) Directory.Delete(raiz); }
+        finally { if (File.Exists(arquivo)) File.Delete(arquivo); var gestor = Path.Combine(raiz, "gestor.credencial"); if (File.Exists(gestor)) File.Delete(gestor); if (Directory.Exists(raiz)) Directory.Delete(raiz); }
     }
 
     private static IEnumerable<DependencyObject> Descendentes(DependencyObject raiz)
