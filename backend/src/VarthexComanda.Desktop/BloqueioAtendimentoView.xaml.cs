@@ -1,4 +1,4 @@
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -29,7 +29,7 @@ public partial class BloqueioAtendimentoView : UserControl
         Instrucao.Text = _acesso.Configurado ? "Digite o PIN para iniciar um atendimento." : "Peça ao gestor para configurar o PIN do estabelecimento.";
         BotaoEntrar.Content = "Desbloquear";
         BotaoEntrar.IsEnabled = _acesso.Configurado;
-        BotaoConfigurar.Content = "Configurar PIN · somente gestor";
+        BotaoConfigurar.Visibility = Visibility.Collapsed;
         Mensagem.Text = "";
         AtualizarVisor();
     }
@@ -41,6 +41,7 @@ public partial class BloqueioAtendimentoView : UserControl
         BotaoEntrar.Content = "Continuar";
         BotaoEntrar.IsEnabled = true;
         BotaoConfigurar.Content = "Cancelar configuração";
+        BotaoConfigurar.Visibility = Visibility.Visible;
         Focus();
     }
     private void AtualizarVisor() => Visor.Text = _pin.Length == 0 ? "PIN" : new string('●', _pin.Length);

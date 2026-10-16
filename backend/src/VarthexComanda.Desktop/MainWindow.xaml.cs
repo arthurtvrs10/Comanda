@@ -1,4 +1,4 @@
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
@@ -37,6 +37,7 @@ public partial class MainWindow : Window
         InitializeComponent();
         _acesso = new AcessoGestor(System.IO.Path.Combine((paths ?? new VarthexComanda.Infrastructure.Storage.AppPaths()).Root, "gestor.credencial"));
         _acessoAtendimento = new AcessoAtendimento(System.IO.Path.Combine((paths ?? new VarthexComanda.Infrastructure.Storage.AppPaths()).Root, "atendimento.credencial"));
+        _acessoAtendimento.GarantirPinInicial();
         _bloqueioView = new BloqueioAtendimentoView(_acessoAtendimento);
         CamadaBloqueio.Content = _bloqueioView;
         _bloqueioView.Desbloqueado += DesbloquearAtendimento;

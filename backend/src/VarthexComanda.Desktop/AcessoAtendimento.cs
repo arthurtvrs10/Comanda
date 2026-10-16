@@ -1,4 +1,4 @@
-using System.IO;
+﻿using System.IO;
 using System.Security.Cryptography;
 
 namespace VarthexComanda.Desktop;
@@ -12,6 +12,11 @@ public sealed class AcessoAtendimento(string caminho, TimeProvider? relogio = nu
     public bool Autenticado { get; private set; }
     public void Bloquear() => Autenticado = false;
     public static bool PinValido(string pin) => pin.Length is >= 4 and <= 8 && pin.All(char.IsAsciiDigit);
+
+    public void GarantirPinInicial()
+    {
+        if (!Configurado) DefinirPin("1234");
+    }
 
     public void DefinirPin(string pin)
     {

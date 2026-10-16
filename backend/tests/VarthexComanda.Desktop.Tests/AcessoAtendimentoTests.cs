@@ -1,4 +1,4 @@
-namespace VarthexComanda.Desktop.Tests;
+﻿namespace VarthexComanda.Desktop.Tests;
 
 public class AcessoAtendimentoTests
 {
@@ -6,6 +6,25 @@ public class AcessoAtendimentoTests
     {
         public DateTimeOffset Agora = DateTimeOffset.UtcNow;
         public override DateTimeOffset GetUtcNow() => Agora;
+    }
+
+    [Fact]
+    public void PinInicialFuncionaSemSubstituirPinExistente()
+    {
+        var arquivo = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".pin");
+        try
+        {
+            var acesso = new AcessoAtendimento(arquivo);
+            acesso.GarantirPinInicial();
+            Assert.False(acesso.Autenticado);
+            Assert.True(acesso.Entrar("1234", out _));
+            acesso.DefinirPin("9876");
+            acesso = new AcessoAtendimento(arquivo);
+            acesso.GarantirPinInicial();
+            Assert.True(acesso.Entrar("9876", out _));
+            Assert.False(acesso.Entrar("1234", out _));
+        }
+        finally { File.Delete(arquivo); }
     }
 
     [Fact]
