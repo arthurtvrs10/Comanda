@@ -8,6 +8,27 @@ namespace VarthexComanda.Desktop.Tests.Configuracao;
 
 public class ConfiguracaoViewModelTests
 {
+    [Fact]
+    public void DescartarRestauraValoresSemGravarESalvarLimpaPendencias()
+    {
+        var (vm, repo)=CriarViewModel();
+        Assert.False(vm.TemAlteracoes);
+        vm.NomeEstabelecimento="Rascunho";
+        vm.PastaBackupExterna="D:\\Teste";
+        Assert.True(vm.TemAlteracoes);
+        vm.DescartarCommand.Execute(null);
+        Assert.False(vm.TemAlteracoes);
+        Assert.Equal("",vm.NomeEstabelecimento);
+        Assert.Null(repo.ObterValor("backup.pasta_externa"));
+        vm.NomeEstabelecimento="Restaurante";
+        vm.SalvarCommand.Execute(null);
+        Assert.False(vm.TemAlteracoes);
+        Assert.False(vm.MensagemErro);
+        vm.QuantidadeComandasTexto="-1";
+        vm.SalvarCommand.Execute(null);
+        Assert.True(vm.MensagemErro);
+        Assert.True(vm.TemAlteracoes);
+    }
     private static (ConfiguracaoViewModel ViewModel, FakeConfiguracaoRepository Repositorio) CriarViewModel()
     {
         var repositorio = new FakeConfiguracaoRepository();

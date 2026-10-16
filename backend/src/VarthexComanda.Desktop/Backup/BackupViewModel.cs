@@ -49,6 +49,7 @@ public partial class BackupViewModel : ObservableObject
 
     [ObservableProperty]
     private string mensagem = string.Empty;
+    public bool MensagemErro { get; private set; }
 
     /// <summary>
     /// Modo de restauração (banco corrompido): não cria backups e a lista vem dos arquivos da
@@ -139,6 +140,7 @@ public partial class BackupViewModel : ObservableObject
         try
         {
             var resultado = _criarBackupManual.Executar(pastaExterna);
+            MensagemErro = !resultado.Sucesso || !string.IsNullOrEmpty(resultado.Valor?.Mensagem);
             Mensagem = resultado.Sucesso
                 ? (string.IsNullOrEmpty(resultado.Valor?.Mensagem) ? "Backup criado com sucesso." : resultado.Valor!.Mensagem!)
                 : string.Join(" ", resultado.Erros);
@@ -147,6 +149,7 @@ public partial class BackupViewModel : ObservableObject
         catch (Exception ex)
         {
             _logger?.Error(ex, "Falha em {Operacao}", "CriarBackup");
+            MensagemErro = true;
             Mensagem = "Não foi possível criar o backup. Tente novamente.";
         }
     }

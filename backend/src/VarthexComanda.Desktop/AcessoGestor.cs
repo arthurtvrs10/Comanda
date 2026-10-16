@@ -30,4 +30,23 @@ public sealed class AcessoGestor(string caminho)
         var hash = Rfc2898DeriveBytes.Pbkdf2(senha, dados.AsSpan(0, 32), 210_000, HashAlgorithmName.SHA256, 32);
         return Autenticado = CryptographicOperations.FixedTimeEquals(hash, dados.AsSpan(32, 32));
     }
+
+    public bool ConferirSenha(string senha)
+    {
+        var dados = File.ReadAllBytes(caminho);
+        if (dados.Length != 64) throw new InvalidOperationException("Credencial do gestor inválida.");
+        var hash = Rfc2898DeriveBytes.Pbkdf2(senha, dados.AsSpan(0,32), 210_000, HashAlgorithmName.SHA256,32);
+        return CryptographicOperations.FixedTimeEquals(hash,dados.AsSpan(32,32));
+    }
+
+    public void AlterarSenha(string atual, string nova)
+    {
+        if (!Autenticado || !ConferirSenha(atual)) throw new InvalidOperationException("Senha atual incorreta.");
+        if (nova.Length < 8) throw new ArgumentException("Use pelo menos 8 caracteres na nova senha.");
+        var sal = RandomNumberGenerator.GetBytes(32);
+        var hash = Rfc2898DeriveBytes.Pbkdf2(nova,sal,210_000,HashAlgorithmName.SHA256,32);
+        var temporario = caminho + "." + Guid.NewGuid().ToString("N") + ".tmp";
+        try { File.WriteAllBytes(temporario,[..sal,..hash]); File.Move(temporario,caminho,true); }
+        finally { if(File.Exists(temporario))File.Delete(temporario); }
+    }
 }

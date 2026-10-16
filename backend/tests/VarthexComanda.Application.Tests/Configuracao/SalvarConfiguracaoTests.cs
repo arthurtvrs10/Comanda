@@ -7,6 +7,18 @@ namespace VarthexComanda.Application.Tests.Configuracao;
 public class SalvarConfiguracaoTests
 {
     [Fact]
+    public void ReducaoNaoPodeOcultarComandaAbertaNemGravarParcialmente()
+    {
+        var repo = new FakeConfiguracaoRepository();
+        var comandas = new Atendimento.FakeComandaRepository();
+        comandas.AbrirComanda(12, DateTime.UtcNow);
+        var salvar = new SalvarConfiguracao(repo, new FakeClock(), comandas);
+        var resultado = salvar.Executar(new ConfiguracaoEstabelecimento { NomeEstabelecimento="Teste", QuantidadeMaximaComandas=10 });
+        Assert.False(resultado.Sucesso);
+        Assert.Null(repo.ObterValor("estabelecimento.nome"));
+        Assert.True(salvar.Executar(new ConfiguracaoEstabelecimento { NomeEstabelecimento="Teste", QuantidadeMaximaComandas=12 }).Sucesso);
+    }
+    [Fact]
     public void Executar_NomeVazio_Falha()
     {
         var repositorio = new FakeConfiguracaoRepository();

@@ -10,6 +10,16 @@ public partial class ConfiguracaoViewModel : ObservableObject
     private readonly ObterConfiguracao _obterConfiguracao;
     private readonly SalvarConfiguracao _salvarConfiguracao;
     private readonly ILogger? _logger;
+    private (string Nome, string Quantidade, string? Pasta) _salvo;
+    public bool TemAlteracoes => _salvo != (NomeEstabelecimento, QuantidadeComandasTexto, PastaBackupExterna);
+    public string EstadoEdicao => TemAlteracoes ? "Alterações não salvas" : "Nenhuma alteração pendente";
+    [ObservableProperty] private bool mensagemErro;
+    private void AtualizarEdicao() { OnPropertyChanged(nameof(TemAlteracoes)); OnPropertyChanged(nameof(EstadoEdicao)); Mensagem = ""; }
+    partial void OnNomeEstabelecimentoChanged(string value) => AtualizarEdicao();
+    partial void OnQuantidadeComandasTextoChanged(string value) => AtualizarEdicao();
+    partial void OnPastaBackupExternaChanged(string? value) => AtualizarEdicao();
+    private void MarcarSalvo() { _salvo = (NomeEstabelecimento, QuantidadeComandasTexto, PastaBackupExterna); OnPropertyChanged(nameof(TemAlteracoes)); OnPropertyChanged(nameof(EstadoEdicao)); }
+    [RelayCommand] private void Descartar() { var salvo = _salvo; NomeEstabelecimento = salvo.Nome; QuantidadeComandasTexto = salvo.Quantidade; PastaBackupExterna = salvo.Pasta; MensagemErro = false; Mensagem = "Alterações descartadas."; }
 
     public ConfiguracaoViewModel(ObterConfiguracao obterConfiguracao, SalvarConfiguracao salvarConfiguracao, ILogger? logger = null)
     {
@@ -49,6 +59,8 @@ public partial class ConfiguracaoViewModel : ObservableObject
         NomeEstabelecimento = configuracao.NomeEstabelecimento;
         QuantidadeComandasTexto = configuracao.QuantidadeMaximaComandas?.ToString() ?? string.Empty;
         PastaBackupExterna = configuracao.PastaBackupExterna;
+        MarcarSalvo();
+        Mensagem = "";
     }
 
     public void DefinirPastaBackupExterna(string? pasta)
@@ -59,6 +71,7 @@ public partial class ConfiguracaoViewModel : ObservableObject
     [RelayCommand]
     private void Salvar()
     {
+        MensagemErro = true;
         int? quantidade = null;
         if (!string.IsNullOrWhiteSpace(QuantidadeComandasTexto))
         {
@@ -83,6 +96,8 @@ public partial class ConfiguracaoViewModel : ObservableObject
             Mensagem = resultado.Sucesso
                 ? "Configurações salvas com sucesso."
                 : string.Join(" ", resultado.Erros);
+            MensagemErro = !resultado.Sucesso;
+            if (resultado.Sucesso) MarcarSalvo();
         }
         catch (Exception ex)
         {

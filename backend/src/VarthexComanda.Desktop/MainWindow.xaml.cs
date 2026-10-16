@@ -57,6 +57,17 @@ public partial class MainWindow : Window
         _historicoView = historicoView;
         _backupView = backupView;
         _configuracaoView = configuracaoView;
+        _configuracaoView.AcaoSolicitada += AcaoConfiguracao;
+        _configuracaoView.ConsultarBackup = () => {
+            _backupView.ViewModel.AtualizarLista();
+            var ultimo = _backupView.ViewModel.Backups.OrderByDescending(b => b.CriadoEm).FirstOrDefault();
+            return ultimo is null ? "Nenhum backup registrado." : $"{ultimo.CriadoEm.ToLocalTime():dd/MM/yyyy HH:mm} · {ultimo.Status}";
+        };
+        _configuracaoView.ConsultarLicenca = () => {
+            try { var atual = new Licenciamento.ServicoLicenca().Verificar(); return atual.Vencimento is null ? "Licença vitalícia ativa · Sem vencimento." : $"Licença ativa até {atual.Vencimento.Value.ToOffset(TimeSpan.FromHours(-3)):dd/MM/yyyy HH:mm}."; }
+            catch { return "Não foi possível confirmar a licença. Abra a ativação para verificar."; }
+        };
+        Closing += (_, e) => { if (!_bloqueado && ReferenceEquals(ConteudoPrincipal.Content,_configuracaoView) && !_configuracaoView.ConfirmarSaida()) e.Cancel=true; };
         _atendimentoView.ViewModel.AtendimentoConcluido += BloquearAtendimento;
         MostrarInicio();
     }
@@ -142,6 +153,7 @@ public partial class MainWindow : Window
     private void IrParaBackup()
     {
         if (_bloqueado || !_acesso.Autenticado) return;
+        if (!_restauracao) { IrParaConfiguracoes(); _configuracaoView.AbrirSecao(3); return; }
         _backupView.ViewModel.AtualizarLista();
         MostrarConteudo(_backupView);
     }
@@ -149,13 +161,16 @@ public partial class MainWindow : Window
     private void IrParaConfiguracoes()
     {
         if (_bloqueado || !_acesso.Autenticado || _restauracao) return;
+        if (ReferenceEquals(ConteudoPrincipal.Content,_configuracaoView)) return;
         _configuracaoView.ViewModel.Carregar();
+        _configuracaoView.AtualizarSecao();
         MostrarConteudo(_configuracaoView);
     }
 
     private void AlternarPerfil_Click(object sender, RoutedEventArgs e)
     {
         if (_bloqueado || _cozinhaAtiva) return;
+        if (!PodeSairDasConfiguracoes()) return;
         if (_acesso.Autenticado)
         {
             _acesso.Sair();
@@ -168,6 +183,7 @@ public partial class MainWindow : Window
 
     private void Bloquear_Click(object sender, RoutedEventArgs e)
     {
+        if (!PodeSairDasConfiguracoes()) return;
         if (_atendimentoView.ViewModel.ComandaAtual is not null)
             _atendimentoView.ViewModel.FecharEdicaoCommand.Execute(null);
         else BloquearAtendimento();
@@ -228,6 +244,7 @@ public partial class MainWindow : Window
 
     private void MenuPrincipal_Click(object sender, RoutedEventArgs e)
     {
+        if (!PodeSairDasConfiguracoes()) return;
         if (_atendimentoView.ViewModel.ComandaAtual is not null)
             _atendimentoView.ViewModel.FecharEdicaoCommand.Execute(null);
         MostrarInicio();
@@ -261,7 +278,7 @@ public partial class MainWindow : Window
                 case "backup": IrParaBackup(); break;
                 case "historico": IrParaHistorico(); break;
                 case "configuracoes": IrParaConfiguracoes(); break;
-                case "licenca": IrParaProdutos(); ((App)System.Windows.Application.Current).RenovarLicenca(); break;
+                case "licenca": IrParaConfiguracoes(); _configuracaoView.AbrirSecao(4); break;
                 default: IrParaProdutos(); break;
             }
         }
@@ -295,6 +312,7 @@ public partial class MainWindow : Window
         foreach (var botao in new[] { BotaoProdutos, BotaoBackup, BotaoConfiguracoes, BotaoLicenca })
         {
             botao.Visibility = _acesso.Autenticado ? Visibility.Visible : Visibility.Collapsed;
+            if (botao == BotaoLicenca || (botao == BotaoBackup && !_restauracao)) botao.Visibility=Visibility.Collapsed;
             botao.IsEnabled = !_bloqueado && _acesso.Autenticado && (!_restauracao || botao == BotaoBackup);
         }
         BotaoAtendimento.IsEnabled = !_bloqueado && !_cozinhaAtiva && !_restauracao;
@@ -314,6 +332,7 @@ public partial class MainWindow : Window
     private void MostrarConteudo(UIElement view)
     {
         if (_bloqueado) return;
+        if (!ReferenceEquals(view,_configuracaoView) && !PodeSairDasConfiguracoes()) return;
         ConteudoPrincipal.Content = view;
         AtualizarAbaAtiva();
         // Foco no primeiro controle util da tela; adiado ate a nova tela ser carregada.
@@ -328,5 +347,33 @@ public partial class MainWindow : Window
                 // Foco inicial e apenas conveniencia: nunca deve derrubar a troca de tela.
             }
         }));
+    }
+
+    private bool PodeSairDasConfiguracoes() => !ReferenceEquals(ConteudoPrincipal.Content,_configuracaoView) || _configuracaoView.ConfirmarSaida();
+
+    private void AcaoConfiguracao(string acao)
+    {
+        if(_bloqueado || !_acesso.Autenticado || _restauracao) return;
+        if(acao is "senha" or "pin")
+        {
+            if(new JanelaAlterarAcesso(_acesso,_acessoAtendimento,acao=="pin") { Owner=this }.ShowDialog()==true)
+            { _configuracaoView.ViewModel.MensagemErro=false;_configuracaoView.ViewModel.Mensagem="Credencial alterada com sucesso."; }
+        }
+        else if(acao=="licenca") { ((App)System.Windows.Application.Current).RenovarLicenca();_configuracaoView.AtualizarSecao(); }
+        else if(acao=="criar-backup")
+        {
+            _backupView.ViewModel.CriarBackupCommand.Execute(_configuracaoView.ViewModel.PastaBackupExterna);
+            var mensagem = _backupView.ViewModel.Mensagem;
+            _configuracaoView.AtualizarSecao();
+            _configuracaoView.ViewModel.MensagemErro=_backupView.ViewModel.MensagemErro;
+            _configuracaoView.ViewModel.Mensagem=mensagem;
+        }
+        else if(acao=="backups")
+        {
+            _backupView.ViewModel.AtualizarLista();
+            var janela=new Window { Title="Backups e restauração",Owner=this,Width=Math.Min(1100,SystemParameters.WorkArea.Width),Height=Math.Min(700,SystemParameters.WorkArea.Height),WindowStartupLocation=WindowStartupLocation.CenterOwner,Content=_backupView };
+            try { janela.ShowDialog(); } finally { janela.Content=null; }
+            _configuracaoView.AtualizarSecao();
+        }
     }
 }

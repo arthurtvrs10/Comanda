@@ -17,3 +17,6 @@ Cabeçalho branco único, sem logo: abas com ícone, nome e atalhos à esquerda;
 ## Produtos — catálogo aprovado
 
 Linhas compactas com foto de 56 px, nome, categoria, preço e situação. Busca e filtro acima da lista. Novo produto e clique em um item abrem um modal centralizado, com foto, nome, categoria, preço e nova categoria; edição permite ativar e desativar. Cancelar ou Esc descarta o formulário e alterações pendentes da foto. Cantos retos e verde do sistema.
+
+## Configurações — central do gestor aprovada
+Cinco seções: Estabelecimento, Atendimento, Segurança, Backup e Licença e sistema. Navegação lateral em telas amplas e categorias acima em telas menores que 800 px. Fundo #F3F5F2, seleção #E1E8E4, ações principais #245640, cantos retos e controles de pelo menos 46 px. Salvar e descartar com indicação de pendências; confirmação padrão do sistema ao sair. Credenciais em modal próprio, backups e ativação reaproveitam os fluxos existentes. Não duplicar backup e licença no cabeçalho normal; preservar o acesso de recuperação de banco corrompido.

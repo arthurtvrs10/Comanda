@@ -290,6 +290,16 @@ public class CarregamentoDeXamlTests
             Assert.Same(viewModel, view.DataContext);
             Assert.NotNull(view.Content);
             MedirEOrganizar(view);
+            foreach(var largura in new[] {1200,780})
+            {
+                for(var secao=0;secao<5;secao++)
+                {
+                    view.AbrirSecao(secao);
+                    view.Measure(new Size(largura,650));view.Arrange(new Rect(0,0,largura,650));view.UpdateLayout();
+                    Assert.Equal(secao.ToString(), ((WrapPanel)view.FindName("Navegacao")).Children.OfType<RadioButton>().Single(b=>b.IsChecked==true).Tag);
+                    SalvarPrevia(view,$"configuracao-{secao}-{largura}");
+                }
+            }
         });
     }
 
