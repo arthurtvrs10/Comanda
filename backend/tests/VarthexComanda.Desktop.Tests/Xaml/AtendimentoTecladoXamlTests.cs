@@ -108,7 +108,8 @@ public class AtendimentoTecladoXamlTests
             var primeiroCard = ordem.FindIndex(e => e is Button { Command: not null } b && b.Width == 128);
             var menos = PosicaoDoBotao(ordem, "−");
             var voltar = PosicaoDoBotao(ordem, "Voltar às comandas");
-            var cancelar = PosicaoDoBotao(ordem, "Cancelar comanda");
+            var cancelar = ordem.FindIndex(e => e is Button b && System.Windows.Automation.AutomationProperties.GetName(b) == "Cancelar comanda");
+            var adicionarPessoa = ordem.FindIndex(e => e is Button b && System.Windows.Automation.AutomationProperties.GetName(b) == "Adicionar ou alterar pessoa");
             var finalizar = PosicaoDoBotao(ordem, "Pagar");
 
             Assert.True(busca >= 0, "A busca precisa estar na ordem de Tab.");
@@ -118,7 +119,8 @@ public class AtendimentoTecladoXamlTests
             Assert.True(categoria < primeiroCard, "categorias antes dos cards do menu");
             Assert.True(primeiroCard < menos, "cards do menu antes dos itens da comanda");
             Assert.True(menos < voltar, "itens antes de Voltar");
-            Assert.True(voltar < cancelar, "Voltar antes de Cancelar");
+            Assert.True(adicionarPessoa >= 0 && cancelar == adicionarPessoa + 1, "Cancelar imediatamente após Adicionar pessoa");
+            Assert.True(cancelar < finalizar, "Cancelar antes das ações de conclusão e pagamento");
             Assert.True(menos < finalizar && finalizar < voltar, "Pagar após os itens e antes das ações de navegação");
 
             // o painel focavel (so para o foco programatico antigo) nao pode ser uma parada de Tab

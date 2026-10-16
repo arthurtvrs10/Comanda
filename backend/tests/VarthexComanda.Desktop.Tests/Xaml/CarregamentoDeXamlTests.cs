@@ -1,4 +1,4 @@
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using VarthexComanda.Application.Atendimento;
 using VarthexComanda.Application.Backup;
@@ -223,6 +223,22 @@ public class CarregamentoDeXamlTests
             Assert.Same(viewModel, view.DataContext);
             Assert.NotNull(view.Content);
             MedirEOrganizar(view);
+            SalvarPrevia(view, "produtos-lista");
+            view.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                var dialogo = System.Windows.Application.Current.Windows.OfType<Window>()
+                    .Single(w => w.Title == "Novo produto");
+                var formulario = (FrameworkElement)dialogo.Content;
+                formulario.UpdateLayout();
+                SalvarPrevia(formulario, "produtos-modal");
+                viewModel.NomeProduto = "Não deve persistir";
+                viewModel.DefinirFoto("foto-descartada.png");
+                dialogo.Close();
+            }), System.Windows.Threading.DispatcherPriority.ApplicationIdle);
+            ((Button)view.FindName("BotaoNovoProduto")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Assert.Empty(viewModel.NomeProduto);
+            Assert.Null(viewModel.FotoPendenteCaminho);
+            Assert.False(viewModel.AdiarFotoAteSalvar);
         });
     }
 

@@ -1,4 +1,4 @@
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -21,6 +21,8 @@ public partial class ProdutosViewModel : ObservableObject
     private readonly DefinirFotoProduto _definirFotoProduto;
     private readonly RemoverFotoProduto _removerFotoProduto;
     private readonly ILogger? _logger;
+    public bool AdiarFotoAteSalvar { get; set; }
+    private bool _removerFotoPendente;
 
     public ProdutosViewModel(
         ListarCategoriasAtivas listarCategoriasAtivas,
@@ -147,11 +149,15 @@ public partial class ProdutosViewModel : ObservableObject
     private void LimparFiltro()
     {
         CategoriaFiltro = null;
+        TextoBusca = string.Empty;
     }
 
     [RelayCommand]
     private void Novo()
     {
+        _removerFotoPendente = false;
+        FotoArquivoAtual = null;
+        NovaCategoriaNome = string.Empty;
         ProdutoSelecionado = null;
         NomeProduto = string.Empty;
         CategoriaProduto = null;
@@ -229,6 +235,20 @@ public partial class ProdutosViewModel : ObservableObject
                 }
             }
 
+            if (!criando && AdiarFotoAteSalvar && (FotoPendenteCaminho is not null || _removerFotoPendente))
+            {
+                var id = resultado.Valor!.Id;
+                if (FotoPendenteCaminho is not null)
+                {
+                    var foto = _definirFotoProduto.Executar(id, FotoPendenteCaminho);
+                    if (!foto.Sucesso) { Mensagem = "Dados salvos, mas a foto não foi atualizada: " + string.Join(" ", foto.Erros); return; }
+                }
+                else
+                {
+                    var foto = _removerFotoProduto.Executar(id);
+                    if (!foto.Sucesso) { Mensagem = "Dados salvos, mas a foto não foi removida: " + string.Join(" ", foto.Erros); return; }
+                }
+            }
             Novo();
             Pesquisar();
         }
@@ -269,8 +289,9 @@ public partial class ProdutosViewModel : ObservableObject
 
     public void DefinirFoto(string caminhoOrigem)
     {
-        if (ProdutoSelecionado is null)
+        if (ProdutoSelecionado is null || AdiarFotoAteSalvar)
         {
+            _removerFotoPendente = false;
             FotoPendenteCaminho = caminhoOrigem;
             Mensagem = string.Empty;
             return;
@@ -299,6 +320,13 @@ public partial class ProdutosViewModel : ObservableObject
     [RelayCommand(CanExecute = nameof(PodeRemoverFoto))]
     private void RemoverFoto()
     {
+        if (AdiarFotoAteSalvar)
+        {
+            _removerFotoPendente = true;
+            FotoPendenteCaminho = null;
+            FotoArquivoAtual = null;
+            return;
+        }
         if (ProdutoSelecionado is null)
         {
             FotoPendenteCaminho = null;
@@ -342,6 +370,7 @@ public partial class ProdutosViewModel : ObservableObject
             NovaCategoriaNome = string.Empty;
             Mensagem = string.Empty;
             CarregarCategorias();
+            CategoriaProduto = Categorias.FirstOrDefault(c => c.Id == resultado.Valor!.Id);
         }
         catch (Exception ex)
         {
