@@ -40,14 +40,14 @@
     <Window.InputBindings>
         <KeyBinding Key="D1" Modifiers="Control" Command="{x:Static local:MainWindow.IrParaAtendimentoCommand}" />
         <KeyBinding Key="NumPad1" Modifiers="Control" Command="{x:Static local:MainWindow.IrParaAtendimentoCommand}" />
-        <KeyBinding Key="D2" Modifiers="Control" Command="{x:Static local:MainWindow.IrParaProdutosCommand}" />
-        <KeyBinding Key="NumPad2" Modifiers="Control" Command="{x:Static local:MainWindow.IrParaProdutosCommand}" />
-        <KeyBinding Key="D3" Modifiers="Control" Command="{x:Static local:MainWindow.IrParaHistoricoCommand}" />
-        <KeyBinding Key="NumPad3" Modifiers="Control" Command="{x:Static local:MainWindow.IrParaHistoricoCommand}" />
-        <KeyBinding Key="D4" Modifiers="Control" Command="{x:Static local:MainWindow.IrParaBackupCommand}" />
-        <KeyBinding Key="NumPad4" Modifiers="Control" Command="{x:Static local:MainWindow.IrParaBackupCommand}" />
-        <KeyBinding Key="D5" Modifiers="Control" Command="{x:Static local:MainWindow.IrParaConfiguracoesCommand}" />
-        <KeyBinding Key="NumPad5" Modifiers="Control" Command="{x:Static local:MainWindow.IrParaConfiguracoesCommand}" />
+        <KeyBinding Key="D2" Modifiers="Control" Command="{x:Static local:MainWindow.IrParaHistoricoCommand}" />
+        <KeyBinding Key="NumPad2" Modifiers="Control" Command="{x:Static local:MainWindow.IrParaHistoricoCommand}" />
+        <KeyBinding Key="D3" Modifiers="Control" Command="{x:Static local:MainWindow.IrParaProdutosCommand}" />
+        <KeyBinding Key="NumPad3" Modifiers="Control" Command="{x:Static local:MainWindow.IrParaProdutosCommand}" />
+        <KeyBinding Key="D4" Modifiers="Control" Command="{x:Static local:MainWindow.IrParaConfiguracoesCommand}" />
+        <KeyBinding Key="NumPad4" Modifiers="Control" Command="{x:Static local:MainWindow.IrParaConfiguracoesCommand}" />
+        <KeyBinding Key="D5" Modifiers="Control" Command="{x:Static local:MainWindow.IrParaBackupCommand}" />
+        <KeyBinding Key="NumPad5" Modifiers="Control" Command="{x:Static local:MainWindow.IrParaBackupCommand}" />
     </Window.InputBindings>
     <Grid>
     <DockPanel x:Name="AreaSistema" Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}">
@@ -69,17 +69,17 @@
                     <Button x:Name="BotaoAtendimento" Click="MostrarAtendimento_Click" Style="{StaticResource AbaNavegacao}" AutomationProperties.Name="Atendimento" ToolTip="Ctrl+1" AutomationProperties.AccessKey="Ctrl+1">
                         <StackPanel Orientation="Horizontal"><Path Data="M3,3 H10 V10 H3 Z M14,3 H21 V10 H14 Z M3,14 H10 V21 H3 Z M14,14 H21 V21 H14 Z" Width="18" Height="18" Stretch="Uniform" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.6" Margin="0,0,8,0" /><TextBlock Text="Atendimento" VerticalAlignment="Center" /><TextBlock Text="Ctrl+1" FontSize="11" Margin="8,0,0,0" VerticalAlignment="Center" /></StackPanel>
                     </Button>
-                    <Button x:Name="BotaoProdutos" Click="MostrarProdutos_Click" Style="{StaticResource AbaNavegacao}" AutomationProperties.Name="Produtos" ToolTip="Ctrl+2" AutomationProperties.AccessKey="Ctrl+2">
-                        <StackPanel Orientation="Horizontal"><Path Data="M3,7 L12,3 L21,7 V21 H3 Z M3,7 L12,11 L21,7 M12,11 V21" Width="18" Height="18" Stretch="Uniform" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.6" Margin="0,0,8,0" /><TextBlock Text="Produtos" VerticalAlignment="Center" /><TextBlock Text="Ctrl+2" FontSize="11" Margin="8,0,0,0" VerticalAlignment="Center" /></StackPanel>
+                    <Button x:Name="BotaoHistorico" Click="MostrarHistorico_Click" Style="{StaticResource AbaNavegacao}" AutomationProperties.Name="Histórico" ToolTip="Ctrl+2" AutomationProperties.AccessKey="Ctrl+2">
+                        <StackPanel Orientation="Horizontal"><Path Data="M4,5 H20 V21 H4 Z M8,2 V8 M16,2 V8 M4,11 H20 M8,15 H16" Width="18" Height="18" Stretch="Uniform" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.6" Margin="0,0,8,0" /><TextBlock Text="Histórico" VerticalAlignment="Center" /><TextBlock Text="Ctrl+2" FontSize="11" Margin="8,0,0,0" VerticalAlignment="Center" /></StackPanel>
                     </Button>
-                    <Button x:Name="BotaoHistorico" Click="MostrarHistorico_Click" Style="{StaticResource AbaNavegacao}" AutomationProperties.Name="Histórico" ToolTip="Ctrl+3" AutomationProperties.AccessKey="Ctrl+3">
-                        <StackPanel Orientation="Horizontal"><Path Data="M4,5 H20 V21 H4 Z M8,2 V8 M16,2 V8 M4,11 H20 M8,15 H16" Width="18" Height="18" Stretch="Uniform" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.6" Margin="0,0,8,0" /><TextBlock Text="Histórico" VerticalAlignment="Center" /><TextBlock Text="Ctrl+3" FontSize="11" Margin="8,0,0,0" VerticalAlignment="Center" /></StackPanel>
+                    <Button x:Name="BotaoProdutos" Click="MostrarProdutos_Click" Style="{StaticResource AbaNavegacao}" AutomationProperties.Name="Produtos" ToolTip="Ctrl+3" AutomationProperties.AccessKey="Ctrl+3">
+                        <StackPanel Orientation="Horizontal"><Path Data="M3,7 L12,3 L21,7 V21 H3 Z M3,7 L12,11 L21,7 M12,11 V21" Width="18" Height="18" Stretch="Uniform" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.6" Margin="0,0,8,0" /><TextBlock Text="Produtos" VerticalAlignment="Center" /><TextBlock Text="Ctrl+3" FontSize="11" Margin="8,0,0,0" VerticalAlignment="Center" /></StackPanel>
                     </Button>
-                    <Button x:Name="BotaoBackup" Click="MostrarBackup_Click" Style="{StaticResource AbaNavegacao}" AutomationProperties.Name="Backup" ToolTip="Ctrl+4" AutomationProperties.AccessKey="Ctrl+4">
-                        <StackPanel Orientation="Horizontal"><Path Data="M4,16 V4 H20 V16 M12,10 V22 M8,18 L12,22 L16,18" Width="18" Height="18" Stretch="Uniform" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.6" Margin="0,0,8,0" /><TextBlock Text="Backup" VerticalAlignment="Center" /><TextBlock Text="Ctrl+4" FontSize="11" Margin="8,0,0,0" VerticalAlignment="Center" /></StackPanel>
+                    <Button x:Name="BotaoBackup" Click="MostrarBackup_Click" Style="{StaticResource AbaNavegacao}" AutomationProperties.Name="Backup" ToolTip="Ctrl+5" AutomationProperties.AccessKey="Ctrl+5">
+                        <StackPanel Orientation="Horizontal"><Path Data="M4,16 V4 H20 V16 M12,10 V22 M8,18 L12,22 L16,18" Width="18" Height="18" Stretch="Uniform" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.6" Margin="0,0,8,0" /><TextBlock Text="Backup" VerticalAlignment="Center" /><TextBlock Text="Ctrl+5" FontSize="11" Margin="8,0,0,0" VerticalAlignment="Center" /></StackPanel>
                     </Button>
-                    <Button x:Name="BotaoConfiguracoes" Click="MostrarConfiguracao_Click" Style="{StaticResource AbaNavegacao}" AutomationProperties.Name="Configurações" ToolTip="Ctrl+5" AutomationProperties.AccessKey="Ctrl+5">
-                        <StackPanel Orientation="Horizontal"><Path Data="M3,6 H21 M3,12 H21 M3,18 H21 M8,3 V9 M16,9 V15 M10,15 V21" Width="18" Height="18" Stretch="Uniform" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.6" Margin="0,0,8,0" /><TextBlock Text="Configurações" VerticalAlignment="Center" /><TextBlock Text="Ctrl+5" FontSize="11" Margin="8,0,0,0" VerticalAlignment="Center" /></StackPanel>
+                    <Button x:Name="BotaoConfiguracoes" Click="MostrarConfiguracao_Click" Style="{StaticResource AbaNavegacao}" AutomationProperties.Name="Configurações" ToolTip="Ctrl+4" AutomationProperties.AccessKey="Ctrl+4">
+                        <StackPanel Orientation="Horizontal"><Path Data="M3,6 H21 M3,12 H21 M3,18 H21 M8,3 V9 M16,9 V15 M10,15 V21" Width="18" Height="18" Stretch="Uniform" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.6" Margin="0,0,8,0" /><TextBlock Text="Configurações" VerticalAlignment="Center" /><TextBlock Text="Ctrl+4" FontSize="11" Margin="8,0,0,0" VerticalAlignment="Center" /></StackPanel>
                     </Button>
                     <Button x:Name="BotaoLicenca" Click="MostrarLicenca_Click" Style="{StaticResource AbaNavegacao}" AutomationProperties.Name="Licença">
                         <StackPanel Orientation="Horizontal"><Path Data="M5,3 H19 V21 H5 Z M8,7 H16 M8,11 H16 M8,15 H13" Width="18" Height="18" Stretch="Uniform" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.6" Margin="0,0,8,0" /><TextBlock Text="Licença" VerticalAlignment="Center" /></StackPanel>
