@@ -25,14 +25,14 @@
     </UserControl.Resources>
     <Grid Background="#F3F5F2">
         <Grid x:Name="Catalogo" Margin="24">
-            <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition/></Grid.RowDefinitions>
-            <DockPanel Margin="0,0,0,20"><Button x:Name="BotaoNovoProduto" Content="Novo produto" Click="NovoProduto_Click" DockPanel.Dock="Right" HorizontalAlignment="Right" Background="#245640" Foreground="White" Padding="20,10"/><StackPanel><TextBlock Text="Produtos" FontSize="26" FontWeight="SemiBold"/><TextBlock Text="Clique em um produto para editar." Foreground="#52675A" Margin="0,6,0,0"/></StackPanel></DockPanel>
-            <Grid Grid.Row="1" Margin="0,0,0,20"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="220"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+            <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition/></Grid.RowDefinitions>
+            <Grid Margin="0,0,0,20"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="180"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                 <StackPanel Margin="0,0,12,0"><TextBlock Text="Buscar produto" Foreground="#52675A" Margin="0,0,0,6"/><TextBox x:Name="CampoBuscaProduto" Text="{Binding TextoBusca, UpdateSourceTrigger=PropertyChanged}" ToolTip="Buscar produto (Ctrl+F)" AutomationProperties.Name="Buscar produto"/></StackPanel>
                 <StackPanel Grid.Column="1" Margin="0,0,12,0"><TextBlock Text="Categoria" Foreground="#52675A" Margin="0,0,0,6"/><ComboBox ItemsSource="{Binding Categorias}" DisplayMemberPath="Nome" SelectedItem="{Binding CategoriaFiltro}" ToolTip="Todas as categorias" AutomationProperties.Name="Filtrar categoria"/></StackPanel>
                 <Button Grid.Column="2" VerticalAlignment="Bottom" Content="Limpar filtro" Command="{Binding LimparFiltroCommand}"/>
+                <Button x:Name="BotaoNovoProduto" Grid.Column="3" VerticalAlignment="Bottom" Margin="12,0,0,0" Content="Novo produto" Click="NovoProduto_Click" Background="#245640" Foreground="White" Padding="20,10"/>
             </Grid>
-            <ListBox Grid.Row="2" ItemsSource="{Binding Produtos}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderBrush="#C5D0C8" Background="White" HorizontalContentAlignment="Stretch">
+            <ListBox Grid.Row="1" ItemsSource="{Binding Produtos}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderBrush="#C5D0C8" Background="White" HorizontalContentAlignment="Stretch">
                 <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem"><Setter Property="Padding" Value="0"/><Setter Property="HorizontalContentAlignment" Value="Stretch"/></Style></ListBox.ItemContainerStyle>
                 <ListBox.ItemTemplate><DataTemplate><Button Click="EditarProduto_Click" Padding="12,8" Background="White" BorderBrush="#DCE3DD" BorderThickness="0,0,0,1" HorizontalContentAlignment="Stretch" AutomationProperties.Name="{Binding Nome}">
                     <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="56"/><ColumnDefinition/><ColumnDefinition Width="130"/><ColumnDefinition Width="110"/><ColumnDefinition Width="80"/></Grid.ColumnDefinitions>
