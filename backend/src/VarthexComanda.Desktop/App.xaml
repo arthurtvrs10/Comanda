@@ -3,33 +3,201 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:VarthexComanda.Desktop">
     <Application.Resources>
+<SolidColorBrush x:Key="Text1F5FBF" Color="#1F5FBF"/>
+<SolidColorBrush x:Key="Text20372C" Color="#20372C"/>
+<SolidColorBrush x:Key="Text23252A" Color="#23252A"/>
+<SolidColorBrush x:Key="Text23262B" Color="#23262B"/>
+<SolidColorBrush x:Key="Text245640" Color="#245640"/>
+<SolidColorBrush x:Key="Text263C32" Color="#263C32"/>
+<SolidColorBrush x:Key="Text326F4C" Color="#326F4C"/>
+<SolidColorBrush x:Key="Text387651" Color="#387651"/>
+<SolidColorBrush x:Key="Text3F8F5F" Color="#3F8F5F"/>
+<SolidColorBrush x:Key="Text46A8E8" Color="#46A8E8"/>
+<SolidColorBrush x:Key="Text486153" Color="#486153"/>
+<SolidColorBrush x:Key="Text4A4A47" Color="#4A4A47"/>
+<SolidColorBrush x:Key="Text4A6A59" Color="#4A6A59"/>
+<SolidColorBrush x:Key="Text4C3A1F" Color="#4C3A1F"/>
+<SolidColorBrush x:Key="Text52675A" Color="#52675A"/>
+<SolidColorBrush x:Key="Text555555" Color="#555555"/>
+<SolidColorBrush x:Key="Text59665E" Color="#59665E"/>
+<SolidColorBrush x:Key="Text596D61" Color="#596D61"/>
+<SolidColorBrush x:Key="Text665133" Color="#665133"/>
+<SolidColorBrush x:Key="Text666666" Color="#666666"/>
+<SolidColorBrush x:Key="Text6B6B67" Color="#6B6B67"/>
+<SolidColorBrush x:Key="Text749D89" Color="#749D89"/>
+<SolidColorBrush x:Key="Text786037" Color="#786037"/>
+<SolidColorBrush x:Key="Text87582D" Color="#87582D"/>
+<SolidColorBrush x:Key="Text87988E" Color="#87988E"/>
+<SolidColorBrush x:Key="Text8A8A86" Color="#8A8A86"/>
+<SolidColorBrush x:Key="Text999999" Color="#999999"/>
+<SolidColorBrush x:Key="TextA12822" Color="#A12822"/>
+<SolidColorBrush x:Key="TextA42B25" Color="#A42B25"/>
+<SolidColorBrush x:Key="TextB22222" Color="#B22222"/>
+<SolidColorBrush x:Key="TextB23B32" Color="#B23B32"/>
+<SolidColorBrush x:Key="TextB71C1C" Color="#B71C1C"/>
+<SolidColorBrush x:Key="TextBDBDBD" Color="#BDBDBD"/>
+<SolidColorBrush x:Key="TextBF701F" Color="#BF701F"/>
+<SolidColorBrush x:Key="TextC4C4C4" Color="#C4C4C4"/>
+<SolidColorBrush x:Key="TextC4CCC6" Color="#C4CCC6"/>
+<SolidColorBrush x:Key="TextC5D0C8" Color="#C5D0C8"/>
+<SolidColorBrush x:Key="TextCCDCD1" Color="#CCDCD1"/>
+<SolidColorBrush x:Key="TextCCE3D6" Color="#CCE3D6"/>
+<SolidColorBrush x:Key="TextD5DED7" Color="#D5DED7"/>
+<SolidColorBrush x:Key="TextD6DED8" Color="#D6DED8"/>
+<SolidColorBrush x:Key="TextD6EADF" Color="#D6EADF"/>
+<SolidColorBrush x:Key="TextD9822B" Color="#D9822B"/>
+<SolidColorBrush x:Key="TextDCE3DD" Color="#DCE3DD"/>
+<SolidColorBrush x:Key="TextE1E5E2" Color="#E1E5E2"/>
+<SolidColorBrush x:Key="TextE1E8E4" Color="#E1E8E4"/>
+<SolidColorBrush x:Key="TextEAE2D1" Color="#EAE2D1"/>
+<SolidColorBrush x:Key="TextEDEDEA" Color="#EDEDEA"/>
+<SolidColorBrush x:Key="TextEDF2EE" Color="#EDF2EE"/>
+<SolidColorBrush x:Key="TextF2F2F0" Color="#F2F2F0"/>
+<SolidColorBrush x:Key="TextF3F5F2" Color="#F3F5F2"/>
+<SolidColorBrush x:Key="TextFBE3C2" Color="#FBE3C2"/>
+<SolidColorBrush x:Key="TextFFF5F3" Color="#FFF5F3"/>
+<SolidColorBrush x:Key="TextFFFFFF" Color="#FFFFFF"/>
+<SolidColorBrush x:Key="Background1F5FBF" Color="#1F5FBF"/>
+<SolidColorBrush x:Key="Background20372C" Color="#20372C"/>
+<SolidColorBrush x:Key="Background23252A" Color="#23252A"/>
+<SolidColorBrush x:Key="Background23262B" Color="#23262B"/>
+<SolidColorBrush x:Key="Background245640" Color="#245640"/>
+<SolidColorBrush x:Key="Background263C32" Color="#263C32"/>
+<SolidColorBrush x:Key="Background326F4C" Color="#326F4C"/>
+<SolidColorBrush x:Key="Background387651" Color="#387651"/>
+<SolidColorBrush x:Key="Background3F8F5F" Color="#3F8F5F"/>
+<SolidColorBrush x:Key="Background46A8E8" Color="#46A8E8"/>
+<SolidColorBrush x:Key="Background486153" Color="#486153"/>
+<SolidColorBrush x:Key="Background4A4A47" Color="#4A4A47"/>
+<SolidColorBrush x:Key="Background4A6A59" Color="#4A6A59"/>
+<SolidColorBrush x:Key="Background4C3A1F" Color="#4C3A1F"/>
+<SolidColorBrush x:Key="Background52675A" Color="#52675A"/>
+<SolidColorBrush x:Key="Background555555" Color="#555555"/>
+<SolidColorBrush x:Key="Background59665E" Color="#59665E"/>
+<SolidColorBrush x:Key="Background596D61" Color="#596D61"/>
+<SolidColorBrush x:Key="Background665133" Color="#665133"/>
+<SolidColorBrush x:Key="Background666666" Color="#666666"/>
+<SolidColorBrush x:Key="Background6B6B67" Color="#6B6B67"/>
+<SolidColorBrush x:Key="Background749D89" Color="#749D89"/>
+<SolidColorBrush x:Key="Background786037" Color="#786037"/>
+<SolidColorBrush x:Key="Background87582D" Color="#87582D"/>
+<SolidColorBrush x:Key="Background87988E" Color="#87988E"/>
+<SolidColorBrush x:Key="Background8A8A86" Color="#8A8A86"/>
+<SolidColorBrush x:Key="Background999999" Color="#999999"/>
+<SolidColorBrush x:Key="BackgroundA12822" Color="#A12822"/>
+<SolidColorBrush x:Key="BackgroundA42B25" Color="#A42B25"/>
+<SolidColorBrush x:Key="BackgroundB22222" Color="#B22222"/>
+<SolidColorBrush x:Key="BackgroundB23B32" Color="#B23B32"/>
+<SolidColorBrush x:Key="BackgroundB71C1C" Color="#B71C1C"/>
+<SolidColorBrush x:Key="BackgroundBDBDBD" Color="#BDBDBD"/>
+<SolidColorBrush x:Key="BackgroundBF701F" Color="#BF701F"/>
+<SolidColorBrush x:Key="BackgroundC4C4C4" Color="#C4C4C4"/>
+<SolidColorBrush x:Key="BackgroundC4CCC6" Color="#C4CCC6"/>
+<SolidColorBrush x:Key="BackgroundC5D0C8" Color="#C5D0C8"/>
+<SolidColorBrush x:Key="BackgroundCCDCD1" Color="#CCDCD1"/>
+<SolidColorBrush x:Key="BackgroundCCE3D6" Color="#CCE3D6"/>
+<SolidColorBrush x:Key="BackgroundD5DED7" Color="#D5DED7"/>
+<SolidColorBrush x:Key="BackgroundD6DED8" Color="#D6DED8"/>
+<SolidColorBrush x:Key="BackgroundD6EADF" Color="#D6EADF"/>
+<SolidColorBrush x:Key="BackgroundD9822B" Color="#D9822B"/>
+<SolidColorBrush x:Key="BackgroundDCE3DD" Color="#DCE3DD"/>
+<SolidColorBrush x:Key="BackgroundE1E5E2" Color="#E1E5E2"/>
+<SolidColorBrush x:Key="BackgroundE1E8E4" Color="#E1E8E4"/>
+<SolidColorBrush x:Key="BackgroundEAE2D1" Color="#EAE2D1"/>
+<SolidColorBrush x:Key="BackgroundEDEDEA" Color="#EDEDEA"/>
+<SolidColorBrush x:Key="BackgroundEDF2EE" Color="#EDF2EE"/>
+<SolidColorBrush x:Key="BackgroundF2F2F0" Color="#F2F2F0"/>
+<SolidColorBrush x:Key="BackgroundF3F5F2" Color="#F3F5F2"/>
+<SolidColorBrush x:Key="BackgroundFBE3C2" Color="#FBE3C2"/>
+<SolidColorBrush x:Key="BackgroundFFF5F3" Color="#FFF5F3"/>
+<SolidColorBrush x:Key="BackgroundFFFFFF" Color="#FFFFFF"/>
+<SolidColorBrush x:Key="Color1F5FBF" Color="#1F5FBF"/>
+<SolidColorBrush x:Key="Color20372C" Color="#20372C"/>
+<SolidColorBrush x:Key="Color23252A" Color="#23252A"/>
+<SolidColorBrush x:Key="Color23262B" Color="#23262B"/>
+<SolidColorBrush x:Key="Color245640" Color="#245640"/>
+<SolidColorBrush x:Key="Color263C32" Color="#263C32"/>
+<SolidColorBrush x:Key="Color326F4C" Color="#326F4C"/>
+<SolidColorBrush x:Key="Color387651" Color="#387651"/>
+<SolidColorBrush x:Key="Color3F8F5F" Color="#3F8F5F"/>
+<SolidColorBrush x:Key="Color46A8E8" Color="#46A8E8"/>
+<SolidColorBrush x:Key="Color486153" Color="#486153"/>
+<SolidColorBrush x:Key="Color4A4A47" Color="#4A4A47"/>
+<SolidColorBrush x:Key="Color4A6A59" Color="#4A6A59"/>
+<SolidColorBrush x:Key="Color4C3A1F" Color="#4C3A1F"/>
+<SolidColorBrush x:Key="Color52675A" Color="#52675A"/>
+<SolidColorBrush x:Key="Color555555" Color="#555555"/>
+<SolidColorBrush x:Key="Color59665E" Color="#59665E"/>
+<SolidColorBrush x:Key="Color596D61" Color="#596D61"/>
+<SolidColorBrush x:Key="Color665133" Color="#665133"/>
+<SolidColorBrush x:Key="Color666666" Color="#666666"/>
+<SolidColorBrush x:Key="Color6B6B67" Color="#6B6B67"/>
+<SolidColorBrush x:Key="Color749D89" Color="#749D89"/>
+<SolidColorBrush x:Key="Color786037" Color="#786037"/>
+<SolidColorBrush x:Key="Color87582D" Color="#87582D"/>
+<SolidColorBrush x:Key="Color87988E" Color="#87988E"/>
+<SolidColorBrush x:Key="Color8A8A86" Color="#8A8A86"/>
+<SolidColorBrush x:Key="Color999999" Color="#999999"/>
+<SolidColorBrush x:Key="ColorA12822" Color="#A12822"/>
+<SolidColorBrush x:Key="ColorA42B25" Color="#A42B25"/>
+<SolidColorBrush x:Key="ColorB22222" Color="#B22222"/>
+<SolidColorBrush x:Key="ColorB23B32" Color="#B23B32"/>
+<SolidColorBrush x:Key="ColorB71C1C" Color="#B71C1C"/>
+<SolidColorBrush x:Key="ColorBDBDBD" Color="#BDBDBD"/>
+<SolidColorBrush x:Key="ColorBF701F" Color="#BF701F"/>
+<SolidColorBrush x:Key="ColorC4C4C4" Color="#C4C4C4"/>
+<SolidColorBrush x:Key="ColorC4CCC6" Color="#C4CCC6"/>
+<SolidColorBrush x:Key="ColorC5D0C8" Color="#C5D0C8"/>
+<SolidColorBrush x:Key="ColorCCDCD1" Color="#CCDCD1"/>
+<SolidColorBrush x:Key="ColorCCE3D6" Color="#CCE3D6"/>
+<SolidColorBrush x:Key="ColorD5DED7" Color="#D5DED7"/>
+<SolidColorBrush x:Key="ColorD6DED8" Color="#D6DED8"/>
+<SolidColorBrush x:Key="ColorD6EADF" Color="#D6EADF"/>
+<SolidColorBrush x:Key="ColorD9822B" Color="#D9822B"/>
+<SolidColorBrush x:Key="ColorDCE3DD" Color="#DCE3DD"/>
+<SolidColorBrush x:Key="ColorE1E5E2" Color="#E1E5E2"/>
+<SolidColorBrush x:Key="ColorE1E8E4" Color="#E1E8E4"/>
+<SolidColorBrush x:Key="ColorEAE2D1" Color="#EAE2D1"/>
+<SolidColorBrush x:Key="ColorEDEDEA" Color="#EDEDEA"/>
+<SolidColorBrush x:Key="ColorEDF2EE" Color="#EDF2EE"/>
+<SolidColorBrush x:Key="ColorF2F2F0" Color="#F2F2F0"/>
+<SolidColorBrush x:Key="ColorF3F5F2" Color="#F3F5F2"/>
+<SolidColorBrush x:Key="ColorFBE3C2" Color="#FBE3C2"/>
+<SolidColorBrush x:Key="ColorFFF5F3" Color="#FFF5F3"/>
+<SolidColorBrush x:Key="ColorFFFFFF" Color="#FFFFFF"/>
+<SolidColorBrush x:Key="Surface" Color="#FFFFFF"/><SolidColorBrush x:Key="Canvas" Color="#F3F5F2"/><SolidColorBrush x:Key="Ink" Color="#263C32"/><SolidColorBrush x:Key="Accent" Color="#245640"/><SolidColorBrush x:Key="Line" Color="#87988E"/>
+
         <!-- Foco visivel de alto contraste (RNF18): contorno azul solido de 3 px, sem pontilhado. -->
         <Style x:Key="FocoVisivel" TargetType="Control">
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Control">
-                        <Rectangle Stroke="#1F5FBF" StrokeThickness="3" Margin="-3"
+                        <Rectangle Stroke="{DynamicResource Color1F5FBF}" StrokeThickness="3" Margin="-3"
                                    SnapsToDevicePixels="True" IsHitTestVisible="False" />
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
         <!-- Tamanhos para uso por toque (campos e botoes >= 46 px). Valores locais nas telas prevalecem. -->
-        <Style TargetType="TextBox">
+        <Style TargetType="TextBox"><Setter Property="Foreground" Value="{DynamicResource Ink}"/><Setter Property="Background" Value="{DynamicResource Surface}"/><Setter Property="BorderBrush" Value="{DynamicResource Line}"/>
             <Setter Property="FocusVisualStyle" Value="{StaticResource FocoVisivel}" />
             <Setter Property="MinHeight" Value="46" />
             <Setter Property="FontSize" Value="16" />
             <Setter Property="Padding" Value="8,6" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
         </Style>
-        <Style TargetType="ComboBox">
+        <Style TargetType="ComboBox"><Setter Property="Foreground" Value="{DynamicResource Ink}"/><Setter Property="Background" Value="{DynamicResource Surface}"/><Setter Property="BorderBrush" Value="{DynamicResource Line}"/>
             <Setter Property="FocusVisualStyle" Value="{StaticResource FocoVisivel}" />
             <Setter Property="MinHeight" Value="46" />
             <Setter Property="FontSize" Value="16" />
             <Setter Property="Padding" Value="8,6" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
-        </Style>
-        <Style TargetType="DatePicker">
+        <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ComboBox"><Grid>
+<ToggleButton Focusable="False" IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" Foreground="{TemplateBinding Foreground}"><ToggleButton.Template><ControlTemplate TargetType="ToggleButton"><Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1"><Path Data="M0,0 L4,4 L8,0" Stroke="{TemplateBinding Foreground}" StrokeThickness="1.5" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,12,0"/></Border></ControlTemplate></ToggleButton.Template></ToggleButton>
+<ContentPresenter Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" Margin="10,4,30,4" VerticalAlignment="Center" IsHitTestVisible="False"/>
+<Popup x:Name="PART_Popup" IsOpen="{TemplateBinding IsDropDownOpen}" Placement="Bottom" AllowsTransparency="True" Focusable="False"><Border Background="{DynamicResource Surface}" BorderBrush="{DynamicResource Line}" BorderThickness="1" MinWidth="{Binding ActualWidth,RelativeSource={RelativeSource TemplatedParent}}" MaxHeight="300"><ScrollViewer><ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained"/></ScrollViewer></Border></Popup>
+</Grid><ControlTemplate.Triggers><Trigger Property="IsEnabled" Value="False"><Setter Property="Opacity" Value="0.5"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style>
+        <Style TargetType="DatePicker"><Setter Property="Foreground" Value="{DynamicResource Ink}"/><Setter Property="Background" Value="{DynamicResource Surface}"/><Setter Property="BorderBrush" Value="{DynamicResource Line}"/>
             <Setter Property="FocusVisualStyle" Value="{StaticResource FocoVisivel}" />
             <Setter Property="MinHeight" Value="46" />
             <Setter Property="FontSize" Value="16" />
@@ -47,7 +215,7 @@
             <Setter Property="Padding" Value="6,0,0,0" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
         </Style>
-        <Style TargetType="Button">
+        <Style TargetType="Button"><Setter Property="Foreground" Value="{DynamicResource Ink}"/><Setter Property="Background" Value="{DynamicResource Surface}"/><Setter Property="BorderBrush" Value="{DynamicResource Line}"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -55,7 +223,7 @@
                             <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" RecognizesAccessKey="True" />
                         </Border>
                         <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="BorderBrush" Value="#1F5FBF" /></Trigger>
+                            <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="BorderBrush" Value="{DynamicResource Color1F5FBF}" /></Trigger>
                             <Trigger Property="IsPressed" Value="True"><Setter TargetName="Surface" Property="Opacity" Value="0.75" /></Trigger>
                             <Trigger Property="IsEnabled" Value="False"><Setter TargetName="Surface" Property="Opacity" Value="0.45" /></Trigger>
                         </ControlTemplate.Triggers>
@@ -68,5 +236,17 @@
             <Setter Property="FontSize" Value="15" />
             <Setter Property="Padding" Value="16,8" />
         </Style>
-    </Application.Resources>
+    <Style TargetType="Window"><Setter Property="Foreground" Value="{DynamicResource Ink}"/><Setter Property="Background" Value="{DynamicResource Surface}"/></Style>
+<Style TargetType="UserControl"><Setter Property="Foreground" Value="{DynamicResource Ink}"/><Setter Property="Background" Value="{DynamicResource Surface}"/></Style>
+<Style TargetType="ListBox"><Setter Property="Foreground" Value="{DynamicResource Ink}"/><Setter Property="Background" Value="{DynamicResource Surface}"/></Style>
+<Style TargetType="ListView"><Setter Property="Foreground" Value="{DynamicResource Ink}"/><Setter Property="Background" Value="{DynamicResource Surface}"/></Style>
+<Style TargetType="ListBoxItem"><Setter Property="Foreground" Value="{DynamicResource Ink}"/><Setter Property="Background" Value="{DynamicResource Surface}"/></Style>
+<Style TargetType="ListViewItem"><Setter Property="Foreground" Value="{DynamicResource Ink}"/><Setter Property="Background" Value="{DynamicResource Surface}"/></Style>
+<Style TargetType="MenuItem"><Setter Property="Foreground" Value="{DynamicResource Ink}"/><Setter Property="Background" Value="{DynamicResource Surface}"/></Style>
+<Style TargetType="ContextMenu"><Setter Property="Foreground" Value="{DynamicResource Ink}"/><Setter Property="Background" Value="{DynamicResource Surface}"/></Style>
+<Style TargetType="ToolTip"><Setter Property="Foreground" Value="{DynamicResource Ink}"/><Setter Property="Background" Value="{DynamicResource Surface}"/></Style>
+<Style TargetType="PasswordBox"><Setter Property="Foreground" Value="{DynamicResource Ink}"/><Setter Property="Background" Value="{DynamicResource Surface}"/></Style>
+<Style TargetType="GridViewColumnHeader"><Setter Property="Background" Value="{DynamicResource Surface}"/><Setter Property="Foreground" Value="{DynamicResource Ink}"/><Setter Property="BorderBrush" Value="{DynamicResource Line}"/><Setter Property="Padding" Value="8"/></Style>
+<Style TargetType="ComboBoxItem"><Setter Property="Foreground" Value="{DynamicResource Ink}"/><Setter Property="Background" Value="{DynamicResource Surface}"/><Setter Property="MinHeight" Value="36"/><Setter Property="Padding" Value="8,4"/></Style>
+</Application.Resources>
 </Application>

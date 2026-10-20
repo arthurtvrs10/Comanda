@@ -41,6 +41,7 @@ public partial class App : System.Windows.Application
     {
         base.OnStartup(e);
         ShutdownMode = ShutdownMode.OnExplicitShutdown;
+        TemaInterface.Inicializar(System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "VarthexComanda"));
 
         _guard = new SingleInstanceGuard("VarthexComanda.SingleInstance");
         if (!_guard.TryAcquire())
