@@ -45,4 +45,18 @@ public class EfConfiguracaoRepository : IConfiguracaoRepository
 
         contexto.SaveChanges();
     }
+
+    public void DefinirValores(IReadOnlyDictionary<string,string> valores, DateTime atualizadoEm)
+    {
+        using var contexto=_fabricaContexto.CreateDbContext();
+        using var transacao=contexto.Database.BeginTransaction();
+        foreach(var (chave,valor) in valores)
+        {
+            var existente=contexto.Configuracoes.SingleOrDefault(c=>c.Chave==chave);
+            if(existente is null) contexto.Configuracoes.Add(new VarthexComanda.Domain.Configuracao { Chave=chave,Valor=valor,AtualizadoEm=atualizadoEm });
+            else { existente.Valor=valor;existente.AtualizadoEm=atualizadoEm; }
+        }
+        contexto.SaveChanges();
+        transacao.Commit();
+    }
 }
