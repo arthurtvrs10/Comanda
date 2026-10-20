@@ -2,7 +2,21 @@
 
 Sistema para pequenos estabelecimentos de alimentação. Registra consumo em comandas, calcula o total e mantém histórico local. Funciona em um computador Windows, sem internet.
 
-**Situação:** produto atual disponível; evolução para pedidos, preparo e rede local em planejamento. Esta revisão altera somente documentação.
+**Situação:** produto atual disponível; evolução local descrita abaixo. Pedido independente, preparo e rede local permanecem em planejamento.
+
+## Reconstrução funcional — evolução local de 19/10/2026
+
+O código em desenvolvimento amplia o fluxo existente de produtos → comanda → consumo → fechamento:
+
+- Mesa opcional de 1 a 999, com indicação de balcão quando não informada. Para definir ou alterar, abra a comanda e use o botão de mesa abaixo do cabeçalho.
+- Comandas da mesma mesa continuam independentes e podem ser encerradas separadamente.
+- Observação de até 300 caracteres para o próximo produto adicionado. O campo é limpo após a gravação; instruções diferentes mantêm linhas separadas.
+- Mesa e instruções aparecem na consulta da cozinha; observações também aparecem no histórico.
+- Atualização do banco por nova migração, aproveitando o backup preventivo existente.
+
+Essas alterações ainda não fazem parte dos instaladores publicados abaixo. Não houve importação do banco ou do código do Consumer. Pedido numerado independente e estados de preparo continuam planejados.
+
+[Escopo e validação desta entrega](specs/2026-10-19-reconstrucao-funcional.md).
 
 ## Recursos atuais
 
@@ -160,3 +174,9 @@ Testes automatizados não substituem validação no estabelecimento. Instalaçã
 ## Licença do código
 
 Nenhuma licença de uso do código foi definida. A licença comercial de ativação do aplicativo é um assunto separado.
+
+## Navegação Ribbon em desenvolvimento
+
+A compilação local inclui categorias contextuais, pesquisa de funcionalidades/produtos e modos claro/escuro persistidos. Selecionar uma categoria mantém a tela atual; clicar em um comando abre o módulo existente. Grupos recolhem em menu em janelas menores. Os instaladores publicados ainda não incluem esta revisão.
+
+[Mapeamento, uso e validação](specs/2026-10-20-ribbon-temas.md).

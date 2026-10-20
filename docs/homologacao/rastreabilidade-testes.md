@@ -28,7 +28,7 @@ no computador da loja) está descrito em `docs/homologacao/`.
 | CT14 | Criar backup | Cópia abre, passa na integridade e possui checksum | automatizado | 3 | Serviço real de backup sobre SQLite real. |
 | CT15 | Rejeitar backup corrompido | Base ativa permanece inalterada | automatizado | 7 | Backup real com bytes corrompidos: caso de uso recusa sem nenhuma escrita na base ativa (hash idêntico). |
 | CT16 | Atualizar aplicação | Migrações completam e totais anteriores permanecem | automatizado | 2 | Banco criado só até a `InitialCreate`, com dados por SQL, migrado até a última com backup preventivo; totais, vendas e comanda aberta preservados. |
-| CT17 | Navegar por teclado | É possível localizar, adicionar e iniciar encerramento | parcial | 41 | Parcial: ViewModel e XAML (atalhos, foco, Enter/Esc). A prova com teclado físico real é ensaio manual. |
+| CT17 | Navegar por teclado | É possível localizar, adicionar e iniciar encerramento | parcial | 43 | Parcial: ViewModel e XAML (atalhos, foco, Enter/Esc). A prova com teclado físico real é ensaio manual. |
 | CT18 | Resumo diário | Quatro vendas totalizando R$ 120,00 geram ticket médio R$ 30,00 | automatizado | 2 | ViewModel do histórico sobre SQLite real, com os valores literais. |
 | CT19 | Impedir segunda instância | Com o aplicativo aberto, nova execução exibe aviso e não abre outra conexão com a base | parcial | 1 | Parcial: teste unitário da trava (mutex). A prova com o segundo executável (aviso na tela e nenhuma segunda conexão) é ensaio. |
 | CT20 | Recuperar comandas abertas | Após término forçado, a reabertura mostra os mesmos itens e totais sem criar venda | automatizado | 4 | Nível de repositório: reabre o SQLite real. O término forçado do processo do app é ensaio. |
@@ -152,7 +152,9 @@ no computador da loja) está descrito em `docs/homologacao/`.
 - `AtendimentoTecladoXamlTests.Enter_NaBusca_AdicionaOPrimeiroEMantemOTexto` (Desktop.Tests)
 - `AtendimentoTecladoXamlTests.Esc_ComTextoNaBusca_LimpaSemSair_ESemTextoVolta` (Desktop.Tests)
 - `AtendimentoTecladoXamlTests.Esc_ForaDaBusca_VoltaMesmoComTextoNaBusca` (Desktop.Tests)
+- `AtendimentoTecladoXamlTests.GradeAceitaNumerosBackspaceEEnterSemSelecionarCampo` (Desktop.Tests)
 - `AtendimentoTecladoXamlTests.ItemSelecionadoParaCorConverter_DestacaSoALinhaSelecionada` (Desktop.Tests)
+- `AtendimentoTecladoXamlTests.NumeroDigitadoDestacaSomenteAComandaCorrespondente` (Desktop.Tests)
 - `AtendimentoTecladoXamlTests.SomenteDigitos_AceitaApenasDigitosAscii` (Desktop.Tests)
 - `AtendimentoTecladoXamlTests.Teclas_ComFocoNaBusca_NaoAgemSobreOsItens` (Desktop.Tests)
 - `AtendimentoTecladoXamlTests.Teclas_ComFocoNoMenu_NaoAgemSobreOsItens` (Desktop.Tests)

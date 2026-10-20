@@ -2,3 +2,7 @@
 artifacts/
 **/*privada*.pem
 **/licenca-*.txt
+
+# Configurações locais dos editores
+.idea/
+.vs/

@@ -282,3 +282,9 @@ Pendente (a homologação humana **ainda não aconteceu**):
 ## 1.0 - 2026-09-13
 
 - definição inicial do sistema local de comandas.
+
+## Interface - 2026-10-20 - Configurações centralizadas
+
+- Modal de configurações com sete seções, preferências persistidas, origem de clientes e filtros de cozinha.
+- Diagnóstico real, fundo personalizável e comprovante não fiscal configurável.
+- 638 testes aprovados; limites de impressão automática e etiquetas por quilo registrados em specs/2026-10-20-configuracoes-sistema.md.
