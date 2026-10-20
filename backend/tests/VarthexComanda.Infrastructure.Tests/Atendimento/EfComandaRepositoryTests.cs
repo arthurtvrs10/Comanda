@@ -13,6 +13,107 @@ namespace VarthexComanda.Infrastructure.Tests.Atendimento;
 
 public class EfComandaRepositoryTests : IDisposable
 {
+    [Fact]
+    public void OrigemClientePersisteENaoPodeSerAlteradaAposEncerramento()
+    {
+        var repo=new EfComandaRepository(_fabrica);var(produto,id)=PrepararComandaEProduto(repo);
+        repo.DefinirOrigemCliente(id,"Instagram");repo.AdicionarItem(id,produto,1,DateTime.UtcNow);
+        repo.EncerrarComanda(id,DateTime.UtcNow);
+        Assert.Equal("Instagram",new EfComandaRepository(_fabrica).BuscarComItens(id)!.Comanda.OrigemCliente);
+        Assert.Throws<VarthexComanda.Application.Atendimento.ComandaNaoAbertaException>(()=>repo.DefinirOrigemCliente(id,"Google"));
+    }
+    [Fact]
+    public void JuntarComandasTransfereItensPreservaPrecosEObservacoesELiberaOrigem()
+    {
+        var repo=new EfComandaRepository(_fabrica);
+        var (produto, origemId)=PrepararComandaEProduto(repo);
+        var destino=repo.AbrirComanda(11,DateTime.UtcNow);
+        repo.AdicionarItem(origemId,produto,2,DateTime.UtcNow,"Sem gelo");
+        repo.AdicionarItem(destino.Id,produto,1,DateTime.UtcNow,"Com gelo");
+        var totalAntes=repo.ListarAbertas().Sum(c=>c.TotalCentavos);
+        repo.JuntarComandas(origemId,destino.Id,DateTime.UtcNow);
+        var salvo=new EfComandaRepository(_fabrica).BuscarComItens(destino.Id)!;
+        Assert.Equal(totalAntes,salvo.Comanda.TotalCentavos);
+        Assert.Equal(1500,salvo.Comanda.TotalCentavos);
+        Assert.Equal(2,salvo.Itens.Count);
+        Assert.Contains(salvo.Itens,i=>i.Observacao=="Sem gelo" && i.Quantidade==2 && i.PrecoUnitarioCentavos==500);
+        Assert.DoesNotContain(repo.ListarAbertas(),c=>c.Id==origemId);
+        var origem=repo.BuscarComItens(origemId)!;
+        Assert.Empty(origem.Itens);
+        Assert.Equal(0,origem.Comanda.TotalCentavos);
+        Assert.Contains("transferidos",origem.Comanda.Observacao);
+        Assert.Throws<VarthexComanda.Application.Atendimento.ComandaNaoAbertaException>(()=>repo.JuntarComandas(origemId,destino.Id,DateTime.UtcNow));
+        Assert.Equal(1500,repo.BuscarComItens(destino.Id)!.Comanda.TotalCentavos);
+        Assert.Equal(10,repo.AbrirComanda(10,DateTime.UtcNow).Numero);
+        using var contexto=_fabrica.CreateDbContext();
+        Assert.Empty(contexto.Vendas);
+    }
+
+    [Fact]
+    public void JuntarComDestinoFechadoOuIgualNaoAlteraOrigem()
+    {
+        var repo=new EfComandaRepository(_fabrica);
+        var (produto, origemId)=PrepararComandaEProduto(repo);
+        repo.AdicionarItem(origemId,produto,2,DateTime.UtcNow);
+        Assert.Throws<InvalidOperationException>(()=>repo.JuntarComandas(origemId,origemId,DateTime.UtcNow));
+        var destino=repo.AbrirComanda(11,DateTime.UtcNow);
+        repo.CancelarComanda(destino.Id,DateTime.UtcNow);
+        Assert.Throws<VarthexComanda.Application.Atendimento.ComandaNaoAbertaException>(()=>repo.JuntarComandas(origemId,destino.Id,DateTime.UtcNow));
+        Assert.Equal(1000,repo.BuscarComItens(origemId)!.Comanda.TotalCentavos);
+        Assert.Single(repo.BuscarComItens(origemId)!.Itens);
+    }
+    [Fact]
+    public void MesaPersistePodeSerCompartilhadaELiberadaSemAlterarConsumo()
+    {
+        var repo = new EfComandaRepository(_fabrica);
+        var (produto, id) = PrepararComandaEProduto(repo);
+        repo.AdicionarItem(id, produto, 2, DateTime.UtcNow);
+        repo.DefinirMesa(id, 7);
+        var segunda = repo.AbrirComanda(11, DateTime.UtcNow);
+        repo.DefinirMesa(segunda.Id, 7);
+        var persistida = new EfComandaRepository(_fabrica).BuscarComItens(id)!;
+        Assert.Equal(7, persistida.Comanda.NumeroMesa);
+        Assert.Equal(1000, persistida.Comanda.TotalCentavos);
+        Assert.Equal(2, persistida.Itens.Single().Quantidade);
+        repo.DefinirMesa(id, null);
+        Assert.Null(repo.BuscarComItens(id)!.Comanda.NumeroMesa);
+        Assert.Equal(7, repo.BuscarComItens(segunda.Id)!.Comanda.NumeroMesa);
+    }
+
+    [Fact]
+    public void MesaInvalidaOuComandaEncerradaNaoPodeSerAlterada()
+    {
+        var repo = new EfComandaRepository(_fabrica);
+        var (produto, id) = PrepararComandaEProduto(repo);
+        Assert.Throws<ArgumentOutOfRangeException>(() => repo.DefinirMesa(id, 0));
+        Assert.Throws<ArgumentOutOfRangeException>(() => repo.DefinirMesa(id, 1000));
+        repo.DefinirMesa(id, 5);
+        repo.AdicionarItem(id, produto, 1, DateTime.UtcNow);
+        repo.EncerrarComanda(id, DateTime.UtcNow);
+        Assert.Throws<VarthexComanda.Application.Atendimento.ComandaNaoAbertaException>(() => repo.DefinirMesa(id, 6));
+        Assert.Equal(5, repo.BuscarComItens(id)!.Comanda.NumeroMesa);
+    }
+
+    [Fact]
+    public void ObservacoesDiferentesSeparamItensEPersistemAposEncerramento()
+    {
+        var repo = new EfComandaRepository(_fabrica);
+        var (produto, id) = PrepararComandaEProduto(repo);
+        repo.AdicionarItem(id, produto, 1, DateTime.UtcNow, "  Sem gelo  ");
+        repo.AdicionarItem(id, produto, 2, DateTime.UtcNow, "Sem gelo");
+        repo.AdicionarItem(id, produto, 1, DateTime.UtcNow, "Com gelo");
+        repo.AdicionarItem(id, produto, 1, DateTime.UtcNow);
+        var detalhe = repo.BuscarComItens(id)!;
+        Assert.Equal(3, detalhe.Itens.Count);
+        Assert.Equal(3, detalhe.Itens.Single(i => i.Observacao == "Sem gelo").Quantidade);
+        Assert.Equal(2500, detalhe.Comanda.TotalCentavos);
+        var venda = repo.EncerrarComanda(id, DateTime.UtcNow);
+        Assert.Equal(2500, venda.TotalCentavos);
+        var historico = new EfComandaRepository(_fabrica).BuscarComItens(id)!;
+        Assert.Equal(3, historico.Itens.Count);
+        Assert.Contains(historico.Itens, i => i.Observacao == "Com gelo");
+    }
+
     private readonly string _dbPath;
     private readonly ServiceProvider _provedor;
     private readonly IDbContextFactory<VarthexComandaDbContext> _fabrica;

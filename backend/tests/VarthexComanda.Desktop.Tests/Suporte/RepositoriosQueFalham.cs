@@ -16,6 +16,9 @@ internal sealed class FalhaTecnicaSimuladaException : Exception
 internal sealed class ComandaRepositoryQueFalha : IComandaRepository
 {
     private readonly IComandaRepository _interno;
+    public Comanda DefinirOrigemCliente(int id,string? origem){Verificar();return _interno.DefinirOrigemCliente(id,origem);}
+    public ComandaComItens JuntarComandas(int origemId, int destinoId, DateTime agora) { Verificar(); return _interno.JuntarComandas(origemId, destinoId, agora); }
+    public Comanda DefinirMesa(int id, int? numeroMesa) { Verificar(); return _interno.DefinirMesa(id, numeroMesa); }
     public Comanda MoverPara(int id, int numero) { Verificar(); return _interno.MoverPara(id, numero); }
     public Comanda DefinirQuantidadePessoas(int id, int quantidade) { Verificar(); return _interno.DefinirQuantidadePessoas(id, quantidade); }
     public Comanda DefinirPrioridade(int comandaId, PrioridadeComanda prioridade) { Verificar(); return _interno.DefinirPrioridade(comandaId, prioridade); }
@@ -43,10 +46,10 @@ internal sealed class ComandaRepositoryQueFalha : IComandaRepository
         return _interno.AbrirComanda(numero, agora);
     }
 
-    public ComandaComItens AdicionarItem(int comandaId, Produto produto, int quantidade, DateTime agora)
+    public ComandaComItens AdicionarItem(int comandaId, Produto produto, int quantidade, DateTime agora, string? observacao = null)
     {
         Verificar();
-        return _interno.AdicionarItem(comandaId, produto, quantidade, agora);
+        return _interno.AdicionarItem(comandaId, produto, quantidade, agora, observacao);
     }
 
     public ComandaComItens AlterarQuantidade(int itemId, int quantidade, DateTime agora)

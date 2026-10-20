@@ -9,6 +9,36 @@ public class FakeComandaRepository : IComandaRepository
     private readonly List<ItemComanda> _itens = new();
     private int _proximoComandaId = 1;
     private int _proximoItemId = 1;
+    public Comanda DefinirOrigemCliente(int id,string? origem)
+    {
+        var comanda=_comandas.Single(c=>c.Id==id);
+        if(comanda.Status!=StatusComanda.Aberta)throw new ComandaNaoAbertaException();
+        comanda.OrigemCliente=origem;return comanda;
+    }
+
+    public ComandaComItens JuntarComandas(int origemId, int destinoId, DateTime agora)
+    {
+        if (origemId == destinoId) throw new InvalidOperationException("Escolha duas comandas diferentes.");
+        var origem = _comandas.Single(c => c.Id == origemId);
+        var destino = _comandas.Single(c => c.Id == destinoId);
+        if (origem.Status != StatusComanda.Aberta || destino.Status != StatusComanda.Aberta) throw new ComandaNaoAbertaException();
+        var itens = _itens.Where(i => i.ComandaId == origemId).ToList();
+        if (itens.Count == 0) throw new InvalidOperationException("A comanda de origem não tem itens para transferir.");
+        foreach (var item in itens) { item.ComandaId = destinoId; item.AtualizadoEm = agora; }
+        destino.TotalCentavos = _itens.Where(i => i.ComandaId == destinoId).Sum(i => i.SubtotalCentavos);
+        origem.TotalCentavos = 0;
+        origem.Status = StatusComanda.Cancelada;
+        origem.FechadaEm = agora;
+        return BuscarComItens(destinoId)!;
+    }
+
+    public Comanda DefinirMesa(int comandaId, int? numeroMesa)
+    {
+        var comanda = _comandas.Single(c => c.Id == comandaId);
+        if (comanda.Status != StatusComanda.Aberta) throw new ComandaNaoAbertaException();
+        comanda.NumeroMesa = numeroMesa;
+        return comanda;
+    }
 
     public Comanda MoverPara(int comandaId, int numero)
     {
@@ -74,7 +104,7 @@ public class FakeComandaRepository : IComandaRepository
         return comanda;
     }
 
-    public ComandaComItens AdicionarItem(int comandaId, Produto produto, int quantidade, DateTime agora)
+    public ComandaComItens AdicionarItem(int comandaId, Produto produto, int quantidade, DateTime agora, string? observacao = null)
     {
         var comanda = _comandas.FirstOrDefault(c => c.Id == comandaId)
             ?? throw new InvalidOperationException("Comanda não encontrada.");
@@ -84,7 +114,7 @@ public class FakeComandaRepository : IComandaRepository
         }
 
         var itens = _itens.Where(i => i.ComandaId == comandaId).ToList();
-        var itemExistente = itens.FirstOrDefault(i => i.ProdutoId == produto.Id && i.PrecoUnitarioCentavos == produto.PrecoCentavos);
+        var itemExistente = itens.FirstOrDefault(i => i.ProdutoId == produto.Id && i.PrecoUnitarioCentavos == produto.PrecoCentavos && i.Observacao == observacao);
 
         if (itemExistente is not null)
         {
@@ -100,6 +130,7 @@ public class FakeComandaRepository : IComandaRepository
                 ComandaId = comandaId,
                 ProdutoId = produto.Id,
                 NomeProduto = produto.Nome,
+                Observacao = observacao,
                 PrecoUnitarioCentavos = produto.PrecoCentavos,
                 Quantidade = quantidade,
                 SubtotalCentavos = produto.PrecoCentavos * quantidade,

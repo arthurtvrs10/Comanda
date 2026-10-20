@@ -10,6 +10,9 @@ namespace VarthexComanda.Desktop.Tests.Suporte;
 internal sealed class ComandaRepositoryDeBancoCorrompido : IComandaRepository
 {
     private static Exception Falha() => new FalhaTecnicaSimuladaException();
+    public Comanda DefinirOrigemCliente(int id,string? origem)=>throw Falha();
+    public ComandaComItens JuntarComandas(int origemId, int destinoId, DateTime agora) => throw Falha();
+    public Comanda DefinirMesa(int id, int? numeroMesa) => throw Falha();
     public Comanda DefinirNomeCliente(int comandaId, string? nome) => throw Falha();
     public Comanda MoverPara(int id, int numero) => throw Falha();
     public Comanda DefinirQuantidadePessoas(int id, int quantidade) => throw Falha();
@@ -18,7 +21,7 @@ internal sealed class ComandaRepositoryDeBancoCorrompido : IComandaRepository
     public IReadOnlyList<Comanda> ListarAbertas() => throw Falha();
     public ComandaComItens? BuscarComItens(int comandaId) => throw Falha();
     public Comanda AbrirComanda(int numero, DateTime agora) => throw Falha();
-    public ComandaComItens AdicionarItem(int comandaId, Produto produto, int quantidade, DateTime agora) => throw Falha();
+    public ComandaComItens AdicionarItem(int comandaId, Produto produto, int quantidade, DateTime agora, string? observacao = null) => throw Falha();
     public ComandaComItens AlterarQuantidade(int itemId, int quantidade, DateTime agora) => throw Falha();
     public ComandaComItens RemoverItem(int itemId, DateTime agora) => throw Falha();
     public Comanda CancelarComanda(int comandaId, DateTime agora) => throw Falha();

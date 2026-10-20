@@ -11,6 +11,7 @@ public class ComandaConfiguration : IEntityTypeConfiguration<Comanda>
         builder.ToTable("comanda", t =>
         {
             t.HasCheckConstraint("CK_comanda_numero_positivo", "numero > 0");
+            t.HasCheckConstraint("CK_comanda_mesa_valida", "numero_mesa IS NULL OR numero_mesa BETWEEN 1 AND 999");
             t.HasCheckConstraint("CK_comanda_total_centavos_nao_negativo", "total_centavos >= 0");
             t.HasCheckConstraint(
                 "CK_comanda_status_fechada_em",
@@ -32,6 +33,8 @@ public class ComandaConfiguration : IEntityTypeConfiguration<Comanda>
         builder.Property(c => c.TotalCentavos).HasColumnName("total_centavos").HasDefaultValue(0L).IsRequired();
         builder.Property(c => c.Observacao).HasColumnName("observacao");
         builder.Property(c => c.NomeCliente).HasColumnName("nome_cliente").HasMaxLength(80);
+        builder.Property(c => c.NumeroMesa).HasColumnName("numero_mesa");
+        builder.Property(c => c.OrigemCliente).HasColumnName("origem_cliente").HasMaxLength(80);
         builder.Property(c => c.Prioridade).HasColumnName("prioridade").HasDefaultValue(PrioridadeComanda.Normal);
         builder.Property(c => c.QuantidadePessoas).HasColumnName("quantidade_pessoas").HasDefaultValue(1);
 

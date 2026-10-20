@@ -9,6 +9,16 @@ namespace VarthexComanda.Application.Tests.Atendimento;
 
 public class AdicionarItemTests
 {
+    [Fact]
+    public void ObservacaoLongaNaoRegistraConsumo()
+    {
+        var (comandas, produtos, id, produtoId, _) = Preparar();
+        var resultado = new AdicionarItem(comandas, produtos, new FakeClock())
+            .Executar(id, produtoId, 1, new string('a', 301));
+        Assert.False(resultado.Sucesso);
+        Assert.Empty(comandas.BuscarComItens(id)!.Itens);
+    }
+
     private static (FakeComandaRepository comandas, FakeProdutoRepository produtos, int comandaId, int produtoAtivoId, int produtoInativoId) Preparar()
     {
         var comandas = new FakeComandaRepository();

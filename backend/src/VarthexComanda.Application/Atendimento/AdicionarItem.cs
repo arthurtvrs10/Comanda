@@ -16,8 +16,11 @@ public class AdicionarItem
         _relogio = relogio;
     }
 
-    public Resultado<ComandaComItens> Executar(int comandaId, int produtoId, int quantidade)
+    public Resultado<ComandaComItens> Executar(int comandaId, int produtoId, int quantidade, string? observacao = null)
     {
+        observacao = string.IsNullOrWhiteSpace(observacao) ? null : observacao.Trim();
+        if (observacao?.Length > 300)
+            return Resultado<ComandaComItens>.Falha("A observação deve ter no máximo 300 caracteres.");
         if (quantidade <= 0)
         {
             return Resultado<ComandaComItens>.Falha("A quantidade deve ser maior que zero.");
@@ -31,7 +34,7 @@ public class AdicionarItem
 
         try
         {
-            return Resultado<ComandaComItens>.Ok(_comandas.AdicionarItem(comandaId, produto, quantidade, _relogio.UtcNow));
+            return Resultado<ComandaComItens>.Ok(_comandas.AdicionarItem(comandaId, produto, quantidade, _relogio.UtcNow, observacao));
         }
         catch (ComandaNaoAbertaException ex)
         {

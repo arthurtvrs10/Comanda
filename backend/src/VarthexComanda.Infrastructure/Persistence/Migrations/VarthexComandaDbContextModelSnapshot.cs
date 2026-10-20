@@ -119,9 +119,18 @@ namespace VarthexComanda.Infrastructure.Persistence.Migrations
                         .HasColumnType("INTEGER")
                         .HasColumnName("numero");
 
+                    b.Property<int?>("NumeroMesa")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("numero_mesa");
+
                     b.Property<string>("Observacao")
                         .HasColumnType("TEXT")
                         .HasColumnName("observacao");
+
+                    b.Property<string>("OrigemCliente")
+                        .HasMaxLength(80)
+                        .HasColumnType("TEXT")
+                        .HasColumnName("origem_cliente");
 
                     b.Property<int>("Prioridade")
                         .ValueGeneratedOnAdd()
@@ -155,6 +164,8 @@ namespace VarthexComanda.Infrastructure.Persistence.Migrations
 
                     b.ToTable("comanda", null, t =>
                         {
+                            t.HasCheckConstraint("CK_comanda_mesa_valida", "numero_mesa IS NULL OR numero_mesa BETWEEN 1 AND 999");
+
                             t.HasCheckConstraint("CK_comanda_numero_positivo", "numero > 0");
 
                             t.HasCheckConstraint("CK_comanda_status_fechada_em", "(status = 'ABERTA' AND fechada_em IS NULL) OR (status IN ('FECHADA', 'CANCELADA') AND fechada_em IS NOT NULL)");

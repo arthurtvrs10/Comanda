@@ -113,8 +113,62 @@ public class EfComandaRepository : IComandaRepository
         return comanda;
     }
 
-    public ComandaComItens AdicionarItem(int comandaId, Produto produto, int quantidade, DateTime agora)
+    public Comanda DefinirMesa(int comandaId, int? numeroMesa)
     {
+        if (numeroMesa is < 1 or > 999) throw new ArgumentOutOfRangeException(nameof(numeroMesa));
+        using var contexto = _fabricaContexto.CreateDbContext();
+        var comanda = contexto.Comandas.SingleOrDefault(c => c.Id == comandaId)
+            ?? throw new InvalidOperationException("Comanda não encontrada.");
+        if (comanda.Status != StatusComanda.Aberta) throw new ComandaNaoAbertaException();
+        comanda.NumeroMesa = numeroMesa;
+        contexto.SaveChanges();
+        return comanda;
+    }
+
+    public Comanda DefinirOrigemCliente(int comandaId,string? origem)
+    {
+        if(origem?.Length>80)throw new ArgumentException("A origem deve ter até 80 caracteres.");
+        using var contexto=_fabricaContexto.CreateDbContext();
+        var comanda=contexto.Comandas.SingleOrDefault(c=>c.Id==comandaId)??throw new InvalidOperationException("Comanda não encontrada.");
+        if(comanda.Status!=StatusComanda.Aberta)throw new ComandaNaoAbertaException();
+        comanda.OrigemCliente=string.IsNullOrWhiteSpace(origem)?null:origem.Trim();contexto.SaveChanges();return comanda;
+    }
+
+    public ComandaComItens JuntarComandas(int origemId, int destinoId, DateTime agora)
+    {
+        if (origemId == destinoId) throw new InvalidOperationException("Escolha duas comandas diferentes.");
+        using var contexto = _fabricaContexto.CreateDbContext();
+        using var transacao = contexto.Database.BeginTransaction();
+        var origem = contexto.Comandas.SingleOrDefault(c => c.Id == origemId)
+            ?? throw new InvalidOperationException("Comanda de origem não encontrada.");
+        var destino = contexto.Comandas.SingleOrDefault(c => c.Id == destinoId)
+            ?? throw new InvalidOperationException("Comanda de destino não encontrada.");
+        if (origem.Status != StatusComanda.Aberta || destino.Status != StatusComanda.Aberta)
+            throw new ComandaNaoAbertaException();
+        var itensOrigem = contexto.ItensComanda.Where(i => i.ComandaId == origemId).ToList();
+        if (itensOrigem.Count == 0) throw new InvalidOperationException("A comanda de origem não tem itens para transferir.");
+        var itensDestino = contexto.ItensComanda.Where(i => i.ComandaId == destinoId).ToList();
+        foreach (var item in itensOrigem)
+        {
+            item.ComandaId = destinoId;
+            item.AtualizadoEm = agora;
+            itensDestino.Add(item);
+        }
+        destino.TotalCentavos = checked(itensDestino.Sum(i => i.SubtotalCentavos));
+        origem.TotalCentavos = 0;
+        origem.Status = StatusComanda.Cancelada;
+        origem.FechadaEm = agora;
+        var registro = $"Itens transferidos para a comanda {destino.Numero} (ID {destino.Id}) em {agora:O}.";
+        origem.Observacao = string.IsNullOrWhiteSpace(origem.Observacao) ? registro : origem.Observacao + "\n" + registro;
+        contexto.SaveChanges();
+        transacao.Commit();
+        return new ComandaComItens { Comanda = destino, Itens = itensDestino.OrderBy(i => i.Id).ToList() };
+    }
+
+    public ComandaComItens AdicionarItem(int comandaId, Produto produto, int quantidade, DateTime agora, string? observacao = null)
+    {
+        observacao = string.IsNullOrWhiteSpace(observacao) ? null : observacao.Trim();
+        if (observacao?.Length > 300) throw new ArgumentException("A observação deve ter no máximo 300 caracteres.", nameof(observacao));
         using var contexto = _fabricaContexto.CreateDbContext();
         var comanda = contexto.Comandas.SingleOrDefault(c => c.Id == comandaId)
             ?? throw new InvalidOperationException("Comanda não encontrada.");
@@ -124,7 +178,7 @@ public class EfComandaRepository : IComandaRepository
         }
 
         var itens = contexto.ItensComanda.Where(i => i.ComandaId == comandaId).OrderBy(i => i.Id).ToList();
-        var itemExistente = itens.FirstOrDefault(i => i.ProdutoId == produto.Id && i.PrecoUnitarioCentavos == produto.PrecoCentavos);
+        var itemExistente = itens.FirstOrDefault(i => i.ProdutoId == produto.Id && i.PrecoUnitarioCentavos == produto.PrecoCentavos && i.Observacao == observacao);
 
         if (itemExistente is not null)
         {
@@ -140,6 +194,7 @@ public class EfComandaRepository : IComandaRepository
                 ComandaId = comandaId,
                 ProdutoId = produto.Id,
                 NomeProduto = produto.Nome,
+                Observacao = observacao,
                 PrecoUnitarioCentavos = produto.PrecoCentavos,
                 Quantidade = quantidade,
                 SubtotalCentavos = produto.PrecoCentavos * quantidade,
