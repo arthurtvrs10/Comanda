@@ -98,11 +98,35 @@ public partial class AtendimentoViewModel : ObservableObject
     public ObservableCollection<Produto> ProdutosCatalogo { get; }
     public ObservableCollection<ComandaSlotItem> Slots { get; }
 
+    public bool JuntarComandas(int origemId, int destinoId)
+    {
+        try
+        {
+            _comandas.JuntarComandas(origemId, destinoId, _relogio.UtcNow);
+            AtualizarComandasAbertas();
+            Mensagem = "Pedidos reunidos na comanda de destino. Comanda de origem liberada.";
+            return true;
+        }
+        catch (Exception ex) when (ex is InvalidOperationException or ComandaNaoAbertaException) { Mensagem = ex.Message; return false; }
+        catch (Exception ex)
+        {
+            _logger?.Error(ex, "Falha ao juntar comandas");
+            Mensagem = "Não foi possível juntar os pedidos. Atualize as comandas antes de tentar novamente.";
+            return false;
+        }
+    }
+
+    public IReadOnlyList<Produto> PesquisarProdutosGlobais(string texto) =>
+        _pesquisarProdutos.Executar(null, texto).Where(p => p.Ativo).ToList();
+
     [ObservableProperty]
     private string novoNumero = string.Empty;
 
     [ObservableProperty]
     private string nomeCliente = string.Empty;
+
+    [ObservableProperty]
+    private string observacaoNovoItem = string.Empty;
 
     [RelayCommand]
     private void SalvarNomeCliente()
@@ -235,6 +259,7 @@ public partial class AtendimentoViewModel : ObservableObject
         ComandaAtual = detalhe.Comanda;
         NomeCliente = ComandaAtual.NomeCliente ?? string.Empty;
         ItemSelecionadoId = null;
+        ObservacaoNovoItem = string.Empty;
         SubstituirItens(detalhe.Itens, null);
         VerTotalCommand.NotifyCanExecuteChanged();
     }
@@ -281,7 +306,15 @@ public partial class AtendimentoViewModel : ObservableObject
 
         try
         {
-            AplicarResultado(_adicionarItem.Executar(ComandaAtual.Id, produto.Id, 1), produto.Id);
+            var resultado = _adicionarItem.Executar(ComandaAtual.Id, produto.Id, 1, ObservacaoNovoItem);
+            AplicarResultado(resultado, produto.Id);
+            if (resultado.Sucesso)
+            {
+                var observacao = string.IsNullOrWhiteSpace(ObservacaoNovoItem) ? null : ObservacaoNovoItem.Trim();
+                ItemSelecionadoId = resultado.Valor!.Itens.First(i => i.ProdutoId == produto.Id
+                    && i.PrecoUnitarioCentavos == produto.PrecoCentavos && i.Observacao == observacao).Id;
+                ObservacaoNovoItem = string.Empty;
+            }
         }
         catch (Exception ex)
         {
@@ -557,6 +590,7 @@ public partial class AtendimentoViewModel : ObservableObject
                     Aberta = true,
                     ComandaId = comanda.Id,
                     NomeCliente = comanda.NomeCliente,
+                    NumeroMesa = comanda.NumeroMesa,
                     TotalFormatado = CentavosParaMoedaConverter.Formatar(comanda.TotalCentavos),
                     AbertaEm = comanda.AbertaEm, Prioridade = comanda.Prioridade, TempoFormatado = ComandaSlotItem.FormatarTempo(comanda.AbertaEm, agora)
                 });
@@ -582,6 +616,7 @@ public partial class AtendimentoViewModel : ObservableObject
                 Aberta = true,
                 ComandaId = comanda.Id,
                 NomeCliente = comanda.NomeCliente,
+                NumeroMesa = comanda.NumeroMesa,
                 TotalFormatado = CentavosParaMoedaConverter.Formatar(comanda.TotalCentavos),
                 AbertaEm = comanda.AbertaEm, Prioridade = comanda.Prioridade, TempoFormatado = ComandaSlotItem.FormatarTempo(comanda.AbertaEm, agora)
             });
@@ -598,6 +633,20 @@ public partial class AtendimentoViewModel : ObservableObject
             Comanda atualizada;
             switch (campo)
             {
+                case "origem":
+                    if(valor.Length>80){Mensagem="A origem deve ter até 80 caracteres.";return false;}
+                    atualizada=_comandas.DefinirOrigemCliente(ComandaAtual.Id,valor);
+                    break;
+                case "mesa":
+                    int? mesa = null;
+                    if (!string.IsNullOrWhiteSpace(valor))
+                    {
+                        if (!int.TryParse(valor, out var numeroMesa) || numeroMesa is < 1 or > 999)
+                        { Mensagem = "Informe uma mesa entre 1 e 999 ou deixe vazio para balcão."; return false; }
+                        mesa = numeroMesa;
+                    }
+                    atualizada = _comandas.DefinirMesa(ComandaAtual.Id, mesa);
+                    break;
                 case "mover":
                     if (!int.TryParse(valor, out var numero) || numero <= 0)
                     { Mensagem = "Informe o número de uma comanda livre."; return false; }

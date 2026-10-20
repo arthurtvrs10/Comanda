@@ -12,7 +12,7 @@ public sealed class JanelaLicenca : Window
     {
         Title = "Ativação — Varthex Comanda";
         Width = 650; Height = Math.Min(760, SystemParameters.WorkArea.Height); WindowStartupLocation = WindowStartupLocation.CenterScreen;
-        Background = new SolidColorBrush(Color.FromRgb(243, 245, 242));
+        Background = TemaInterface.Pincel("#F3F5F2");
         var painel = new StackPanel { Margin = new Thickness(24) };
         Content = new ScrollViewer { Content = painel, VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
         painel.Children.Add(new TextBlock { Text = "Licença do Varthex Comanda", FontSize = 24, Margin = new Thickness(0, 0, 0, 16) });
@@ -34,7 +34,7 @@ public sealed class JanelaLicenca : Window
         painel.Children.Add(new TextBlock { Text = "Código de ativação recebido", FontSize = 16 });
         var entrada = new TextBox { AcceptsReturn = true, TextWrapping = TextWrapping.Wrap, Height = 110, VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
         painel.Children.Add(entrada);
-        var ativar = new Button { Content = "Ativar sistema", MinHeight = 46, Margin = new Thickness(0, 12, 0, 12), Background = new SolidColorBrush(Color.FromRgb(36, 86, 64)), Foreground = Brushes.White };
+        var ativar = new Button { Content = "Ativar sistema", MinHeight = 46, Margin = new Thickness(0, 12, 0, 12), Background = new SolidColorBrush(Color.FromRgb(36,86,64)), Foreground = Brushes.White };
         ativar.Click += (_, _) =>
         {
             try { servico.Verificar(entrada.Text); DialogResult = true; }

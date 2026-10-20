@@ -6,7 +6,7 @@
         xmlns:domain="clr-namespace:VarthexComanda.Domain;assembly=VarthexComanda.Domain"
         xmlns:local="clr-namespace:VarthexComanda.Desktop.Atendimento"
         mc:Ignorable="d"
-        Title="Pagamento" Background="#F3F5F2" Icon="pack://application:,,,/VarthexComanda;component/Assets/VarthexComanda.ico" Width="600" MaxHeight="580" SizeToContent="Height"
+        Title="Pagamento" Background="{DynamicResource BackgroundF3F5F2}" Icon="pack://application:,,,/VarthexComanda;component/Assets/VarthexComanda.ico" Width="600" MaxHeight="580" SizeToContent="Height"
         PreviewKeyDown="Pagamento_PreviewKeyDown" WindowStartupLocation="CenterOwner" ResizeMode="NoResize"
         FocusManager.FocusedElement="{Binding ElementName=FormaDinheiro}">
     <Window.Resources>
@@ -19,26 +19,26 @@
             <Setter Property="FocusVisualStyle" Value="{StaticResource FocoVisivel}" />
             <Setter Property="Template"><Setter.Value>
                 <ControlTemplate TargetType="RadioButton">
-                    <Border x:Name="Surface" Background="White" BorderBrush="#87988E" BorderThickness="1" Padding="12">
+                    <Border x:Name="Surface" Background="{DynamicResource BackgroundFFFFFF}" BorderBrush="{DynamicResource Color87988E}" BorderThickness="1" Padding="12">
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                             <RadioButton IsHitTestVisible="False" Focusable="False" IsChecked="{TemplateBinding IsChecked}" VerticalAlignment="Center" Margin="0,0,10,0" />
                             <ContentPresenter />
                         </StackPanel>
                     </Border>
                     <ControlTemplate.Triggers>
-                        <Trigger Property="IsChecked" Value="True"><Setter TargetName="Surface" Property="Background" Value="#E1E8E4" /><Setter TargetName="Surface" Property="BorderBrush" Value="#245640" /><Setter TargetName="Surface" Property="BorderThickness" Value="2" /></Trigger>
-                        <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="BorderBrush" Value="#1F5FBF" /></Trigger>
+                        <Trigger Property="IsChecked" Value="True"><Setter TargetName="Surface" Property="Background" Value="{DynamicResource BackgroundE1E8E4}" /><Setter TargetName="Surface" Property="BorderBrush" Value="{DynamicResource Color245640}" /><Setter TargetName="Surface" Property="BorderThickness" Value="2" /></Trigger>
+                        <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="BorderBrush" Value="{DynamicResource Color1F5FBF}" /></Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value></Setter>
         </Style>
     </Window.Resources>
-    <ScrollViewer VerticalScrollBarVisibility="Auto" Background="#F3F5F2">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Background="{DynamicResource BackgroundF3F5F2}">
     <StackPanel Margin="16">
         <TextBlock Text="{Binding NumeroComanda, StringFormat='Comanda {0}'}" FontWeight="Bold" FontSize="22" Margin="0,0,0,4" />
         <TextBlock Text="{Binding NomeCliente}" FontSize="16" TextWrapping="Wrap" Margin="0,0,0,8" />
 
-        <TextBlock Text="{Binding Identificador}" Foreground="#596D61" />
+        <TextBlock Text="{Binding Identificador}" Foreground="{DynamicResource Text596D61}" />
         <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
             <TextBlock Text="Total a pagar: " FontWeight="Bold" FontSize="24" />
             <TextBlock Text="{Binding TotalCentavos, Converter={StaticResource Moeda}}" FontWeight="Bold" FontSize="24" />
@@ -51,20 +51,20 @@
             <RadioButton x:Name="FormaCredito" GroupName="Pagamento" Content="4 · Crédito" Checked="Forma_Checked" Style="{StaticResource Forma}" Command="{Binding SelecionarFormaCommand}" CommandParameter="{x:Static domain:FormaPagamento.Credito}" />
         </UniformGrid>
         <TextBlock Text="{Binding FormaSelecionadaDescricao, StringFormat='Forma: {0}'}" FontWeight="SemiBold" Margin="0,8,0,4" />
-        <TextBlock Text="Confirme somente depois de receber o pagamento." Foreground="#596D61" TextWrapping="Wrap" Margin="0,0,0,8" />
+        <TextBlock Text="Confirme somente depois de receber o pagamento." Foreground="{DynamicResource Text596D61}" TextWrapping="Wrap" Margin="0,0,0,8" />
 
         <CheckBox x:Name="CaixaPagamentoRecebido" IsChecked="{Binding PagamentoRecebido}" Content="Pagamento recebido / aprovado (Espaço)" MinHeight="46" Margin="0,0,0,8">
             <CheckBox.Style><Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
                 <Style.Triggers><DataTrigger Binding="{Binding FormaSelecionada}" Value="{x:Null}"><Setter Property="IsEnabled" Value="False" /></DataTrigger></Style.Triggers>
             </Style></CheckBox.Style>
         </CheckBox>
-        <TextBlock Text="Tab: navegar · 1–4: forma · Espaço: recebido · Enter: confirmar · Esc: voltar" FontSize="12" Foreground="#596D61" TextWrapping="Wrap" Margin="0,0,0,12" />
+        <TextBlock Text="Tab: navegar · 1–4: forma · Espaço: recebido · Enter: confirmar · Esc: voltar" FontSize="12" Foreground="{DynamicResource Text596D61}" TextWrapping="Wrap" Margin="0,0,0,12" />
         <TextBlock Text="{Binding Mensagem}" Foreground="Red" TextWrapping="Wrap" Margin="0,0,0,12" />
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
             <Button x:Name="BotaoVoltar" Content="Voltar" IsCancel="True" Command="{Binding VoltarCommand}" Height="56" FontSize="16" Padding="18,0" Margin="0,0,8,0" />
             <Button x:Name="BotaoConfirmarEncerrar" Content="Confirmar pagamento" IsDefault="True" Command="{Binding ConfirmarEncerrarCommand}" Height="56" FontSize="16" Padding="18,0"
-                    Background="#245640" Foreground="White" FontWeight="Bold" />
+                    Background="{DynamicResource Background245640}" Foreground="White" FontWeight="Bold" />
         </StackPanel>
     </StackPanel>
     </ScrollViewer>

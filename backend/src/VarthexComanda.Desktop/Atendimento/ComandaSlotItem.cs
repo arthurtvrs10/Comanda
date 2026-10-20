@@ -9,6 +9,8 @@ public class ComandaSlotItem : ObservableObject
     public required bool Aberta { get; init; }
     public int? ComandaId { get; init; }
     public string? NomeCliente { get; init; }
+    public int? NumeroMesa { get; init; }
+    public string MesaTexto => Aberta ? NumeroMesa is int mesa ? $"Mesa {mesa}" : "Balcão" : string.Empty;
     public required string TotalFormatado { get; init; }
     public DateTime? AbertaEm { get; init; }
     public PrioridadeComanda Prioridade { get; init; }

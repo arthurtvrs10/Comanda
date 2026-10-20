@@ -1,6 +1,6 @@
 <UserControl x:Class="VarthexComanda.Desktop.InicioView"
  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
- xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Background="#F3F5F2">
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Background="{DynamicResource BackgroundF3F5F2}">
  <UserControl.Resources>
   <Style x:Key="Modulo" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -15,8 +15,8 @@
        <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
       </Border>
       <ControlTemplate.Triggers>
-       <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Fundo" Property="BorderBrush" Value="#749D89" /></Trigger>
-       <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="Fundo" Property="BorderBrush" Value="#46A8E8" /></Trigger>
+       <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Fundo" Property="BorderBrush" Value="{DynamicResource Color749D89}" /></Trigger>
+       <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="Fundo" Property="BorderBrush" Value="{DynamicResource Color46A8E8}" /></Trigger>
        <Trigger Property="IsPressed" Value="True"><Setter TargetName="Fundo" Property="Opacity" Value="0.85" /></Trigger>
        <Trigger Property="IsEnabled" Value="False"><Setter TargetName="Fundo" Property="Opacity" Value="0.45" /></Trigger>
       </ControlTemplate.Triggers>
@@ -25,8 +25,8 @@
    </Setter>
   </Style>
   <Style x:Key="Atalho" TargetType="Button" BasedOn="{StaticResource Modulo}">
-   <Setter Property="Background" Value="White" />
-   <Setter Property="Foreground" Value="#263C32" />
+   <Setter Property="Background" Value="{DynamicResource BackgroundFFFFFF}" />
+   <Setter Property="Foreground" Value="{DynamicResource Text263C32}" />
    <Setter Property="FontSize" Value="16" />
    <Setter Property="Padding" Value="16,12" />
    <Setter Property="MinHeight" Value="52" />
@@ -43,68 +43,68 @@
    <Grid.ColumnDefinitions><ColumnDefinition /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
     <Image Source="Assets/LogoRodape.png" Width="116" Height="36" Stretch="Uniform" AutomationProperties.Name="Varthex" />
-    <Border Width="1" Background="#D6DED8" Margin="22,0" />
-    <StackPanel><TextBlock Text="VComanda" FontSize="19" FontWeight="SemiBold" Foreground="#20372C" /><TextBlock Text="Operação do estabelecimento" FontSize="12" Foreground="#596D61" /></StackPanel>
+    <Border Width="1" Background="{DynamicResource BackgroundD6DED8}" Margin="22,0" />
+    <StackPanel><TextBlock Text="VComanda" FontSize="19" FontWeight="SemiBold" Foreground="{DynamicResource Text20372C}" /><TextBlock Text="Operação do estabelecimento" FontSize="12" Foreground="{DynamicResource Text596D61}" /></StackPanel>
    </StackPanel>
    <StackPanel Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right">
-    <TextBlock x:Name="Horario" FontSize="19" FontWeight="SemiBold" Foreground="#20372C" TextAlignment="Right" />
-    <TextBlock x:Name="DataHoje" FontSize="12" Foreground="#596D61" TextAlignment="Right" />
+    <TextBlock x:Name="Horario" FontSize="19" FontWeight="SemiBold" Foreground="{DynamicResource Text20372C}" TextAlignment="Right" />
+    <TextBlock x:Name="DataHoje" FontSize="12" Foreground="{DynamicResource Text596D61}" TextAlignment="Right" />
    </StackPanel>
   </Grid>
-  <TextBlock Grid.Row="1" x:Name="Aviso" Foreground="#A12822" FontSize="14" TextWrapping="Wrap" Margin="0,16,0,8" />
+  <TextBlock Grid.Row="1" x:Name="Aviso" Foreground="{DynamicResource TextA12822}" FontSize="14" TextWrapping="Wrap" Margin="0,16,0,8" />
   <Grid Grid.Row="2" MinHeight="360">
    <Grid.ColumnDefinitions><ColumnDefinition Width="1.2*" /><ColumnDefinition Width="16" /><ColumnDefinition Width="1*" /><ColumnDefinition Width="20" /><ColumnDefinition Width="0.72*" /></Grid.ColumnDefinitions>
-   <Button x:Name="BotaoGarcom" Tag="garcom" Click="Escolher_Click" Style="{StaticResource Modulo}" Background="#245640" Foreground="White" AutomationProperties.Name="Garçom, F1" ToolTip="Atendimento · F1">
+   <Button x:Name="BotaoGarcom" Tag="garcom" Click="Escolher_Click" Style="{StaticResource Modulo}" Background="{DynamicResource Background245640}" Foreground="White" AutomationProperties.Name="Garçom, F1" ToolTip="Atendimento · F1">
     <Grid>
      <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
-     <DockPanel><TextBlock Text="PIN da equipe" FontSize="12" Foreground="#CCE3D6" /></DockPanel>
+     <DockPanel><TextBlock Text="PIN da equipe" FontSize="12" Foreground="{DynamicResource TextCCE3D6}" /></DockPanel>
      <StackPanel Grid.Row="1" VerticalAlignment="Center" Margin="0,24">
-      <Path Data="M 4,39 L 60,39 M 9,34 C 9,9 55,9 55,34 Z M 29,10 L 35,10 M 32,6 L 32,10 M 13,47 L 51,47" Stroke="#D6EADF" StrokeThickness="2.2" Width="64" Height="52" Stretch="Uniform" HorizontalAlignment="Left" Margin="0,0,0,26" />
+      <Path Data="M 4,39 L 60,39 M 9,34 C 9,9 55,9 55,34 Z M 29,10 L 35,10 M 32,6 L 32,10 M 13,47 L 51,47" Stroke="{DynamicResource ColorD6EADF}" StrokeThickness="2.2" Width="64" Height="52" Stretch="Uniform" HorizontalAlignment="Left" Margin="0,0,0,26" />
       <TextBlock Text="Garçom" FontSize="40" FontWeight="Bold" />
       <TextBlock Text="F1" FontSize="18" FontWeight="SemiBold" Margin="0,4,0,0" />
-      <TextBlock Text="Abra comandas e anote os pedidos com agilidade." FontSize="16" Foreground="#D6EADF" TextWrapping="Wrap" Margin="0,10,0,0" MaxWidth="270" HorizontalAlignment="Left" />
+      <TextBlock Text="Abra comandas e anote os pedidos com agilidade." FontSize="16" Foreground="{DynamicResource TextD6EADF}" TextWrapping="Wrap" Margin="0,10,0,0" MaxWidth="270" HorizontalAlignment="Left" />
      </StackPanel>
-     <DockPanel Grid.Row="2"><TextBlock Text="Iniciar atendimento" FontWeight="SemiBold" FontSize="16" /><Path Data="M 1,8 L 23,8 M 16,1 L 23,8 L 16,15" Stroke="White" StrokeThickness="2" Width="24" Height="16" HorizontalAlignment="Right" /></DockPanel>
+     <DockPanel Grid.Row="2"><TextBlock Text="Iniciar atendimento" FontWeight="SemiBold" FontSize="16" /><Path Data="M 1,8 L 23,8 M 16,1 L 23,8 L 16,15" Stroke="{DynamicResource ColorFFFFFF}" StrokeThickness="2" Width="24" Height="16" HorizontalAlignment="Right" /></DockPanel>
     </Grid>
    </Button>
    <Grid Grid.Column="2">
     <Grid.RowDefinitions><RowDefinition /><RowDefinition Height="16" /><RowDefinition /></Grid.RowDefinitions>
-    <Button x:Name="BotaoCozinha" Tag="cozinha" Click="Escolher_Click" Style="{StaticResource Modulo}" Background="#EAE2D1" Foreground="#4C3A1F" AutomationProperties.Name="Cozinha, F2" ToolTip="Consultar comandas · F2" Padding="24">
+    <Button x:Name="BotaoCozinha" Tag="cozinha" Click="Escolher_Click" Style="{StaticResource Modulo}" Background="{DynamicResource BackgroundEAE2D1}" Foreground="{DynamicResource Text4C3A1F}" AutomationProperties.Name="Cozinha, F2" ToolTip="Consultar comandas · F2" Padding="24">
      <Grid>
       <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
-      <DockPanel><Path Data="M 6,17 C -1,15 2,4 9,7 C 10,-1 24,-1 25,7 C 33,3 37,16 28,18 L 27,29 L 7,29 Z M 8,23 L 27,23" Stroke="#786037" StrokeThickness="1.8" Width="36" Height="32" Stretch="Uniform" HorizontalAlignment="Left" /></DockPanel>
+      <DockPanel><Path Data="M 6,17 C -1,15 2,4 9,7 C 10,-1 24,-1 25,7 C 33,3 37,16 28,18 L 27,29 L 7,29 Z M 8,23 L 27,23" Stroke="{DynamicResource Color786037}" StrokeThickness="1.8" Width="36" Height="32" Stretch="Uniform" HorizontalAlignment="Left" /></DockPanel>
       <StackPanel Grid.Row="1" VerticalAlignment="Center" Margin="0,10">
        <TextBlock Text="Cozinha" FontSize="28" FontWeight="Bold" />
        <TextBlock Text="F2" FontSize="16" FontWeight="SemiBold" Margin="0,4,0,0" />
       </StackPanel>
-      <TextBlock Grid.Row="2" Text="Consulte os itens das comandas abertas." TextWrapping="Wrap" FontSize="14" Foreground="#665133" />
+      <TextBlock Grid.Row="2" Text="Consulte os itens das comandas abertas." TextWrapping="Wrap" FontSize="14" Foreground="{DynamicResource Text665133}" />
      </Grid>
     </Button>
-    <Button Grid.Row="2" Tag="gestor" Click="Escolher_Click" Style="{StaticResource Modulo}" Background="#E1E8E4" Foreground="#263C32" AutomationProperties.Name="Gestor, F3" ToolTip="Administração · F3" Padding="24">
+    <Button Grid.Row="2" Tag="gestor" Click="Escolher_Click" Style="{StaticResource Modulo}" Background="{DynamicResource BackgroundE1E8E4}" Foreground="{DynamicResource Text263C32}" AutomationProperties.Name="Gestor, F3" ToolTip="Administração · F3" Padding="24">
      <Grid>
       <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
-      <DockPanel><Path Data="M 3,3 L 29,3 L 29,29 L 3,29 Z M 9,23 L 9,17 M 16,23 L 16,10 M 23,23 L 23,14" Stroke="#4A6A59" StrokeThickness="1.8" Width="32" Height="32" Stretch="Uniform" HorizontalAlignment="Left" /></DockPanel>
+      <DockPanel><Path Data="M 3,3 L 29,3 L 29,29 L 3,29 Z M 9,23 L 9,17 M 16,23 L 16,10 M 23,23 L 23,14" Stroke="{DynamicResource Color4A6A59}" StrokeThickness="1.8" Width="32" Height="32" Stretch="Uniform" HorizontalAlignment="Left" /></DockPanel>
       <StackPanel Grid.Row="1" VerticalAlignment="Center" Margin="0,10">
        <TextBlock Text="Gestor" FontSize="28" FontWeight="Bold" />
        <TextBlock Text="F3" FontSize="16" FontWeight="SemiBold" Margin="0,4,0,0" />
       </StackPanel>
-      <TextBlock Grid.Row="2" Text="Produtos, configurações e controle do negócio." TextWrapping="Wrap" FontSize="14" Foreground="#486153" />
+      <TextBlock Grid.Row="2" Text="Produtos, configurações e controle do negócio." TextWrapping="Wrap" FontSize="14" Foreground="{DynamicResource Text486153}" />
      </Grid>
     </Button>
    </Grid>
    <StackPanel Grid.Column="4">
-    <TextBlock Text="Acessos rápidos" FontSize="17" FontWeight="SemiBold" Foreground="#20372C" Margin="0,0,0,14" />
+    <TextBlock Text="Acessos rápidos" FontSize="17" FontWeight="SemiBold" Foreground="{DynamicResource Text20372C}" Margin="0,0,0,14" />
     <Button Tag="produtos" Content="Produtos" Click="Escolher_Click" Style="{StaticResource Atalho}" />
     <Button Tag="historico" Content="Histórico de vendas" Click="Escolher_Click" Style="{StaticResource Atalho}" />
     <Button Tag="backup" Content="Backup" Click="Escolher_Click" Style="{StaticResource Atalho}" />
     <Button Tag="configuracoes" Content="Configurações" Click="Escolher_Click" Style="{StaticResource Atalho}" />
     <Button Tag="licenca" Content="Licença" Click="Escolher_Click" Style="{StaticResource Atalho}" />
-    <TextBlock Text="Os acessos administrativos exigem a senha do gestor." FontSize="12" Foreground="#596D61" TextWrapping="Wrap" Margin="2,6,0,0" />
+    <TextBlock Text="Os acessos administrativos exigem a senha do gestor." FontSize="12" Foreground="{DynamicResource Text596D61}" TextWrapping="Wrap" Margin="2,6,0,0" />
    </StackPanel>
   </Grid>
   <DockPanel Grid.Row="3" Margin="0,22,0,0">
-   <StackPanel Orientation="Horizontal"><Ellipse Width="7" Height="7" Fill="#387651" Margin="0,0,7,0" /><TextBlock Text="Acesso protegido" FontSize="12" Foreground="#596D61" /></StackPanel>
-   <TextBlock Text="Toque na tela ou use F1, F2 e F3" FontSize="12" Foreground="#596D61" HorizontalAlignment="Right" />
+   <StackPanel Orientation="Horizontal"><Ellipse Width="7" Height="7" Fill="{DynamicResource Color387651}" Margin="0,0,7,0" /><TextBlock Text="Acesso protegido" FontSize="12" Foreground="{DynamicResource Text596D61}" /></StackPanel>
+   <TextBlock Text="Toque na tela ou use F1, F2 e F3" FontSize="12" Foreground="{DynamicResource Text596D61}" HorizontalAlignment="Right" />
   </DockPanel>
  </Grid>
  </ScrollViewer>

@@ -22,7 +22,6 @@ public partial class MainWindow : Window
     private bool _bloqueado = true;
     private bool _cozinhaAtiva;
     private string _areaPendente = "garcom";
-    private readonly InicioView _inicioView;
     private readonly CozinhaView _cozinhaView;
     private readonly AcessoAtendimento _acessoAtendimento;
     private readonly BloqueioAtendimentoView _bloqueioView;
@@ -32,9 +31,11 @@ public partial class MainWindow : Window
     private readonly BackupView _backupView;
     private readonly ConfiguracaoView _configuracaoView;
 
-    public MainWindow(AtendimentoView atendimentoView, ProdutosView produtosView, HistoricoView historicoView, BackupView backupView, ConfiguracaoView configuracaoView, VarthexComanda.Infrastructure.Storage.AppPaths? paths = null)
+
+    public MainWindow(AtendimentoView atendimentoView, ProdutosView produtosView, HistoricoView historicoView, BackupView backupView, ConfiguracaoView configuracaoView, VarthexComanda.Infrastructure.Storage.AppPaths? paths = null, VarthexComanda.Application.Configuracao.IConfiguracaoRepository? configuracoes = null)
     {
         InitializeComponent();
+        Title = $"Varthex Comanda · Versão {VersaoDoAplicativo.Atual}";
         _acesso = new AcessoGestor(System.IO.Path.Combine((paths ?? new VarthexComanda.Infrastructure.Storage.AppPaths()).Root, "gestor.credencial"));
         _acessoAtendimento = new AcessoAtendimento(System.IO.Path.Combine((paths ?? new VarthexComanda.Infrastructure.Storage.AppPaths()).Root, "atendimento.credencial"));
         _acessoAtendimento.GarantirPinInicial();
@@ -43,9 +44,6 @@ public partial class MainWindow : Window
         _bloqueioView.Desbloqueado += DesbloquearAtendimento;
         _bloqueioView.ConfiguracaoSolicitada += ConfigurarPin;
         _bloqueioView.VoltarSolicitado += MostrarInicio;
-        _inicioView = new InicioView();
-        MenuInicial.Content = _inicioView;
-        _inicioView.AreaSolicitada += EscolherArea;
         _cozinhaView = new CozinhaView(atendimentoView.ViewModel.ConsultarCozinha);
         RegistrarAtalho(IrParaAtendimentoCommand, BotaoAtendimento, IrParaAtendimento);
         RegistrarAtalho(IrParaProdutosCommand, BotaoProdutos, IrParaProdutos);
@@ -57,6 +55,13 @@ public partial class MainWindow : Window
         _historicoView = historicoView;
         _backupView = backupView;
         _configuracaoView = configuracaoView;
+        _pathsSistema=paths ?? new VarthexComanda.Infrastructure.Storage.AppPaths();
+        _repositorioSistema=configuracoes;
+        _atendimentoView.ImpressaoSolicitada=ImprimirConta;
+        _atendimentoView.OrigensCliente=()=>LerPreferencias().OrigensCliente;
+        _cozinhaView.ConsultarLocais=()=>LerPreferencias().Cozinhas;
+        AplicarFundoSistema();
+        InicializarRibbon((paths ?? new VarthexComanda.Infrastructure.Storage.AppPaths()).Root);
         _configuracaoView.AcaoSolicitada += AcaoConfiguracao;
         _configuracaoView.ConsultarBackup = () => {
             _backupView.ViewModel.AtualizarLista();
@@ -67,7 +72,7 @@ public partial class MainWindow : Window
             try { var atual = new Licenciamento.ServicoLicenca().Verificar(); return atual.Vencimento is null ? "Licença vitalícia ativa · Sem vencimento." : $"Licença ativa até {atual.Vencimento.Value.ToOffset(TimeSpan.FromHours(-3)):dd/MM/yyyy HH:mm}."; }
             catch { return "Não foi possível confirmar a licença. Abra a ativação para verificar."; }
         };
-        Closing += (_, e) => { if (!_bloqueado && ReferenceEquals(ConteudoPrincipal.Content,_configuracaoView) && !_configuracaoView.ConfirmarSaida()) e.Cancel=true; };
+        Closing += (_, e) => { if (!_bloqueado && !PodeSairDasConfiguracoes()) e.Cancel=true; };
         _atendimentoView.ViewModel.AtendimentoConcluido += BloquearAtendimento;
         MostrarInicio();
     }
@@ -153,7 +158,7 @@ public partial class MainWindow : Window
     private void IrParaBackup()
     {
         if (_bloqueado || !_acesso.Autenticado) return;
-        if (!_restauracao) { IrParaConfiguracoes(); _configuracaoView.AbrirSecao(3); return; }
+        if (!_restauracao) { AcaoConfiguracao("backups"); return; }
         _backupView.ViewModel.AtualizarLista();
         MostrarConteudo(_backupView);
     }
@@ -161,10 +166,7 @@ public partial class MainWindow : Window
     private void IrParaConfiguracoes()
     {
         if (_bloqueado || !_acesso.Autenticado || _restauracao) return;
-        if (ReferenceEquals(ConteudoPrincipal.Content,_configuracaoView)) return;
-        _configuracaoView.ViewModel.Carregar();
-        _configuracaoView.AtualizarSecao();
-        MostrarConteudo(_configuracaoView);
+        AbrirSistemaConfiguracoes();
     }
 
     private void AlternarPerfil_Click(object sender, RoutedEventArgs e)
@@ -174,7 +176,7 @@ public partial class MainWindow : Window
         if (_acesso.Autenticado)
         {
             _acesso.Sair();
-            ConteudoPrincipal.Content = _restauracao ? null : _atendimentoView;
+            ConteudoPrincipal.Content = null;
         }
         else if (new JanelaAcessoGestor(_acesso) { Owner = this }.ShowDialog() == true && _restauracao)
             IrParaBackup();
@@ -197,8 +199,8 @@ public partial class MainWindow : Window
         ConteudoPrincipal.Content = null;
         _cozinhaAtiva = false;
         AreaSistema.IsEnabled = false;
-        AreaSistema.Visibility = Visibility.Collapsed;
-        MenuInicial.Visibility = Visibility.Visible;
+        AreaSistema.Visibility = Visibility.Visible;
+        MenuInicial.Visibility = Visibility.Collapsed;
         MenuInicial.IsEnabled = false;
         CamadaBloqueio.Visibility = Visibility.Visible;
         _bloqueioView.Reiniciar();
@@ -236,10 +238,12 @@ public partial class MainWindow : Window
 
     private void MostrarInicio()
     {
+        _areaPendente = "garcom";
         BloquearAtendimento();
         CamadaBloqueio.Visibility = Visibility.Collapsed;
-        MenuInicial.IsEnabled = true;
-        _inicioView.MostrarAviso(_restauracao ? "Banco indisponível. Entre como gestor para restaurar um backup." : "");
+        AreaSistema.IsEnabled = true;
+        MenuInicial.Visibility = Visibility.Collapsed;
+        SelecionarCategoriaRibbon("Principal");
     }
 
     private void MenuPrincipal_Click(object sender, RoutedEventArgs e)
@@ -252,17 +256,16 @@ public partial class MainWindow : Window
 
     private void EscolherArea(string area)
     {
-        if (MenuInicial.Visibility != Visibility.Visible || !MenuInicial.IsEnabled) return;
-        _inicioView.MostrarAviso("");
+        if (!PodeSairDasConfiguracoes()) return;
         if (area is "garcom" or "cozinha")
         {
-            if (_restauracao) { _inicioView.MostrarAviso("Entre como gestor para restaurar o banco antes de iniciar a operação."); return; }
+            if (_restauracao) { JanelaAviso.Mostrar("Recuperação", "Entre como gestor para restaurar o banco antes de iniciar a operação.", TipoAviso.Informacao); return; }
             _areaPendente = area;
             BloquearAtendimento();
             return;
         }
         if (_restauracao && area is not ("gestor" or "backup"))
-        { _inicioView.MostrarAviso("Somente a restauração de backup está disponível."); return; }
+        { JanelaAviso.Mostrar("Recuperação", "Somente a restauração de backup está disponível.", TipoAviso.Informacao); return; }
         if (new JanelaAcessoGestor(_acesso) { Owner = this }.ShowDialog() != true) return;
         _bloqueado = false;
         _cozinhaAtiva = false;
@@ -285,14 +288,19 @@ public partial class MainWindow : Window
         catch
         {
             MostrarInicio();
-            _inicioView.MostrarAviso("Não foi possível abrir essa área. Tente novamente.");
+            JanelaAviso.Mostrar("Varthex Comanda", "Não foi possível abrir essa área. Tente novamente.", TipoAviso.Erro);
         }
     }
 
     protected override void OnPreviewKeyDown(KeyEventArgs e)
     {
         base.OnPreviewKeyDown(e);
-        if (e.Handled || e.IsRepeat || Keyboard.Modifiers != ModifierKeys.None || MenuInicial.Visibility != Visibility.Visible || !MenuInicial.IsEnabled) return;
+        if (!e.Handled && !_bloqueado && ReferenceEquals(ConteudoPrincipal.Content, _atendimentoView)
+            && _atendimentoView.DigitarNumeroNaGrade(e.Key, e.KeyboardDevice.Modifiers, e.OriginalSource as DependencyObject))
+        { e.Handled = true; return; }
+        if (e.Key == Key.K && Keyboard.Modifiers == ModifierKeys.Control)
+        { AbrirPesquisa(); e.Handled = true; return; }
+        if (e.Handled || e.IsRepeat || Keyboard.Modifiers != ModifierKeys.None || !AreaSistema.IsEnabled || !_bloqueado) return;
         var area = e.Key switch { Key.F1 => "garcom", Key.F2 => "cozinha", Key.F3 => "gestor", _ => null };
         if (area is null) return;
         e.Handled = true;
@@ -324,15 +332,19 @@ public partial class MainWindow : Window
         BotaoCozinha.Visibility = _cozinhaAtiva ? Visibility.Visible : Visibility.Collapsed;
         BotaoCozinha.IsEnabled = !_bloqueado && _cozinhaAtiva && !_restauracao;
         RotuloPerfil.Text = _cozinhaAtiva ? "Cozinha · consulta" : _acesso.Autenticado ? "Gestor" : "Garçom";
+        UsuarioRodape.Text = $"Usuário: {Environment.UserName} · {(_bloqueado ? "Acesso bloqueado" : RotuloPerfil.Text)}";
+        LicencaRodape.Text = _configuracaoView.ConsultarLicenca?.Invoke() ?? "Licença: consultar ativação";
+        LicencaRodape.ToolTip = LicencaRodape.Text;
+        BotaoBackupRodape.IsEnabled = true;
         AtualizarAbaAtiva();
         BotaoPerfil.Content = _acesso.Autenticado ? "Voltar ao garçom" : "Entrar como gestor";
         CommandManager.InvalidateRequerySuggested();
+        AtualizarRibbon();
     }
 
     private void MostrarConteudo(UIElement view)
     {
         if (_bloqueado) return;
-        if (!ReferenceEquals(view,_configuracaoView) && !PodeSairDasConfiguracoes()) return;
         ConteudoPrincipal.Content = view;
         AtualizarAbaAtiva();
         // Foco no primeiro controle util da tela; adiado ate a nova tela ser carregada.
@@ -349,14 +361,14 @@ public partial class MainWindow : Window
         }));
     }
 
-    private bool PodeSairDasConfiguracoes() => !ReferenceEquals(ConteudoPrincipal.Content,_configuracaoView) || _configuracaoView.ConfirmarSaida();
+    private bool PodeSairDasConfiguracoes() => !_configuracaoView.ViewModel.TemAlteracoes || _configuracaoView.ConfirmarSaida();
 
     private void AcaoConfiguracao(string acao)
     {
         if(_bloqueado || !_acesso.Autenticado || _restauracao) return;
         if(acao is "senha" or "pin")
         {
-            if(new JanelaAlterarAcesso(_acesso,_acessoAtendimento,acao=="pin") { Owner=this }.ShowDialog()==true)
+            if(new JanelaAlterarAcesso(_acesso,_acessoAtendimento,acao=="pin") { Owner=_configuracoesModal??(Window)this }.ShowDialog()==true)
             { _configuracaoView.ViewModel.MensagemErro=false;_configuracaoView.ViewModel.Mensagem="Credencial alterada com sucesso."; }
         }
         else if(acao=="licenca") { ((App)System.Windows.Application.Current).RenovarLicenca();_configuracaoView.AtualizarSecao(); }
@@ -364,6 +376,7 @@ public partial class MainWindow : Window
         {
             _backupView.ViewModel.CriarBackupCommand.Execute(_configuracaoView.ViewModel.PastaBackupExterna);
             var mensagem = _backupView.ViewModel.Mensagem;
+            if(_configuracoesModal is not null)JanelaAviso.Mostrar("Backup",mensagem,_backupView.ViewModel.MensagemErro?TipoAviso.Erro:TipoAviso.Informacao);
             _configuracaoView.AtualizarSecao();
             _configuracaoView.ViewModel.MensagemErro=_backupView.ViewModel.MensagemErro;
             _configuracaoView.ViewModel.Mensagem=mensagem;
@@ -371,7 +384,7 @@ public partial class MainWindow : Window
         else if(acao=="backups")
         {
             _backupView.ViewModel.AtualizarLista();
-            var janela=new Window { Title="Backups e restauração",Owner=this,Width=Math.Min(1100,SystemParameters.WorkArea.Width),Height=Math.Min(700,SystemParameters.WorkArea.Height),WindowStartupLocation=WindowStartupLocation.CenterOwner,Content=_backupView };
+            var janela=new Window { Title="Backups e restauração",Owner=_configuracoesModal??(Window)this,Width=Math.Min(1100,SystemParameters.WorkArea.Width),Height=Math.Min(700,SystemParameters.WorkArea.Height),WindowStartupLocation=WindowStartupLocation.CenterOwner,Content=_backupView,ResizeMode=ResizeMode.CanResize };
             try { janela.ShowDialog(); } finally { janela.Content=null; }
             _configuracaoView.AtualizarSecao();
         }

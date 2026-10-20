@@ -8,7 +8,8 @@ public class JanelaConfirmador : IConfirmador
     {
         var janela = new ConfirmacaoView(titulo, mensagem);
         // Qualificado: dentro de VarthexComanda.Desktop, "Application" solto resolve para o namespace VarthexComanda.Application.
-        var dono = System.Windows.Application.Current?.MainWindow;
+        var dono = System.Windows.Application.Current?.Windows.OfType<Window>().FirstOrDefault(w => w.IsActive)
+            ?? System.Windows.Application.Current?.MainWindow;
         if (dono is not null && dono.IsLoaded)
         {
             janela.Owner = dono;

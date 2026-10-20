@@ -12,6 +12,42 @@ namespace VarthexComanda.Desktop.Tests.Atendimento;
 public class AtendimentoViewModelTests
 {
     [Fact]
+    public void MesaValidaAtualizaGradeEPermiteVoltarAoBalcao()
+    {
+        var (vm, _, _, _) = CriarViewModel();
+        vm.NovoNumero = "1";
+        vm.AbrirCommand.Execute(null);
+        Assert.False(vm.SalvarDadosComanda("mesa", "0"));
+        Assert.False(vm.SalvarDadosComanda("mesa", "1000"));
+        Assert.False(vm.SalvarDadosComanda("mesa", "abc"));
+        Assert.True(vm.SalvarDadosComanda("mesa", "12"));
+        Assert.Equal("Mesa 12", vm.Slots.Single(s => s.Numero == 1).MesaTexto);
+        Assert.True(vm.SalvarDadosComanda("mesa", ""));
+        Assert.Null(vm.ComandaAtual!.NumeroMesa);
+        Assert.Equal("Balcão", vm.Slots.Single(s => s.Numero == 1).MesaTexto);
+    }
+
+    [Fact]
+    public void ObservacaoAplicaSomenteAoProximoProdutoELimpaAposSucesso()
+    {
+        var (vm, produtos, _, _) = CriarViewModel();
+        vm.NovoNumero = "1";
+        vm.AbrirCommand.Execute(null);
+        var produto = produtos.Pesquisar(null, null)[0];
+        vm.ObservacaoNovoItem = "  Sem cebola  ";
+        vm.AdicionarProdutoAoItemCommand.Execute(produto);
+        Assert.Equal("Sem cebola", vm.Itens.Single().Observacao);
+        Assert.Empty(vm.ObservacaoNovoItem);
+        vm.AdicionarProdutoAoItemCommand.Execute(produto);
+        Assert.Equal(2, vm.Itens.Count);
+        Assert.Null(vm.Itens.Single(i => i.Id == vm.ItemSelecionadoId).Observacao);
+        vm.ObservacaoNovoItem = new string('a', 301);
+        vm.AdicionarProdutoAoItemCommand.Execute(produto);
+        Assert.Equal(2, vm.Itens.Count);
+        Assert.Equal(301, vm.ObservacaoNovoItem.Length);
+    }
+
+    [Fact]
     public void SaidaNotificaBloqueioSomenteQuandoOAtendimentoTermina()
     {
         var (vm, produtos, confirmador, pagamento) = CriarViewModel();

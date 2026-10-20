@@ -10,6 +10,176 @@ namespace VarthexComanda.Desktop.Atendimento;
 public partial class AtendimentoView : UserControl
 {
     public AtendimentoViewModel ViewModel { get; }
+    public Action? ImpressaoSolicitada { get; set; }
+    public Func<IReadOnlyList<string>>? OrigensCliente { get; set; }
+    private void ImprimirConta_Click(object sender,RoutedEventArgs e)=>ImpressaoSolicitada?.Invoke();
+    private void OrigemCliente_Click(object sender,RoutedEventArgs e)
+    {
+        if(ViewModel.ComandaAtual is null)return;
+        var janela=new Window { Title="Origem do cliente",Owner=_janelaComanda??Window.GetWindow(this),Width=420,SizeToContent=SizeToContent.Height,WindowStartupLocation=WindowStartupLocation.CenterOwner,ResizeMode=ResizeMode.NoResize };
+        var painel=new StackPanel { Margin=new Thickness(24) };janela.Content=painel;
+        var lista=new ComboBox { ItemsSource=(OrigensCliente?.Invoke()??new[]{"Indefinido"}).Append(ViewModel.ComandaAtual.OrigemCliente??"Indefinido").Distinct().ToArray(),SelectedItem=ViewModel.ComandaAtual.OrigemCliente??"Indefinido",MinHeight=46 };
+        painel.Children.Add(new Label { Content="Como o cliente conheceu o estabelecimento?",Target=lista });painel.Children.Add(lista);
+        var erro=new TextBlock { TextWrapping=TextWrapping.Wrap,Margin=new Thickness(0,8,0,8) };painel.Children.Add(erro);
+        var salvar=new Button { Content="Salvar",IsDefault=true };salvar.Click+=(_,_)=>{if(ViewModel.SalvarDadosComanda("origem",lista.SelectedItem as string??"Indefinido"))janela.DialogResult=true;else erro.Text=ViewModel.Mensagem;};painel.Children.Add(salvar);
+        painel.Children.Add(new Button { Content="Cancelar",IsCancel=true,Margin=new Thickness(0,8,0,0) });janela.ShowDialog();
+    }
+    private Window? _janelaComanda;
+    private bool _abrindoJanelaComanda;
+
+    private void AgendarJanelaComanda()
+    {
+        if (ViewModel.ComandaAtual is null)
+        {
+            _janelaComanda?.Close();
+            return;
+        }
+        if (_janelaComanda is not null)
+        {
+            _janelaComanda.Title = $"Comanda {ViewModel.ComandaAtual.Numero:00} · #{ViewModel.ComandaAtual.Id:0000}";
+            return;
+        }
+        if (_abrindoJanelaComanda || !IsLoaded || !IsVisible) return;
+        _abrindoJanelaComanda = true;
+        Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(() =>
+        {
+            _abrindoJanelaComanda = false;
+            if (ViewModel.ComandaAtual is null || _janelaComanda is not null || !IsVisible) return;
+            var owner = Window.GetWindow(this);
+            if (owner?.IsVisible != true) return;
+            AbrirJanelaComanda(owner);
+        }));
+    }
+
+    private void AbrirJanelaComanda(Window owner)
+    {
+        var painelOriginal = (Panel)PainelEdicao.Parent;
+        var indice = painelOriginal.Children.IndexOf(PainelEdicao);
+        var bindingGrade = System.Windows.Data.BindingOperations.GetBindingBase(PainelGrade, VisibilityProperty)!;
+        painelOriginal.Children.Remove(PainelEdicao);
+        var janela = new Window
+        {
+            Title = $"Comanda {ViewModel.ComandaAtual!.Numero:00} · #{ViewModel.ComandaAtual.Id:0000}",
+            Owner = owner, WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            Width = Math.Min(1180, SystemParameters.WorkArea.Width), Height = Math.Min(760, SystemParameters.WorkArea.Height),
+            MinWidth = 800, MinHeight = 600, ResizeMode = ResizeMode.CanResize,
+            ShowInTaskbar = false, DataContext = ViewModel,
+            Content = new Border { Child = PainelEdicao, Padding = new Thickness(16) }
+        };
+        janela.SetResourceReference(Window.BackgroundProperty, "Canvas");
+        ((Border)janela.Content).SetResourceReference(Border.BackgroundProperty, "Canvas");
+        _janelaComanda = janela;
+        PainelGrade.Visibility = Visibility.Visible;
+        janela.PreviewKeyDown += (_, e) => OnPreviewKeyDown(e);
+        janela.ContentRendered += (_, _) => CampoBusca.Focus();
+        try { janela.ShowDialog(); }
+        finally
+        {
+            _janelaComanda = null;
+            ((Border)janela.Content).Child = null;
+            janela.Content = null;
+            painelOriginal.Children.Insert(indice, PainelEdicao);
+            System.Windows.Data.BindingOperations.SetBinding(PainelGrade, VisibilityProperty, bindingGrade);
+            if (ViewModel.ComandaAtual is not null) ViewModel.FecharEdicaoCommand.Execute(null);
+            ViewModel.AtualizarComandasAbertas();
+        }
+    }
+
+    private void OpcoesGrade_Click(object sender, RoutedEventArgs e)
+    {
+        var menu = new ContextMenu { PlacementTarget = (Button)sender, Placement = PlacementMode.Custom, MinWidth = 240, Padding = new Thickness(4) };
+        menu.CustomPopupPlacementCallback = (tamanhoMenu, tamanhoBotao, deslocamento) =>
+        {
+            var botao = (Button)sender;
+            var janela = Window.GetWindow(botao);
+            if (janela is null)
+                return new[] { new CustomPopupPlacement(new Point(tamanhoBotao.Width - tamanhoMenu.Width, tamanhoBotao.Height), PopupPrimaryAxis.Vertical) };
+            var posicao = botao.TranslatePoint(new Point(0,0), janela);
+            var x = Math.Max(-posicao.X, Math.Min(tamanhoBotao.Width - tamanhoMenu.Width, janela.ActualWidth - posicao.X - tamanhoMenu.Width));
+            var y = posicao.Y + tamanhoBotao.Height + tamanhoMenu.Height <= janela.ActualHeight
+                ? tamanhoBotao.Height : -tamanhoMenu.Height;
+            return new[] { new CustomPopupPlacement(new Point(x,y), PopupPrimaryAxis.None) };
+        };
+        MenuItem Opcao(string nome, string desenho)
+        {
+            var icone = new System.Windows.Shapes.Path
+            {
+                Data = System.Windows.Media.Geometry.Parse(desenho), Width = 21, Height = 21,
+                Stretch = System.Windows.Media.Stretch.Uniform, StrokeThickness = 1.8,
+                StrokeStartLineCap = System.Windows.Media.PenLineCap.Round,
+                StrokeEndLineCap = System.Windows.Media.PenLineCap.Round,
+                StrokeLineJoin = System.Windows.Media.PenLineJoin.Round,
+                HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center
+            };
+            icone.SetResourceReference(System.Windows.Shapes.Shape.StrokeProperty, "Ink");
+            var quadro = new Grid { Width = 28, Height = 28, Margin = new Thickness(0,0,12,0) };
+            quadro.Children.Add(icone);
+            var cabecalho = new StackPanel { Orientation = Orientation.Horizontal };
+            cabecalho.Children.Add(quadro);
+            cabecalho.Children.Add(new TextBlock { Text = nome, VerticalAlignment = VerticalAlignment.Center });
+            var opcao = new MenuItem { Header = cabecalho, FontSize = 16, MinHeight = 48, Padding = new Thickness(6,8,14,8) };
+            System.Windows.Automation.AutomationProperties.SetName(opcao, nome);
+            return opcao;
+        }
+        var atualizar = Opcao("Atualizar", "M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8 M21 3v5h-5 M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16 M8 16H3v5");
+        atualizar.Click += (_, _) =>
+        {
+            try { ViewModel.AtualizarComandasAbertas(); }
+            catch { JanelaAviso.Mostrar("Comandas", "Não foi possível atualizar. Tente novamente.", TipoAviso.Erro); }
+        };
+        menu.Items.Add(atualizar);
+        var juntar = Opcao("Juntar pedidos", "M8 6l4-4 4 4 M12 2v10.3a4 4 0 0 1-1.172 2.872L4 22 M20 22l-5-5");
+        juntar.Click += (_, _) => JuntarPedidos();
+        menu.Items.Add(juntar);
+        menu.IsOpen = true;
+    }
+
+    private void JuntarPedidos()
+    {
+        try { ViewModel.AtualizarComandasAbertas(); }
+        catch { JanelaAviso.Mostrar("Comandas", "Não foi possível consultar as comandas. Tente novamente.", TipoAviso.Erro); return; }
+        if (ViewModel.ComandasAbertas.Count < 2)
+        {
+            JanelaAviso.Mostrar("Juntar pedidos", "Abra pelo menos duas comandas para juntar os pedidos.", TipoAviso.Informacao);
+            return;
+        }
+        var janela = new Window { Title="Juntar pedidos", Owner=Window.GetWindow(this), WindowStartupLocation=WindowStartupLocation.CenterOwner,
+            Width=460, SizeToContent=SizeToContent.Height, ResizeMode=ResizeMode.NoResize, ShowInTaskbar=false };
+        var painel = new StackPanel { Margin=new Thickness(24) };
+        janela.Content = painel;
+        painel.Children.Add(new TextBlock { Text="Todos os itens serão transferidos para o destino. A comanda de origem será liberada.", TextWrapping=TextWrapping.Wrap, Margin=new Thickness(0,0,0,16) });
+        var opcoes = ViewModel.ComandasAbertas.Select(c=>new { c.Id, Nome=$"Comanda {c.Numero:00} · {CentavosParaMoedaConverter.Formatar(c.TotalCentavos)}" }).ToList();
+        var origem = new ComboBox { ItemsSource=opcoes, DisplayMemberPath="Nome", SelectedValuePath="Id", MinHeight=46 };
+        var destino = new ComboBox { ItemsSource=opcoes, DisplayMemberPath="Nome", SelectedValuePath="Id", MinHeight=46 };
+        painel.Children.Add(new Label { Content="Comanda de origem", Target=origem, Padding=new Thickness(0,0,0,6) });
+        painel.Children.Add(origem);
+        painel.Children.Add(new Label { Content="Comanda de destino", Target=destino, Padding=new Thickness(0,16,0,6) });
+        painel.Children.Add(destino);
+        var erro = new TextBlock { TextWrapping=TextWrapping.Wrap, Margin=new Thickness(0,12,0,12) };
+        erro.SetResourceReference(TextBlock.ForegroundProperty,"TextB22222");
+        painel.Children.Add(erro);
+        var confirmar = new Button { Content="Juntar pedidos", IsDefault=true };
+        confirmar.Click += (_,_) =>
+        {
+            if (origem.SelectedValue is not int origemId || destino.SelectedValue is not int destinoId)
+            { erro.Text="Selecione a origem e o destino."; return; }
+            if (origemId==destinoId) { erro.Text="Escolha duas comandas diferentes."; return; }
+            if (!new JanelaConfirmador().Confirmar("Confirmar transferência?", $"Transferir os itens de {origem.Text} para {destino.Text}? A origem será liberada.")) return;
+            confirmar.IsEnabled=false;
+            if (ViewModel.JuntarComandas(origemId,destinoId)) janela.DialogResult=true;
+            else { erro.Text=ViewModel.Mensagem; confirmar.IsEnabled=true; }
+        };
+        painel.Children.Add(confirmar);
+        painel.Children.Add(new Button { Content="Cancelar", IsCancel=true, Margin=new Thickness(0,8,0,0) });
+        janela.ShowDialog();
+    }
+
+    private void PainelEdicao_SizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        ColunaCatalogo.Width = e.NewSize.Width < 1050
+            ? new GridLength(240)
+            : new GridLength(1, GridUnitType.Star);
+    }
 
     private void EditarDados_Click(object sender, RoutedEventArgs e)
     {
@@ -60,11 +230,12 @@ public partial class AtendimentoView : UserControl
         DataContext = viewModel;
         var cronometro = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
         cronometro.Tick += (_, _) => ViewModel.AtualizarCronometros();
-        Loaded += (_, _) => { ViewModel.AtualizarCronometros(); cronometro.Start(); };
+        Loaded += (_, _) => { ViewModel.AtualizarCronometros(); cronometro.Start(); AgendarJanelaComanda(); };
         Unloaded += (_, _) => cronometro.Stop();
         DataObject.AddPastingHandler(CampoNumeroComanda, CampoNumero_Colar);
         // as linhas sao recriadas a cada alteracao; garante que o teclado continue chegando (F4/Esc)
         viewModel.Itens.CollectionChanged += (_, _) => RestaurarFocoSePerdido();
+        viewModel.PropertyChanged += (_, e) => { if (e.PropertyName == nameof(AtendimentoViewModel.ComandaAtual)) AgendarJanelaComanda(); };
     }
 
     // ---- foco inicial: so depois que o elemento esta de fato visivel (focar antes falha em silencio) ----
@@ -115,6 +286,29 @@ public partial class AtendimentoView : UserControl
 
     // ---- teclado do atendimento ----
 
+    public bool DigitarNumeroNaGrade(Key tecla, ModifierKeys modificadores, DependencyObject? origem)
+    {
+        if (ViewModel.ComandaAtual is not null || modificadores != ModifierKeys.None) return false;
+        if (origem is TextBoxBase or PasswordBox or ComboBox
+            || Keyboard.FocusedElement is TextBoxBase or PasswordBox or ComboBox) return false;
+        string? digito = tecla is >= Key.D0 and <= Key.D9 ? ((int)tecla - (int)Key.D0).ToString()
+            : tecla is >= Key.NumPad0 and <= Key.NumPad9 ? ((int)tecla - (int)Key.NumPad0).ToString() : null;
+        if (digito is not null) ViewModel.NovoNumero += digito;
+        else if (tecla == Key.Back)
+        {
+            if (ViewModel.NovoNumero.Length > 0) ViewModel.NovoNumero = ViewModel.NovoNumero[..^1];
+        }
+        else if (tecla == Key.Enter && ViewModel.NovoNumero.Length > 0)
+        {
+            ViewModel.AbrirCommand.Execute(null);
+            return true;
+        }
+        else return false;
+        CampoNumeroComanda.Focus();
+        CampoNumeroComanda.CaretIndex = CampoNumeroComanda.Text.Length;
+        return true;
+    }
+
     protected override void OnPreviewKeyDown(KeyEventArgs e)
     {
         base.OnPreviewKeyDown(e);
@@ -124,6 +318,8 @@ public partial class AtendimentoView : UserControl
         }
 
         var modificadores = e.KeyboardDevice.Modifiers;
+        if (DigitarNumeroNaGrade(e.Key, modificadores, e.OriginalSource as DependencyObject))
+        { e.Handled = true; return; }
         var ctrl = modificadores.HasFlag(ModifierKeys.Control);
 
         if (ctrl && !modificadores.HasFlag(ModifierKeys.Alt))

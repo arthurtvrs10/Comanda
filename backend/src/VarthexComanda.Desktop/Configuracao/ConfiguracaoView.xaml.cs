@@ -25,12 +25,11 @@ public partial class ConfiguracaoView : UserControl
         if(!new Atendimento.JanelaConfirmador().Confirmar("Descartar alterações?","Há alterações não salvas. Deseja descartá-las e continuar?"))return false;
         ViewModel.DescartarCommand.Execute(null); return true;
     }
-    public void AbrirSecao(int secao) { if(secao==_secao || ConfirmarSaida()) Selecionar(secao); }
+    public void AbrirSecao(int secao) => Selecionar(secao);
     private void TrocarSecao(object sender,RoutedEventArgs e)
     {
         if(_trocando || ViewModel is null)return;
         int destino=int.Parse((string)((RadioButton)sender).Tag);
-        if(destino!=_secao && !ConfirmarSaida()){Selecionar(_secao);return;}
         Selecionar(destino);
     }
     private void Selecionar(int secao)
@@ -70,13 +69,13 @@ public partial class ConfiguracaoView : UserControl
         var input=new TextBox { MinHeight=46,Width=largura,MaxWidth=600,HorizontalAlignment=HorizontalAlignment.Left,IsReadOnly=somenteLeitura,MinWidth=double.IsNaN(largura)?200:largura };
         if(double.IsNaN(largura)){input.HorizontalAlignment=HorizontalAlignment.Left; input.Width=Math.Min(600,Math.Max(200,ActualWidth-(ActualWidth<800?110:330)));}
         input.SetBinding(TextBox.TextProperty,new Binding(propriedade){Mode=somenteLeitura?BindingMode.OneWay:BindingMode.TwoWay,UpdateSourceTrigger=UpdateSourceTrigger.PropertyChanged});
-        label.Target=input;Formulario.Children.Add(input);Formulario.Children.Add(new TextBlock { Text=ajuda,TextWrapping=TextWrapping.Wrap,Foreground=new SolidColorBrush(Color.FromRgb(89,102,94)),Margin=new Thickness(0,8,0,16) });
+        label.Target=input;Formulario.Children.Add(input);Formulario.Children.Add(new TextBlock { Text=ajuda,TextWrapping=TextWrapping.Wrap,Foreground=TemaInterface.Pincel("#59665E"),Margin=new Thickness(0,8,0,16) });
     }
     private void Linha(string titulo,string texto,string? botao=null,string? acao=null)
     {
         var painel=new StackPanel { Margin=new Thickness(0,0,0,22) };
         painel.Children.Add(new TextBlock { Text=titulo,FontSize=17,FontWeight=FontWeights.SemiBold,TextWrapping=TextWrapping.Wrap });
-        painel.Children.Add(new TextBlock { Text=texto,TextWrapping=TextWrapping.Wrap,Foreground=new SolidColorBrush(Color.FromRgb(89,102,94)),Margin=new Thickness(0,6,0,12) });
+        painel.Children.Add(new TextBlock { Text=texto,TextWrapping=TextWrapping.Wrap,Foreground=TemaInterface.Pincel("#59665E"),Margin=new Thickness(0,6,0,12) });
         if(botao!=null){var b=new Button { Content=botao,HorizontalAlignment=HorizontalAlignment.Left,MinHeight=46 };b.Click+=(_,_)=>{if(ViewModel.TemAlteracoes && acao is "criar-backup" or "backups"){ViewModel.MensagemErro=true;ViewModel.Mensagem="Salve ou descarte as alterações antes de abrir o backup.";return;}AcaoSolicitada?.Invoke(acao!);};painel.Children.Add(b);}
         var linha=new Grid { Margin=new Thickness(0,0,0,18) };
         linha.ColumnDefinitions.Add(new ColumnDefinition());linha.ColumnDefinitions.Add(new ColumnDefinition { Width=GridLength.Auto });

@@ -11,10 +11,10 @@ public class CategoriaSelecionadaParaCorConverter : IMultiValueConverter
     {
         if (values.Length == 2 && values[0] is Categoria item && values[1] is Categoria selecionada && item.Id == selecionada.Id)
         {
-            return new SolidColorBrush(Color.FromRgb(0xED, 0xED, 0xEA));
+            return TemaInterface.Pincel("#EDEDEA");
         }
 
-        return Brushes.White;
+        return TemaInterface.Pincel("#FFFFFF");
     }
 
     public object[] ConvertBack(object value, Type[] targetTypes, object? parameter, CultureInfo culture) =>

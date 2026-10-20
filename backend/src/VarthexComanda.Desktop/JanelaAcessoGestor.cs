@@ -28,7 +28,7 @@ public sealed class JanelaAcessoGestor : Window
             painel.Children.Add(new TextBlock { Text = "Confirmar senha", Margin = new Thickness(0,12,0,4) });
             painel.Children.Add(confirmacao);
         }
-        var erro = new TextBlock { Foreground = Brushes.Firebrick, TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0,12,0,8) };
+        var erro = new TextBlock { Foreground = TemaInterface.Pincel("#B22222"), TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0,12,0,8) };
         painel.Children.Add(erro);
         var entrar = new Button { Content = cadastro ? "Definir senha e entrar" : "Entrar", IsDefault = true, Padding = new Thickness(12,8,12,8) };
         entrar.Click += (_, _) =>

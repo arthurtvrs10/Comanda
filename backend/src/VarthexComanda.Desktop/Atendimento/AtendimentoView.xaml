@@ -7,11 +7,12 @@
              xmlns:domain="clr-namespace:VarthexComanda.Domain;assembly=VarthexComanda.Domain"
              xmlns:catalogo="clr-namespace:VarthexComanda.Desktop.Catalogo"
              mc:Ignorable="d"
-             Background="#F2F2F0">
+             Background="{DynamicResource BackgroundF2F2F0}">
     <UserControl.Resources>
+        <local:NumeroComandaPesquisadoConverter x:Key="NumeroPesquisado" />
         <Style x:Key="BotaoPainelComanda" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
             <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="BorderBrush" Value="#87988E" />
+            <Setter Property="BorderBrush" Value="{DynamicResource Color87988E}" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -19,11 +20,11 @@
                             <ContentPresenter x:Name="Label" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" RecognizesAccessKey="True" />
                         </Border>
                         <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="BorderBrush" Value="#1F5FBF" /><Setter TargetName="Surface" Property="BorderThickness" Value="2" /></Trigger>
+                            <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="BorderBrush" Value="{DynamicResource Color1F5FBF}" /><Setter TargetName="Surface" Property="BorderThickness" Value="2" /></Trigger>
                             <Trigger Property="IsPressed" Value="True"><Setter TargetName="Surface" Property="Opacity" Value="0.85" /></Trigger>
                             <Trigger Property="IsEnabled" Value="False">
-                                <Setter TargetName="Surface" Property="Background" Value="#E1E5E2" />
-                                <Setter TargetName="Surface" Property="BorderBrush" Value="#C4CCC6" />
+                                <Setter TargetName="Surface" Property="Background" Value="{DynamicResource BackgroundE1E5E2}" />
+                                <Setter TargetName="Surface" Property="BorderBrush" Value="{DynamicResource ColorC4CCC6}" />
                                 <Setter TargetName="Label" Property="TextElement.Foreground" Value="#59645D" />
                             </Trigger>
                         </ControlTemplate.Triggers>
@@ -32,8 +33,8 @@
             </Setter>
         </Style>
         <Style x:Key="AcaoComanda" TargetType="Button" BasedOn="{StaticResource BotaoPainelComanda}">
-            <Setter Property="Background" Value="#E1E8E4" />
-            <Setter Property="Foreground" Value="#263C32" />
+            <Setter Property="Background" Value="{DynamicResource BackgroundE1E8E4}" />
+            <Setter Property="Foreground" Value="{DynamicResource Text263C32}" />
             <Setter Property="BorderThickness" Value="1" />
             <Setter Property="Height" Value="78" />
             <Setter Property="Padding" Value="4" />
@@ -57,7 +58,7 @@
         <local:ItemSelecionadoParaCorConverter x:Key="CorItemSelecionado" />
         <Style x:Key="PlaceholderBusca" TargetType="TextBlock">
             <Setter Property="IsHitTestVisible" Value="False" />
-            <Setter Property="Foreground" Value="#8A8A86" />
+            <Setter Property="Foreground" Value="{DynamicResource Text8A8A86}" />
             <Setter Property="FontSize" Value="16" />
             <Setter Property="Margin" Value="12,0,0,0" />
             <Setter Property="VerticalAlignment" Value="Center" />
@@ -92,9 +93,10 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <TextBlock Grid.Row="0" Text="COMANDAS" FontWeight="Bold" FontSize="12" Foreground="#4A4A47" Margin="0,0,0,10" />
 
-            <Grid Grid.Row="1" Margin="0,0,0,12" Width="260" HorizontalAlignment="Left">
+            <DockPanel Grid.Row="1" Margin="0,0,0,12" LastChildFill="False">
+                <Button DockPanel.Dock="Right" Content="Opções ▾" Click="OpcoesGrade_Click" Padding="16,8" AutomationProperties.Name="Opções das comandas" />
+                <Grid Width="260" HorizontalAlignment="Left">
                 <TextBox x:Name="CampoNumeroComanda" ToolTip="Nº da comanda (Ctrl+N). Enter abre a comanda."
                          AutomationProperties.Name="Nº da comanda"
                          InputMethod.IsInputMethodEnabled="False"
@@ -106,52 +108,66 @@
                     </TextBox.InputBindings>
                 </TextBox>
                 <TextBlock Text="Nº da comanda (Ctrl+N)" Style="{StaticResource PlaceholderNumero}" />
-            </Grid>
+                </Grid>
+            </DockPanel>
 
             <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
                 <ItemsControl ItemsSource="{Binding Slots}" VerticalAlignment="Top">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <UniformGrid Columns="5" />
+                            <WrapPanel />
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Button Margin="4" Height="128" HorizontalContentAlignment="Stretch"
+                            <Button Margin="4" Width="136" Height="136" Padding="6" HorizontalContentAlignment="Stretch"
                                     Command="{Binding DataContext.AbrirOuSelecionarSlotCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                     CommandParameter="{Binding}">
                                 <Button.Style>
                                     <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
                                         <Setter Property="FocusVisualStyle" Value="{StaticResource FocoVisivel}" />
-                                        <Setter Property="Background" Value="White" />
-                                        <Setter Property="BorderBrush" Value="#C4C4C4" />
+                                        <Setter Property="Background" Value="{DynamicResource BackgroundFFFFFF}" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource ColorC4C4C4}" />
                                         <Setter Property="BorderThickness" Value="1" />
-                                        <Setter Property="Foreground" Value="#23252A" />
+                                        <Setter Property="Foreground" Value="{DynamicResource Text23252A}" />
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding Aberta}" Value="True">
-                                                <Setter Property="Background" Value="#D9822B" />
-                                                <Setter Property="BorderBrush" Value="#BF701F" />
+                                                <Setter Property="Background" Value="{DynamicResource BackgroundD9822B}" />
+                                                <Setter Property="BorderBrush" Value="{DynamicResource ColorBF701F}" />
                                                 <Setter Property="Foreground" Value="White" />
+                                            </DataTrigger>
+                                            <DataTrigger Value="True">
+                                                <DataTrigger.Binding>
+                                                    <MultiBinding Converter="{StaticResource NumeroPesquisado}">
+                                                        <Binding Path="Numero" />
+                                                        <Binding Path="DataContext.NovoNumero" RelativeSource="{RelativeSource AncestorType=ItemsControl}" />
+                                                    </MultiBinding>
+                                                </DataTrigger.Binding>
+                                                <Setter Property="BorderBrush" Value="#1F5FBF" />
+                                                <Setter Property="BorderThickness" Value="4" />
+                                                <Setter Property="AutomationProperties.ItemStatus" Value="Comanda pesquisada" />
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
                                 </Button.Style>
-                                <Grid Margin="10">
+                                <Grid Margin="0">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="*" />
                                         <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
-                                    <DockPanel Grid.Row="0">
+                                    <StackPanel Grid.Row="0"><DockPanel>
                                         <Ellipse DockPanel.Dock="Right" Width="10" Height="10" Margin="6,0,0,0" Fill="{Binding CorPrioridade}" ToolTip="{Binding PrioridadeTexto}" AutomationProperties.Name="{Binding PrioridadeTexto}" />
                                         <TextBlock Text="{Binding PrioridadeTexto}" FontSize="11" FontWeight="Bold" />
-                                        <TextBlock Text="{Binding TempoFormatado}" FontSize="10" DockPanel.Dock="Right" HorizontalAlignment="Right" />
                                     </DockPanel>
+                                    <TextBlock Text="{Binding TempoFormatado}" FontSize="10" Margin="0,2,0,0" />
+                                    </StackPanel>
                                     <StackPanel Grid.Row="1" VerticalAlignment="Center">
                                     <TextBlock Text="{Binding Numero, StringFormat='{}{0:00}'}"
                                                FontSize="28" FontWeight="Bold"
                                                HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                    <TextBlock Text="{Binding NomeCliente}" ToolTip="{Binding NomeCliente}" TextTrimming="CharacterEllipsis" FontSize="13" HorizontalAlignment="Center" />
+                                    <TextBlock Text="{Binding NomeCliente}" ToolTip="{Binding NomeCliente}" TextTrimming="CharacterEllipsis" FontSize="12" HorizontalAlignment="Stretch" TextAlignment="Center" />
+                                    <TextBlock Text="{Binding MesaTexto}" FontSize="12" TextAlignment="Center" HorizontalAlignment="Stretch" Margin="0,2,0,3" />
                                     </StackPanel>
                                     <TextBlock Grid.Row="2" HorizontalAlignment="Center" FontSize="11">
                                         <TextBlock.Style>
@@ -172,10 +188,10 @@
                 </ItemsControl>
             </ScrollViewer>
 
-            <TextBlock Grid.Row="3" Text="{Binding Mensagem}" Foreground="#B23B32" Margin="0,12,0,0" />
+            <TextBlock Grid.Row="3" Text="{Binding Mensagem}" Foreground="{DynamicResource TextB23B32}" Margin="0,12,0,0" />
         </Grid>
 
-        <Grid x:Name="PainelEdicao" IsVisibleChanged="PainelEdicao_IsVisibleChanged"
+        <Grid x:Name="PainelEdicao" IsVisibleChanged="PainelEdicao_IsVisibleChanged" SizeChanged="PainelEdicao_SizeChanged"
               Visibility="{Binding ComandaAtual, Converter={StaticResource VisivelSeComandaAberta}}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -183,17 +199,17 @@
             </Grid.RowDefinitions>
 
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*" />
+                <ColumnDefinition x:Name="ColunaCatalogo" Width="1*" />
                 <ColumnDefinition Width="1" />
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
-            <DockPanel Grid.Row="0" Grid.Column="0" Margin="0,0,14,12" KeyboardNavigation.TabIndex="3">
-                <Button DockPanel.Dock="Left" Content="Voltar às comandas" Command="{Binding FecharEdicaoCommand}"
+            <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,14,12" KeyboardNavigation.TabIndex="3">
+                <Button Content="Voltar às comandas" Command="{Binding FecharEdicaoCommand}"
                         Padding="14,6" ToolTip="Voltar ao menu e bloquear o acesso (Esc). A comanda permanece aberta." />
-                <TextBlock Text="Ao sair, o atendimento será bloqueado." Foreground="#666666" VerticalAlignment="Center" Margin="16,0" TextWrapping="Wrap" />
-            </DockPanel>
+                <TextBlock Text="Ao sair, o atendimento será bloqueado." Foreground="{DynamicResource Text666666}" Margin="0,6,0,0" TextWrapping="Wrap" />
+            </StackPanel>
 
-            <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Background="#C4C4C4" />
+            <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Background="{DynamicResource BackgroundC4C4C4}" />
 
             <Grid x:Name="PainelMenu" Grid.Row="1" Grid.Column="0" KeyboardNavigation.TabIndex="0" Margin="0,0,14,0">
                 <Grid.RowDefinitions>
@@ -203,15 +219,21 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <TextBlock Grid.Row="0" Text="MENU" FontWeight="Bold" FontSize="12" Foreground="#4A4A47" Margin="0,0,0,8" />
+                <TextBlock Grid.Row="0" Text="MENU" FontWeight="Bold" FontSize="12" Foreground="{DynamicResource Text4A4A47}" Margin="0,0,0,8" />
 
                 <!-- Ordem de Tab da tela: busca (0) > categorias (1) > cards do menu (2) > itens da comanda > Voltar > Cancelar > Finalizar -->
-                <Grid Grid.Row="1" Margin="0,0,0,8" KeyboardNavigation.TabIndex="0">
+                <StackPanel Grid.Row="1" Margin="0,0,0,8" KeyboardNavigation.TabIndex="0">
+                <Grid>
                     <TextBox x:Name="CampoBusca" ToolTip="Buscar produto (Ctrl+F). Enter adiciona o primeiro resultado."
                              AutomationProperties.Name="Buscar produto"
                              Text="{Binding TextoBuscaCatalogo, UpdateSourceTrigger=PropertyChanged}" />
                     <TextBlock Text="Buscar produto (Ctrl+F)" Style="{StaticResource PlaceholderProduto}" />
                 </Grid>
+                    <TextBlock Text="Observação para o próximo produto" Margin="0,8,0,4" Foreground="{DynamicResource Text4A4A47}" />
+                    <TextBox Text="{Binding ObservacaoNovoItem, UpdateSourceTrigger=PropertyChanged}" MaxLength="300"
+                             MinHeight="46" AutomationProperties.Name="Observação para o próximo produto"
+                             ToolTip="Ex.: sem cebola. Será aplicada ao próximo produto adicionado e depois limpa." />
+                </StackPanel>
 
                 <ScrollViewer Grid.Row="2" KeyboardNavigation.TabIndex="2" VerticalScrollBarVisibility="Auto">
                     <ItemsControl ItemsSource="{Binding ProdutosCatalogo}">
@@ -224,7 +246,7 @@
                             <DataTemplate>
                                 <Button Width="128" Height="128" Margin="0,0,8,8" Padding="0"
                                         HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
-                                        Background="White" BorderBrush="#C4C4C4" BorderThickness="1"
+                                        Background="{DynamicResource BackgroundFFFFFF}" BorderBrush="{DynamicResource ColorC4C4C4}" BorderThickness="1"
                                         Command="{Binding DataContext.AdicionarProdutoAoItemCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                         CommandParameter="{Binding}">
                                     <Grid>
@@ -232,15 +254,15 @@
                                             <RowDefinition Height="*" />
                                             <RowDefinition Height="Auto" />
                                         </Grid.RowDefinitions>
-                                        <Grid Grid.Row="0" Background="#E1E8E4" ClipToBounds="True">
+                                        <Grid Grid.Row="0" Background="{DynamicResource BackgroundE1E8E4}" ClipToBounds="True">
                                             <Image Source="{Binding FotoArquivo, Converter={StaticResource FotoImagem}}" Stretch="UniformToFill" />
                                         </Grid>
-                                        <Border Grid.Row="1" BorderBrush="#C4C4C4" BorderThickness="0,1,0,0" Padding="8,6">
+                                        <Border Grid.Row="1" BorderBrush="{DynamicResource ColorC4C4C4}" BorderThickness="0,1,0,0" Padding="8,6">
                                             <StackPanel>
                                                 <TextBlock Text="{Binding Nome}" FontSize="12" FontWeight="SemiBold"
                                                            TextTrimming="CharacterEllipsis" />
                                                 <TextBlock Text="{Binding PrecoCentavos, Converter={StaticResource Moeda}}"
-                                                           FontSize="10.5" Foreground="#6B6B67" />
+                                                           FontSize="10.5" Foreground="{DynamicResource Text6B6B67}" />
                                             </StackPanel>
                                         </Border>
                                     </Grid>
@@ -256,12 +278,12 @@
                         <Button.Style>
                             <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
                                 <Setter Property="FocusVisualStyle" Value="{StaticResource FocoVisivel}" />
-                                <Setter Property="Background" Value="White" />
-                                <Setter Property="BorderBrush" Value="#C4C4C4" />
+                                <Setter Property="Background" Value="{DynamicResource BackgroundFFFFFF}" />
+                                <Setter Property="BorderBrush" Value="{DynamicResource ColorC4C4C4}" />
                                 <Setter Property="BorderThickness" Value="1" />
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding CategoriaCatalogo}" Value="{x:Null}">
-                                        <Setter Property="Background" Value="#EDEDEA" />
+                                        <Setter Property="Background" Value="{DynamicResource BackgroundEDEDEA}" />
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
@@ -287,7 +309,7 @@
                                     <Button.Style>
                                         <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
                                             <Setter Property="FocusVisualStyle" Value="{StaticResource FocoVisivel}" />
-                                            <Setter Property="BorderBrush" Value="#C4C4C4" />
+                                            <Setter Property="BorderBrush" Value="{DynamicResource ColorC4C4C4}" />
                                             <Setter Property="BorderThickness" Value="1" />
                                             <Setter Property="Content" Value="{Binding Nome}" />
                                             <Setter Property="FontSize" Value="13" />
@@ -311,7 +333,7 @@
                 </Grid.RowDefinitions>
 
                 <StackPanel Grid.Row="0">
-                    <Border Background="#263C32" Padding="10,7" Margin="0,0,0,8">
+                    <Border Background="{DynamicResource Background263C32}" Padding="10,7" Margin="0,0,0,8">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
@@ -321,11 +343,11 @@
                             </Grid.ColumnDefinitions>
                             <WrapPanel VerticalAlignment="Center" Margin="0,0,8,0">
                                 <TextBlock Text="{Binding ComandaAtual.Numero, StringFormat='COMANDA {0}'}" Foreground="White" FontWeight="Bold" Margin="0,0,12,0" />
-                                <TextBlock Text="{Binding ComandaAtual.Id, StringFormat='#{0:0000}'}" Foreground="#D6EADF" FontWeight="SemiBold" ToolTip="Identificador único da comanda" />
+                                <TextBlock Text="{Binding ComandaAtual.Id, StringFormat='#{0:0000}'}" Foreground="{DynamicResource TextD6EADF}" FontWeight="SemiBold" ToolTip="Identificador único da comanda" />
                             </WrapPanel>
                             <StackPanel Grid.Column="1">
                                 <StackPanel Orientation="Horizontal">
-                                    <Ellipse Width="9" Height="9" Fill="{Binding CorPrioridadeAtual}" Stroke="White" StrokeThickness="1" Margin="0,0,4,0" />
+                                    <Ellipse Width="9" Height="9" Fill="{Binding CorPrioridadeAtual}" Stroke="{DynamicResource ColorFFFFFF}" StrokeThickness="1" Margin="0,0,4,0" />
                                     <TextBlock Text="{Binding ComandaAtual.Prioridade}" Foreground="White" FontWeight="Bold" />
                                 </StackPanel>
                                 <TextBlock Text="{Binding TempoComandaAtual}" Foreground="White" FontWeight="Bold" ToolTip="Tempo desde a abertura" AutomationProperties.Name="Tempo desde a abertura" />
@@ -340,16 +362,24 @@
                             </StackPanel>
                         </Grid>
                     </Border>
+                    <WrapPanel>
+                    <Button Tag="mesa" Click="EditarDados_Click" Margin="0,0,0,8" MinHeight="46" Padding="12,4"
+                            HorizontalAlignment="Left" AutomationProperties.Name="Definir mesa"
+                            ToolTip="Definir ou alterar a mesa; vazio para balcão">
+                        <TextBlock Text="{Binding ComandaAtual.NumeroMesa, StringFormat='Mesa {0} · alterar', TargetNullValue='Balcão · definir mesa'}" />
+                    </Button>
+<Button Content="Origem do cliente" Click="OrigemCliente_Click" Margin="8,0,0,8"/><Button Content="Imprimir conta" Click="ImprimirConta_Click" Margin="8,0,0,8"/>
+</WrapPanel>
                 </StackPanel>
 
-                <Border Grid.Row="1" BorderBrush="#C4CCC6" BorderThickness="1" Background="White">
+                <Border Grid.Row="1" BorderBrush="{DynamicResource ColorC4CCC6}" BorderThickness="1" Background="{DynamicResource BackgroundFFFFFF}">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
                     
-                        <Grid Grid.Row="0" Background="#E1E8E4" Margin="0,0,17,0">
+                        <Grid Grid.Row="0" Background="{DynamicResource BackgroundE1E8E4}" Margin="0,0,17,0">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="44" />
@@ -357,13 +387,13 @@
                                 <ColumnDefinition Width="72" />
                                 <ColumnDefinition Width="188" />
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="DESCRIÇÃO" FontSize="12" FontWeight="Bold" Foreground="#4A4A47"
+                            <TextBlock Grid.Column="0" Text="DESCRIÇÃO" FontSize="12" FontWeight="Bold" Foreground="{DynamicResource Text4A4A47}"
                                        Margin="8,6" VerticalAlignment="Center" />
-                            <TextBlock Grid.Column="1" Text="QTD." FontSize="12" FontWeight="Bold" Foreground="#4A4A47"
+                            <TextBlock Grid.Column="1" Text="QTD." FontSize="12" FontWeight="Bold" Foreground="{DynamicResource Text4A4A47}"
                                        Margin="0,6" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                            <TextBlock Grid.Column="2" Text="PREÇO" FontSize="12" FontWeight="Bold" Foreground="#4A4A47"
+                            <TextBlock Grid.Column="2" Text="PREÇO" FontSize="12" FontWeight="Bold" Foreground="{DynamicResource Text4A4A47}"
                                        Margin="0,6,8,6" HorizontalAlignment="Right" VerticalAlignment="Center" />
-                            <TextBlock Grid.Column="3" Text="TOTAL" FontSize="12" FontWeight="Bold" Foreground="#4A4A47"
+                            <TextBlock Grid.Column="3" Text="TOTAL" FontSize="12" FontWeight="Bold" Foreground="{DynamicResource Text4A4A47}"
                                        Margin="0,6,8,6" HorizontalAlignment="Right" VerticalAlignment="Center" />
                         </Grid>
                     
@@ -388,8 +418,10 @@
                                                     <ColumnDefinition Width="72" />
                                                     <ColumnDefinition Width="188" />
                                                 </Grid.ColumnDefinitions>
-                                                <TextBlock Grid.Column="0" Text="{Binding NomeProduto}" FontSize="14"
-                                                           TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Margin="8,0" />
+                                                <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="8,0">
+                                                    <TextBlock Text="{Binding NomeProduto}" FontSize="14" TextTrimming="CharacterEllipsis" />
+                                                    <TextBlock Text="{Binding Observacao}" FontSize="12" Foreground="{DynamicResource Text4A4A47}" TextWrapping="Wrap" />
+                                                </StackPanel>
                                                 <TextBlock Grid.Column="1" Text="{Binding Quantidade}" FontSize="14" FontWeight="Bold"
                                                            HorizontalAlignment="Center" VerticalAlignment="Center" />
                                                 <TextBlock Grid.Column="2" Text="{Binding PrecoUnitarioCentavos, Converter={StaticResource Moeda}}" FontSize="14"
@@ -403,7 +435,7 @@
                                                     <Button Content="+" Width="44" Height="44" FontSize="20" FontWeight="Bold"
                                                             Command="{Binding DataContext.AumentarQuantidadeCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                                             CommandParameter="{Binding}" Margin="0,0,4,0" />
-                                                    <Button Content="Excluir" Foreground="#B23B32" Height="44" MinHeight="44" Padding="12,0"
+                                                    <Button Content="Excluir" Foreground="{DynamicResource TextB23B32}" Height="44" MinHeight="44" Padding="12,0"
                                                             Command="{Binding DataContext.RemoverCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                                             CommandParameter="{Binding}" />
                                                 </StackPanel>
@@ -418,7 +450,7 @@
 
                 <StackPanel Grid.Row="2" Margin="0,8,0,6">
                     <DockPanel Margin="4,0,4,10">
-                        <TextBlock Text="TOTAL DA COMANDA" FontWeight="Bold" FontSize="12" Foreground="#666666" VerticalAlignment="Center" />
+                        <TextBlock Text="TOTAL DA COMANDA" FontWeight="Bold" FontSize="12" Foreground="{DynamicResource Text666666}" VerticalAlignment="Center" />
                         <TextBlock Text="{Binding ComandaAtual.TotalCentavos, Converter={StaticResource Moeda}}" FontWeight="Bold" FontSize="26" DockPanel.Dock="Right" HorizontalAlignment="Right" />
                     </DockPanel>
                     <UniformGrid Columns="5">
@@ -447,7 +479,7 @@
                             </StackPanel>
                         </Button>
                         <Button Command="{Binding CancelarComandaAtualCommand}" Style="{StaticResource AcaoComanda}"
-                                Foreground="#B23B32" BorderBrush="#B23B32" Background="#FFF5F3"
+                                Foreground="{DynamicResource TextB23B32}" BorderBrush="{DynamicResource ColorB23B32}" Background="{DynamicResource BackgroundFFF5F3}"
                                 AutomationProperties.Name="Cancelar comanda" ToolTip="Cancelar o atendimento sem registrar pagamento. Requer confirmação.">
                             <StackPanel>
                                 <Path Data="M 5,5 L 19,19 M 19,5 L 5,19" Style="{StaticResource IconeAcao}" />
@@ -460,13 +492,13 @@
                 <StackPanel Grid.Row="3">
                     <Grid>
                         <Grid.ColumnDefinitions><ColumnDefinition /><ColumnDefinition /></Grid.ColumnDefinitions>
-                        <Button Style="{StaticResource BotaoPainelComanda}" Content="Concluir lançamento" Command="{Binding FecharEdicaoCommand}" Background="#23262B" Foreground="White" Height="86" FontWeight="Bold" Margin="0,0,8,0" Padding="8" ToolTip="Manter a comanda aberta e bloquear o atendimento" />
-                        <Button Style="{StaticResource BotaoPainelComanda}" Grid.Column="1" Content="Pagar" Command="{Binding VerTotalCommand}" Background="#245640" Foreground="White" Height="86" FontWeight="Bold" Padding="8" ToolTip="Finalizar comanda (F4)" />
+                        <Button Style="{StaticResource BotaoPainelComanda}" Content="Concluir lançamento" Command="{Binding FecharEdicaoCommand}" Background="{DynamicResource Background23262B}" Foreground="White" Height="86" FontWeight="Bold" Margin="0,0,8,0" Padding="8" ToolTip="Manter a comanda aberta e bloquear o atendimento" />
+                        <Button Style="{StaticResource BotaoPainelComanda}" Grid.Column="1" Content="Pagar" Command="{Binding VerTotalCommand}" Background="{DynamicResource Background245640}" Foreground="White" Height="86" FontWeight="Bold" Padding="8" ToolTip="Finalizar comanda (F4)" />
                     </Grid>
 
                 </StackPanel>
 
-                <TextBlock Grid.Row="4" Text="{Binding Mensagem}" Foreground="#B23B32" TextWrapping="Wrap" Margin="0,8,0,0" />
+                <TextBlock Grid.Row="4" Text="{Binding Mensagem}" Foreground="{DynamicResource TextB23B32}" TextWrapping="Wrap" Margin="0,8,0,0" />
             </Grid>
         </Grid>
     </Grid>

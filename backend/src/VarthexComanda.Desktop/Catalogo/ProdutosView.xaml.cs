@@ -40,6 +40,8 @@ public partial class ProdutosView : UserControl
         AbrirModal();
     }
 
+    public void AbrirNovoProduto() => NovoProduto_Click(this, new RoutedEventArgs());
+
     private void EditarProduto_Click(object sender, RoutedEventArgs e)
     {
         if (sender is Button { DataContext: VarthexComanda.Domain.Produto produto })
@@ -67,7 +69,7 @@ public partial class ProdutosView : UserControl
             Width = 620, Height = Math.Min(660, SystemParameters.WorkArea.Height - 40),
             MinWidth = 480, MinHeight = 420, ResizeMode = ResizeMode.NoResize,
             ShowInTaskbar = false, Content = formulario, DataContext = vm,
-            Background = System.Windows.Media.Brushes.White
+            Background = TemaInterface.Pincel("#FFFFFF")
         };
         _dialogo.PreviewKeyDown += (_, e) =>
         {

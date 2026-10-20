@@ -18,6 +18,51 @@ namespace VarthexComanda.Desktop.Tests.Xaml;
 [Trait("Caso", "CT17")]
 public class AtendimentoTecladoXamlTests
 {
+    [Fact]
+    public void NumeroDigitadoDestacaSomenteAComandaCorrespondente()
+    {
+        ThreadingHelper.EmSta(() =>
+        {
+            CarregamentoDeXamlTests.GarantirApp();
+            var (vm, _) = CarregamentoDeXamlTests.CriarAtendimento();
+            vm.FecharEdicaoCommand.Execute(null);
+            var view = new AtendimentoView(vm);
+            CarregamentoDeXamlTests.MedirEOrganizar(view);
+            var botoes=Descendentes(view).OfType<Button>().Where(b=>b.CommandParameter is ComandaSlotItem).ToArray();
+            vm.NovoNumero="01";
+            view.UpdateLayout();
+            var marcado=Assert.Single(botoes.Where(b=>b.BorderThickness==new Thickness(4)));
+            Assert.Equal(1,((ComandaSlotItem)marcado.CommandParameter).Numero);
+            vm.NovoNumero="10";
+            view.UpdateLayout();
+            marcado=Assert.Single(botoes.Where(b=>b.BorderThickness==new Thickness(4)));
+            Assert.Equal(10,((ComandaSlotItem)marcado.CommandParameter).Numero);
+            vm.NovoNumero="";
+            view.UpdateLayout();
+            Assert.DoesNotContain(botoes,b=>b.BorderThickness==new Thickness(4));
+        });
+    }
+    [Fact]
+    public void GradeAceitaNumerosBackspaceEEnterSemSelecionarCampo()
+    {
+        ThreadingHelper.EmSta(() =>
+        {
+            CarregamentoDeXamlTests.GarantirApp();
+            var (vm, _) = CarregamentoDeXamlTests.CriarAtendimento();
+            vm.FecharEdicaoCommand.Execute(null);
+            var view = new AtendimentoView(vm);
+            Assert.True(view.DigitarNumeroNaGrade(Key.D1, ModifierKeys.None, new Button()));
+            Assert.True(view.DigitarNumeroNaGrade(Key.NumPad2, ModifierKeys.None, new Button()));
+            Assert.Equal("12", vm.NovoNumero);
+            Assert.True(view.DigitarNumeroNaGrade(Key.Back, ModifierKeys.None, new Button()));
+            Assert.Equal("1", vm.NovoNumero);
+            Assert.False(view.DigitarNumeroNaGrade(Key.D3, ModifierKeys.None, new TextBox()));
+            Assert.False(view.DigitarNumeroNaGrade(Key.D3, ModifierKeys.Control, new Button()));
+            Assert.True(view.DigitarNumeroNaGrade(Key.Enter, ModifierKeys.None, new Button()));
+            Assert.Equal(1, vm.ComandaAtual!.Numero);
+            Assert.False(view.DigitarNumeroNaGrade(Key.D3, ModifierKeys.None, new Button()));
+        });
+    }
     private static IEnumerable<DependencyObject> Descendentes(DependencyObject raiz)
     {
         var quantidade = VisualTreeHelper.GetChildrenCount(raiz);
