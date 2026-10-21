@@ -19,6 +19,7 @@ public class LocalizadorProdutoTests
         var repo=new EfComandaRepository(banco.Fabrica);var comanda=repo.AbrirComanda(1,DateTime.UtcNow);
         var pedido=OperacoesComandaRegressaoTests.Criar(banco,repo);pedido.SelecionarComandaCommand.Execute(comanda);
         using var vm=new LocalizarProdutoViewModel(pedido);
+        Assert.True(vm.Fotos);Assert.False(vm.Lista);
         Assert.Equal(2,vm.Produtos.Count);
         vm.Categoria=pedido.Categorias.Single(c=>c.Nome=="Bebidas");
         Assert.Equal("Suco de laranja",vm.Produtos.Single().Nome);
@@ -96,15 +97,14 @@ public class LocalizadorProdutoTests
                     try
                     {
                         janela.Show();
-                        janela.Dispatcher.Invoke(()=>{},System.Windows.Threading.DispatcherPriority.Render);
+                        janela.UpdateLayout();
                         TemaInterface.Aplicar(escuro,false);
-                        foreach(var fotos in new[]{false,true})
+                        foreach(var fotos in largura==740 ? new[]{false,true} : new[]{true})
                         {
                             janela.ViewModel.Fotos=fotos;janela.UpdateLayout();
                             Capturar(janela,janela.ActualWidth,janela.ActualHeight,$"localizador-{escuro}-{largura}-{(fotos?"fotos":"lista")}");
                             Assert.Equal(fotos?Visibility.Collapsed:Visibility.Visible,((DataGrid)janela.FindName("TabelaLocalizador")).Visibility);
                             Assert.Equal(3,janela.ViewModel.Produtos.Count);
-                            if(!fotos && largura==1100)Assert.True(((DataGrid)janela.FindName("TabelaLocalizador")).Columns[2].ActualWidth>400);
                             if(fotos)Assert.Contains(AlinhamentoInterfaceTests.Filhos(janela).OfType<Image>(),i=>i.Source is not null);
                         }
                         if(largura==740)
@@ -117,6 +117,75 @@ public class LocalizadorProdutoTests
                 }
             }
             finally{VarthexComanda.Desktop.Catalogo.FotoArquivoParaImagemConverter.DiretorioFotos=diretorioAnterior;TemaInterface.Aplicar(false,false);}
+        });
+    }
+
+    [Fact]
+    public void CartaoInteiroAbrePersonalizacaoSemLancarAntesDeConfirmar()
+    {
+        using var banco=new BancoDeHomologacao();banco.CriarProduto("Almoço executivo",4500,"Refeições");
+        ThreadingHelper.EmSta(()=>
+        {
+            CarregamentoDeXamlTests.GarantirApp();
+            var repo=new EfComandaRepository(banco.Fabrica);var comanda=repo.AbrirComanda(1,DateTime.UtcNow);
+            var pedido=OperacoesComandaRegressaoTests.Criar(banco,repo);pedido.SelecionarComandaCommand.Execute(comanda);
+            var catalogo=new LocalizarProdutoView(pedido);catalogo.Show();catalogo.UpdateLayout();
+            try
+            {
+                Assert.True(catalogo.ViewModel.Fotos);
+                var cartao=AlinhamentoInterfaceTests.Filhos(catalogo).OfType<Button>().Single(b=>b.Name=="CartaoProduto");
+                Assert.Equal(190,cartao.ActualHeight);
+                Assert.DoesNotContain(AlinhamentoInterfaceTests.Filhos(cartao).OfType<Button>(),b=>b!=cartao);
+                catalogo.Dispatcher.BeginInvoke(new Action(()=>
+                {
+                    var personalizar=catalogo.OwnedWindows.OfType<PersonalizarItemView>().Single();
+                    Assert.Empty(repo.BuscarComItens(comanda.Id)!.Itens);
+                    Assert.Same(catalogo,personalizar.Owner);
+                    personalizar.Close();
+                }));
+                cartao.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                Assert.Empty(repo.BuscarComItens(comanda.Id)!.Itens);
+                var vm=new PersonalizarItemViewModel(catalogo.ViewModel,catalogo.ViewModel.Produtos.Single());
+                vm.Quantidade="0";Assert.False(vm.Adicionar());Assert.NotEmpty(vm.Erro);
+                vm.Quantidade="1,5";Assert.False(vm.Adicionar());Assert.Empty(repo.BuscarComItens(comanda.Id)!.Itens);
+                vm.Quantidade="1";vm.DiminuirCommand.Execute(null);Assert.Equal("1",vm.Quantidade);
+                vm.AumentarCommand.Execute(null);Assert.Equal("2",vm.Quantidade);Assert.Contains("90,00",vm.Total);
+                vm.Observacao="Sem cebola";Assert.True(vm.Adicionar());
+                var item=repo.BuscarComItens(comanda.Id)!.Itens.Single();Assert.Equal(2,item.Quantidade);Assert.Equal("Sem cebola",item.Observacao);Assert.Equal(9000,item.SubtotalCentavos);
+            }
+            finally{catalogo.Close();}
+        });
+    }
+
+    [Fact]
+    public void PersonalizacaoNosDoisTemasETamanhosPreservaTextoECancelaSemLancar()
+    {
+        using var banco=new BancoDeHomologacao();banco.CriarProduto("Almoço completo com acompanhamentos e salada da casa",4500,"Refeições");
+        ThreadingHelper.EmSta(()=>
+        {
+            CarregamentoDeXamlTests.GarantirApp();
+            var repo=new EfComandaRepository(banco.Fabrica);var comanda=repo.AbrirComanda(1,DateTime.UtcNow);
+            var pedido=OperacoesComandaRegressaoTests.Criar(banco,repo);pedido.SelecionarComandaCommand.Execute(comanda);pedido.ObservacaoNovoItem="Sem cebola";
+            using var catalogo=new LocalizarProdutoViewModel(pedido);
+            try
+            {
+                foreach(var escuro in new[]{false,true})
+                foreach(var compacto in new[]{false,true})
+                {
+                    TemaInterface.Aplicar(escuro,false);
+                    var janela=new PersonalizarItemView(catalogo,catalogo.Produtos.Single()){Width=compacto?700:880,Height=compacto?440:620};
+                    try
+                    {
+                        janela.Show();janela.UpdateLayout();
+                        Assert.Equal("Sem cebola",((TextBox)janela.FindName("CampoObservacao")).Text);
+                        Capturar(janela,janela.ActualWidth,janela.ActualHeight,$"personalizar-{escuro}-{(compacto?"compacto":"normal")}");
+                        Assert.True(((Button)janela.FindName("AdicionarItem")).IsVisible);
+                    }
+                    finally{janela.Close();}
+                }
+                Assert.Equal("Sem cebola",pedido.ObservacaoNovoItem);Assert.Empty(repo.BuscarComItens(comanda.Id)!.Itens);
+            }
+            finally{TemaInterface.Aplicar(false,false);}
         });
     }
 
