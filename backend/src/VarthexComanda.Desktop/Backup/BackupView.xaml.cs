@@ -15,29 +15,29 @@ public partial class BackupView : UserControl
         DataContext = viewModel;
         IconePasta.Content = IconesVarthex.Criar(IconeVarthex.Pasta, 26);
         IconeDrive.Content = IconesVarthex.Criar(IconeVarthex.GoogleDrive, 36);
-        IconeDropbox.Content = IconesVarthex.Criar(IconeVarthex.Dropbox, 36);
+        IconeOneDrive.Content = IconesVarthex.Criar(IconeVarthex.OneDrive, 36);
         IconeDados.Content = IconesVarthex.Criar(IconeVarthex.Backup, 24);
         IconeFotos.Content = IconesVarthex.Criar(IconeVarthex.Fotos, 24);
+        IconeAlertaRestauracao.Content = IconesVarthex.Criar(IconeVarthex.Alerta, 24);
         ViewModel.SolicitouReinicio += ViewModel_SolicitouReinicio;
-        ViewModel.PropertyChanged += (_, e) => { if (e.PropertyName == nameof(BackupViewModel.ModoRestauracao)) AtualizarRecuperacao(); };
-        AtualizarRecuperacao();
+        ViewModel.Progresso.CollectionChanged += (_, _) => Dispatcher.BeginInvoke(new Action(() => RolagemProgresso.ScrollToEnd()));
+        ViewModel.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName != nameof(BackupViewModel.EmAndamento)) return;
+            if (ViewModel.EmAndamento && SystemParameters.ClientAreaAnimation)
+                PontosProgresso.BeginAnimation(OpacityProperty, new System.Windows.Media.Animation.DoubleAnimation(0.35, 1, TimeSpan.FromSeconds(0.65)) { AutoReverse = true, RepeatBehavior = System.Windows.Media.Animation.RepeatBehavior.Forever });
+            else PontosProgresso.BeginAnimation(OpacityProperty, null);
+        };
     }
 
-    private void AtualizarRecuperacao()
-    {
-        CorpoBackup.Children.Remove(HistoricoBackup);
-        if (ViewModel.ModoRestauracao) CorpoBackup.Children.Insert(0, HistoricoBackup);
-        else CorpoBackup.Children.Add(HistoricoBackup);
-        HistoricoBackup.IsExpanded = ViewModel.ModoRestauracao;
-        HistoricoBackup.Margin = new Thickness(0, 0, 0, ViewModel.ModoRestauracao ? 20 : 0);
-    }
+    private void VoltarProgresso_Click(object sender, RoutedEventArgs e) => ViewModel.VoltarConfiguracao();
 
     private async void CriarBackup_Click(object sender, RoutedEventArgs e) => await ViewModel.CriarBackupAsync();
 
     private void ConfigurarPasta_Click(object sender, RoutedEventArgs e)
     {
         var destino = (string)((Button)sender).Tag;
-        var nome = destino == "drive" ? "Google Drive" : destino == "dropbox" ? "Dropbox" : "backups locais";
+        var nome = destino == "drive" ? "Google Drive" : destino == "onedrive" ? "OneDrive" : "backups locais";
         var dialogo = new OpenFolderDialog { Title = "Escolha a pasta de " + nome };
         if (dialogo.ShowDialog(Window.GetWindow(this)) == true)
         {

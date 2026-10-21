@@ -4,7 +4,7 @@ using System.Windows.Media;
 
 namespace VarthexComanda.Desktop;
 
-internal enum IconeVarthex { Mesas, Cozinha, Painel, Produtos, NovoProduto, Historico, Configuracoes, Numeracao, Impressoras, Colaboradores, Senha, Backup, Assinatura, Ajuda, Diagnostico, Contato, Feedback, Treinamento, CentralAjuda, SuporteRemoto, FecharAjuda, GoogleDrive, Dropbox, Pasta, Fotos }
+internal enum IconeVarthex { Mesas, Cozinha, Painel, Produtos, NovoProduto, Historico, Configuracoes, Numeracao, Impressoras, Colaboradores, Senha, Backup, Assinatura, Ajuda, Diagnostico, Contato, Feedback, Treinamento, CentralAjuda, SuporteRemoto, FecharAjuda, GoogleDrive, OneDrive, Pasta, Fotos, Alerta }
 
 /// <summary>Ilustrações vetoriais originais para comandos, desenhadas em 32 unidades.</summary>
 internal static class IconesVarthex
@@ -34,8 +34,13 @@ internal static class IconesVarthex
                 Forma("M11,2 H21 L32,21 H22 Z", "#FFC83D");
                 Forma("M11,2 L0,21 L5,30 L16,11 Z", "#21A366");
                 Forma("M5,30 H27 L32,21 H10 Z", "#4285F4");break;
-            case IconeVarthex.Dropbox:
-                Forma("M8,2 L16,7 L8,12 L0,7 Z M24,2 L32,7 L24,12 L16,7 Z M8,13 L16,18 L8,23 L0,18 Z M24,13 L32,18 L24,23 L16,18 Z M8,25 L16,20 L24,25 L16,30 Z", "#1684E8");break;
+            case IconeVarthex.OneDrive:
+                Forma("M6,13 C6,4 17,1 22,10 C28,7 34,14 30,21 H6 Z", "#0767BA");
+                Forma("M2,24 C-3,17 2,10 9,13 C12,5 24,8 25,17 C34,15 36,27 27,28 H7 Z", "#1596D2");
+                Forma("M2,24 C-1,20 0,16 3,14 L19,24 L27,28 H7 Z", "#45B2E0");break;
+            case IconeVarthex.Alerta:
+                Forma("M16,1 L31,16 L16,31 L1,16 Z", "#FFFFFF");Linha("M16,1 L31,16 L16,31 L1,16 Z", "#EC4B4B", 1.6);
+                Linha("M16,8 V18 M16,23 V24", "#EC4B4B", 2.2);break;
             case IconeVarthex.Pasta:
                 Forma("M1,8 H12 L15,12 H30 V29 H1 Z", "#D79A28");
                 Forma("M1,14 H31 L26,29 H1 Z", "#F7C34D");break;

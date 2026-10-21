@@ -409,21 +409,22 @@ public partial class MainWindow : Window
             AbrirAlteracaoAcesso(acao=="pin");
         }
         else if(acao=="licenca") { ((App)System.Windows.Application.Current).RenovarLicenca();_configuracaoView.AtualizarSecao(); }
-        else if(acao=="criar-backup")
+        else if(acao is "backups" or "criar-backup")
         {
-            _backupView.ViewModel.CriarBackupCommand.Execute(_configuracaoView.ViewModel.PastaBackupExterna);
-            var mensagem = _backupView.ViewModel.Mensagem;
-            if(_configuracoesModal is not null)JanelaAviso.Mostrar("Backup",mensagem,_backupView.ViewModel.MensagemErro?TipoAviso.Erro:TipoAviso.Informacao);
-            _configuracaoView.AtualizarSecao();
-            _configuracaoView.ViewModel.MensagemErro=_backupView.ViewModel.MensagemErro;
-            _configuracaoView.ViewModel.Mensagem=mensagem;
-        }
-        else if(acao=="backups")
-        {
-            _backupView.ViewModel.AtualizarLista();
+            _backupView.ViewModel.VoltarConfiguracao();
             var janela=new Window { Title="Backups e restauração",Owner=_configuracoesModal??(Window)this,Width=Math.Min(1100,SystemParameters.WorkArea.Width),Height=Math.Min(700,SystemParameters.WorkArea.Height),WindowStartupLocation=WindowStartupLocation.CenterOwner,Content=_backupView,ResizeMode=ResizeMode.CanResize };
             janela.MinWidth = 760; janela.MinHeight = 480;
             janela.Closing += (_, e) => { if (_backupView.ViewModel.EmAndamento) e.Cancel = true; };
+            if (acao == "criar-backup")
+            {
+                var iniciou = false;
+                janela.Loaded += async (_, _) =>
+                {
+                    if (iniciou) return;
+                    iniciou = true;
+                    await _backupView.ViewModel.CriarBackupAsync(_configuracaoView.ViewModel.PastaBackupExterna);
+                };
+            }
             try { janela.ShowDialog(); } finally { janela.Content=null; }
             _configuracaoView.AtualizarSecao();
         }

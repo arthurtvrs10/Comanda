@@ -14,6 +14,10 @@ namespace VarthexComanda.Desktop.Backup;
 
 public partial class BackupViewModel : ObservableObject
 {
+    public ObservableCollection<LinhaProgressoBackup> Progresso { get; } = new();
+    [ObservableProperty] private bool exibindoProgresso;
+    [ObservableProperty] private string tituloProgresso = "Aguarde, fazendo o backup…";
+    [ObservableProperty] private string estadoProgresso = "andamento";
     private readonly CriarBackupManual _criarBackupManual;
     private readonly RestaurarBackup _restaurarBackup;
     private readonly ListarBackupsRecentes _listarBackupsRecentes;
@@ -72,11 +76,11 @@ public partial class BackupViewModel : ObservableObject
     public bool PodeRestaurarFotos => !EmAndamento && _fotos is not null;
     public string PastaLocal => _pastas.Local ?? _paths?.BackupsDirectory ?? "Pasta padrão do Varthex";
     public string PastaGoogleDrive => _pastas.GoogleDrive ?? "Nenhuma pasta configurada";
-    public string PastaDropbox => _pastas.Dropbox ?? "Nenhuma pasta configurada";
+    public string PastaOneDrive => _pastas.OneDrive ?? "Nenhuma pasta configurada";
     public bool GoogleDriveConfigurado => !string.IsNullOrWhiteSpace(_pastas.GoogleDrive);
-    public bool DropboxConfigurado => !string.IsNullOrWhiteSpace(_pastas.Dropbox);
+    public bool OneDriveConfigurado => !string.IsNullOrWhiteSpace(_pastas.OneDrive);
     public string StatusGoogleDrive => StatusPasta(_pastas.GoogleDrive);
-    public string StatusDropbox => StatusPasta(_pastas.Dropbox);
+    public string StatusOneDrive => StatusPasta(_pastas.OneDrive);
     public string ResumoPastas => "Backups automáticos ao abrir o sistema (uma vez ao dia) e ao encerrar. As configurações são salvas neste computador.";
 
     private static string StatusPasta(string? pasta)
@@ -97,7 +101,7 @@ public partial class BackupViewModel : ObservableObject
     {
         try { _pastas = _preferencias?.Ler() ?? new(); }
         catch { MensagemErro = true; Mensagem = "Não foi possível ler as pastas de backup. Configure as pastas novamente."; }
-        foreach (var propriedade in new[] { nameof(PastaLocal), nameof(PastaGoogleDrive), nameof(PastaDropbox), nameof(GoogleDriveConfigurado), nameof(DropboxConfigurado), nameof(StatusGoogleDrive), nameof(StatusDropbox) })
+        foreach (var propriedade in new[] { nameof(PastaLocal), nameof(PastaGoogleDrive), nameof(PastaOneDrive), nameof(GoogleDriveConfigurado), nameof(OneDriveConfigurado), nameof(StatusGoogleDrive), nameof(StatusOneDrive) })
             OnPropertyChanged(propriedade);
     }
 
@@ -111,7 +115,7 @@ public partial class BackupViewModel : ObservableObject
             {
                 "local" => _pastas with { Local = validada },
                 "drive" => _pastas with { GoogleDrive = validada },
-                "dropbox" => _pastas with { Dropbox = validada },
+                "onedrive" => _pastas with { OneDrive = validada },
                 _ => throw new ArgumentException("Destino desconhecido.")
             };
             if (validada is not null && _paths is not null && string.Equals(validada, _paths.DataDirectory, StringComparison.OrdinalIgnoreCase))
@@ -154,10 +158,10 @@ public partial class BackupViewModel : ObservableObject
         catch (Exception ex)
         {
             // o registro de backups vive no próprio banco; se ele estiver corrompido a lista
-            // não carrega, mas a restauração por "Selecionar arquivo..." continua possível
+            // não carrega, mas a restauração por "Restaurar dados" continua possível
             _logger?.Error(ex, "Falha em {Operacao}", "ListarBackups");
             Backups.Clear();
-            Mensagem = "Não foi possível listar os backups registrados. Use \"Selecionar arquivo...\" para escolher um backup.";
+            Mensagem = "Não foi possível consultar os backups registrados. Use Restaurar dados para escolher um arquivo de backup.";
         }
     }
 
@@ -168,7 +172,7 @@ public partial class BackupViewModel : ObservableObject
         {
             var pastas = new[] { _paths?.BackupsDirectory, _pastas.Local,
                 _pastas.GoogleDrive is null ? null : PreferenciasBackup.DestinoSincronizado(_pastas.GoogleDrive),
-                _pastas.Dropbox is null ? null : PreferenciasBackup.DestinoSincronizado(_pastas.Dropbox) };
+                _pastas.OneDrive is null ? null : PreferenciasBackup.DestinoSincronizado(_pastas.OneDrive) };
             foreach (var pasta in pastas.Where(p => p is not null && Directory.Exists(p)).Distinct(StringComparer.OrdinalIgnoreCase))
             {
                 // o nome carrega data e hora (yyyy-MM-dd-HHmmss), então a ordem decrescente do
@@ -200,7 +204,7 @@ public partial class BackupViewModel : ObservableObject
 
         if (Backups.Count == 0)
         {
-            Mensagem = "Nenhum backup encontrado na pasta de backups. Use \"Selecionar arquivo...\" para escolher um backup.";
+            Mensagem = "Nenhum backup encontrado nas pastas disponíveis. Use Restaurar dados para escolher um arquivo de backup.";
         }
     }
 
@@ -232,25 +236,55 @@ public partial class BackupViewModel : ObservableObject
         Mensagem = resultado.Sucesso
             ? (string.IsNullOrEmpty(resultado.Valor?.Mensagem)
                 ? $"Backup criado com sucesso. Pasta local: {resultado.Valor!.Destino}." +
-                    (GoogleDriveConfigurado || DropboxConfigurado ? " Cópias gravadas nas pastas configuradas." : string.Empty)
+                    (GoogleDriveConfigurado || OneDriveConfigurado ? " Cópias gravadas nas pastas configuradas." : string.Empty)
                 : resultado.Valor!.Mensagem!)
             : "Não foi possível criar o backup: " + string.Join(" ", resultado.Erros);
         CarregarPastas();
     }
 
-    public async Task CriarBackupAsync()
+    public async Task CriarBackupAsync(string? pastaExterna = null)
     {
         if (!PodeCriarBackup) return;
+        Progresso.Clear();
+        EstadoProgresso = "andamento";
+        TituloProgresso = "Aguarde, fazendo o backup…";
+        ExibindoProgresso = true;
         EmAndamento = true;
         MensagemErro = false;
         Mensagem = "Criando backup e copiando para as pastas configuradas… Aguarde.";
-        try { ExibirResultado(await Task.Run(() => _criarBackupManual.Executar(null))); }
+        var contexto = SynchronizationContext.Current;
+        var acompanhamento = new Acompanhamento(etapa =>
+        {
+            void Adicionar() => Progresso.Add(new(etapa));
+            if (contexto is not null && contexto != SynchronizationContext.Current) contexto.Send(_ => Adicionar(), null);
+            else Adicionar();
+        });
+        try
+        {
+            var resultado = await Task.Run(() => _criarBackupManual.Executar(pastaExterna, acompanhamento));
+            ExibirResultado(resultado);
+            EstadoProgresso = !resultado.Sucesso ? "falha" : MensagemErro ? "aviso" : "sucesso";
+            TituloProgresso = !resultado.Sucesso ? "Falha ao fazer o backup" : MensagemErro ? "Backup concluído com avisos" : "Backup concluído!";
+            Progresso.Add(new(new(DateTime.UtcNow, Mensagem, MensagemErro)));
+        }
         catch (Exception ex)
         {
             _logger?.Error(ex, "Falha ao criar backup");
             MensagemErro = true; Mensagem = "Não foi possível criar o backup. Verifique o espaço e o acesso às pastas e tente novamente.";
+            EstadoProgresso = "falha"; TituloProgresso = "Falha ao fazer o backup";
+            Progresso.Add(new(new(DateTime.UtcNow, Mensagem, true)));
         }
         finally { EmAndamento = false; }
+    }
+
+    public void VoltarConfiguracao()
+    {
+        if (!EmAndamento) ExibindoProgresso = false;
+    }
+
+    private sealed class Acompanhamento(Action<EtapaBackup> receber) : IProgress<EtapaBackup>
+    {
+        public void Report(EtapaBackup value) => receber(value);
     }
 
     public async Task RestaurarFotosAsync(string arquivo)
@@ -320,4 +354,10 @@ public partial class BackupViewModel : ObservableObject
     }
 
     private bool PodeRestaurar() => BackupSelecionado is not null && !EmAndamento;
+}
+
+public sealed record LinhaProgressoBackup(EtapaBackup Etapa)
+{
+    public string Texto => $"{VarthexComanda.Application.Atendimento.FusoBrasilia.ParaLocal(Etapa.OcorridoEm):HH:mm:ss} > {Etapa.Mensagem}";
+    public bool Aviso => Etapa.Aviso;
 }

@@ -131,7 +131,7 @@ public class ConstrucaoComBancoCorrompidoTests
             coletor.Logger);
 
         Assert.Empty(viewModel.Backups);
-        Assert.Contains("Selecionar arquivo", viewModel.Mensagem);
+        Assert.Contains("Restaurar dados", viewModel.Mensagem);
         var evento = Assert.Single(coletor.Eventos);
         Assert.Equal(LogEventLevel.Error, evento.Level);
         Assert.NotNull(evento.Exception);

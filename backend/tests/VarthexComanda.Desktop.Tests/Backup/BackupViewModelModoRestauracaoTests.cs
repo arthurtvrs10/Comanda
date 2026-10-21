@@ -111,7 +111,7 @@ public sealed class BackupViewModelModoRestauracaoTests : IDisposable
         viewModel.AtualizarLista();
 
         Assert.Empty(viewModel.Backups);
-        Assert.Contains("Selecionar arquivo", viewModel.Mensagem);
+        Assert.Contains("Restaurar dados", viewModel.Mensagem);
     }
 
     [Fact]

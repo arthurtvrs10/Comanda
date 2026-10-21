@@ -22,19 +22,19 @@ public class BackupLayoutTests
         {
             var paths = new AppPaths(raiz); paths.EnsureCreated();
             var drive = Directory.CreateDirectory(Path.Combine(raiz, "Drive")).FullName;
-            var dropbox = Directory.CreateDirectory(Path.Combine(raiz, "Dropbox")).FullName;
+            var onedrive = Directory.CreateDirectory(Path.Combine(raiz, "OneDrive")).FullName;
             var local = Directory.CreateDirectory(Path.Combine(raiz, "Local")).FullName;
             var vm = Criar(paths);
-            vm.ConfigurarPasta("local", local); vm.ConfigurarPasta("drive", drive); vm.ConfigurarPasta("dropbox", dropbox);
+            vm.ConfigurarPasta("local", local); vm.ConfigurarPasta("drive", drive); vm.ConfigurarPasta("onedrive", onedrive);
             var reaberto = Criar(paths);
-            Assert.Equal(local, reaberto.PastaLocal); Assert.Equal(drive, reaberto.PastaGoogleDrive); Assert.Equal(dropbox, reaberto.PastaDropbox);
+            Assert.Equal(local, reaberto.PastaLocal); Assert.Equal(drive, reaberto.PastaGoogleDrive); Assert.Equal(onedrive, reaberto.PastaOneDrive);
             var destino = Directory.CreateDirectory(PreferenciasBackup.DestinoSincronizado(drive)).FullName;
             var arquivo = Path.Combine(destino, "varthex-comanda-2026-10-21-120000.db");
             File.WriteAllText(arquivo, "backup");
             reaberto.ModoRestauracao = true; reaberto.AtualizarLista();
             Assert.Equal(destino, Assert.Single(reaberto.Backups).Destino);
             reaberto.ModoRestauracao = false; reaberto.ConfigurarPasta("drive", null);
-            Assert.True(File.Exists(arquivo)); Assert.False(reaberto.GoogleDriveConfigurado); Assert.True(reaberto.DropboxConfigurado);
+            Assert.True(File.Exists(arquivo)); Assert.False(reaberto.GoogleDriveConfigurado); Assert.True(reaberto.OneDriveConfigurado);
             reaberto.ConfigurarPasta("drive", Path.Combine(raiz, "ausente"));
             Assert.True(reaberto.MensagemErro); Assert.False(reaberto.GoogleDriveConfigurado);
         }
@@ -62,8 +62,9 @@ public class BackupLayoutTests
                 Assert.True(rolagem.ViewportWidth > 690);
                 Assert.InRange(rolagem.ScrollableWidth, 0, 10);
                 vm.ModoRestauracao = true;
-                ((Expander)view.FindName("HistoricoBackup")).IsExpanded = true;
-                vm.Mensagem = "Nenhum backup encontrado. Use Restaurar dados para selecionar um arquivo.";
+                Assert.Null(view.FindName("HistoricoBackup"));
+                Assert.DoesNotContain(AlinhamentoInterfaceTests.Filhos(view).OfType<TextBlock>(), t => t.Text.Contains("Backups recentes"));
+                vm.AtualizarLista();
                 Renderizar(view, largura, 440, $"backup-recuperacao-{(escuro ? "escuro" : "claro")}-{largura}");
                 Assert.False(criar.IsEnabled);
                 var restaurarRodape = Assert.Single(botoes, b => Equals(b.Content, "Restaurar dados"));
