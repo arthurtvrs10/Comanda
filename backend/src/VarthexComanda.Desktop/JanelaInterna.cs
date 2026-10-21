@@ -12,20 +12,26 @@ public sealed class JanelaInterna : Grid
 {
     private readonly Border _moldura;
     private readonly Button _maximizar;
+    private readonly Grid _barra;
+    private readonly ViewportInterno _viewport;
     private bool _posicionada;
     private double _x,_y;
+    private double _larguraNormal=1180,_alturaNormal=600,_deslocamentoInicial;
+    private readonly List<Thumb> _redimensionadores=new();
     public UIElement Conteudo { get; }
     public bool Maximizada { get; private set; }
-    public event Action? FecharSolicitado;
+    public event Action<JanelaInterna>? FecharSolicitado;
 
-    public JanelaInterna(string titulo,UIElement conteudo)
+    public JanelaInterna(string titulo,UIElement conteudo,double larguraMinimaConteudo=640,double alturaMinimaConteudo=320)
     {
         Conteudo=conteudo;ClipToBounds=true;
         System.Windows.Automation.AutomationProperties.SetName(this,"Janela interna de "+titulo);
         _moldura=new Border { Name="MolduraInterna",HorizontalAlignment=HorizontalAlignment.Left,VerticalAlignment=VerticalAlignment.Top,BorderThickness=new Thickness(1) };
         _moldura.SetResourceReference(Border.BackgroundProperty,"Canvas");_moldura.SetResourceReference(Border.BorderBrushProperty,"Line");Children.Add(_moldura);
-        var layout=new DockPanel();_moldura.Child=layout;
-        var barra=new Grid { Height=30 };barra.SetResourceReference(Panel.BackgroundProperty,"RibbonHover");DockPanel.SetDock(barra,Dock.Top);layout.Children.Add(barra);
+        var superficie=new Grid();_moldura.Child=superficie;
+        var layout=new DockPanel();superficie.Children.Add(layout);
+        var barra=new Grid { Height=30 };_barra=barra;barra.SetResourceReference(Panel.BackgroundProperty,"RibbonHover");DockPanel.SetDock(barra,Dock.Top);layout.Children.Add(barra);
+        barra.Resources["HoverOverlay"]=new SolidColorBrush(Color.FromArgb(38,255,255,255));
         var arrastar=new Thumb { Cursor=Cursors.SizeAll,Margin=new Thickness(0,0,84,0),Template=(ControlTemplate)System.Windows.Markup.XamlReader.Parse("<ControlTemplate xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation' TargetType='Thumb'><Border Background='Transparent'/></ControlTemplate>") };
         System.Windows.Automation.AutomationProperties.SetName(arrastar,"Mover janela de "+titulo);
         arrastar.DragDelta+=(_,e)=>{if(Maximizada)return;_x+=e.HorizontalChange;_y+=e.VerticalChange;_posicionada=true;AjustarLimites();};
@@ -33,15 +39,60 @@ public sealed class JanelaInterna : Grid
         barra.Children.Add(new TextBlock { Text=titulo,Foreground=Brushes.White,FontSize=12,FontWeight=FontWeights.SemiBold,VerticalAlignment=VerticalAlignment.Center,Margin=new Thickness(10,0,90,0),IsHitTestVisible=false,TextTrimming=TextTrimming.CharacterEllipsis });
         var acoes=new StackPanel { Orientation=Orientation.Horizontal,HorizontalAlignment=HorizontalAlignment.Right };barra.Children.Add(acoes);
         _maximizar=BotaoTitulo("Maximizar "+titulo,"M1,1 H11 V11 H1 Z");_maximizar.Click+=(_,_)=>AlternarMaximizar();acoes.Children.Add(_maximizar);
-        var fechar=BotaoTitulo("Fechar "+titulo,"M1,1 L11,11 M11,1 L1,11");fechar.Click+=(_,_)=>FecharSolicitado?.Invoke();acoes.Children.Add(fechar);
-        layout.Children.Add(new ContentControl { Content=conteudo,HorizontalContentAlignment=HorizontalAlignment.Stretch,VerticalContentAlignment=VerticalAlignment.Stretch });
+        var fechar=BotaoTitulo("Fechar "+titulo,"M1,1 L11,11 M11,1 L1,11");fechar.Click+=(_,_)=>FecharSolicitado?.Invoke(this);acoes.Children.Add(fechar);
+        _viewport=new ViewportInterno(conteudo,larguraMinimaConteudo,alturaMinimaConteudo);layout.Children.Add(_viewport);
+        foreach(var (nome,horizontal,vertical,cursor) in new (string,int,int,Cursor)[]
+        {
+            ("esquerda",-1,0,Cursors.SizeWE),("direita",1,0,Cursors.SizeWE),
+            ("superior",0,-1,Cursors.SizeNS),("inferior",0,1,Cursors.SizeNS),
+            ("superior esquerda",-1,-1,Cursors.SizeNWSE),("superior direita",1,-1,Cursors.SizeNESW),
+            ("inferior esquerda",-1,1,Cursors.SizeNESW),("inferior direita",1,1,Cursors.SizeNWSE)
+        })
+        {
+            var alca=new Thumb { Cursor=cursor,HorizontalAlignment=horizontal<0?HorizontalAlignment.Left:horizontal>0?HorizontalAlignment.Right:HorizontalAlignment.Stretch,
+                VerticalAlignment=vertical<0?VerticalAlignment.Top:vertical>0?VerticalAlignment.Bottom:VerticalAlignment.Stretch,
+                Margin=horizontal==0?new Thickness(6,0,6,0):vertical==0?new Thickness(0,6,0,6):new Thickness(0),
+                Template=(ControlTemplate)System.Windows.Markup.XamlReader.Parse("<ControlTemplate xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation' TargetType='Thumb'><Border Background='Transparent'/></ControlTemplate>") };
+            if(horizontal!=0)alca.Width=6;
+            if(vertical!=0)alca.Height=6;
+            System.Windows.Automation.AutomationProperties.SetName(alca,"Redimensionar "+nome);
+            alca.DragDelta+=(_,e)=>Redimensionar(e.HorizontalChange,e.VerticalChange,horizontal,vertical);
+            _redimensionadores.Add(alca);superficie.Children.Add(alca);
+        }
         SizeChanged+=(_,_)=>AjustarLimites();Loaded+=(_,_)=>AjustarLimites();
         PreviewKeyDown+=(_,e)=>
         {
             if(e.KeyboardDevice.Modifiers!=ModifierKeys.Control)return;
-            if(e.Key==Key.F4){FecharSolicitado?.Invoke();e.Handled=true;}
+            if(e.Key==Key.F4){FecharSolicitado?.Invoke(this);e.Handled=true;}
             else if(e.Key==Key.F10){AlternarMaximizar();e.Handled=true;}
         };
+    }
+    internal void DeslocarAbertura(double deslocamento)
+    {
+        if(!_posicionada)_deslocamentoInicial=deslocamento;
+    }
+    public void DefinirMinimoConteudo(double largura,double altura)=>_viewport.DefinirMinimo(largura,altura);
+    internal void DefinirAtiva(bool ativa)
+    {
+        _barra.SetResourceReference(Panel.BackgroundProperty,ativa?"RibbonHover":"RibbonBar");
+        System.Windows.Automation.AutomationProperties.SetItemStatus(this,ativa?"Janela ativa":"Janela em segundo plano");
+    }
+    private void Redimensionar(double dx,double dy,int horizontal,int vertical)
+    {
+        if(Maximizada||ActualWidth<=0||ActualHeight<=0)return;
+        var largura=_moldura.Width;var altura=_moldura.Height;
+        var minimaLargura=Math.Min(640,ActualWidth);var minimaAltura=Math.Min(360,ActualHeight);
+        if(horizontal<0)
+        {
+            var direita=_x+largura;_x=Math.Clamp(_x+dx,0,Math.Max(0,direita-minimaLargura));largura=direita-_x;
+        }
+        else if(horizontal>0)largura=Math.Clamp(largura+dx,Math.Min(minimaLargura,ActualWidth-_x),ActualWidth-_x);
+        if(vertical<0)
+        {
+            var baseJanela=_y+altura;_y=Math.Clamp(_y+dy,0,Math.Max(0,baseJanela-minimaAltura));altura=baseJanela-_y;
+        }
+        else if(vertical>0)altura=Math.Clamp(altura+dy,Math.Min(minimaAltura,ActualHeight-_y),ActualHeight-_y);
+        _larguraNormal=largura;_alturaNormal=altura;_posicionada=true;AjustarLimites();
     }
     private static Button BotaoTitulo(string nome,string geometria)
     {
@@ -60,12 +111,56 @@ public sealed class JanelaInterna : Grid
     private void AjustarLimites()
     {
         if(ActualWidth<=0||ActualHeight<=0)return;
-        if(Maximizada){_moldura.Width=ActualWidth;_moldura.Height=ActualHeight;_moldura.Margin=new Thickness(0);return;}
-        var largura=Math.Max(0,Math.Min(1180,ActualWidth-32));
-        var altura=Math.Max(0,Math.Min(600,ActualHeight-32));
-        if(!_posicionada){_x=(ActualWidth-largura)/2;_y=(ActualHeight-altura)/2;}
+        if(Maximizada)
+        {
+            _moldura.Width=ActualWidth;
+            _moldura.Height=ActualHeight;
+            _moldura.Margin=new Thickness(0);
+            foreach(var alca in _redimensionadores)alca.Visibility=Visibility.Collapsed;
+            return;
+        }
+        foreach(var alca in _redimensionadores)alca.Visibility=Visibility.Visible;
+        var largura=Math.Max(0,Math.Min(_larguraNormal,ActualWidth));
+        var altura=Math.Max(0,Math.Min(_alturaNormal,ActualHeight));
+        if(!_posicionada){_x=(ActualWidth-largura)/2+_deslocamentoInicial;_y=(ActualHeight-altura)/2+_deslocamentoInicial;_posicionada=true;}
         _x=Math.Clamp(_x,0,Math.Max(0,ActualWidth-largura));_y=Math.Clamp(_y,0,Math.Max(0,ActualHeight-altura));
         _moldura.Width=largura;_moldura.Height=altura;
         _moldura.Margin=new Thickness(_x,_y,0,0);
+    }
+
+    // Mede a tela em um espaço finito: mantém listas virtualizadas e oferece
+    // rolagem quando o usuário reduz a moldura além do espaço útil do formulário.
+    private sealed class ViewportInterno : ScrollViewer
+    {
+        private readonly ContentControl _apresentador;
+        private double _larguraMinima,_alturaMinima;
+        public ViewportInterno(UIElement conteudo,double larguraMinima,double alturaMinima)
+        {
+            Name="ViewportJanelaInterna";
+            _larguraMinima=larguraMinima;_alturaMinima=alturaMinima;
+            HorizontalScrollBarVisibility=ScrollBarVisibility.Auto;VerticalScrollBarVisibility=ScrollBarVisibility.Auto;
+            HorizontalContentAlignment=HorizontalAlignment.Stretch;VerticalContentAlignment=VerticalAlignment.Stretch;
+            _apresentador=new ContentControl { Content=conteudo,HorizontalContentAlignment=HorizontalAlignment.Stretch,VerticalContentAlignment=VerticalAlignment.Stretch };
+            Content=_apresentador;
+        }
+        public void DefinirMinimo(double largura,double altura)
+        {
+            _larguraMinima=Math.Max(0,largura);_alturaMinima=Math.Max(0,altura);InvalidateMeasure();
+        }
+        protected override Size MeasureOverride(Size constraint)
+        {
+            var largura=double.IsInfinity(constraint.Width)?_larguraMinima:constraint.Width;
+            var altura=double.IsInfinity(constraint.Height)?_alturaMinima:constraint.Height;
+            bool rolarH=false,rolarV=false;
+            for(var i=0;i<3;i++)
+            {
+                var disponivelW=Math.Max(0,largura-(rolarV?SystemParameters.VerticalScrollBarWidth:0));
+                var disponivelH=Math.Max(0,altura-(rolarH?SystemParameters.HorizontalScrollBarHeight:0));
+                rolarH=disponivelW<_larguraMinima;rolarV=disponivelH<_alturaMinima;
+            }
+            _apresentador.Width=Math.Max(_larguraMinima,largura-(rolarV?SystemParameters.VerticalScrollBarWidth:0));
+            _apresentador.Height=Math.Max(_alturaMinima,altura-(rolarH?SystemParameters.HorizontalScrollBarHeight:0));
+            return base.MeasureOverride(constraint);
+        }
     }
 }

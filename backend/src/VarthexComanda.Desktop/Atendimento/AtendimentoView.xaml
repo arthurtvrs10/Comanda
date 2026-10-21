@@ -16,13 +16,17 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}" CornerRadius="0">
-                            <ContentPresenter x:Name="Label" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" RecognizesAccessKey="True" />
+                        <Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="0">
+                            <Grid>
+                                <Border x:Name="HoverFeedback" Background="{DynamicResource HoverOverlay}" Opacity="0" IsHitTestVisible="False"/>
+                                <ContentPresenter x:Name="Label" Margin="{TemplateBinding Padding}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" RecognizesAccessKey="True" />
+                            </Grid>
                         </Border>
                         <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="BorderBrush" Value="{DynamicResource Color1F5FBF}" /><Setter TargetName="Surface" Property="BorderThickness" Value="2" /></Trigger>
+                            <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="BorderBrush" Value="{DynamicResource Color1F5FBF}" /><Setter TargetName="Surface" Property="BorderThickness" Value="2" /><Setter TargetName="HoverFeedback" Property="Opacity" Value="1"/></Trigger>
                             <Trigger Property="IsPressed" Value="True"><Setter TargetName="Surface" Property="Opacity" Value="0.85" /></Trigger>
                             <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="HoverFeedback" Property="Opacity" Value="0"/>
                                 <Setter TargetName="Surface" Property="Background" Value="{DynamicResource BackgroundE1E5E2}" />
                                 <Setter TargetName="Surface" Property="BorderBrush" Value="{DynamicResource ColorC4CCC6}" />
                                 <Setter TargetName="Label" Property="TextElement.Foreground" Value="#59645D" />
@@ -49,6 +53,10 @@
             <Setter Property="Stretch" Value="Uniform" />
             <Setter Property="Margin" Value="0,0,0,3" />
             <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="StrokeStartLineCap" Value="Round" />
+            <Setter Property="StrokeEndLineCap" Value="Round" />
+            <Setter Property="StrokeLineJoin" Value="Round" />
         </Style>
         <local:NuloParaVisibilidadeConverter x:Key="VisivelSeComandaAberta" />
         <local:NuloParaVisibilidadeInversoConverter x:Key="VisivelSeGrade" />
@@ -111,16 +119,17 @@
                 </Grid>
             </DockPanel>
 
-            <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+            <ScrollViewer x:Name="RolagemComandas" Grid.Row="2" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Disabled"
+                          CanContentScroll="False" AutomationProperties.Name="Rolagem da grade de comandas">
                 <ItemsControl ItemsSource="{Binding Slots}" VerticalAlignment="Top">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <WrapPanel />
+                            <local:GradeComandasPanel />
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Button Margin="4" Width="136" Height="136" Padding="6" HorizontalContentAlignment="Stretch"
+                            <Button Margin="4" Height="136" Padding="6" HorizontalContentAlignment="Stretch"
                                     Command="{Binding DataContext.AbrirOuSelecionarSlotCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                     CommandParameter="{Binding}">
                                 <Button.Style>
@@ -188,7 +197,16 @@
                 </ItemsControl>
             </ScrollViewer>
 
-            <TextBlock Grid.Row="3" Text="{Binding Mensagem}" Foreground="{DynamicResource TextB23B32}" Margin="0,12,0,0" />
+            <TextBlock x:Name="MensagemGrade" Grid.Row="3" Text="{Binding Mensagem}" Foreground="{DynamicResource TextB23B32}" Margin="0,12,0,0" TextWrapping="Wrap">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Mensagem}" Value=""><Setter Property="Visibility" Value="Collapsed"/></DataTrigger>
+                            <DataTrigger Binding="{Binding Mensagem}" Value="{x:Null}"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
         </Grid>
 
         <Grid x:Name="PainelEdicao" IsVisibleChanged="PainelEdicao_IsVisibleChanged" SizeChanged="PainelEdicao_SizeChanged"

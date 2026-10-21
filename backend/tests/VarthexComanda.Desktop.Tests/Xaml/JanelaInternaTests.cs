@@ -18,7 +18,7 @@ public class JanelaInternaTests
             var interna=new JanelaInterna("Produtos",produto);
             var area=new Grid();area.SetResourceReference(Panel.BackgroundProperty,"Canvas");area.Children.Add(interna);
             var moldura=(Border)AlinhamentoInterfaceTests.Filhos(interna).Single(c=>c is Border b&&b.Name=="MolduraInterna");
-            bool fechou=false;interna.FecharSolicitado+=()=>{fechou=true;area.Children.Remove(interna);};
+            bool fechou=false;interna.FecharSolicitado+=_=>{fechou=true;area.Children.Remove(interna);};
             void Organizar(double w,double h){area.Measure(new Size(w,h));area.Arrange(new Rect(0,0,w,h));area.UpdateLayout();}
             void ConferirLimites()
             {
@@ -26,15 +26,19 @@ public class JanelaInternaTests
                 Assert.True(pos.X+moldura.ActualWidth<=area.ActualWidth+1);Assert.True(pos.Y+moldura.ActualHeight<=area.ActualHeight+1);
             }
             foreach(var escuro in new[]{false,true})
-            foreach(var tamanho in new[]{new Size(1440,800),new Size(800,440)})
+            foreach(var tamanho in new[]{new Size(1920,1080),new Size(1440,800),new Size(800,440)})
             {
                 TemaInterface.Aplicar(escuro,false);Organizar(tamanho.Width,tamanho.Height);ConferirLimites();
-                Assert.True(moldura.ActualWidth<area.ActualWidth);Assert.True(moldura.ActualHeight<area.ActualHeight);
+                Assert.True(moldura.ActualWidth<=area.ActualWidth);Assert.True(moldura.ActualHeight<=area.ActualHeight);
                 var mover=AlinhamentoInterfaceTests.Filhos(interna).OfType<Thumb>().Single(t=>System.Windows.Automation.AutomationProperties.GetName(t)=="Mover janela de Produtos");
                 mover.RaiseEvent(new DragDeltaEventArgs(90,-40){RoutedEvent=Thumb.DragDeltaEvent});Organizar(tamanho.Width,tamanho.Height);ConferirLimites();
                 var posicao=moldura.Margin;
                 interna.AlternarMaximizar();Organizar(tamanho.Width,tamanho.Height);Assert.True(interna.Maximizada);ConferirLimites();
-                Assert.Equal(area.ActualWidth,moldura.ActualWidth);Assert.Equal(area.ActualHeight,moldura.ActualHeight);
+                Assert.Equal(area.ActualWidth,moldura.ActualWidth);
+                Assert.Equal(area.ActualHeight,moldura.ActualHeight);
+                Assert.Equal(0,moldura.Margin.Left);Assert.Equal(0,moldura.Margin.Top);
+                Assert.Equal(area.ActualWidth,moldura.Margin.Left+moldura.ActualWidth);
+                Assert.Equal(area.ActualHeight,moldura.Margin.Top+moldura.ActualHeight);
                 var pasta=Environment.GetEnvironmentVariable("VARTHEX_PREVIAS_TESTE");
                 if(!string.IsNullOrWhiteSpace(pasta))
                 {
