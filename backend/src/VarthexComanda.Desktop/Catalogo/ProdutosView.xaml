@@ -34,27 +34,72 @@
             <DockPanel Margin="0,0,0,12">
                 <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
                                         <Button Click="OpcoesProdutos_Click" Margin="0,0,8,0" AutomationProperties.Name="Opções de produtos"><StackPanel Orientation="Horizontal"><Path Data="M4,12 A2,2 0 1 1 0,12 A2,2 0 1 1 4,12 M14,12 A2,2 0 1 1 10,12 A2,2 0 1 1 14,12 M24,12 A2,2 0 1 1 20,12 A2,2 0 1 1 24,12" Stroke="{DynamicResource RibbonSubtitle}" StrokeThickness="1.2" Width="23" Height="7" Stretch="Uniform" Margin="0,0,8,0" VerticalAlignment="Center"/><TextBlock Text="Opções" VerticalAlignment="Center"/><Path Data="M0,0 L3,3 L6,0 Z" Fill="{DynamicResource RibbonSubtitle}" Width="6" Height="3" Margin="10,0,0,0" VerticalAlignment="Center"/></StackPanel></Button>
-                                        <Button Click="EditarSelecionado_Click" Margin="0,0,8,0" AutomationProperties.Name="Editar produto"><StackPanel Orientation="Horizontal"><Path Data="M3,19 L1,25 L7,23 L24,6 L20,2 Z M17,5 L21,9 M3,19 L7,23" Stroke="{DynamicResource RibbonSubtitle}" StrokeThickness="1.4" Width="23" Height="23" Stretch="Uniform" Margin="0,0,9,0"/><TextBlock Text="Editar" VerticalAlignment="Center"/></StackPanel></Button>
-                                        <Button x:Name="BotaoNovoProduto" ToolTip="Adicionar produto" Click="NovoProduto_Click" AutomationProperties.Name="Novo produto"><StackPanel Orientation="Horizontal"><Path Data="M12,2 V22 M2,12 H22" Stroke="{DynamicResource RibbonSubtitle}" StrokeThickness="1.4" Width="23" Height="23" Stretch="Uniform" Margin="0,0,9,0"/><TextBlock Text="Novo" VerticalAlignment="Center"/></StackPanel></Button>
+                                        <Button Click="EditarSelecionado_Click" Margin="0,0,8,0" AutomationProperties.Name="Editar produto"><StackPanel Orientation="Horizontal" VerticalAlignment="Center"><Path Data="M3,19 L1,25 L7,23 L24,6 L20,2 Z M17,5 L21,9 M3,19 L7,23" Stroke="{DynamicResource RibbonSubtitle}" StrokeThickness="1.4" Width="23" Height="23" Stretch="Uniform" Margin="0,0,9,0" VerticalAlignment="Center"/><TextBlock Text="Editar" VerticalAlignment="Center"/></StackPanel></Button>
+                                        <Button x:Name="BotaoNovoProduto" ToolTip="Adicionar produto" Click="NovoProduto_Click" AutomationProperties.Name="Novo produto"><StackPanel Orientation="Horizontal" VerticalAlignment="Center"><Path Data="M12,2 V22 M2,12 H22" Stroke="{DynamicResource RibbonSubtitle}" StrokeThickness="1.4" Width="23" Height="23" Stretch="Uniform" Margin="0,0,9,0" VerticalAlignment="Center"/><TextBlock Text="Novo" VerticalAlignment="Center"/></StackPanel></Button>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center"><Path Data="M14,7 A7,7 0 1 1 0,7 A7,7 0 1 1 14,7 M12,12 L19,19" Stroke="{DynamicResource Line}" StrokeThickness="1.3" Width="19" Height="19" Stretch="Uniform" Margin="0,0,7,0"/><TextBox x:Name="CampoBuscaProduto" Width="275" Text="{Binding TextoBusca, UpdateSourceTrigger=PropertyChanged}" ToolTip="Pesquisar produto (Ctrl+F)" AutomationProperties.Name="Buscar produto"/></StackPanel>
             </DockPanel>
             <Border Grid.Row="1" BorderBrush="{DynamicResource Accent}" BorderThickness="0,0,0,2" HorizontalAlignment="Left" Padding="10,3,10,7"><TextBlock Text="{Binding Produtos.Count,StringFormat=Produtos ({0})}" FontSize="12"/></Border>
-            <DataGrid x:Name="TabelaProdutos" Grid.Row="2" ItemsSource="{Binding Produtos}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" SelectionMode="Single" SelectionUnit="FullRow" RowHeight="32" ColumnHeaderHeight="34" FontSize="12" HeadersVisibility="Column" GridLinesVisibility="Horizontal" BorderBrush="{DynamicResource Line}" BorderThickness="1" Background="{DynamicResource Surface}" Foreground="{DynamicResource Ink}" RowBackground="{DynamicResource Surface}" AlternatingRowBackground="{DynamicResource Canvas}" HorizontalGridLinesBrush="{DynamicResource Line}" MouseDoubleClick="TabelaProdutos_MouseDoubleClick" KeyDown="TabelaProdutos_KeyDown">
+            <DataGrid x:Name="TabelaProdutos" Grid.Row="2" ItemsSource="{Binding Produtos}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" SelectionMode="Single" SelectionUnit="FullRow" RowHeight="32" ColumnHeaderHeight="34" FontSize="12" HeadersVisibility="Column" GridLinesVisibility="Horizontal" BorderBrush="{DynamicResource Line}" BorderThickness="1" Background="{DynamicResource Surface}" Foreground="{DynamicResource Ink}" RowBackground="{DynamicResource Surface}" AlternatingRowBackground="{DynamicResource Canvas}" HorizontalGridLinesBrush="{DynamicResource Line}" MouseDoubleClick="TabelaProdutos_MouseDoubleClick" KeyDown="TabelaProdutos_KeyDown" Sorting="TabelaProdutos_Sorting">
                 <DataGrid.Resources>
                     <Style TargetType="TextBlock"><Setter Property="VerticalAlignment" Value="Center"/><Setter Property="TextTrimming" Value="CharacterEllipsis"/></Style>
-                    <Style TargetType="DataGridColumnHeader"><Setter Property="VerticalContentAlignment" Value="Center"/><Setter Property="Background" Value="{DynamicResource Canvas}"/><Setter Property="Foreground" Value="{DynamicResource Ink}"/><Setter Property="Padding" Value="7,4"/><Setter Property="BorderBrush" Value="{DynamicResource Line}"/><Setter Property="BorderThickness" Value="0,0,1,1"/></Style>
+                    <Style TargetType="DataGridColumnHeader">
+                        <Setter Property="VerticalContentAlignment" Value="Center"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="Background" Value="{DynamicResource Canvas}"/>
+                        <Setter Property="Foreground" Value="{DynamicResource Ink}"/>
+                        <Setter Property="Padding" Value="7,4"/>
+                        <Setter Property="BorderBrush" Value="{DynamicResource Line}"/>
+                        <Setter Property="BorderThickness" Value="0,0,1,1"/>
+                        <Setter Property="ToolTip" Value="Clique para ordenar em ordem crescente."/>
+                        <Setter Property="AutomationProperties.HelpText" Value="Clique para ordenar em ordem crescente."/>
+                        <Setter Property="ContentTemplate"><Setter.Value>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                    <TextBlock Text="{Binding}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                    <Path x:Name="IndicadorOrdenavel" Grid.Column="1" Data="M2,5 L5,2 L8,5 M2,9 L5,12 L8,9" Stroke="{DynamicResource RibbonSubtitle}" StrokeThickness="1.3" Width="10" Height="14" Stretch="Uniform" Margin="6,0,0,0" VerticalAlignment="Center" IsHitTestVisible="False"/>
+                                </Grid>
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding Column,RelativeSource={RelativeSource AncestorType=DataGridColumnHeader}}" Value="{x:Null}"><Setter TargetName="IndicadorOrdenavel" Property="Visibility" Value="Collapsed"/></DataTrigger>
+                                    <DataTrigger Binding="{Binding Column.CanUserSort,RelativeSource={RelativeSource AncestorType=DataGridColumnHeader}}" Value="False"><Setter TargetName="IndicadorOrdenavel" Property="Visibility" Value="Collapsed"/></DataTrigger>
+                                    <DataTrigger Binding="{Binding SortDirection,RelativeSource={RelativeSource AncestorType=DataGridColumnHeader}}" Value="Ascending">
+                                        <Setter TargetName="IndicadorOrdenavel" Property="Data" Value="M2,8 L5,4 L8,8"/>
+                                        <Setter TargetName="IndicadorOrdenavel" Property="Stroke" Value="{DynamicResource Ink}"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding SortDirection,RelativeSource={RelativeSource AncestorType=DataGridColumnHeader}}" Value="Descending">
+                                        <Setter TargetName="IndicadorOrdenavel" Property="Data" Value="M2,4 L5,8 L8,4"/>
+                                        <Setter TargetName="IndicadorOrdenavel" Property="Stroke" Value="{DynamicResource Ink}"/>
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+                        </Setter.Value></Setter>
+                        <Style.Triggers>
+                            <Trigger Property="SortDirection" Value="Ascending">
+                                <Setter Property="ToolTip" Value="Ordem crescente. Clique para ordenar em ordem decrescente."/>
+                                <Setter Property="AutomationProperties.HelpText" Value="Ordem crescente. Clique para ordenar em ordem decrescente."/>
+                            </Trigger>
+                            <Trigger Property="SortDirection" Value="Descending">
+                                <Setter Property="ToolTip" Value="Ordem decrescente. Clique para ordenar em ordem crescente."/>
+                                <Setter Property="AutomationProperties.HelpText" Value="Ordem decrescente. Clique para ordenar em ordem crescente."/>
+                            </Trigger>
+                            <DataTrigger Binding="{Binding Column.CanUserSort,RelativeSource={RelativeSource Self}}" Value="False">
+                                <Setter Property="ToolTip" Value="Todos os produtos usam a medida UN."/>
+                                <Setter Property="AutomationProperties.HelpText" Value="Todos os produtos usam a medida UN."/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
                     <Style TargetType="DataGridCell" BasedOn="{StaticResource CelulaTabela}"/>
                 </DataGrid.Resources>
                 <DataGrid.Columns>
-                    <DataGridTextColumn ElementStyle="{StaticResource NumeroTabela}" Header="Cód. sistema" Binding="{Binding Id}" Width="95"/>
-                    <DataGridTemplateColumn Header="Categoria" Width="140"><DataGridTemplateColumn.CellTemplate><DataTemplate><TextBlock Style="{StaticResource TextoTabela}"><TextBlock.Text><MultiBinding Converter="{StaticResource CategoriaNome}"><Binding Path="CategoriaId"/><Binding Path="DataContext.Categorias" RelativeSource="{RelativeSource AncestorType=UserControl}"/></MultiBinding></TextBlock.Text></TextBlock></DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
+                    <DataGridTextColumn ElementStyle="{StaticResource NumeroTabela}" Header="Cód. sistema" Binding="{Binding Id}" Width="105"/>
+                    <DataGridTemplateColumn Header="Categoria" SortMemberPath="CategoriaId" Width="140"><DataGridTemplateColumn.CellTemplate><DataTemplate><TextBlock Style="{StaticResource TextoTabela}"><TextBlock.Text><MultiBinding Converter="{StaticResource CategoriaNome}"><Binding Path="CategoriaId"/><Binding Path="DataContext.Categorias" RelativeSource="{RelativeSource AncestorType=UserControl}"/></MultiBinding></TextBlock.Text></TextBlock></DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
                     <DataGridTextColumn ElementStyle="{StaticResource TextoTabela}" Header="Nome" Binding="{Binding Nome}" Width="*" MinWidth="160"/>
                     <DataGridTextColumn ElementStyle="{StaticResource NumeroTabela}" Header="Preço custo" Binding="{Binding CustoCentavos,Converter={StaticResource Moeda}}" Width="115"/>
                     <DataGridTextColumn ElementStyle="{StaticResource NumeroTabela}" Header="Preço venda" Binding="{Binding PrecoCentavos,Converter={StaticResource Moeda}}" Width="115"/>
-                    <DataGridTemplateColumn Header="Medida" Width="75"><DataGridTemplateColumn.CellTemplate><DataTemplate><TextBlock Text="UN" Style="{StaticResource TextoTabela}"/></DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="Status venda" Width="105"><DataGridTemplateColumn.CellTemplate><DataTemplate><StackPanel Orientation="Horizontal" VerticalAlignment="Center"><Ellipse Width="10" Height="10" VerticalAlignment="Center" Margin="0,0,6,0"><Ellipse.Style><Style TargetType="Ellipse"><Setter Property="Fill" Value="#35B85B"/><Style.Triggers><DataTrigger Binding="{Binding Ativo}" Value="False"><Setter Property="Fill" Value="#9BA5A8"/></DataTrigger></Style.Triggers></Style></Ellipse.Style></Ellipse><TextBlock><TextBlock.Style><Style TargetType="TextBlock" BasedOn="{StaticResource TextoTabela}"><Setter Property="Text" Value="Ativo"/><Style.Triggers><DataTrigger Binding="{Binding Ativo}" Value="False"><Setter Property="Text" Value="Inativo"/></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock></StackPanel></DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
-                    <DataGridTextColumn ElementStyle="{StaticResource NumeroTabela}" Header="Cód. personalizado" Binding="{Binding CodigoPersonalizado}" Width="135"/>
+                    <DataGridTemplateColumn Header="Medida" CanUserSort="False" Width="75"><DataGridTemplateColumn.CellTemplate><DataTemplate><TextBlock Text="UN" Style="{StaticResource TextoTabela}"/></DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Status venda" SortMemberPath="Ativo" Width="105"><DataGridTemplateColumn.CellTemplate><DataTemplate><StackPanel Orientation="Horizontal" VerticalAlignment="Center"><Ellipse Width="10" Height="10" VerticalAlignment="Center" Margin="0,0,6,0"><Ellipse.Style><Style TargetType="Ellipse"><Setter Property="Fill" Value="#35B85B"/><Style.Triggers><DataTrigger Binding="{Binding Ativo}" Value="False"><Setter Property="Fill" Value="#9BA5A8"/></DataTrigger></Style.Triggers></Style></Ellipse.Style></Ellipse><TextBlock><TextBlock.Style><Style TargetType="TextBlock" BasedOn="{StaticResource TextoTabela}"><Setter Property="Text" Value="Ativo"/><Style.Triggers><DataTrigger Binding="{Binding Ativo}" Value="False"><Setter Property="Text" Value="Inativo"/></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock></StackPanel></DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
+                    <DataGridTextColumn ElementStyle="{StaticResource NumeroTabela}" Header="Cód. personalizado" Binding="{Binding CodigoPersonalizado}" Width="155"/>
                 </DataGrid.Columns>
             </DataGrid>
             <Border Grid.Row="3" BorderBrush="{DynamicResource Line}" BorderThickness="1,0,1,1" Background="{DynamicResource Surface}" Padding="12,7"><TextBlock Text="{Binding ResumoCatalogo}" FontSize="12" HorizontalAlignment="Center"/></Border>

@@ -1,6 +1,9 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.ComponentModel;
+using System.Globalization;
+using System.Windows.Data;
 using Microsoft.Win32;
 
 namespace VarthexComanda.Desktop.Catalogo;
@@ -64,6 +67,26 @@ public partial class ProdutosView : UserControl
     {
         if(e.Key==Key.Enter){EditarSelecionado_Click(sender,e);e.Handled=true;}
         else if(e.Key==Key.F2){NovoProduto_Click(sender,e);e.Handled=true;}
+    }
+    private void TabelaProdutos_Sorting(object sender, DataGridSortingEventArgs e)
+    {
+        if (e.Column.SortMemberPath != "CategoriaId" ||
+            CollectionViewSource.GetDefaultView(TabelaProdutos.ItemsSource) is not ListCollectionView lista) return;
+        e.Handled = true;
+        var direcao = e.Column.SortDirection == ListSortDirection.Ascending
+            ? ListSortDirection.Descending : ListSortDirection.Ascending;
+        var nomes = ((ProdutosViewModel)DataContext).Categorias.ToDictionary(c => c.Id, c => c.Nome);
+        var comparacao = CultureInfo.GetCultureInfo("pt-BR").CompareInfo;
+        var sinal = direcao == ListSortDirection.Ascending ? 1 : -1;
+        foreach (var coluna in TabelaProdutos.Columns) coluna.SortDirection = null;
+        lista.SortDescriptions.Clear();
+        lista.CustomSort = Comparer<VarthexComanda.Domain.Produto>.Create((a, b) =>
+        {
+            var ordem = comparacao.Compare(nomes.GetValueOrDefault(a.CategoriaId, ""),
+                nomes.GetValueOrDefault(b.CategoriaId, ""), CompareOptions.IgnoreCase);
+            return ordem == 0 ? a.Id.CompareTo(b.Id) : sinal * ordem;
+        });
+        e.Column.SortDirection = direcao;
     }
     private void OpcoesProdutos_Click(object sender,RoutedEventArgs e)
     {
