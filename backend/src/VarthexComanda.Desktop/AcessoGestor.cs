@@ -7,7 +7,14 @@ public sealed class AcessoGestor(string caminho)
 {
     public bool Configurado => File.Exists(caminho);
     public bool Autenticado { get; private set; }
-    public void Sair() => Autenticado = false;
+    public bool AutenticadoPorColaborador { get; private set; }
+    public void Sair() { Autenticado = false; AutenticadoPorColaborador = false; }
+
+    public bool EntrarColaborador(ServicoColaboradores colaboradores)
+    {
+        Sair();
+        return Autenticado = AutenticadoPorColaborador = colaboradores.ConferirSessao()?.Perfil == "gestor";
+    }
 
     public void Cadastrar(string senha)
     {
@@ -19,12 +26,13 @@ public sealed class AcessoGestor(string caminho)
         using var arquivo = new FileStream(caminho, FileMode.CreateNew, FileAccess.Write, FileShare.None);
         arquivo.Write(sal);
         arquivo.Write(hash);
+        AutenticadoPorColaborador = false;
         Autenticado = true;
     }
 
     public bool Entrar(string senha)
     {
-        Autenticado = false;
+        Sair();
         var dados = File.ReadAllBytes(caminho);
         if (dados.Length != 64) throw new InvalidOperationException("O arquivo de acesso do gestor está inválido. Contate o suporte.");
         var hash = Rfc2898DeriveBytes.Pbkdf2(senha, dados.AsSpan(0, 32), 210_000, HashAlgorithmName.SHA256, 32);
@@ -41,7 +49,7 @@ public sealed class AcessoGestor(string caminho)
 
     public void AlterarSenha(string atual, string nova)
     {
-        if (!Autenticado || !ConferirSenha(atual)) throw new InvalidOperationException("Senha atual incorreta.");
+        if (!Autenticado || AutenticadoPorColaborador || !ConferirSenha(atual)) throw new InvalidOperationException("Senha atual incorreta.");
         if (nova.Length < 8) throw new ArgumentException("Use pelo menos 8 caracteres na nova senha.");
         var sal = RandomNumberGenerator.GetBytes(32);
         var hash = Rfc2898DeriveBytes.Pbkdf2(nova,sal,210_000,HashAlgorithmName.SHA256,32);

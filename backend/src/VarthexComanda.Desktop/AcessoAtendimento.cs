@@ -11,6 +11,11 @@ public sealed class AcessoAtendimento(string caminho, TimeProvider? relogio = nu
     public bool Configurado => File.Exists(caminho);
     public bool Autenticado { get; private set; }
     public void Bloquear() => Autenticado = false;
+    public bool EntrarColaborador(ServicoColaboradores colaboradores)
+    {
+        Bloquear();
+        return Autenticado = colaboradores.ConferirSessao()?.Perfil is "garcom" or "cozinha";
+    }
     public static bool PinValido(string pin) => pin.Length is >= 4 and <= 8 && pin.All(char.IsAsciiDigit);
 
     public void GarantirPinInicial()
