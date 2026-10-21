@@ -57,6 +57,7 @@ public static class TemaInterface
         recursos["RibbonBar"]=new SolidColorBrush((Color)ColorConverter.ConvertFromString("#0A0A0A"));
         recursos["RibbonHover"]=new SolidColorBrush((Color)ColorConverter.ConvertFromString("#484644"));
         recursos["RibbonSurface"]=new SolidColorBrush((Color)ColorConverter.ConvertFromString(escuro?"#323130":"#E5E4E3"));
+        recursos["RibbonSubtitle"]=new SolidColorBrush((Color)ColorConverter.ConvertFromString(escuro?"#B1B9BD":"#59666E"));
         recursos["RibbonInk"]=new SolidColorBrush((Color)ColorConverter.ConvertFromString(escuro?"#F1F3F2":"#263C32"));
         foreach(var key in new[]{SystemColors.WindowBrushKey,SystemColors.ControlBrushKey,SystemColors.ControlLightBrushKey,SystemColors.ControlLightLightBrushKey,SystemColors.MenuBrushKey})recursos[key]=Pincel("#FFFFFF");
         foreach(var key in new[]{SystemColors.WindowTextBrushKey,SystemColors.ControlTextBrushKey,SystemColors.MenuTextBrushKey})recursos[key]=Pincel("#263C32");
