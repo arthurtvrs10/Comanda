@@ -500,7 +500,7 @@ public class CarregamentoDeXamlTests
                 view.Arrange(new Rect(new Point(0, 0), tamanho));
                 view.UpdateLayout();
                 Assert.Contains(Descendentes(view).OfType<TextBlock>(), t => t.Text == "Sem gelo. Entregar junto com os lanches.");
-                Assert.Contains(Descendentes(view).OfType<TextBlock>(), t => t.Text == "Mesa 12 · alterar");
+                Assert.Equal(12, vm.ComandaAtual!.NumeroMesa);
                 SalvarPrevia(view, $"mesa-observacao-{tamanho.Width}");
             }
             var cozinha = new CozinhaView(vm.ConsultarCozinha);

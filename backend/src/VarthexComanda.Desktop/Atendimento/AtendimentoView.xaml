@@ -4,69 +4,49 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:local="clr-namespace:VarthexComanda.Desktop.Atendimento"
-             xmlns:domain="clr-namespace:VarthexComanda.Domain;assembly=VarthexComanda.Domain"
              xmlns:catalogo="clr-namespace:VarthexComanda.Desktop.Catalogo"
              mc:Ignorable="d"
-             Background="{DynamicResource BackgroundF2F2F0}">
+             Background="{DynamicResource AjudaCanvas}">
     <UserControl.Resources>
+        <Style x:Key="MenuPedidoContexto" TargetType="ContextMenu">
+            <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ContextMenu"><Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" Padding="6"><ScrollViewer CanContentScroll="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"><ItemsPresenter KeyboardNavigation.DirectionalNavigation="Cycle"/></ScrollViewer></Border></ControlTemplate></Setter.Value></Setter>
+        </Style>
+        <Style x:Key="MenuPedidoItem" TargetType="MenuItem">
+            <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="MenuItem">
+                <Border x:Name="Fundo" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+                    <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="16"/></Grid.ColumnDefinitions>
+                        <ContentPresenter ContentSource="Header" RecognizesAccessKey="True" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <Path x:Name="Seta" Grid.Column="1" Data="M0 0L4 4L0 8" Stroke="{TemplateBinding Foreground}" StrokeThickness="1.3" Width="4" Height="8" VerticalAlignment="Center" Visibility="Collapsed"/>
+                        <Popup x:Name="PART_Popup" Placement="Right" IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}" AllowsTransparency="True" Focusable="False"><Border Background="{DynamicResource AjudaCanvas}" BorderBrush="{DynamicResource AjudaLine}" BorderThickness="1" Padding="6"><ItemsPresenter KeyboardNavigation.DirectionalNavigation="Cycle"/></Border></Popup>
+                    </Grid>
+                </Border>
+                <ControlTemplate.Triggers><Trigger Property="HasItems" Value="True"><Setter TargetName="Seta" Property="Visibility" Value="Visible"/></Trigger><Trigger Property="IsHighlighted" Value="True"><Setter TargetName="Fundo" Property="Background" Value="{DynamicResource AjudaHover}"/></Trigger><Trigger Property="IsSubmenuOpen" Value="True"><Setter TargetName="Fundo" Property="Background" Value="{DynamicResource AjudaHover}"/></Trigger><Trigger Property="IsEnabled" Value="False"><Setter TargetName="Fundo" Property="Opacity" Value="0.6"/></Trigger></ControlTemplate.Triggers>
+            </ControlTemplate></Setter.Value></Setter>
+        </Style>
+        <BooleanToVisibilityConverter x:Key="BoolVisible"/>
+        <local:DetalheItemPedidoConverter x:Key="DetalheItem"/>
+        <Style x:Key="BotaoPedido" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="MinHeight" Value="36"/><Setter Property="MinWidth" Value="0"/>
+            <Setter Property="Padding" Value="10,6"/><Setter Property="FontSize" Value="13"/>
+            <Setter Property="Background" Value="{DynamicResource AjudaCanvas}"/><Setter Property="Foreground" Value="{DynamicResource AjudaInk}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource AjudaLine}"/>
+        </Style>
+        <Style x:Key="IconePedido" TargetType="Path">
+            <Setter Property="Width" Value="20"/><Setter Property="Height" Value="20"/>
+            <Setter Property="Margin" Value="0,0,8,0"/><Setter Property="Stretch" Value="Uniform"/>
+            <Setter Property="Stroke" Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+            <Setter Property="StrokeThickness" Value="1.4"/><Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="StrokeLineJoin" Value="Round"/>
+        </Style>
         <local:NumeroComandaPesquisadoConverter x:Key="NumeroPesquisado" />
-        <Style x:Key="BotaoPainelComanda" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="BorderBrush" Value="{DynamicResource Color87988E}" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="0">
-                            <Grid>
-                                <Border x:Name="HoverFeedback" Background="{DynamicResource HoverOverlay}" Opacity="0" IsHitTestVisible="False"/>
-                                <ContentPresenter x:Name="Label" Margin="{TemplateBinding Padding}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" RecognizesAccessKey="True" />
-                            </Grid>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="BorderBrush" Value="{DynamicResource Color1F5FBF}" /><Setter TargetName="Surface" Property="BorderThickness" Value="2" /><Setter TargetName="HoverFeedback" Property="Opacity" Value="1"/></Trigger>
-                            <Trigger Property="IsPressed" Value="True"><Setter TargetName="Surface" Property="Opacity" Value="0.85" /></Trigger>
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter TargetName="HoverFeedback" Property="Opacity" Value="0"/>
-                                <Setter TargetName="Surface" Property="Background" Value="{DynamicResource BackgroundE1E5E2}" />
-                                <Setter TargetName="Surface" Property="BorderBrush" Value="{DynamicResource ColorC4CCC6}" />
-                                <Setter TargetName="Label" Property="TextElement.Foreground" Value="#59645D" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style x:Key="AcaoComanda" TargetType="Button" BasedOn="{StaticResource BotaoPainelComanda}">
-            <Setter Property="Background" Value="{DynamicResource BackgroundE1E8E4}" />
-            <Setter Property="Foreground" Value="{DynamicResource Text263C32}" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="Height" Value="78" />
-            <Setter Property="Padding" Value="4" />
-            <Setter Property="FontSize" Value="14" />
-            <Setter Property="FontWeight" Value="Bold" />
-        </Style>
-        <Style x:Key="IconeAcao" TargetType="Path">
-            <Setter Property="Stroke" Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
-            <Setter Property="StrokeThickness" Value="1.7" />
-            <Setter Property="Width" Value="22" />
-            <Setter Property="Height" Value="22" />
-            <Setter Property="Stretch" Value="Uniform" />
-            <Setter Property="Margin" Value="0,0,0,3" />
-            <Setter Property="HorizontalAlignment" Value="Center" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="StrokeStartLineCap" Value="Round" />
-            <Setter Property="StrokeEndLineCap" Value="Round" />
-            <Setter Property="StrokeLineJoin" Value="Round" />
-        </Style>
         <local:NuloParaVisibilidadeConverter x:Key="VisivelSeComandaAberta" />
         <local:NuloParaVisibilidadeInversoConverter x:Key="VisivelSeGrade" />
         <local:CentavosParaMoedaConverter x:Key="Moeda" />
-        <local:CategoriaSelecionadaParaCorConverter x:Key="CorCategoria" />
         <catalogo:FotoArquivoParaImagemConverter x:Key="FotoImagem" />
         <local:ItemSelecionadoParaCorConverter x:Key="CorItemSelecionado" />
         <Style x:Key="PlaceholderBusca" TargetType="TextBlock">
             <Setter Property="IsHitTestVisible" Value="False" />
-            <Setter Property="Foreground" Value="{DynamicResource Text8A8A86}" />
+            <Setter Property="Foreground" Value="{DynamicResource AjudaMuted}" />
             <Setter Property="FontSize" Value="16" />
             <Setter Property="Margin" Value="12,0,0,0" />
             <Setter Property="VerticalAlignment" Value="Center" />
@@ -209,322 +189,100 @@
             </TextBlock>
         </Grid>
 
-        <Grid x:Name="PainelEdicao" IsVisibleChanged="PainelEdicao_IsVisibleChanged" SizeChanged="PainelEdicao_SizeChanged"
-              Visibility="{Binding ComandaAtual, Converter={StaticResource VisivelSeComandaAberta}}">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition x:Name="ColunaCatalogo" Width="1*" />
-                <ColumnDefinition Width="1" />
-                <ColumnDefinition Width="1*" />
-            </Grid.ColumnDefinitions>
-            <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,14,12" KeyboardNavigation.TabIndex="3">
-                <Button Content="Voltar às comandas" Command="{Binding FecharEdicaoCommand}"
-                        Padding="14,6" ToolTip="Voltar ao menu e bloquear o acesso (Esc). A comanda permanece aberta." />
-                <TextBlock Text="Ao sair, o atendimento será bloqueado." Foreground="{DynamicResource Text666666}" Margin="0,6,0,0" TextWrapping="Wrap" />
-            </StackPanel>
-
-            <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Background="{DynamicResource BackgroundC4C4C4}" />
-
-            <Grid x:Name="PainelMenu" Grid.Row="1" Grid.Column="0" KeyboardNavigation.TabIndex="0" Margin="0,0,14,0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-
-                <TextBlock Grid.Row="0" Text="MENU" FontWeight="Bold" FontSize="12" Foreground="{DynamicResource Text4A4A47}" Margin="0,0,0,8" />
-
-                <!-- Ordem de Tab da tela: busca (0) > categorias (1) > cards do menu (2) > itens da comanda > Voltar > Cancelar > Finalizar -->
-                <StackPanel Grid.Row="1" Margin="0,0,0,8" KeyboardNavigation.TabIndex="0">
-                <Grid>
-                    <TextBox x:Name="CampoBusca" ToolTip="Buscar produto (Ctrl+F). Enter adiciona o primeiro resultado."
-                             AutomationProperties.Name="Buscar produto"
-                             Text="{Binding TextoBuscaCatalogo, UpdateSourceTrigger=PropertyChanged}" />
-                    <TextBlock Text="Buscar produto (Ctrl+F)" Style="{StaticResource PlaceholderProduto}" />
+        <Grid x:Name="PainelEdicao" TextElement.Foreground="{DynamicResource AjudaInk}" TextElement.FontSize="13" IsVisibleChanged="PainelEdicao_IsVisibleChanged" Visibility="{Binding ComandaAtual, Converter={StaticResource VisivelSeComandaAberta}}" Background="{DynamicResource AjudaCanvas}">
+            <Grid.RowDefinitions><RowDefinition Height="54"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+            <Grid Grid.Row="0" Margin="8,0,8,8">
+                <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="160"/><ColumnDefinition Width="120"/></Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding ComandaAtual.Numero, StringFormat='{}{0:00}'}" FontSize="24" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,16,0"/>
+                <Border Grid.Column="1" Padding="16,6" VerticalAlignment="Center" Background="{DynamicResource AjudaSoft}"><TextBlock Text="{Binding SituacaoPedido}" FontWeight="SemiBold"/></Border>
+                <TextBlock Grid.Column="2" Text="{Binding IdentificacaoPedido}" VerticalAlignment="Center" Margin="12,0"/>
+                <Grid Grid.Column="3" Margin="0,0,8,0" VerticalAlignment="Center">
+                    <TextBox x:Name="CampoBusca" Background="{DynamicResource AjudaSurface}" Foreground="{DynamicResource AjudaInk}" BorderBrush="{DynamicResource AjudaLine}" MinHeight="32" FontSize="13" Padding="7,4" Text="{Binding TextoBuscaCatalogo, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Buscar produto" ToolTip="Buscar produto (Ctrl+F). Enter adiciona o primeiro resultado." IsEnabled="{Binding PodeAlterarPedido}"/>
+                    <TextBlock Text="Buscar produto" Style="{StaticResource PlaceholderProduto}" FontSize="12" Margin="8,0,0,0"/>
                 </Grid>
-                    <TextBlock Text="Observação para o próximo produto" Margin="0,8,0,4" Foreground="{DynamicResource Text4A4A47}" />
-                    <TextBox Text="{Binding ObservacaoNovoItem, UpdateSourceTrigger=PropertyChanged}" MaxLength="300"
-                             MinHeight="46" AutomationProperties.Name="Observação para o próximo produto"
-                             ToolTip="Ex.: sem cebola. Será aplicada ao próximo produto adicionado e depois limpa." />
-                </StackPanel>
-
-                <ScrollViewer Grid.Row="2" KeyboardNavigation.TabIndex="2" VerticalScrollBarVisibility="Auto">
-                    <ItemsControl ItemsSource="{Binding ProdutosCatalogo}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <WrapPanel />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Button Width="128" Height="128" Margin="0,0,8,8" Padding="0"
-                                        HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
-                                        Background="{DynamicResource BackgroundFFFFFF}" BorderBrush="{DynamicResource ColorC4C4C4}" BorderThickness="1"
-                                        Command="{Binding DataContext.AdicionarProdutoAoItemCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                        CommandParameter="{Binding}">
-                                    <Grid>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="*" />
-                                            <RowDefinition Height="Auto" />
-                                        </Grid.RowDefinitions>
-                                        <Grid Grid.Row="0" Background="{DynamicResource BackgroundE1E8E4}" ClipToBounds="True">
-                                            <Image Source="{Binding FotoArquivo, Converter={StaticResource FotoImagem}}" Stretch="UniformToFill" />
-                                        </Grid>
-                                        <Border Grid.Row="1" BorderBrush="{DynamicResource ColorC4C4C4}" BorderThickness="0,1,0,0" Padding="8,6">
-                                            <StackPanel>
-                                                <TextBlock Text="{Binding Nome}" FontSize="12" FontWeight="SemiBold"
-                                                           TextTrimming="CharacterEllipsis" />
-                                                <TextBlock Text="{Binding PrecoCentavos, Converter={StaticResource Moeda}}"
-                                                           FontSize="10.5" Foreground="{DynamicResource Text6B6B67}" />
-                                            </StackPanel>
-                                        </Border>
-                                    </Grid>
-                                </Button>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </ScrollViewer>
-
-                <DockPanel Grid.Row="3" Margin="0,8,0,0" KeyboardNavigation.TabIndex="1">
-                    <Button DockPanel.Dock="Left" Content="Todas" Width="76" Height="48" Margin="0,0,6,0" Padding="4" FontSize="13"
-                            Command="{Binding LimparFiltroCommand}">
-                        <Button.Style>
-                            <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-                                <Setter Property="FocusVisualStyle" Value="{StaticResource FocoVisivel}" />
-                                <Setter Property="Background" Value="{DynamicResource BackgroundFFFFFF}" />
-                                <Setter Property="BorderBrush" Value="{DynamicResource ColorC4C4C4}" />
-                                <Setter Property="BorderThickness" Value="1" />
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding CategoriaCatalogo}" Value="{x:Null}">
-                                        <Setter Property="Background" Value="{DynamicResource BackgroundEDEDEA}" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Button.Style>
-                    </Button>
-                    <ItemsControl ItemsSource="{Binding Categorias}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <UniformGrid Rows="1" />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Button Height="48" Margin="0,0,6,0" Padding="4"
-                                        Command="{Binding DataContext.SelecionarCategoriaCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                        CommandParameter="{Binding}">
-                                    <Button.Background>
-                                        <MultiBinding Converter="{StaticResource CorCategoria}">
-                                            <Binding />
-                                            <Binding Path="DataContext.CategoriaCatalogo" RelativeSource="{RelativeSource AncestorType=ItemsControl}" />
-                                        </MultiBinding>
-                                    </Button.Background>
-                                    <Button.Style>
-                                        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-                                            <Setter Property="FocusVisualStyle" Value="{StaticResource FocoVisivel}" />
-                                            <Setter Property="BorderBrush" Value="{DynamicResource ColorC4C4C4}" />
-                                            <Setter Property="BorderThickness" Value="1" />
-                                            <Setter Property="Content" Value="{Binding Nome}" />
-                                            <Setter Property="FontSize" Value="13" />
-                                        </Style>
-                                    </Button.Style>
-                                </Button>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </DockPanel>
+                <Button Grid.Column="4" x:Name="BotaoProdutosPedido" Click="ProdutosPedido_Click" Style="{StaticResource BotaoPedido}" IsEnabled="{Binding PodeAlterarPedido}"><StackPanel Orientation="Horizontal"><Path Data="M12 3V21 M3 12H21" Style="{StaticResource IconePedido}"/><TextBlock Text="Produtos" VerticalAlignment="Center"/></StackPanel></Button>
             </Grid>
-
-            <Grid Grid.Row="0" Grid.RowSpan="2" Grid.Column="2" KeyboardNavigation.TabIndex="1" x:Name="PainelComanda" Focusable="True" KeyboardNavigation.IsTabStop="False"
-                  FocusVisualStyle="{StaticResource FocoVisivel}" Margin="14,0,0,0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-
-                <StackPanel Grid.Row="0">
-                    <Border Background="{DynamicResource Background263C32}" Padding="10,7" Margin="0,0,0,8">
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions><ColumnDefinition Width="210"/><ColumnDefinition Width="10"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                <Border Grid.Column="0" BorderBrush="{DynamicResource AjudaLine}" BorderThickness="1" Padding="10">
+                    <DockPanel LastChildFill="True">
+                        <StackPanel DockPanel.Dock="Bottom">
+                            <Button Tag="cliente" Click="EditarDados_Click" Style="{StaticResource BotaoPedido}" HorizontalContentAlignment="Left" Margin="0,0,0,4"><StackPanel Orientation="Horizontal"><Path Data="M12 3 A4 4 0 1 0 12 11 A4 4 0 1 0 12 3 M4 22V18 C4 12 20 12 20 18V22" Style="{StaticResource IconePedido}"/><TextBlock Text="{Binding ClientePedido}" TextTrimming="CharacterEllipsis" MaxWidth="140" VerticalAlignment="Center"/></StackPanel></Button>
+                            <Button x:Name="BotaoMaisOpcoes" Click="MaisOpcoesPedido_Click" Style="{StaticResource BotaoPedido}" HorizontalContentAlignment="Left" Margin="0,0,0,4"><StackPanel Orientation="Horizontal"><Path Data="M3 5H21 M3 12H21 M3 19H21" Style="{StaticResource IconePedido}"/><TextBlock Text="Mais opções" VerticalAlignment="Center"/></StackPanel></Button>
+                            <Button Content="Voltar às comandas" Command="{Binding FecharEdicaoCommand}" Style="{StaticResource BotaoPedido}" HorizontalContentAlignment="Left" ToolTip="Voltar e bloquear o acesso ao atendimento (Esc). O pedido permanece aberto."/>
+                        </StackPanel>
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                            <StackPanel>
+                                <TextBlock Foreground="{DynamicResource AjudaMuted}" Margin="0,0,0,6"><Run Text="Iniciado em "/><Run Text="{Binding AberturaPedido, Mode=OneWay}"/></TextBlock>
+                                <TextBlock Foreground="{DynamicResource AjudaMuted}" TextWrapping="Wrap" Margin="0,0,0,8"><Run Text="Criado por: "/><Run Text="{Binding AutorPedido, Mode=OneWay}"/></TextBlock>
+                                <TextBlock Text="Responsável" Margin="0,0,0,4"/>
+                                <ComboBox x:Name="ResponsavelPedido" Background="{DynamicResource AjudaSurface}" Foreground="{DynamicResource AjudaInk}" BorderBrush="{DynamicResource AjudaLine}" MinHeight="32" FontSize="13" SelectionChanged="ResponsavelPedido_SelectionChanged" AutomationProperties.Name="Responsável pelo pedido" IsEnabled="{Binding PodeAlterarPedido}"/>
+                                <TextBlock Text="Observação do pedido" Margin="0,10,0,4"/>
+                                <TextBox x:Name="ObservacaoPedido" Background="{DynamicResource AjudaSurface}" Foreground="{DynamicResource AjudaInk}" BorderBrush="{DynamicResource AjudaLine}" FontSize="13" Padding="6" Text="{Binding ComandaAtual.Observacao, Mode=OneWay}" AcceptsReturn="True" TextWrapping="Wrap" Height="60" MinHeight="32" MaxLength="1000" VerticalScrollBarVisibility="Auto" LostKeyboardFocus="ObservacaoPedido_LostKeyboardFocus" AutomationProperties.Name="Observação do pedido" IsEnabled="{Binding PodeAlterarPedido}"/>
+                                <CheckBox x:Name="BloqueioPedido" Content="Bloquear pedido" FontSize="13" Margin="0,10,0,8" IsChecked="{Binding ComandaAtual.Bloqueada, Mode=OneWay}" Click="BloqueioPedido_Click" ToolTip="Impede adicionar, alterar e transferir itens. Permite pagar e imprimir."/>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </DockPanel>
+                </Border>
+                <Grid Grid.Column="2" x:Name="PainelComanda" Focusable="True" KeyboardNavigation.IsTabStop="False" FocusVisualStyle="{StaticResource FocoVisivel}">
+                    <Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="58"/></Grid.RowDefinitions>
+                    <Border Grid.Row="0" BorderBrush="{DynamicResource AjudaLine}" BorderThickness="1" Background="{DynamicResource AjudaSurface}">
                         <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="90" />
-                                <ColumnDefinition Width="70" />
-                                <ColumnDefinition Width="120" />
-                            </Grid.ColumnDefinitions>
-                            <WrapPanel VerticalAlignment="Center" Margin="0,0,8,0">
-                                <TextBlock Text="{Binding ComandaAtual.Numero, StringFormat='COMANDA {0}'}" Foreground="White" FontWeight="Bold" Margin="0,0,12,0" />
-                                <TextBlock Text="{Binding ComandaAtual.Id, StringFormat='#{0:0000}'}" Foreground="{DynamicResource TextD6EADF}" FontWeight="SemiBold" ToolTip="Identificador único da comanda" />
-                                <TextBlock Text="{Binding ComandaAtual.CodigoPedido, StringFormat='Pedido {0}'}" Foreground="White" FontWeight="SemiBold" Margin="12,0,0,0">
-                                    <TextBlock.Style>
-                                        <Style TargetType="TextBlock">
-                                            <Style.Triggers><DataTrigger Binding="{Binding ComandaAtual.CodigoPedido}" Value="{x:Null}"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers>
-                                        </Style>
-                                    </TextBlock.Style>
-                                </TextBlock>
-                            </WrapPanel>
-                            <StackPanel Grid.Column="1">
-                                <StackPanel Orientation="Horizontal">
-                                    <Ellipse Width="9" Height="9" Fill="{Binding CorPrioridadeAtual}" Stroke="{DynamicResource ColorFFFFFF}" StrokeThickness="1" Margin="0,0,4,0" />
-                                    <TextBlock Text="{Binding ComandaAtual.Prioridade}" Foreground="White" FontWeight="Bold" />
+                            <Grid.RowDefinitions><RowDefinition Height="38"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+                            <DockPanel Background="{DynamicResource AjudaCanvas}" LastChildFill="True">
+                                <CheckBox DockPanel.Dock="Right" Content="Exibição completa" IsChecked="{Binding ExibicaoCompleta}" VerticalAlignment="Center" Margin="8,0,12,0" FontSize="12"/>
+                                <TextBlock Text="{Binding CabecalhoItens}" FontWeight="SemiBold" VerticalAlignment="Center" Margin="12,0"/>
+                            </DockPanel>
+                            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                <StackPanel>
+                                    <ItemsControl ItemsSource="{Binding Itens}">
+                                        <ItemsControl.ItemTemplate><DataTemplate>
+                                            <Border BorderBrush="{DynamicResource AjudaLine}" BorderThickness="0,0,0,1" Padding="12,8" GotKeyboardFocus="LinhaItem_GotKeyboardFocus" PreviewMouseLeftButtonDown="LinhaItem_PreviewMouseLeftButtonDown">
+                                                <Border.Background><MultiBinding Converter="{StaticResource CorItemSelecionado}"><Binding Path="Id"/><Binding Path="DataContext.ItemSelecionadoId" RelativeSource="{RelativeSource AncestorType=ItemsControl}"/></MultiBinding></Border.Background>
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="86"/><ColumnDefinition Width="38"/></Grid.ColumnDefinitions>
+                                                    <StackPanel VerticalAlignment="Center" Margin="0,0,8,0">
+                                                        <TextBlock TextWrapping="Wrap"><Run Text="{Binding Quantidade}" FontWeight="Bold"/><Run Text=" × "/><Run Text="{Binding NomeProduto}" FontWeight="SemiBold"/><Run Text="  [Cód. "/><Run Text="{Binding ProdutoId}"/><Run Text="]"/></TextBlock>
+                                                        <StackPanel Visibility="{Binding DataContext.ExibicaoCompleta, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource BoolVisible}}">
+                                                            <TextBlock Text="{Binding Converter={StaticResource DetalheItem}}" Foreground="{DynamicResource AjudaMuted}" FontSize="12" TextWrapping="Wrap" Margin="0,3,0,0"/>
+                                                            <TextBlock Text="{Binding Observacao}" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource AjudaMuted}"/>
+                                                        </StackPanel>
+                                                    </StackPanel>
+                                                    <TextBlock Grid.Column="1" Text="{Binding SubtotalCentavos, Converter={StaticResource Moeda}}" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                                    <Button Grid.Column="2" VerticalAlignment="Center" Height="32" BorderThickness="0" Click="OpcoesItem_Click" Tag="{Binding}" Style="{StaticResource BotaoPedido}" MinWidth="30" MinHeight="32" Padding="4" Margin="6,0,0,0" AutomationProperties.Name="Opções do item" ToolTip="Alterar quantidade ou remover item"><Path Data="M3 12 A1 1 0 1 0 5 12 A1 1 0 1 0 3 12 M11 12 A1 1 0 1 0 13 12 A1 1 0 1 0 11 12 M19 12 A1 1 0 1 0 21 12 A1 1 0 1 0 19 12" Style="{StaticResource IconePedido}" Margin="0"/></Button>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate></ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                    <TextBlock Text="Nenhum item lançado. Use Produtos ou busque pelo nome." TextWrapping="Wrap" Margin="16" Foreground="{DynamicResource AjudaMuted}"><TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding Itens.Count}" Value="0"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock>
+                                    <Grid Margin="12,14,50,12"><Grid.RowDefinitions><RowDefinition/><RowDefinition/></Grid.RowDefinitions><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                        <TextBlock Text="SUBTOTAL" Margin="0,0,0,14"/><TextBlock Grid.Column="1" Text="{Binding TotalPedido}" FontWeight="SemiBold"/>
+                                        <TextBlock Grid.Row="1" Text="TOTAL" FontWeight="Bold" FontSize="16"/><TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding TotalPedido}" FontWeight="Bold" FontSize="16"/>
+                                    </Grid>
                                 </StackPanel>
-                                <TextBlock Text="{Binding TempoComandaAtual}" Foreground="White" FontWeight="Bold" ToolTip="Tempo desde a abertura" AutomationProperties.Name="Tempo desde a abertura" />
-                            </StackPanel>
-                            <StackPanel Grid.Column="2">
-                                <TextBlock Text="Pessoas" Foreground="White" FontWeight="Bold" />
-                                <TextBlock Text="{Binding ComandaAtual.QuantidadePessoas}" Foreground="White" FontWeight="Bold" />
-                            </StackPanel>
-                            <StackPanel Grid.Column="3">
-                                <TextBlock Text="Cliente" Foreground="White" FontWeight="Bold" />
-                                <TextBlock Text="{Binding ComandaAtual.NomeCliente, TargetNullValue='Não informado'}" ToolTip="{Binding ComandaAtual.NomeCliente}" TextTrimming="CharacterEllipsis" Foreground="White" FontWeight="Bold" />
-                            </StackPanel>
+                            </ScrollViewer>
                         </Grid>
                     </Border>
-                    <WrapPanel>
-                    <Button Tag="mesa" Click="EditarDados_Click" Margin="0,0,0,8" MinHeight="46" Padding="12,4"
-                            HorizontalAlignment="Left" AutomationProperties.Name="Definir mesa"
-                            ToolTip="Definir ou alterar a mesa; vazio para balcão">
-                        <TextBlock Text="{Binding ComandaAtual.NumeroMesa, StringFormat='Mesa {0} · alterar', TargetNullValue='Balcão · definir mesa'}" />
-                    </Button>
-<Button Content="Origem do cliente" Click="OrigemCliente_Click" Margin="8,0,0,8"/><Button Content="Imprimir conta" Click="ImprimirConta_Click" Margin="8,0,0,8"/>
-</WrapPanel>
-                </StackPanel>
-
-                <Border Grid.Row="1" BorderBrush="{DynamicResource ColorC4CCC6}" BorderThickness="1" Background="{DynamicResource BackgroundFFFFFF}">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
-                    
-                        <Grid Grid.Row="0" Background="{DynamicResource BackgroundE1E8E4}" Margin="0,0,17,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="44" />
-                                <ColumnDefinition Width="72" />
-                                <ColumnDefinition Width="72" />
-                                <ColumnDefinition Width="188" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="DESCRIÇÃO" FontSize="12" FontWeight="Bold" Foreground="{DynamicResource Text4A4A47}"
-                                       Margin="8,6" VerticalAlignment="Center" />
-                            <TextBlock Grid.Column="1" Text="QTD." FontSize="12" FontWeight="Bold" Foreground="{DynamicResource Text4A4A47}"
-                                       Margin="0,6" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                            <TextBlock Grid.Column="2" Text="PREÇO" FontSize="12" FontWeight="Bold" Foreground="{DynamicResource Text4A4A47}"
-                                       Margin="0,6,8,6" HorizontalAlignment="Right" VerticalAlignment="Center" />
-                            <TextBlock Grid.Column="3" Text="TOTAL" FontSize="12" FontWeight="Bold" Foreground="{DynamicResource Text4A4A47}"
-                                       Margin="0,6,8,6" HorizontalAlignment="Right" VerticalAlignment="Center" />
-                        </Grid>
-                    
-                        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Disabled">
-                            <ItemsControl ItemsSource="{Binding Itens}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Border BorderThickness="0" Padding="0,4"
-                                                GotKeyboardFocus="LinhaItem_GotKeyboardFocus"
-                                                PreviewMouseLeftButtonDown="LinhaItem_PreviewMouseLeftButtonDown">
-                                            <Border.Background>
-                                                <MultiBinding Converter="{StaticResource CorItemSelecionado}">
-                                                    <Binding Path="Id" />
-                                                    <Binding Path="DataContext.ItemSelecionadoId" RelativeSource="{RelativeSource AncestorType=ItemsControl}" />
-                                                </MultiBinding>
-                                            </Border.Background>
-                                            <Grid>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="*" />
-                                                    <ColumnDefinition Width="44" />
-                                                    <ColumnDefinition Width="72" />
-                                                    <ColumnDefinition Width="72" />
-                                                    <ColumnDefinition Width="188" />
-                                                </Grid.ColumnDefinitions>
-                                                <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="8,0">
-                                                    <TextBlock Text="{Binding NomeProduto}" FontSize="14" TextTrimming="CharacterEllipsis" />
-                                                    <TextBlock Text="{Binding Observacao}" FontSize="12" Foreground="{DynamicResource Text4A4A47}" TextWrapping="Wrap" />
-                                                </StackPanel>
-                                                <TextBlock Grid.Column="1" Text="{Binding Quantidade}" FontSize="14" FontWeight="Bold"
-                                                           HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                                <TextBlock Grid.Column="2" Text="{Binding PrecoUnitarioCentavos, Converter={StaticResource Moeda}}" FontSize="14"
-                                                           HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0" />
-                                                <TextBlock Grid.Column="3" Text="{Binding SubtotalCentavos, Converter={StaticResource Moeda}}" FontSize="14"
-                                                           HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0" />
-                                                <StackPanel Grid.Column="4" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                                                    <Button Content="−" Width="44" Height="44" FontSize="20" FontWeight="Bold"
-                                                            Command="{Binding DataContext.DiminuirQuantidadeCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                                            CommandParameter="{Binding}" Margin="0,0,4,0" />
-                                                    <Button Content="+" Width="44" Height="44" FontSize="20" FontWeight="Bold"
-                                                            Command="{Binding DataContext.AumentarQuantidadeCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                                            CommandParameter="{Binding}" Margin="0,0,4,0" />
-                                                    <Button Content="Excluir" Foreground="{DynamicResource TextB23B32}" Height="44" MinHeight="44" Padding="12,0"
-                                                            Command="{Binding DataContext.RemoverCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                                            CommandParameter="{Binding}" />
-                                                </StackPanel>
-                                            </Grid>
-                                        </Border>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </ScrollViewer>
-                    </Grid>
-                </Border>
-
-                <StackPanel Grid.Row="2" Margin="0,8,0,6">
-                    <DockPanel Margin="4,0,4,10">
-                        <TextBlock Text="TOTAL DA COMANDA" FontWeight="Bold" FontSize="12" Foreground="{DynamicResource Text666666}" VerticalAlignment="Center" />
-                        <TextBlock Text="{Binding ComandaAtual.TotalCentavos, Converter={StaticResource Moeda}}" FontWeight="Bold" FontSize="26" DockPanel.Dock="Right" HorizontalAlignment="Right" />
-                    </DockPanel>
-                    <UniformGrid Columns="5">
-                        <Button Click="AlterarPrioridade_Click" Style="{StaticResource AcaoComanda}" Margin="0,0,8,0" AutomationProperties.Name="Alterar prioridade">
-                            <StackPanel>
-                                <Path Data="M 6,17 L 7,15 L 7,9 C 7,3 17,3 17,9 L 17,15 L 19,17 Z M 10,20 L 15,20 M 12,2 L 12,4" Style="{StaticResource IconeAcao}" />
-                                <TextBlock Text="Alterar&#10;prioridade" TextAlignment="Center" />
-                            </StackPanel>
-                        </Button>
-                        <Button Tag="mover" Click="EditarDados_Click" Style="{StaticResource AcaoComanda}" Margin="0,0,8,0" AutomationProperties.Name="Mover para">
-                            <StackPanel>
-                                <Path Data="M 12,1 L 12,23 M 1,12 L 23,12 M 8,5 L 12,1 L 16,5 M 8,19 L 12,23 L 16,19 M 5,8 L 1,12 L 5,16 M 19,8 L 23,12 L 19,16" Style="{StaticResource IconeAcao}" />
-                                <TextBlock Text="Mover&#10;para" TextAlignment="Center" />
-                            </StackPanel>
-                        </Button>
-                        <Button Tag="pessoas" Click="EditarDados_Click" Style="{StaticResource AcaoComanda}" Margin="0,0,8,0" AutomationProperties.Name="Alterar quantidade de pessoas">
-                            <StackPanel>
-                                <Path Data="M 8,3 A 3,3 0 1 0 8,9 A 3,3 0 1 0 8,3 M 1,23 L 1,17 C 1,11 15,11 15,17 L 15,23 M 17,4 A 3,3 0 0 1 17,10 M 18,14 C 23,14 23,17 23,22" Style="{StaticResource IconeAcao}" />
-                                <TextBlock Text="Alterar&#10;pessoas" TextAlignment="Center" />
-                            </StackPanel>
-                        </Button>
-                        <Button Tag="cliente" Click="EditarDados_Click" Style="{StaticResource AcaoComanda}" Margin="0,0,8,0" AutomationProperties.Name="Adicionar ou alterar pessoa">
-                            <StackPanel>
-                                <Path Data="M 9,2 A 4,4 0 1 0 9,10 A 4,4 0 1 0 9,2 M 1,23 L 1,18 C 1,12 17,12 17,18 L 17,23 M 20,3 L 20,11 M 16,7 L 24,7" Style="{StaticResource IconeAcao}" />
-                                <TextBlock Text="Adicionar&#10;pessoa" TextAlignment="Center" />
-                            </StackPanel>
-                        </Button>
-                        <Button Command="{Binding CancelarComandaAtualCommand}" Style="{StaticResource AcaoComanda}"
-                                Foreground="{DynamicResource TextB23B32}" BorderBrush="{DynamicResource ColorB23B32}" Background="{DynamicResource BackgroundFFF5F3}"
-                                AutomationProperties.Name="Cancelar comanda" ToolTip="Cancelar o atendimento sem registrar pagamento. Requer confirmação.">
-                            <StackPanel>
-                                <Path Data="M 5,5 L 19,19 M 19,5 L 5,19" Style="{StaticResource IconeAcao}" />
-                                <TextBlock Text="Cancelar&#10;comanda" TextAlignment="Center" />
-                            </StackPanel>
-                        </Button>
-                    </UniformGrid>
-                </StackPanel>
-
-                <StackPanel Grid.Row="3">
-                    <Grid>
-                        <Grid.ColumnDefinitions><ColumnDefinition /><ColumnDefinition /></Grid.ColumnDefinitions>
-                        <Button Style="{StaticResource BotaoPainelComanda}" Content="Concluir lançamento" Command="{Binding FecharEdicaoCommand}" Background="{DynamicResource Background23262B}" Foreground="White" Height="86" FontWeight="Bold" Margin="0,0,8,0" Padding="8" ToolTip="Manter a comanda aberta e bloquear o atendimento" />
-                        <Button Style="{StaticResource BotaoPainelComanda}" Grid.Column="1" Content="Pagar" Command="{Binding VerTotalCommand}" Background="{DynamicResource Background245640}" Foreground="White" Height="86" FontWeight="Bold" Padding="8" ToolTip="Finalizar comanda (F4)" />
-                    </Grid>
-
-                </StackPanel>
-
-                <TextBlock Grid.Row="4" Text="{Binding Mensagem}" Foreground="{DynamicResource TextB23B32}" TextWrapping="Wrap" Margin="0,8,0,0" />
+                    <Border Grid.Row="1" BorderBrush="{DynamicResource AjudaLine}" BorderThickness="1,0,1,1" Padding="8">
+                        <DockPanel LastChildFill="False">
+                            <Button x:Name="BotaoImprimirPedido" DockPanel.Dock="Left" Click="ImprimirPedido_Click" Style="{StaticResource BotaoPedido}"><StackPanel Orientation="Horizontal"><Path Data="M6 8V2H18V8 M6 18H3V8H21V18H18 M6 14H18V23H6Z" Style="{StaticResource IconePedido}"/><TextBlock Text="Imprimir" VerticalAlignment="Center"/></StackPanel></Button>
+                            <Button DockPanel.Dock="Right" Content="PAGAMENTO" Command="{Binding VerTotalCommand}" Style="{StaticResource BotaoPedido}" Background="{DynamicResource AjudaAction}" Foreground="{DynamicResource AjudaActionInk}" FontWeight="Bold" Width="178" ToolTip="Pagamento da comanda (F4)"/>
+                        </DockPanel>
+                    </Border>
+                    <Border x:Name="PainelMenu" Grid.RowSpan="2" Visibility="Collapsed" BorderBrush="{DynamicResource AjudaLine}" BorderThickness="1" Background="{DynamicResource AjudaSurface}" Padding="12">
+                        <DockPanel>
+                            <DockPanel DockPanel.Dock="Top" Margin="0,0,0,12"><Button Content="Voltar ao pedido" DockPanel.Dock="Right" Click="FecharProdutosPedido_Click" Style="{StaticResource BotaoPedido}"/><StackPanel><TextBlock Text="Adicionar produtos" FontWeight="SemiBold" FontSize="16"/><TextBlock Text="{Binding Itens.Count, StringFormat='{}{0} item(ns) no pedido'}" FontSize="12" Foreground="{DynamicResource AjudaMuted}"/></StackPanel></DockPanel>
+                            <StackPanel DockPanel.Dock="Bottom" Margin="0,12,0,0"><TextBlock Text="Observação para o próximo produto" Margin="0,0,0,4"/><TextBox Background="{DynamicResource AjudaSurface}" Foreground="{DynamicResource AjudaInk}" BorderBrush="{DynamicResource AjudaLine}" Text="{Binding ObservacaoNovoItem, UpdateSourceTrigger=PropertyChanged}" MaxLength="300" MinHeight="32" AutomationProperties.Name="Observação para o próximo produto"/></StackPanel>
+                            <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel>
+                                <WrapPanel Margin="0,0,0,10"><Button Content="Todas" Command="{Binding LimparFiltroCommand}" Style="{StaticResource BotaoPedido}" Margin="0,0,6,6"/><ItemsControl ItemsSource="{Binding Categorias}"><ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate></ItemsControl.ItemsPanel><ItemsControl.ItemTemplate><DataTemplate><Button Content="{Binding Nome}" Command="{Binding DataContext.SelecionarCategoriaCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding}" Style="{StaticResource BotaoPedido}" Margin="0,0,6,6"/></DataTemplate></ItemsControl.ItemTemplate></ItemsControl></WrapPanel>
+                                <ItemsControl ItemsSource="{Binding ProdutosCatalogo}"><ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate></ItemsControl.ItemsPanel><ItemsControl.ItemTemplate><DataTemplate><Button Background="{DynamicResource AjudaCanvas}" Foreground="{DynamicResource AjudaInk}" BorderBrush="{DynamicResource AjudaLine}" Width="148" MinHeight="78" Margin="0,0,8,8" Padding="10" Command="{Binding DataContext.AdicionarProdutoAoItemCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding}" IsEnabled="{Binding DataContext.PodeAlterarPedido, RelativeSource={RelativeSource AncestorType=ItemsControl}}"><StackPanel><TextBlock Text="{Binding Nome}" TextWrapping="Wrap" FontWeight="SemiBold"/><TextBlock Text="{Binding PrecoCentavos, Converter={StaticResource Moeda}}" Margin="0,6,0,0"/></StackPanel></Button></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+                                <TextBlock Text="Nenhum produto encontrado." Foreground="{DynamicResource AjudaMuted}" Margin="0,16"><TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding ProdutosCatalogo.Count}" Value="0"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock>
+                            </StackPanel></ScrollViewer>
+                        </DockPanel>
+                    </Border>
+                </Grid>
             </Grid>
+            <TextBlock Grid.Row="2" Text="{Binding Mensagem}" Foreground="{DynamicResource AjudaInk}" TextWrapping="Wrap" Margin="0,8,0,0" AutomationProperties.LiveSetting="Polite"/>
         </Grid>
     </Grid>
 </UserControl>

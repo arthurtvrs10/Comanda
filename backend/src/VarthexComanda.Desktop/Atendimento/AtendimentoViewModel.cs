@@ -219,7 +219,7 @@ public partial class AtendimentoViewModel : ObservableObject
             NovoNumero = string.Empty;
             Mensagem = string.Empty;
             AtualizarComandasAbertas();
-            AbrirParaEdicao(resultado.Valor!.Id);
+            AbrirParaEdicao(resultado.Valor!.Id, nova: true);
         }
         catch (Exception ex)
         {
@@ -247,7 +247,7 @@ public partial class AtendimentoViewModel : ObservableObject
         Abrir();
     }
 
-    private void AbrirParaEdicao(int comandaId)
+    private void AbrirParaEdicao(int comandaId, bool nova = false)
     {
         var detalhe = _comandas.BuscarComItens(comandaId);
         if (detalhe is null)
@@ -262,11 +262,18 @@ public partial class AtendimentoViewModel : ObservableObject
         ItemSelecionadoId = null;
         ObservacaoNovoItem = string.Empty;
         SubstituirItens(detalhe.Itens, null);
+        if (nova) RegistrarAberturaPedido();
         VerTotalCommand.NotifyCanExecuteChanged();
     }
 
     [RelayCommand]
     private void FecharEdicao()
+    {
+        if (ComandaAtual is not null && PrepararSaidaPedido?.Invoke() == false) return;
+        LimparEdicao();
+    }
+
+    private void LimparEdicao()
     {
         var estavaEmAtendimento = ComandaAtual is not null;
         Mensagem = string.Empty;
@@ -287,10 +294,11 @@ public partial class AtendimentoViewModel : ObservableObject
             return;
         }
 
+        if (PrepararSaidaPedido?.Invoke() == false) return;
         var comandaId = ComandaAtual.Id;
         if (_encerramentoDialog.Abrir(comandaId))
         {
-            FecharEdicao();
+            LimparEdicao();
             AtualizarComandasAbertas();
         }
     }
@@ -300,6 +308,7 @@ public partial class AtendimentoViewModel : ObservableObject
     [RelayCommand]
     private void AdicionarProdutoAoItem(Produto produto)
     {
+        if (!PermitirAlteracao()) return;
         if (ComandaAtual is null)
         {
             return;
@@ -307,12 +316,12 @@ public partial class AtendimentoViewModel : ObservableObject
 
         try
         {
-            var resultado = _adicionarItem.Executar(ComandaAtual.Id, produto.Id, 1, ObservacaoNovoItem);
+            var resultado = _adicionarItem.Executar(ComandaAtual.Id, produto.Id, 1, ObservacaoNovoItem, ObterOperador?.Invoke());
             AplicarResultado(resultado, produto.Id);
             if (resultado.Sucesso)
             {
                 var observacao = string.IsNullOrWhiteSpace(ObservacaoNovoItem) ? null : ObservacaoNovoItem.Trim();
-                ItemSelecionadoId = resultado.Valor!.Itens.First(i => i.ProdutoId == produto.Id
+                ItemSelecionadoId = resultado.Valor!.ItemAlteradoId ?? resultado.Valor.Itens.First(i => i.ProdutoId == produto.Id
                     && i.PrecoUnitarioCentavos == produto.PrecoCentavos && i.Observacao == observacao).Id;
                 ObservacaoNovoItem = string.Empty;
             }
@@ -327,6 +336,7 @@ public partial class AtendimentoViewModel : ObservableObject
     [RelayCommand]
     private void AumentarQuantidade(ItemComanda item)
     {
+        if (!PermitirAlteracao()) return;
         try
         {
             AplicarResultado(_alterarQuantidade.Executar(item.Id, item.Quantidade + 1));
@@ -341,6 +351,7 @@ public partial class AtendimentoViewModel : ObservableObject
     [RelayCommand]
     private void DiminuirQuantidade(ItemComanda item)
     {
+        if (!PermitirAlteracao()) return;
         try
         {
             if (item.Quantidade <= 1)
@@ -366,6 +377,7 @@ public partial class AtendimentoViewModel : ObservableObject
     [RelayCommand]
     private void Remover(ItemComanda item)
     {
+        if (!PermitirAlteracao()) return;
         if (!_confirmador.Confirmar("Remover item", MensagemRemocao(item)))
         {
             return;
@@ -409,7 +421,7 @@ public partial class AtendimentoViewModel : ObservableObject
             }
 
             Mensagem = string.Empty;
-            FecharEdicao();
+            LimparEdicao();
             AtualizarComandasAbertas();
             Mensagem = $"Comanda {numero} cancelada. O número está disponível novamente.";
         }
@@ -696,6 +708,7 @@ public partial class AtendimentoViewModel : ObservableObject
     {
         OnPropertyChanged(nameof(TempoComandaAtual));
         OnPropertyChanged(nameof(CorPrioridadeAtual));
+        AtualizarResumoPedido();
     }
     public void AtualizarCronometros()
     {

@@ -61,6 +61,9 @@ public partial class MainWindow : Window
         _pathsSistema=paths ?? new VarthexComanda.Infrastructure.Storage.AppPaths();
         _repositorioSistema=configuracoes;
         _atendimentoView.ImpressaoSolicitada=ImprimirConta;
+        _atendimentoView.ImprimirPedido=ImprimirPedido;
+        _atendimentoView.ViewModel.ObterOperador=()=>_colaboradores.SessaoAtual?.Nome ?? Environment.UserName;
+        _atendimentoView.ViewModel.ObterResponsaveis=()=>_colaboradores.Listar().Where(c=>c.Ativo).Select(c=>c.Nome).Append(_colaboradores.SessaoAtual?.Nome ?? Environment.UserName).Distinct().Order().ToArray();
         _atendimentoView.OrigensCliente=()=>LerPreferencias().OrigensCliente;
         _cozinhaView.ConsultarLocais=()=>LerPreferencias().Cozinhas;
         AplicarFundoSistema();

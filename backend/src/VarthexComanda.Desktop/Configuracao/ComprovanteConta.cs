@@ -31,9 +31,9 @@ public static class ComprovanteConta
         return string.Join("\n",linhas.Where(x=>!string.IsNullOrWhiteSpace(x)));
     }
     public static void VisualizarExemplo(Window owner,PreferenciasSistema prefs,string nome)=>Visualizar(owner,MontarTexto(prefs,nome,1,[new ItemComanda { Id=0,ComandaId=0,ProdutoId=0,NomeProduto="Produto de exemplo (dados fictícios)",PrecoUnitarioCentavos=1000,Quantidade=1,SubtotalCentavos=1000,Observacao="Exemplo de observação",CriadoEm=DateTime.UtcNow,AtualizadoEm=DateTime.UtcNow }]));
-    public static void Visualizar(Window owner,string texto,PreferenciaImpressora? impressora=null)
+    public static bool Visualizar(Window owner,string texto,PreferenciaImpressora? impressora=null,string titulo="Conferência da conta · Não fiscal")
     {
-        var janela=new Window { Title="Conferência da conta · Não fiscal",Owner=owner,Width=560,Height=700,MinWidth=420,MinHeight=400,WindowStartupLocation=WindowStartupLocation.CenterOwner,ShowInTaskbar=false };
+        var janela=new Window { Title=titulo,Owner=owner,Width=560,Height=700,MinWidth=420,MinHeight=400,WindowStartupLocation=WindowStartupLocation.CenterOwner,ShowInTaskbar=false };
         var documento=new FlowDocument(new Paragraph(new Run(texto))) { FontFamily=new FontFamily("Consolas"),FontSize=12,PagePadding=new Thickness(18),Foreground=Brushes.Black,Background=Brushes.White };
         var raiz=new DockPanel();var imprimir=new Button { Content=impressora is null?"Imprimir…":"Imprimir",Margin=new Thickness(12),IsEnabled=impressora?.Habilitada??true,ToolTip=impressora is null?"Selecionar impressora":impressora.Habilitada?impressora.Caminho:"Impressão do caixa desabilitada em Configurações → Impressora" };DockPanel.SetDock(imprimir,Dock.Bottom);raiz.Children.Add(imprimir);
         raiz.Children.Add(new FlowDocumentScrollViewer { Document=documento,IsToolBarVisible=false });janela.Content=raiz;
@@ -41,13 +41,13 @@ public static class ComprovanteConta
         {
             try
             {
-                if(impressora is not null){ImpressaoWindows.ImprimirTexto(impressora,texto,"Conferência da conta Varthex");return;}
+                if(impressora is not null){ImpressaoWindows.ImprimirTexto(impressora,texto,titulo);janela.DialogResult=true;return;}
                 var dialogo=new PrintDialog();if(dialogo.ShowDialog()!=true)return;
                 documento.PageWidth=dialogo.PrintableAreaWidth;documento.PageHeight=dialogo.PrintableAreaHeight;documento.ColumnWidth=Math.Max(1,dialogo.PrintableAreaWidth-36);
-                dialogo.PrintDocument(((IDocumentPaginatorSource)documento).DocumentPaginator,"Conferência da conta Varthex");
+                dialogo.PrintDocument(((IDocumentPaginatorSource)documento).DocumentPaginator,titulo);janela.DialogResult=true;
             }
             catch { JanelaAviso.Mostrar("Impressão","Não foi possível imprimir. Confira a impressora e tente novamente.",TipoAviso.Erro); }
         };
-        janela.ShowDialog();
+        return janela.ShowDialog()==true;
     }
 }

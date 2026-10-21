@@ -12,7 +12,6 @@ public partial class AtendimentoView : UserControl
     public AtendimentoViewModel ViewModel { get; }
     public Action? ImpressaoSolicitada { get; set; }
     public Func<IReadOnlyList<string>>? OrigensCliente { get; set; }
-    private void ImprimirConta_Click(object sender,RoutedEventArgs e)=>ImpressaoSolicitada?.Invoke();
     private void OrigemCliente_Click(object sender,RoutedEventArgs e)
     {
         if(ViewModel.ComandaAtual is null)return;
@@ -36,7 +35,8 @@ public partial class AtendimentoView : UserControl
         }
         if (_janelaComanda is not null)
         {
-            _janelaComanda.Title = $"Comanda {ViewModel.ComandaAtual.Numero:00} · #{ViewModel.ComandaAtual.Id:0000}";
+            _janelaComanda.Title = TituloPedido();
+            AtualizarDadosLaterais();
             return;
         }
         if (_abrindoJanelaComanda || !IsLoaded || !IsVisible) return;
@@ -59,19 +59,22 @@ public partial class AtendimentoView : UserControl
         painelOriginal.Children.Remove(PainelEdicao);
         var janela = new Window
         {
-            Title = $"Comanda {ViewModel.ComandaAtual!.Numero:00} · #{ViewModel.ComandaAtual.Id:0000}",
+            Title = TituloPedido(),
             Owner = owner, WindowStartupLocation = WindowStartupLocation.CenterOwner,
-            Width = Math.Min(1180, SystemParameters.WorkArea.Width), Height = Math.Min(760, SystemParameters.WorkArea.Height),
-            MinWidth = 800, MinHeight = 600, ResizeMode = ResizeMode.CanResize,
+            Width = Math.Min(900, SystemParameters.WorkArea.Width), Height = Math.Min(740, SystemParameters.WorkArea.Height),
+            MinWidth = 800, MinHeight = 580, ResizeMode = ResizeMode.CanResize,
             ShowInTaskbar = false, DataContext = ViewModel,
-            Content = new Border { Child = PainelEdicao, Padding = new Thickness(16) }
+            Content = new Border { Child = PainelEdicao, Padding = new Thickness(8) }
         };
-        janela.SetResourceReference(Window.BackgroundProperty, "Canvas");
-        ((Border)janela.Content).SetResourceReference(Border.BackgroundProperty, "Canvas");
+        janela.SetResourceReference(Window.BackgroundProperty, "AjudaCanvas");
+        ((Border)janela.Content).SetResourceReference(Border.BackgroundProperty, "AjudaCanvas");
+        AtualizarDadosLaterais();
         _janelaComanda = janela;
+        janela.InputBindings.Add(new KeyBinding(ViewModel.VerTotalCommand, Key.F4, ModifierKeys.None));
         PainelGrade.Visibility = Visibility.Visible;
         janela.PreviewKeyDown += (_, e) => OnPreviewKeyDown(e);
         janela.ContentRendered += (_, _) => CampoBusca.Focus();
+        janela.Closing += (_, e) => { if (!SalvarObservacaoPendente()) { e.Cancel=true; ObservacaoPedido.Focus(); } };
         try { janela.ShowDialog(); }
         finally
         {
@@ -174,17 +177,10 @@ public partial class AtendimentoView : UserControl
         janela.ShowDialog();
     }
 
-    private void PainelEdicao_SizeChanged(object sender, SizeChangedEventArgs e)
-    {
-        ColunaCatalogo.Width = e.NewSize.Width < 1050
-            ? new GridLength(240)
-            : new GridLength(1, GridUnitType.Star);
-    }
-
     private void EditarDados_Click(object sender, RoutedEventArgs e)
     {
         if (ViewModel.ComandaAtual is null || sender is not Button { Tag: string campo }) return;
-        new EditarDadosComandaView(ViewModel, campo) { Owner = Window.GetWindow(this) }.ShowDialog();
+        new EditarDadosComandaView(ViewModel, campo) { Owner = _janelaComanda ?? Window.GetWindow(this) }.ShowDialog();
     }
 
     private void AlterarPrioridade_Click(object sender, RoutedEventArgs e)
@@ -228,6 +224,9 @@ public partial class AtendimentoView : UserControl
         InitializeComponent();
         ViewModel = viewModel;
         DataContext = viewModel;
+        viewModel.PrepararSaidaPedido = SalvarObservacaoPendente;
+        AtualizarDadosLaterais();
+        viewModel.Itens.CollectionChanged += (_, _) => viewModel.NotificarItensPedido();
         var cronometro = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
         cronometro.Tick += (_, _) => ViewModel.AtualizarCronometros();
         Loaded += (_, _) => { ViewModel.AtualizarCronometros(); cronometro.Start(); AgendarJanelaComanda(); };
@@ -366,12 +365,18 @@ public partial class AtendimentoView : UserControl
 
         if (e.Key == Key.Escape)
         {
-            if (emBusca && !string.IsNullOrEmpty(CampoBusca.Text))
+            if (PainelMenu.Visibility == Visibility.Visible)
+            {
+                PainelMenu.Visibility = Visibility.Collapsed;
+                BotaoProdutosPedido.Focus();
+            }
+            else if (emBusca && !string.IsNullOrEmpty(CampoBusca.Text))
             {
                 ViewModel.TextoBuscaCatalogo = string.Empty;
             }
             else
             {
+                if (!SalvarObservacaoPendente()) { e.Handled = true; return; }
                 ViewModel.FecharEdicaoCommand.Execute(null);
             }
             e.Handled = true;
