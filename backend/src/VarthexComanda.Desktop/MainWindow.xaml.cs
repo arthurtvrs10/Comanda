@@ -124,7 +124,7 @@ public partial class MainWindow : Window
             (BotaoConfiguracoes, _configuracaoView), (BotaoCozinha, _cozinhaView)
         })
         {
-            var ativa = !_bloqueado && ReferenceEquals(ConteudoPrincipal.Content, conteudo);
+            var ativa = !_bloqueado && ReferenceEquals(ConteudoPrincipal.Content is JanelaInterna interna?interna.Conteudo:ConteudoPrincipal.Content, conteudo);
             botao.Tag = ativa ? "ativa" : null;
             System.Windows.Automation.AutomationProperties.SetItemStatus(botao, ativa ? "Tela atual" : "");
         }
@@ -149,7 +149,24 @@ public partial class MainWindow : Window
         MostrarConteudo(_atendimentoView);
     }
 
-    private void IrParaProdutos() { if (!_bloqueado && _acesso.Autenticado && !_restauracao) MostrarConteudo(_produtosView); }
+    private JanelaInterna? _janelaProdutos;
+    private void IrParaProdutos()
+    {
+        if(_bloqueado||!_acesso.Autenticado||_restauracao)return;
+        if(_janelaProdutos is null)
+        {
+            _janelaProdutos=new JanelaInterna("Produtos",_produtosView);
+            _janelaProdutos.FecharSolicitado+=()=>
+            {
+                if(ReferenceEquals(ConteudoPrincipal.Content,_janelaProdutos))
+                {
+                    ConteudoPrincipal.Content=null;AtualizarAbaAtiva();
+                    CategoriasRibbon.Children.OfType<Button>().FirstOrDefault(b=>Equals(b.Content,_categoriaRibbon))?.Focus();
+                }
+            };
+        }
+        MostrarConteudo(_janelaProdutos);
+    }
 
     private void IrParaHistorico()
     {

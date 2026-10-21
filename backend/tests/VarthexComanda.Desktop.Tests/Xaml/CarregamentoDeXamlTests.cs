@@ -308,10 +308,12 @@ public class CarregamentoDeXamlTests
                 void Categoria(string nome)=>categorias.Children.OfType<Button>().Single(b=>Equals(b.Content,nome)).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
                 void Comando(string nome)=>Descendentes((FrameworkElement)janela.FindName("GruposRibbon")).OfType<Button>().Single(b=>System.Windows.Automation.AutomationProperties.GetName(b)==nome).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
                 Categoria("Produtos");Assert.Same(atendimento,conteudo.Content);
-                Comando("Produtos");var produtos=Assert.IsType<ProdutosView>(conteudo.Content);
+                Comando("Produtos");var janelaProdutos=Assert.IsType<JanelaInterna>(conteudo.Content);var produtos=Assert.IsType<ProdutosView>(janelaProdutos.Conteudo);
                 ((ProdutosViewModel)produtos.DataContext).TextoBusca="Refrigerante";
+                Descendentes(janelaProdutos).OfType<Button>().Single(b=>System.Windows.Automation.AutomationProperties.GetName(b)=="Fechar Produtos").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                Assert.Null(conteudo.Content);Comando("Produtos");Assert.Same(janelaProdutos,conteudo.Content);
                 Assert.Equal("Refrigerante",((ProdutosViewModel)produtos.DataContext).TextoBusca);
-                Categoria("Marketing");Assert.Same(produtos,conteudo.Content);
+                Categoria("Marketing");Assert.Same(janelaProdutos,conteudo.Content);
                 Assert.Empty(Descendentes((FrameworkElement)janela.FindName("GruposRibbon")).OfType<Button>());
                 Categoria("Principal");Comando("Mesas / comandas");
                 Assert.Equal("Sem cebola",atendimento.ViewModel.ObservacaoNovoItem);
@@ -342,6 +344,9 @@ public class CarregamentoDeXamlTests
                     raiz.UpdateLayout();
                     Assert.Equal(Visibility.Visible,((FrameworkElement)janela.FindName("GruposRibbon")).Visibility);
                     SalvarPrevia(raiz,$"ribbon-expandida-{(escuro?"escuro":"claro")}");
+                    janelaProdutos.AlternarMaximizar();raiz.UpdateLayout();
+                    SalvarPrevia(raiz,$"ribbon-produtos-maximizado-{(escuro?"escuro":"claro")}");
+                    janelaProdutos.AlternarMaximizar();raiz.UpdateLayout();
                     Categoria("Principal");Comando("Mesas / comandas");
                     raiz.Measure(new Size(1280,780));raiz.Arrange(new Rect(0,0,1280,780));raiz.UpdateLayout();
                     SalvarPrevia(raiz,$"ribbon-atendimento-{(escuro?"escuro":"claro")}");
