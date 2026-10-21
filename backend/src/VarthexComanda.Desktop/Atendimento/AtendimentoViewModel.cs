@@ -12,6 +12,7 @@ namespace VarthexComanda.Desktop.Atendimento;
 
 public partial class AtendimentoViewModel : ObservableObject
 {
+    public long ConsultarMaiorCodigoPedido() => _comandas.ObterMaiorCodigoPedido();
     private readonly AbrirComanda _abrirComanda;
     private readonly AdicionarItem _adicionarItem;
     private readonly AlterarQuantidade _alterarQuantidade;
