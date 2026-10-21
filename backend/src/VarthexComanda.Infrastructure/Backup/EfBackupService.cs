@@ -42,8 +42,11 @@ public class EfBackupService : IBackupService, IBackupFotosService
         _limiteTotalRestauracaoBytes = limiteTotalRestauracaoFotosBytes;
     }
 
-    public Resultado<BackupRegistro> CriarBackupGerenciado()
+    public Resultado<BackupRegistro> CriarBackupGerenciado() => CriarBackupGerenciado(null);
+
+    public Resultado<BackupRegistro> CriarBackupGerenciado(IProgress<EtapaBackup>? progresso)
     {
+        progresso?.Report(new(_relogio.UtcNow, "Preparando backup local…"));
         var avisos = new List<string>();
         PastasBackup pastas;
         try { pastas = new PreferenciasBackup(_paths).Ler(); }
@@ -64,32 +67,38 @@ public class EfBackupService : IBackupService, IBackupFotosService
                 avisos.Add("A pasta local escolhida está indisponível. A cópia foi salva na pasta padrão do Varthex.");
             }
         }
-        var resultado = CriarBackupInterno(local, aplicarRetencao: true, out var fotos);
+        var resultado = CriarBackupInterno(local, aplicarRetencao: true, out var fotos, progresso);
         if (!resultado.Sucesso) return resultado;
         if (!string.IsNullOrEmpty(resultado.Valor!.Mensagem)) avisos.Add(resultado.Valor.Mensagem);
-        foreach (var (nome, raiz) in new[] { ("Google Drive", pastas.GoogleDrive), ("Dropbox", pastas.Dropbox) })
+        foreach (var (nome, raiz) in new[] { ("Google Drive", pastas.GoogleDrive), ("OneDrive", pastas.OneDrive) })
         {
             if (string.IsNullOrWhiteSpace(raiz)) continue;
             _pastasMascaradas?.Adicionar(PastasMascaradas.TokenPastaBackupExterna, raiz);
-            try { CopiarParaPastaSincronizada(resultado.Valor!, raiz, fotos.Arquivo); }
+            try
+            {
+                progresso?.Report(new(_relogio.UtcNow, $"Copiando backup para a pasta do {nome}…"));
+                var copia = CopiarParaPastaSincronizada(resultado.Valor!, raiz, fotos.Arquivo);
+                progresso?.Report(new(_relogio.UtcNow, $"Backup gravado na pasta do {nome}:\n{copia}"));
+            }
             catch (Exception ex)
             {
                 _logger?.Warning(ex, "Falha ao copiar backup para {Servico}", nome);
                 avisos.Add($"A cópia para {nome} falhou. Verifique se a pasta está disponível e tente novamente. O backup local foi preservado.");
+                progresso?.Report(new(_relogio.UtcNow, avisos[^1], true));
             }
         }
         if (avisos.Count > 0) resultado.Valor!.Mensagem = string.Join(" ", avisos);
         return resultado;
     }
 
-    private void CopiarParaPastaSincronizada(BackupRegistro registro, string raiz, string? fotos)
+    private string CopiarParaPastaSincronizada(BackupRegistro registro, string raiz, string? fotos)
     {
         PreferenciasBackup.ValidarPasta(raiz);
         var pasta = PreferenciasBackup.DestinoSincronizado(raiz);
         _pastasMascaradas?.Adicionar(PastasMascaradas.TokenPastaBackupExterna, pasta);
         Directory.CreateDirectory(pasta);
         var origem = Path.Combine(registro.Destino, registro.Arquivo);
-        if (string.Equals(Path.GetFullPath(pasta), Path.GetFullPath(registro.Destino), StringComparison.OrdinalIgnoreCase)) return;
+        if (string.Equals(Path.GetFullPath(pasta), Path.GetFullPath(registro.Destino), StringComparison.OrdinalIgnoreCase)) return origem;
         var destino = Path.Combine(pasta, registro.Arquivo);
         for (var n = 1; File.Exists(destino); n++)
             destino = Path.Combine(pasta, Path.GetFileNameWithoutExtension(registro.Arquivo) + $"-copia{n}.db");
@@ -125,6 +134,7 @@ public class EfBackupService : IBackupService, IBackupFotosService
         {
             foreach (var arquivo in temporarios) { try { File.Delete(arquivo); } catch { } }
         }
+        return destino;
     }
 
     public Resultado<BackupRegistro> CriarBackupExterno(string pastaExterna)
@@ -135,7 +145,7 @@ public class EfBackupService : IBackupService, IBackupFotosService
         return CriarBackupInterno(pastaExterna, aplicarRetencao: false, out _);
     }
 
-    private Resultado<BackupRegistro> CriarBackupInterno(string pastaDestino, bool aplicarRetencao, out EstadoFotos fotos)
+    private Resultado<BackupRegistro> CriarBackupInterno(string pastaDestino, bool aplicarRetencao, out EstadoFotos fotos, IProgress<EtapaBackup>? progresso = null)
     {
         fotos = new(null, true);
         var agora = _relogio.UtcNow;
@@ -211,11 +221,22 @@ public class EfBackupService : IBackupService, IBackupFotosService
                 _logger?.Warning(exRegistro, "Falha em {Operacao}", "RegistrarBackup");
             }
 
-            // as fotos entram DEPOIS de o .db estar no lugar e registrado: qualquer falha ao zipar e so
-            // registrada em log e nunca afeta o resultado do backup do banco
+            progresso?.Report(new(_relogio.UtcNow, "Backup local realizado com sucesso!"));
+            progresso?.Report(new(_relogio.UtcNow, "Backup salvo em:\n" + destinoFinal));
+            progresso?.Report(new(_relogio.UtcNow, "Preparando backup das fotos…"));
             fotos = ZiparFotosDoBackup(destinoFinal + SufixoZipDeFotos, pastaDestino);
             if (!fotos.Completo)
+            {
                 registro.Mensagem = "Backup dos dados criado, mas algumas fotos não puderam ser incluídas. Feche os arquivos em uso e faça outro backup. As cópias nas pastas da nuvem também podem estar sem essas fotos.";
+                progresso?.Report(new(_relogio.UtcNow, registro.Mensagem, true));
+            }
+            else if (fotos.Arquivo is null)
+                progresso?.Report(new(_relogio.UtcNow, "Nenhuma foto cadastrada para incluir no backup."));
+            else
+            {
+                progresso?.Report(new(_relogio.UtcNow, "Backup de fotos realizado com sucesso!"));
+                progresso?.Report(new(_relogio.UtcNow, "Backup de fotos salvo em:\n" + fotos.Arquivo));
+            }
 
             // a limpeza e "melhor esforco": falhar aqui nunca transforma um backup gravado em Falha
             if (aplicarRetencao)

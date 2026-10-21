@@ -68,9 +68,9 @@ public class EfBackupServiceTests : IDisposable
     public void PastasSincronizadas_RecebemOMesmoBancoChecksumEFotosInclusiveQuandoInalteradas()
     {
         var drive = Directory.CreateDirectory(Path.Combine(_raizTeste, "Drive")).FullName;
-        var dropbox = Directory.CreateDirectory(Path.Combine(_raizTeste, "Dropbox")).FullName;
+        var onedrive = Directory.CreateDirectory(Path.Combine(_raizTeste, "OneDrive")).FullName;
         var local = Directory.CreateDirectory(Path.Combine(_raizTeste, "Local")).FullName;
-        new PreferenciasBackup(_paths).Salvar(new(local, drive, dropbox));
+        new PreferenciasBackup(_paths).Salvar(new(local, drive, onedrive));
         File.WriteAllText(Path.Combine(_paths.FotosDirectory, "produto.png"), "foto de teste");
         var servico = new EfBackupService(_paths, _registros, new FakeClockDeIntegracao());
         for (var i = 0; i < 2; i++)
@@ -80,7 +80,7 @@ public class EfBackupServiceTests : IDisposable
             Assert.Null(resultado.Valor!.Mensagem);
             Assert.Equal(local, resultado.Valor.Destino);
             var origem = Path.Combine(local, resultado.Valor.Arquivo);
-            foreach (var pasta in new[] { drive, dropbox })
+            foreach (var pasta in new[] { drive, onedrive })
             {
                 var copia = Path.Combine(PreferenciasBackup.DestinoSincronizado(pasta), resultado.Valor.Arquivo);
                 Assert.Equal(File.ReadAllBytes(origem), File.ReadAllBytes(copia));
@@ -96,14 +96,14 @@ public class EfBackupServiceTests : IDisposable
     public void PastaDaNuvemIndisponivel_PreservaLocalECopiaParaOutroServicoSemRecriarRaiz()
     {
         var ausente = Path.Combine(_raizTeste, "Drive desconectado");
-        var dropbox = Directory.CreateDirectory(Path.Combine(_raizTeste, "Dropbox")).FullName;
-        new PreferenciasBackup(_paths).Salvar(new(GoogleDrive: ausente, Dropbox: dropbox));
+        var onedrive = Directory.CreateDirectory(Path.Combine(_raizTeste, "OneDrive")).FullName;
+        new PreferenciasBackup(_paths).Salvar(new(GoogleDrive: ausente, OneDrive: onedrive));
         var resultado = new EfBackupService(_paths, _registros, new FakeClockDeIntegracao()).CriarBackupGerenciado();
         Assert.True(resultado.Sucesso);
         Assert.Contains("Google Drive", resultado.Valor!.Mensagem);
         Assert.False(Directory.Exists(ausente));
         Assert.True(File.Exists(Path.Combine(resultado.Valor.Destino, resultado.Valor.Arquivo)));
-        Assert.True(File.Exists(Path.Combine(PreferenciasBackup.DestinoSincronizado(dropbox), resultado.Valor.Arquivo)));
+        Assert.True(File.Exists(Path.Combine(PreferenciasBackup.DestinoSincronizado(onedrive), resultado.Valor.Arquivo)));
     }
 
     [Theory]
@@ -141,6 +141,44 @@ public class EfBackupServiceTests : IDisposable
         Assert.True(resultado.Sucesso);
         Assert.Equal(_paths.BackupsDirectory, resultado.Valor!.Destino);
         Assert.Contains("pasta padrão", resultado.Valor.Mensagem);
+    }
+
+    [Fact]
+    public void ProgressoReportaSomenteEtapasConcluidasECaminhosExistentes()
+    {
+        var onedrive = Directory.CreateDirectory(Path.Combine(_raizTeste, "OneDrive")).FullName;
+        new PreferenciasBackup(_paths).Salvar(new(OneDrive: onedrive));
+        File.WriteAllText(Path.Combine(_paths.FotosDirectory, "produto.png"), "foto");
+        var etapas = new List<EtapaBackup>();
+        var servico = new EfBackupService(_paths, _registros, new FakeClockDeIntegracao());
+        var resultado = servico.CriarBackupGerenciado(new ProgressoTeste(etapa =>
+        {
+            etapas.Add(etapa);
+            if (etapa.Mensagem.Contains("salvo em:") || etapa.Mensagem.Contains("gravado na pasta"))
+                Assert.True(File.Exists(etapa.Mensagem.Split('\n')[^1]));
+        }));
+        Assert.True(resultado.Sucesso);
+        Assert.Contains(etapas, e => e.Mensagem == "Backup local realizado com sucesso!");
+        Assert.Contains(etapas, e => e.Mensagem == "Backup de fotos realizado com sucesso!");
+        Assert.Contains(etapas, e => e.Mensagem.StartsWith("Backup gravado na pasta do OneDrive:"));
+        Assert.DoesNotContain(etapas, e => e.Mensagem.Contains("XML") || e.Mensagem.Contains("Dropbox"));
+    }
+
+    [Fact]
+    public void PreferenciasAntigas_NaoReutilizamPastaDropboxComoOneDrive()
+    {
+        File.WriteAllText(Path.Combine(_paths.Root, "pastas-backup.json"), "{\"Local\":\"local\",\"GoogleDrive\":\"drive\",\"Dropbox\":\"dropbox-antigo\"}");
+        var preferencias = new PreferenciasBackup(_paths);
+        var pastas = preferencias.Ler();
+        Assert.Equal("local", pastas.Local); Assert.Equal("drive", pastas.GoogleDrive); Assert.Null(pastas.OneDrive);
+        preferencias.Salvar(pastas with { OneDrive = "onedrive-novo" });
+        Assert.Equal("onedrive-novo", preferencias.Ler().OneDrive);
+        Assert.DoesNotContain("Dropbox", File.ReadAllText(Path.Combine(_paths.Root, "pastas-backup.json")));
+    }
+
+    private sealed class ProgressoTeste(Action<EtapaBackup> receber) : IProgress<EtapaBackup>
+    {
+        public void Report(EtapaBackup value) => receber(value);
     }
 
     [Fact]

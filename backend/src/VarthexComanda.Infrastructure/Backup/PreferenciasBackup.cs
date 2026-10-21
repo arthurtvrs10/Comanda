@@ -3,7 +3,7 @@ using VarthexComanda.Infrastructure.Storage;
 
 namespace VarthexComanda.Infrastructure.Backup;
 
-public sealed record PastasBackup(string? Local = null, string? GoogleDrive = null, string? Dropbox = null);
+public sealed record PastasBackup(string? Local = null, string? GoogleDrive = null, string? OneDrive = null);
 
 /// <summary>Fora do banco para continuar disponível durante a recuperação de uma base corrompida.</summary>
 public sealed class PreferenciasBackup(AppPaths paths)

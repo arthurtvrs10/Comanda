@@ -6,6 +6,7 @@ namespace VarthexComanda.Application.Backup;
 public interface IBackupService
 {
     Resultado<BackupRegistro> CriarBackupGerenciado();
+    Resultado<BackupRegistro> CriarBackupGerenciado(IProgress<EtapaBackup>? progresso) => CriarBackupGerenciado();
     Resultado<BackupRegistro> CriarBackupExterno(string pastaExterna);
     RelatorioValidacao Validar(string caminhoArquivo);
     Resultado<BackupRegistro> RestaurarPara(string caminhoArquivo);
