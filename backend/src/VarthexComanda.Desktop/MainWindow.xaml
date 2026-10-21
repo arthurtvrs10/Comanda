@@ -54,6 +54,7 @@
     <Grid>
     <DockPanel x:Name="AreaSistema" Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}">
         <Border DockPanel.Dock="Bottom" Background="{DynamicResource RibbonBar}" BorderBrush="{DynamicResource Line}" BorderThickness="0,1,0,0" Padding="8,2">
+            <Border.Resources><SolidColorBrush x:Key="HoverOverlay" Color="#26FFFFFF"/></Border.Resources>
             <DockPanel LastChildFill="False">
                 <Button x:Name="BotaoBackupRodape" DockPanel.Dock="Right" Content="Backup e restauração" Click="BackupRodape_Click" Background="Transparent" Foreground="White" BorderThickness="0" MinHeight="28" Padding="8,3" FontSize="11" ToolTip="Consultar cópias e restaurar dados. Requer acesso de gestor." />
                 <TextBlock x:Name="UsuarioRodape" Foreground="White" FontSize="11" VerticalAlignment="Center" Margin="0,0,10,0" />
@@ -70,6 +71,7 @@
         <Border DockPanel.Dock="Top" Background="{DynamicResource RibbonSurface}" TextElement.Foreground="{DynamicResource RibbonInk}" BorderBrush="{DynamicResource Line}" BorderThickness="0,0,0,1">
 <StackPanel>
 <Grid Background="{DynamicResource RibbonBar}">
+<Grid.Resources><SolidColorBrush x:Key="HoverOverlay" Color="#26FFFFFF"/></Grid.Resources>
 <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
 <WrapPanel VerticalAlignment="Center">
 <WrapPanel x:Name="CategoriasRibbon"/>
@@ -97,7 +99,11 @@
 <Button x:Name="BotaoLicenca" Click="MostrarLicenca_Click" Content="Licença"/>
 <Button x:Name="BotaoCozinha" Click="MostrarCozinha_Click" Content="Comandas abertas"/>
 </WrapPanel></StackPanel></Border>
-        <Grid Background="{DynamicResource Canvas}"><Border x:Name="FundoTrabalho"/><Border x:Name="ImagemTrabalho"/><ContentControl x:Name="ConteudoPrincipal" /></Grid>
+        <Grid Background="{DynamicResource Canvas}"><Border x:Name="FundoTrabalho"/><Border x:Name="ImagemTrabalho"/><local:AreaTrabalhoInterna x:Name="ConteudoPrincipal" />
+            <Button x:Name="BotaoAjudaFlutuante" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="54" Height="54" Margin="16" Panel.ZIndex="3"
+                    Background="{DynamicResource AjudaSurface}" BorderBrush="{DynamicResource AjudaLine}" BorderThickness="1" Padding="10"
+                    ToolTip="Opções de ajuda" AutomationProperties.Name="Abrir opções de ajuda" Click="AjudaFlutuante_Click"/>
+        </Grid>
     </DockPanel>
     <ContentControl x:Name="MenuInicial" Panel.ZIndex="5" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
     <ContentControl x:Name="CamadaBloqueio" Panel.ZIndex="10" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />

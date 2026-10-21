@@ -57,6 +57,7 @@ public partial class MainWindow : Window
         _historicoView = historicoView;
         _backupView = backupView;
         _configuracaoView = configuracaoView;
+        ConteudoPrincipal.JanelaAtivaAlterada += AtualizarAbaAtiva;
         _pathsSistema=paths ?? new VarthexComanda.Infrastructure.Storage.AppPaths();
         _repositorioSistema=configuracoes;
         _atendimentoView.ImpressaoSolicitada=ImprimirConta;
@@ -74,7 +75,7 @@ public partial class MainWindow : Window
             try { var atual = new Licenciamento.ServicoLicenca().Verificar(); return atual.Vencimento is null ? "Licença vitalícia ativa · Sem vencimento." : $"Licença ativa até {atual.Vencimento.Value.ToOffset(TimeSpan.FromHours(-3)):dd/MM/yyyy HH:mm}."; }
             catch { return "Não foi possível confirmar a licença. Abra a ativação para verificar."; }
         };
-        Closing += (_, e) => { if (!_bloqueado && !PodeSairDasConfiguracoes()) e.Cancel=true; };
+        Closing += (_, e) => { if (_backupView.ViewModel.EmAndamento || (!_bloqueado && !PodeSairDasConfiguracoes())) e.Cancel=true; };
         Closed += (_,_) => _painelSenhas?.Dispose();
         _atendimentoView.ViewModel.AtendimentoConcluido += BloquearAtendimento;
         MostrarInicio();
@@ -94,7 +95,7 @@ public partial class MainWindow : Window
         FaixaRestauracao.Visibility = Visibility.Visible;
 
         _backupView.ViewModel.ModoRestauracao = true;
-        ConteudoPrincipal.Content = null;
+        ConteudoPrincipal.Limpar();
         MostrarInicio();
     }
 
@@ -124,7 +125,7 @@ public partial class MainWindow : Window
             (BotaoConfiguracoes, _configuracaoView), (BotaoCozinha, _cozinhaView)
         })
         {
-            var ativa = !_bloqueado && ReferenceEquals(ConteudoPrincipal.Content is JanelaInterna interna?interna.Conteudo:ConteudoPrincipal.Content, conteudo);
+            var ativa = !_bloqueado && ReferenceEquals(ConteudoPrincipal.JanelaAtiva?.Conteudo, conteudo);
             botao.Tag = ativa ? "ativa" : null;
             System.Windows.Automation.AutomationProperties.SetItemStatus(botao, ativa ? "Tela atual" : "");
         }
@@ -149,23 +150,35 @@ public partial class MainWindow : Window
         MostrarConteudo(_atendimentoView);
     }
 
-    private JanelaInterna? _janelaProdutos;
+    private readonly Dictionary<UIElement,JanelaInterna> _janelasInternas=new();
+    private JanelaInterna ObterJanela(UIElement view)
+    {
+        if(_janelasInternas.TryGetValue(view,out var existente))return existente;
+        var titulo=view==_atendimentoView?"Mesas / comandas":view==_produtosView?"Produtos":view==_historicoView?"Histórico de vendas":view==_cozinhaView?"Cozinha":view==_backupView?"Backup e restauração":"Configurações";
+        var janela=new JanelaInterna(titulo,view,view==_atendimentoView?760:720,view==_atendimentoView?540:360);
+        if(view==_atendimentoView)
+        {
+            void AjustarMinimoAtendimento()=>janela.DefinirMinimoConteudo(_atendimentoView.ViewModel.ComandaAtual is null?0:760,_atendimentoView.ViewModel.ComandaAtual is null?0:540);
+            AjustarMinimoAtendimento();
+            _atendimentoView.ViewModel.PropertyChanged+=(_,e)=>
+            {
+                if(e.PropertyName==nameof(AtendimentoViewModel.ComandaAtual))AjustarMinimoAtendimento();
+            };
+        }
+        janela.FecharSolicitado += _ =>
+        {
+            Dispatcher.BeginInvoke(new Action(()=>
+            {
+                if(ConteudoPrincipal.JanelaAtiva is null)
+                    CategoriasRibbon.Children.OfType<Button>().FirstOrDefault(b=>Equals(b.Content,_categoriaRibbon))?.Focus();
+            }));
+        };
+        _janelasInternas.Add(view,janela);return janela;
+    }
     private void IrParaProdutos()
     {
         if(_bloqueado||!_acesso.Autenticado||_restauracao)return;
-        if(_janelaProdutos is null)
-        {
-            _janelaProdutos=new JanelaInterna("Produtos",_produtosView);
-            _janelaProdutos.FecharSolicitado+=()=>
-            {
-                if(ReferenceEquals(ConteudoPrincipal.Content,_janelaProdutos))
-                {
-                    ConteudoPrincipal.Content=null;AtualizarAbaAtiva();
-                    CategoriasRibbon.Children.OfType<Button>().FirstOrDefault(b=>Equals(b.Content,_categoriaRibbon))?.Focus();
-                }
-            };
-        }
-        MostrarConteudo(_janelaProdutos);
+        MostrarConteudo(_produtosView);
     }
 
     private void IrParaHistorico()
@@ -196,7 +209,7 @@ public partial class MainWindow : Window
         if (_acesso.Autenticado)
         {
             _acesso.Sair();
-            ConteudoPrincipal.Content = null;
+            ConteudoPrincipal.Limpar();
         }
         else if (new JanelaAcessoGestor(_acesso) { Owner = this }.ShowDialog() == true && _restauracao)
             IrParaBackup();
@@ -218,7 +231,7 @@ public partial class MainWindow : Window
         _acesso.Sair();
         _acessoAtendimento.Bloquear();
         _colaboradores.Sair();
-        ConteudoPrincipal.Content = null;
+        ConteudoPrincipal.Limpar();
         _cozinhaAtiva = false;
         AreaSistema.IsEnabled = false;
         AreaSistema.Visibility = Visibility.Visible;
@@ -248,7 +261,7 @@ public partial class MainWindow : Window
             MenuInicial.Visibility = Visibility.Collapsed;
             _cozinhaAtiva = _areaPendente == "cozinha";
             if (_cozinhaAtiva) _cozinhaView.Atualizar();
-            ConteudoPrincipal.Content = _restauracao ? null : _cozinhaAtiva ? _cozinhaView : _atendimentoView;
+            if(!_restauracao)MostrarConteudo(_cozinhaAtiva?_cozinhaView:_atendimentoView);
             AtualizarPerfil();
         }
         catch
@@ -317,7 +330,7 @@ public partial class MainWindow : Window
     protected override void OnPreviewKeyDown(KeyEventArgs e)
     {
         base.OnPreviewKeyDown(e);
-        if (!e.Handled && !_bloqueado && ReferenceEquals(ConteudoPrincipal.Content, _atendimentoView)
+        if (!e.Handled && !_bloqueado && ReferenceEquals(ConteudoPrincipal.JanelaAtiva?.Conteudo, _atendimentoView)
             && _atendimentoView.DigitarNumeroNaGrade(e.Key, e.KeyboardDevice.Modifiers, e.OriginalSource as DependencyObject))
         { e.Handled = true; return; }
         if (e.Key == Key.K && Keyboard.Modifiers == ModifierKeys.Control)
@@ -368,14 +381,16 @@ public partial class MainWindow : Window
     private void MostrarConteudo(UIElement view)
     {
         if (_bloqueado) return;
-        ConteudoPrincipal.Content = view;
+        var janela=ObterJanela(view);
+        ConteudoPrincipal.Abrir(janela);
         AtualizarAbaAtiva();
         // Foco no primeiro controle util da tela; adiado ate a nova tela ser carregada.
         Dispatcher.BeginInvoke(DispatcherPriority.Input, new Action(() =>
         {
             try
             {
-                ConteudoPrincipal.MoveFocus(new TraversalRequest(FocusNavigationDirection.First));
+                if(ReferenceEquals(ConteudoPrincipal.JanelaAtiva,janela))
+                    janela.MoveFocus(new TraversalRequest(FocusNavigationDirection.First));
             }
             catch (Exception)
             {
@@ -407,6 +422,8 @@ public partial class MainWindow : Window
         {
             _backupView.ViewModel.AtualizarLista();
             var janela=new Window { Title="Backups e restauração",Owner=_configuracoesModal??(Window)this,Width=Math.Min(1100,SystemParameters.WorkArea.Width),Height=Math.Min(700,SystemParameters.WorkArea.Height),WindowStartupLocation=WindowStartupLocation.CenterOwner,Content=_backupView,ResizeMode=ResizeMode.CanResize };
+            janela.MinWidth = 760; janela.MinHeight = 480;
+            janela.Closing += (_, e) => { if (_backupView.ViewModel.EmAndamento) e.Cancel = true; };
             try { janela.ShowDialog(); } finally { janela.Content=null; }
             _configuracaoView.AtualizarSecao();
         }

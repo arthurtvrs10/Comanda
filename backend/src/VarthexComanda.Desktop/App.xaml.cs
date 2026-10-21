@@ -29,6 +29,13 @@ namespace VarthexComanda.Desktop;
 
 public partial class App : System.Windows.Application
 {
+    public App()
+    {
+        EventManager.RegisterClassHandler(typeof(Window), FrameworkElement.LoadedEvent, new RoutedEventHandler((sender, e) =>
+        {
+            if (sender is Window janela && ReferenceEquals(e.OriginalSource, janela)) LimitesJanelaModal.Aplicar(janela);
+        }));
+    }
     private SingleInstanceGuard? _guard;
     private ILogger? _logger;
     private ServiceProvider? _serviceProvider;
@@ -130,6 +137,7 @@ public partial class App : System.Windows.Application
         services.AddTransient<HistoricoView>();
         services.AddTransient<IBackupRegistroRepository, EfBackupRegistroRepository>();
         services.AddTransient<IBackupService, EfBackupService>();
+        services.AddTransient<IBackupFotosService, EfBackupService>();
         services.AddTransient<CriarBackupAutomatico>();
         services.AddTransient<CriarBackupManual>();
         services.AddTransient<ValidarBackup>();

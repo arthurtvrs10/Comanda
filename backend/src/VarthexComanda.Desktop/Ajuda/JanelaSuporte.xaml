@@ -1,0 +1,100 @@
+<Window x:Class="VarthexComanda.Desktop.Ajuda.JanelaSuporte"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Ajuda" Width="360" Height="640" MinWidth="320" MinHeight="360"
+        WindowStartupLocation="Manual" ShowInTaskbar="False" ResizeMode="NoResize"
+        Background="{DynamicResource AjudaCanvas}" Foreground="{DynamicResource AjudaInk}"
+        FontFamily="Segoe UI" FontSize="12" UseLayoutRounding="True">
+    <Window.Resources>
+        <Style x:Key="IconeCanalAjuda" TargetType="ContentControl">
+            <Setter Property="Width" Value="22"/><Setter Property="Height" Value="22"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/><Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style x:Key="AcaoAjuda" TargetType="Button">
+            <Setter Property="FocusVisualStyle" Value="{StaticResource FocoVisivel}"/>
+            <Setter Property="Background" Value="{DynamicResource AjudaAction}"/>
+            <Setter Property="Foreground" Value="{DynamicResource AjudaActionInk}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource AjudaAction}"/>
+            <Setter Property="MinHeight" Value="30"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="10,4"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template"><Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="Center" RecognizesAccessKey="True"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value></Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True"><Setter Property="Background" Value="{DynamicResource AjudaActionHover}"/></Trigger>
+                <Trigger Property="IsPressed" Value="True"><Setter Property="Opacity" Value="0.85"/></Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="{DynamicResource AjudaSoft}"/>
+                    <Setter Property="BorderBrush" Value="{DynamicResource AjudaLine}"/>
+                    <Setter Property="Foreground" Value="{DynamicResource AjudaMuted}"/>
+                    <Setter Property="FontWeight" Value="Normal"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="CanalAjuda" TargetType="Border">
+            <Setter Property="Background" Value="{DynamicResource AjudaSurface}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource AjudaLine}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="10,6"/>
+            <Setter Property="Margin" Value="0,0,0,6"/>
+        </Style>
+        <Style x:Key="TituloCanalAjuda" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="9,0,0,0"/>
+        </Style>
+        <Style x:Key="FecharAjuda" TargetType="Button" BasedOn="{StaticResource AcaoAjuda}">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{DynamicResource AjudaInk}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="Normal"/>
+            <Setter Property="Padding" Value="12,9"/>
+            <Style.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter Property="Background" Value="{DynamicResource AjudaHover}"/></Trigger></Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <DockPanel Background="{DynamicResource AjudaCanvas}">
+        <Border DockPanel.Dock="Bottom" Background="{DynamicResource AjudaSoft}" BorderBrush="{DynamicResource AjudaLine}" BorderThickness="0,1,0,0" Padding="8,8,20,8">
+            <Button x:Name="BotaoFecharOcultar" Content="Fechar e ocultar botão" HorizontalAlignment="Left" Style="{StaticResource FecharAjuda}" Click="FecharOcultar_Click"/>
+        </Border>
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="16,14,16,12">
+            <StackPanel>
+                <Image Source="{DynamicResource AjudaLogo}" Width="148" Height="34" Stretch="Uniform" HorizontalAlignment="Left" AutomationProperties.Name="Varthex Comanda"/>
+                <TextBlock Text="Opções de ajuda" FontSize="18" FontWeight="SemiBold" Margin="0,12,0,10"/>
+                <Border Style="{StaticResource CanalAjuda}"><StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8"><ContentControl x:Name="IconeWhatsapp" Style="{StaticResource IconeCanalAjuda}"/><TextBlock Text="WhatsApp" Style="{StaticResource TituloCanalAjuda}"/></StackPanel>
+                    <Button x:Name="BotaoWhatsapp" Content="Abrir WhatsApp" Style="{StaticResource AcaoAjuda}" Click="Whatsapp_Click" ToolTip="Conversar com o suporte: (61) 98553-2004"/>
+                </StackPanel></Border>
+                <Border Style="{StaticResource CanalAjuda}"><StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8"><ContentControl x:Name="IconeCentral" Style="{StaticResource IconeCanalAjuda}"/><TextBlock Text="Central de ajuda" Style="{StaticResource TituloCanalAjuda}"/></StackPanel>
+                    <Button x:Name="BotaoCentral" Content="Em preparação" Style="{StaticResource AcaoAjuda}" IsEnabled="False" ToolTip="O endereço da central ainda não foi disponibilizado."/>
+                </StackPanel></Border>
+                <Border Style="{StaticResource CanalAjuda}"><StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8"><ContentControl x:Name="IconeRemoto" Style="{StaticResource IconeCanalAjuda}"/><TextBlock Text="Suporte remoto" Style="{StaticResource TituloCanalAjuda}"/></StackPanel>
+                    <Button x:Name="BotaoRustDesk" Content="Baixar RustDesk" Style="{StaticResource AcaoAjuda}" Click="RustDesk_Click" ToolTip="Abrir o site oficial do RustDesk. Durante o atendimento, informe ao suporte o ID exibido no aplicativo."/>
+                </StackPanel></Border>
+                <Border Style="{StaticResource CanalAjuda}"><StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8"><ContentControl x:Name="IconeIdeias" Style="{StaticResource IconeCanalAjuda}"/><TextBlock Text="Ideias e sugestões" Style="{StaticResource TituloCanalAjuda}"/></StackPanel>
+                    <Button x:Name="BotaoFeedback" Content="Enviar feedback" Style="{StaticResource AcaoAjuda}" Click="Feedback_Click"/>
+                </StackPanel></Border>
+                <Border Style="{StaticResource CanalAjuda}"><StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8"><ContentControl x:Name="IconeTutorial" Style="{StaticResource IconeCanalAjuda}"/><TextBlock Text="Treinamento" Style="{StaticResource TituloCanalAjuda}"/></StackPanel>
+                    <Button x:Name="BotaoTreinamento" Content="Iniciar tutorial guiado" Style="{StaticResource AcaoAjuda}" Click="Treinamento_Click"/>
+                </StackPanel></Border>
+                <TextBlock x:Name="Mensagem" Visibility="Collapsed" TextWrapping="Wrap" Margin="0,4,0,8" AutomationProperties.LiveSetting="Polite"/>
+                <TextBlock Text="© 2026 VARTHEX" TextAlignment="Center" FontSize="12" Foreground="{DynamicResource AjudaMuted}" Margin="0,10,0,4"/>
+            </StackPanel>
+        </ScrollViewer>
+    </DockPanel>
+</Window>

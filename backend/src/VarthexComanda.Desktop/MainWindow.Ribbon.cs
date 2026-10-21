@@ -11,13 +11,14 @@ namespace VarthexComanda.Desktop;
 public partial class MainWindow
 {
     private string _categoriaRibbon = "Principal";
-    private sealed record DestinoRibbon(string Categoria, string Grupo, string Nome, IconeVarthex Icone, Func<bool> Permitido, Action Abrir);
+    private sealed record DestinoRibbon(string Categoria, string Grupo, string Nome, IconeVarthex Icone, Func<bool> Permitido, Action Abrir, bool ExibirNaRibbon = true);
     private sealed record ResultadoPesquisa(string Nome, Action Abrir);
     private List<DestinoRibbon> _destinosRibbon = new();
     private void InicializarRibbon(string pasta)
     {
         TemaInterface.Inicializar(pasta);
         ModoEscuro.IsChecked = TemaInterface.Escuro;
+        AtualizarBotaoAjuda();
         _destinosRibbon = new()
         {
             new("Principal", "Pedido", "Mesas / comandas", IconeVarthex.Mesas, () => !_bloqueado && !_cozinhaAtiva && !_restauracao, IrParaAtendimento),
@@ -32,11 +33,13 @@ public partial class MainWindow
             new("Configurações", "Configurações", "Alterar senha", IconeVarthex.Senha, PodeAlterarSenha, () => AbrirAlteracaoAcesso(false)),
             new("Configurações", "Configurações", "Backup e restauração", IconeVarthex.Backup, () => !_bloqueado && _acesso.Autenticado, IrParaBackup),
             new("Configurações", "Versão premium", "Minha assinatura", IconeVarthex.Assinatura, PodeGerir, AbrirMinhaAssinatura),
-            new("Configurações", "Ajuda e suporte", "Ajuda e suporte", IconeVarthex.Ajuda, () => !_bloqueado, AbrirAjuda),
-            new("Configurações", "Ajuda e suporte", "Diagnóstico de serviços", IconeVarthex.Diagnostico, PodeGerir, AbrirDiagnostico)
+            new("Ajuda", "Ajuda e suporte", "Ajuda", IconeVarthex.Ajuda, () => !_bloqueado, AbrirAjuda),
+            new("Ajuda", "Ideias e aprendizado", "Feedback", IconeVarthex.Feedback, () => !_bloqueado, AbrirFeedback, false),
+            new("Ajuda", "Ideias e aprendizado", "Show training", IconeVarthex.Treinamento, () => !_bloqueado, AbrirTreinamento, false),
+            new("Ajuda", "Verificações", "Diagnóstico de serviços", IconeVarthex.Diagnostico, PodeGerir, AbrirDiagnostico, false)
 
         };
-        foreach (var nome in new[] { "Principal", "Produtos", "Marketing", "Financeiro", "Apps", "Configurações" })
+        foreach (var nome in new[] { "Principal", "Produtos", "Marketing", "Financeiro", "Apps", "Configurações", "Ajuda" })
         {
             var botao = new Button { Content = nome, Tag = nome, Padding = new Thickness(16,7,16,7), MinHeight = 36, FontSize = 12, Style = (Style)FindResource("AbaNavegacao"), Foreground=Brushes.White };
             botao.SetResourceReference(Control.BackgroundProperty,"RibbonBar");
@@ -50,7 +53,7 @@ public partial class MainWindow
     private void AbrirConfiguracaoRibbon(int secao)
     {
         IrParaConfiguracoes();
-        if (ReferenceEquals(ConteudoPrincipal.Content, _configuracaoView)) _configuracaoView.AbrirSecao(secao);
+        if (ReferenceEquals(ConteudoPrincipal.JanelaAtiva?.Conteudo, _configuracaoView)) _configuracaoView.AbrirSecao(secao);
     }
     private void SelecionarCategoriaRibbon(string categoria)
     {
@@ -67,18 +70,20 @@ public partial class MainWindow
     {
         if (_destinosRibbon.Count == 0) return;
         GruposRibbon.Children.Clear();
-        foreach (var grupo in _destinosRibbon.Where(d=>d.Categoria==_categoriaRibbon).GroupBy(d=>d.Grupo))
+        foreach (var grupo in _destinosRibbon.Where(d=>d.Categoria==_categoriaRibbon && d.ExibirNaRibbon).GroupBy(d=>d.Grupo))
         {
             var painel = new StackPanel();
             var comandos = new StackPanel { Orientation=Orientation.Horizontal };
             foreach (var destino in grupo)
             {
-                var conteudo = new StackPanel();
-                var icone = IconesVarthex.Criar(destino.Icone);
-                icone.Margin = new Thickness(0,0,0,6);
+                var conteudo = new Grid();
+                conteudo.RowDefinitions.Add(new RowDefinition { Height=new GridLength(32) });
+                conteudo.RowDefinitions.Add(new RowDefinition { Height=new GridLength(32) });
+                var icone = IconesVarthex.Criar(destino.Icone,destino.Icone==IconeVarthex.Configuracoes?32:30);
                 conteudo.Children.Add(icone);
-                conteudo.Children.Add(new TextBlock { Text=destino.Nome, TextWrapping=TextWrapping.Wrap, TextAlignment=TextAlignment.Center, MaxWidth=130 });
-                var b=new Button { Content=conteudo, Padding=new Thickness(10,6,10,6), MinWidth=100, Height=78, Margin=new Thickness(0,0,4,0), BorderThickness=new Thickness(0), Background=Brushes.Transparent, FontSize=12 };
+                var rotulo=new TextBlock { Text=destino.Nome, TextWrapping=TextWrapping.Wrap, TextAlignment=TextAlignment.Center, MaxWidth=130,VerticalAlignment=VerticalAlignment.Center,LineHeight=14,LineStackingStrategy=LineStackingStrategy.BlockLineHeight };
+                Grid.SetRow(rotulo,1);conteudo.Children.Add(rotulo);
+                var b=new Button { Content=conteudo, Padding=new Thickness(10,5,10,5), MinWidth=100, Height=78, Margin=new Thickness(0,0,4,0), BorderThickness=new Thickness(0), Background=Brushes.Transparent, FontSize=12,HorizontalContentAlignment=HorizontalAlignment.Center,VerticalContentAlignment=VerticalAlignment.Center };
                 System.Windows.Automation.AutomationProperties.SetName(b,destino.Nome);
                 b.Click+=(_,_)=>ExecutarDestino(destino);
                 comandos.Children.Add(b);
@@ -140,7 +145,7 @@ public partial class MainWindow
                 _acesso.Sair();
                 _areaPendente=login.Perfil;
                 DesbloquearAtendimento();
-                ConteudoPrincipal.Content=null;
+                ConteudoPrincipal.Limpar();
                 AtualizarAbaAtiva();
             }
         }
@@ -156,7 +161,7 @@ public partial class MainWindow
     private void RibbonCompacta_Click(object sender,RoutedEventArgs e)
     {
         var menu=new ContextMenu();
-        foreach(var grupo in _destinosRibbon.Where(d=>d.Categoria==_categoriaRibbon).GroupBy(d=>d.Grupo))
+        foreach(var grupo in _destinosRibbon.Where(d=>d.Categoria==_categoriaRibbon && d.ExibirNaRibbon).GroupBy(d=>d.Grupo))
         {
             var item=new MenuItem { Header=grupo.Key };
             foreach(var destino in grupo){var comando=new MenuItem { Header=destino.Nome, Icon=IconesVarthex.Criar(destino.Icone,20) };comando.Click+=(_,_)=>ExecutarDestino(destino);item.Items.Add(comando);}
@@ -242,7 +247,7 @@ public partial class MainWindow
             DesbloquearAtendimento();
             if (login.Perfil=="garcom")
             {
-                ConteudoPrincipal.Content=null;
+                ConteudoPrincipal.Limpar();
                 AtualizarAbaAtiva();
             }
         }

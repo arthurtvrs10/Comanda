@@ -7,17 +7,63 @@ namespace VarthexComanda.Desktop;
 
 public partial class MainWindow
 {
-    private void AbrirAjuda()=>AbrirInformacoes("Ajuda e suporte",()=>
-        "VARTHEX COMANDA — AJUDA\n\n"+
-        "MESAS / COMANDAS\nAbra Principal e clique em Mesas / comandas. Digite o número para localizar uma comanda e pressione Enter para abrir. Use Opções para atualizar ou juntar pedidos.\n\n"+
-        "PRODUTOS\nNa categoria Produtos, cadastre um novo produto ou selecione um existente para editar nome, categoria, preço e imagem.\n\n"+
-        "APPS\nCozinha consulta os pedidos abertos. Painel de senhas permite chamar números e exibir o painel no monitor configurado.\n\n"+
-        "CONFIGURAÇÕES\nConfigure impressão, colaboradores, numeração e preferências do sistema. Backup e restauração permite preservar os dados locais.\n\n"+
-        "PRECISA DE AJUDA?\nAbra Diagnóstico de serviços, atualize e copie o relatório para compartilhar com seu responsável pelo suporte. O sistema não envia dados automaticamente.",false);
-
-    private void AbrirDiagnostico()=>AbrirInformacoes("Diagnóstico de serviços",()=>
-        _pathsSistema is null?"O ambiente desta sessão não está disponível.":DiagnosticoSistema.Gerar(_pathsSistema,_configuracaoView.ViewModel.NomeEstabelecimento,_configuracaoView.ConsultarBackup?.Invoke()??"Não disponível"),true);
-
+    private Ajuda.JanelaSuporte? _janelaSuporte;
+    private void AbrirAjuda()=>AbrirSuporte();
+    private void AjudaFlutuante_Click(object sender, RoutedEventArgs e)
+    {
+        if (_janelaSuporte is { IsVisible: true })
+        {
+            _janelaSuporte.Close();
+            return;
+        }
+        ExecutarDestino(_destinosRibbon.Single(d => d.Categoria == "Ajuda" && d.Nome == "Ajuda"));
+    }
+    private void AtualizarBotaoAjuda()
+    {
+        var aberta = _janelaSuporte is { IsVisible: true };
+        BotaoAjudaFlutuante.Content = IconesVarthex.Criar(aberta ? IconeVarthex.FecharAjuda : IconeVarthex.Ajuda, 32);
+        BotaoAjudaFlutuante.ToolTip = aberta ? "Fechar ajuda" : "Opções de ajuda";
+        System.Windows.Automation.AutomationProperties.SetName(BotaoAjudaFlutuante, aberta ? "Fechar ajuda" : "Abrir opções de ajuda");
+    }
+    private void AbrirSuporte()
+    {
+        if (_janelaSuporte is { IsVisible: true })
+        {
+            _janelaSuporte.Activate();
+            return;
+        }
+        var janela = new Ajuda.JanelaSuporte(
+            treinamento: AbrirTreinamento,
+            ocultarBotao: () => BotaoAjudaFlutuante.Visibility = Visibility.Collapsed,
+            ancora: BotaoAjudaFlutuante) { Owner=this };
+        _janelaSuporte = janela;
+        janela.Closed += (_, _) =>
+        {
+            if (ReferenceEquals(_janelaSuporte, janela))
+            {
+                _janelaSuporte = null;
+                AtualizarBotaoAjuda();
+            }
+        };
+        janela.Show();
+        AtualizarBotaoAjuda();
+    }
+    private void AbrirFeedback()=>new Ajuda.JanelaFeedback { Owner=this }.ShowDialog();
+    private void AbrirTreinamento()=>AbrirTreinamento(this);
+    private void AbrirTreinamento(Window owner)
+    {
+        var anterior=_categoriaRibbon;
+        try{new Ajuda.JanelaTreinamento(SelecionarCategoriaRibbon) { Owner=owner }.ShowDialog();}
+        finally{SelecionarCategoriaRibbon(anterior);}
+    }
+    private void AbrirDiagnostico()
+    {
+        if(_pathsSistema is null)return;
+        new Ajuda.JanelaDiagnosticoServicos(()=>Ajuda.DiagnosticoServicos.Avaliar(_pathsSistema,()=>
+        {
+            try{new Licenciamento.ServicoLicenca().Verificar();return true;}catch{return false;}
+        })) { Owner=this }.ShowDialog();
+    }
     private void AbrirInformacoes(string titulo,Func<string> obter,bool diagnostico)
     {
         var janela=new Window { Title=titulo,Owner=this,Width=760,Height=610,MinWidth=520,MinHeight=380,ResizeMode=ResizeMode.CanResize };

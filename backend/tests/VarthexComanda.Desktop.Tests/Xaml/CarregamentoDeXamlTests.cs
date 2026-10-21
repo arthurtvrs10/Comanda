@@ -155,7 +155,7 @@ public class CarregamentoDeXamlTests
         return new ConfiguracaoViewModel(new ObterConfiguracao(repositorio), new SalvarConfiguracao(repositorio, new FakeClock()));
     }
 
-    private static MainWindow CriarMainWindow(VarthexComanda.Infrastructure.Storage.AppPaths? paths = null)
+    internal static MainWindow CriarMainWindow(VarthexComanda.Infrastructure.Storage.AppPaths? paths = null)
     {
         var (atendimento, _) = CriarAtendimento();
         return new MainWindow(
@@ -167,6 +167,57 @@ public class CarregamentoDeXamlTests
     }
 
     // ---- testes ----
+
+    [Fact]
+    public void AjudaPermiteUsarRibbonSemBloquearSistemaEReutilizaJanelaAberta()
+    {
+        var pasta=Path.Combine(Path.GetTempPath(),"ajuda-livre-"+Guid.NewGuid());
+        try
+        {
+            ThreadingHelper.EmSta(()=>
+            {
+                GarantirApp();
+                var janela=CriarMainWindow(new VarthexComanda.Infrastructure.Storage.AppPaths(pasta));
+                janela.Opacity=0;janela.ShowInTaskbar=false;
+                try
+                {
+                    janela.Show();
+                    var botaoAjuda=(Button)janela.FindName("BotaoAjudaFlutuante");
+                    Assert.Equal("Abrir opções de ajuda",System.Windows.Automation.AutomationProperties.GetName(botaoAjuda));
+                    var abrir=typeof(MainWindow).GetMethod("AbrirSuporte",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic)!;
+                    abrir.Invoke(janela,null);
+                    var ajuda=Assert.Single(janela.OwnedWindows.OfType<VarthexComanda.Desktop.Ajuda.JanelaSuporte>());
+                    Assert.True(janela.IsEnabled);Assert.True(ajuda.IsVisible);
+                    Assert.Equal("Fechar ajuda",System.Windows.Automation.AutomationProperties.GetName(botaoAjuda));
+                    Assert.Equal("Fechar ajuda",botaoAjuda.ToolTip);
+                    janela.UpdateLayout();
+                    void CapturarBotao(string nome)
+                    {
+                        var previa=new System.Windows.Shapes.Rectangle { Width=54,Height=54,Fill=new System.Windows.Media.VisualBrush(botaoAjuda) };
+                        previa.Measure(new Size(54,54));previa.Arrange(new Rect(0,0,54,54));
+                        SalvarPrevia(previa,nome);
+                    }
+                    CapturarBotao("ajuda-botao-x");
+                    var categorias=(WrapPanel)janela.FindName("CategoriasRibbon");
+                    var produtos=categorias.Children.OfType<Button>().Single(b=>Equals(b.Content,"Produtos"));
+                    Assert.True(produtos.IsEnabled);produtos.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                    Assert.Equal("ativa",produtos.Tag);
+                    abrir.Invoke(janela,null);
+                    Assert.Same(ajuda,Assert.Single(janela.OwnedWindows.OfType<VarthexComanda.Desktop.Ajuda.JanelaSuporte>()));
+                    botaoAjuda.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                    Assert.Empty(janela.OwnedWindows.OfType<VarthexComanda.Desktop.Ajuda.JanelaSuporte>());
+                    Assert.Equal("Abrir opções de ajuda",System.Windows.Automation.AutomationProperties.GetName(botaoAjuda));
+                    janela.UpdateLayout();CapturarBotao("ajuda-botao-original");
+                    abrir.Invoke(janela,null);
+                    var reaberta=Assert.Single(janela.OwnedWindows.OfType<VarthexComanda.Desktop.Ajuda.JanelaSuporte>());
+                    Assert.NotSame(ajuda,reaberta);Assert.True(janela.IsEnabled);reaberta.Close();
+                    Assert.Equal("Abrir opções de ajuda",System.Windows.Automation.AutomationProperties.GetName(botaoAjuda));
+                }
+                finally { janela.Close(); }
+            });
+        }
+        finally { if(Directory.Exists(pasta))Directory.Delete(pasta,true); }
+    }
 
     [Fact]
     public void ConfiguracoesSistemaSecoesSalvamEmModalEUsamTemas()
@@ -298,27 +349,34 @@ public class CarregamentoDeXamlTests
                 ((FrameworkElement)janela.FindName("CamadaBloqueio")).Visibility=Visibility.Collapsed;
                 var area=(FrameworkElement)janela.FindName("AreaSistema");area.Visibility=Visibility.Visible;area.IsEnabled=true;
                 tipo.GetMethod("AtualizarPerfil",flags)!.Invoke(janela,null);
-                var conteudo=(ContentControl)janela.FindName("ConteudoPrincipal");
+                var conteudo=(AreaTrabalhoInterna)janela.FindName("ConteudoPrincipal");
                 MainWindow.IrParaAtendimentoCommand.Execute(null,janela);
-                var atendimento=Assert.IsType<AtendimentoView>(conteudo.Content);
+                var janelaAtendimento=Assert.IsType<JanelaInterna>(conteudo.JanelaAtiva);
+                var atendimento=Assert.IsType<AtendimentoView>(janelaAtendimento.Conteudo);
                 atendimento.ViewModel.ObservacaoNovoItem="Sem cebola";
                 atendimento.ViewModel.TextoBuscaCatalogo="Refrigerante";
                 var categorias=(WrapPanel)janela.FindName("CategoriasRibbon");
-                Assert.Equal(new[]{"Principal","Produtos","Marketing","Financeiro","Apps","Configurações"},categorias.Children.OfType<Button>().Select(b=>(string)b.Content));
+                Assert.Equal(new[]{"Principal","Produtos","Marketing","Financeiro","Apps","Configurações","Ajuda"},categorias.Children.OfType<Button>().Select(b=>(string)b.Content));
                 void Categoria(string nome)=>categorias.Children.OfType<Button>().Single(b=>Equals(b.Content,nome)).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
                 void Comando(string nome)=>Descendentes((FrameworkElement)janela.FindName("GruposRibbon")).OfType<Button>().Single(b=>System.Windows.Automation.AutomationProperties.GetName(b)==nome).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-                Categoria("Produtos");Assert.Same(atendimento,conteudo.Content);
-                Comando("Produtos");var janelaProdutos=Assert.IsType<JanelaInterna>(conteudo.Content);var produtos=Assert.IsType<ProdutosView>(janelaProdutos.Conteudo);
+                Categoria("Produtos");Assert.Same(janelaAtendimento,conteudo.JanelaAtiva);
+                Comando("Produtos");var janelaProdutos=Assert.IsType<JanelaInterna>(conteudo.JanelaAtiva);var produtos=Assert.IsType<ProdutosView>(janelaProdutos.Conteudo);
+                Assert.Equal(2,conteudo.Janelas.Count);Assert.Contains(janelaAtendimento,conteudo.Janelas);
                 ((ProdutosViewModel)produtos.DataContext).TextoBusca="Refrigerante";
                 Descendentes(janelaProdutos).OfType<Button>().Single(b=>System.Windows.Automation.AutomationProperties.GetName(b)=="Fechar Produtos").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-                Assert.Null(conteudo.Content);Comando("Produtos");Assert.Same(janelaProdutos,conteudo.Content);
+                Assert.Same(janelaAtendimento,conteudo.JanelaAtiva);Comando("Produtos");Assert.Same(janelaProdutos,conteudo.JanelaAtiva);
                 Assert.Equal("Refrigerante",((ProdutosViewModel)produtos.DataContext).TextoBusca);
-                Categoria("Marketing");Assert.Same(janelaProdutos,conteudo.Content);
+                Categoria("Marketing");Assert.Same(janelaProdutos,conteudo.JanelaAtiva);
                 Assert.Empty(Descendentes((FrameworkElement)janela.FindName("GruposRibbon")).OfType<Button>());
                 Categoria("Principal");Comando("Mesas / comandas");
                 Assert.Equal("Sem cebola",atendimento.ViewModel.ObservacaoNovoItem);
+                Assert.Same(janelaAtendimento,conteudo.JanelaAtiva);
+                Descendentes(janelaAtendimento).OfType<Button>().Single(b=>System.Windows.Automation.AutomationProperties.GetName(b)=="Fechar Mesas / comandas").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                Assert.Same(janelaProdutos,conteudo.JanelaAtiva);
+                Comando("Mesas / comandas");Assert.Same(janelaAtendimento,conteudo.JanelaAtiva);
+                Assert.Equal("Sem cebola",atendimento.ViewModel.ObservacaoNovoItem);
                 Categoria("Configurações");
-                Assert.Equal(new[]{"Configurações do sistema","Numeração de pedidos","Impressoras","Colaboradores","Alterar senha","Backup e restauração","Minha assinatura","Ajuda e suporte","Diagnóstico de serviços"},Descendentes((FrameworkElement)janela.FindName("GruposRibbon")).OfType<Button>().Select(b=>System.Windows.Automation.AutomationProperties.GetName(b)));
+                Assert.Equal(new[]{"Configurações do sistema","Numeração de pedidos","Impressoras","Colaboradores","Alterar senha","Backup e restauração","Minha assinatura"},Descendentes((FrameworkElement)janela.FindName("GruposRibbon")).OfType<Button>().Select(b=>System.Windows.Automation.AutomationProperties.GetName(b)));
                 var config=(ConfiguracaoView)tipo.GetField("_configuracaoView",flags)!.GetValue(janela)!;config.ViewModel.NomeEstabelecimento="Nome em edição";
                 Categoria("Produtos");Comando("Produtos");Assert.Equal("Refrigerante",((ProdutosViewModel)produtos.DataContext).TextoBusca);
                 Categoria("Configurações");Assert.Equal("Nome em edição",config.ViewModel.NomeEstabelecimento);
@@ -355,6 +413,22 @@ public class CarregamentoDeXamlTests
                     Categoria("Configurações");
                     raiz.Measure(new Size(1280,780));raiz.Arrange(new Rect(0,0,1280,780));raiz.UpdateLayout();
                     SalvarPrevia(raiz,$"ribbon-configuracoes-{(escuro?"escuro":"claro")}");
+                    Categoria("Ajuda");raiz.UpdateLayout();
+                    Assert.Equal(new[]{"Ajuda"},Descendentes((FrameworkElement)janela.FindName("GruposRibbon")).OfType<Button>().Select(b=>System.Windows.Automation.AutomationProperties.GetName(b)));
+                    SalvarPrevia(raiz,$"ribbon-ajuda-{(escuro?"escuro":"claro")}");
+                    // As duas telas continuam abertas e podem ocupar posições independentes.
+                    Assert.Equal(2,conteudo.Janelas.Count);
+                    raiz.Measure(new Size(1920,1080));raiz.Arrange(new Rect(0,0,1920,1080));raiz.UpdateLayout();
+                    AreaTrabalhoInternaTests.Redimensionar(janelaAtendimento,"inferior direita",-400,-180);
+                    AreaTrabalhoInternaTests.Mover(janelaAtendimento,-500,-300);
+                    AreaTrabalhoInternaTests.Redimensionar(janelaProdutos,"inferior direita",-400,-180);
+                    AreaTrabalhoInternaTests.Mover(janelaProdutos,600,220);
+                    raiz.UpdateLayout();
+                    SalvarPrevia(raiz,$"area-trabalho-organizada-{(escuro?"escuro":"claro")}");
+                    conteudo.Ativar(janelaAtendimento);janelaAtendimento.AlternarMaximizar();raiz.UpdateLayout();
+                    Assert.Equal(conteudo.RenderSize,AreaTrabalhoInternaTests.Moldura(janelaAtendimento).RenderSize);
+                    SalvarPrevia(raiz,$"area-trabalho-maximizada-{(escuro?"escuro":"claro")}");
+                    janelaAtendimento.AlternarMaximizar();
                     Categoria("Produtos");Comando("Produtos");
                     TemaInterface.Inicializar(pasta);Assert.Equal(escuro,TemaInterface.Escuro);
                 }
@@ -643,7 +717,7 @@ public class CarregamentoDeXamlTests
                 var area = (DockPanel)janela.FindName("AreaSistema");
                 var camada = (ContentControl)janela.FindName("CamadaBloqueio");
                 var bloqueio = Assert.IsType<BloqueioAtendimentoView>(camada.Content);
-                var conteudo = (ContentControl)janela.FindName("ConteudoPrincipal");
+                var conteudo = (AreaTrabalhoInterna)janela.FindName("ConteudoPrincipal");
                 var raizVisual = (FrameworkElement)janela.Content;
                 MedirEOrganizar(raizVisual);
                 var inicioHost = (ContentControl)janela.FindName("MenuInicial");
@@ -660,7 +734,7 @@ public class CarregamentoDeXamlTests
                     .RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
                 MedirEOrganizar(raizVisual);
                 Assert.False(area.IsEnabled);
-                Assert.Null(conteudo.Content);
+                Assert.Null(conteudo.JanelaAtiva);Assert.Empty(conteudo.Janelas);
                 Assert.False(MainWindow.IrParaAtendimentoCommand.CanExecute(null, janela));
                 Assert.False(MainWindow.IrParaHistoricoCommand.CanExecute(null, janela));
                 SalvarPrevia(raizVisual, "bloqueio-pin-1200");
@@ -707,16 +781,16 @@ public class CarregamentoDeXamlTests
                 raizVisual.UpdateLayout();
                 SalvarPrevia(raizVisual, "abas-gestor-800");
                 ((Button)janela.FindName("BotaoPerfil")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-                Assert.Null(conteudo.Content);
+                Assert.Null(conteudo.JanelaAtiva);Assert.Empty(conteudo.Janelas);
                 Assert.Null(abaAtendimento.Tag);
                 MainWindow.IrParaAtendimentoCommand.Execute(null, janela);
                 Assert.Equal(Visibility.Collapsed, ((Button)janela.FindName("BotaoProdutos")).Visibility);
-                var atendimento = Assert.IsType<AtendimentoView>(conteudo.Content);
+                var atendimento = Assert.IsType<AtendimentoView>(Assert.IsType<JanelaInterna>(conteudo.JanelaAtiva).Conteudo);
                 var id = atendimento.ViewModel.ComandaAtual!.Id;
                 atendimento.ViewModel.FecharEdicaoCommand.Execute(null);
                 Assert.False(area.IsEnabled);
                 Assert.Equal(Visibility.Visible, camada.Visibility);
-                Assert.Null(conteudo.Content);
+                Assert.Null(conteudo.JanelaAtiva);Assert.Empty(conteudo.Janelas);
                 Assert.Contains(atendimento.ViewModel.ComandasAbertas, c => c.Id == id);
                 Descendentes(bloqueio).OfType<Button>().Single(b => Equals(b.Content, "Voltar ao início")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
                 Assert.Equal(Visibility.Collapsed,inicioHost.Visibility);
@@ -725,7 +799,7 @@ public class CarregamentoDeXamlTests
                 foreach (var digito in "0123")
                     botoes.Single(b => Equals(b.Content, digito.ToString())).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
                 ((Button)bloqueio.FindName("BotaoEntrar")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-                var cozinha = Assert.IsType<CozinhaView>(conteudo.Content);
+                var cozinha = Assert.IsType<CozinhaView>(Assert.IsType<JanelaInterna>(conteudo.JanelaAtiva).Conteudo);
                 Assert.Equal("ativa", ((Button)janela.FindName("BotaoCozinha")).Tag);
                 Assert.Equal(Visibility.Collapsed, abaAtendimento.Visibility);
                 Assert.False(MainWindow.IrParaAtendimentoCommand.CanExecute(null, janela));
