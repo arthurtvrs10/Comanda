@@ -20,7 +20,7 @@ public partial class LocalizarProdutoViewModel : ObservableObject, IDisposable
     public ObservableCollection<ProdutoLocalizado> Produtos { get; } = new();
     [ObservableProperty] private ProdutoLocalizado? selecionado;
     [ObservableProperty] private Categoria? categoria;
-    [ObservableProperty] private bool fotos;
+    [ObservableProperty] private bool fotos = true;
     [ObservableProperty] private string mensagem = "";
     public bool Lista { get => !Fotos; set { if (value) Fotos = false; } }
     public string TotalEncontrados => $"{Produtos.Count} produto(s) encontrado(s)";
