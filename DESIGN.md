@@ -52,3 +52,41 @@ Tabelas usam o apresentador com altura completa e conteúdo centralizado vertica
 
 ### Produtos em janela interna — 21/10/2026
 A listagem Produtos abre como janela filha dentro da área de trabalho, sobre o fundo configurado, com título e botões maximizar/restaurar e fechar. A Ribbon permanece disponível. Janela normal de até1180×600, limitada ao espaço interno e movível pelo título. Maximizar não cobre categorias ou rodapé. Detalhes e testes em specs/2026-10-21-janela-interna-produtos.md.
+
+### Ajuda e numeração — 21/10/2026
+Categoria Ajuda à direita de Configurações com um único comando visível, Ajuda, que abre as opções de suporte WhatsApp, RustDesk, feedback e tutorial guiado. Feedback, Show training e Diagnóstico de serviços permanecem disponíveis pela pesquisa global, com as permissões existentes; Contate o suporte foi removido. A numeração configura o primeiro número real da grade de comandas, preservando atendimentos abertos fora da faixa. Especificações em specs/2026-10-21-categoria-ajuda.md e specs/2026-10-21-numeracao-comandas.md.
+
+### Opções de ajuda — superfície aprovada em 21/10/2026
+O modal de ajuda usa a marca original em versão preta/branca conforme o tema, superfícies e textos cinza neutros, ações verdes e cinco ícones vetoriais coloridos. Seções de título e botão, cantos retos, corpo rolável e rodapé fixo com “Fechar e ocultar botão”; hover cinza e foco de teclado explícito. Ocultar vale para o atalho flutuante na sessão atual; Ajuda na Ribbon continua acessível. Central de ajuda fica “Em preparação” até existir URL. Esta paleta `Ajuda*` é específica da superfície. Composição, recursos e evidências em specs/2026-10-21-categoria-ajuda.md.
+
+Ajuda abre o modal compacto de 360 × 640 junto ao ícone de ajuda, acima dele com intervalo de 4 e bordas direitas alinhadas. Só reduz para caber no espaço disponível, respeitando a área útil do monitor; pode abrir abaixo quando esse lado tiver mais espaço. Não ocupa a altura inteira do sistema e não pode ser arrastado ou redimensionado separadamente.
+
+A ajuda é uma janela não bloqueante: permite usar as outras funções enquanto permanece aberta. Cliques repetidos ativam a mesma instância; fechar permite reabrir.
+
+O atalho flutuante alterna entre o ícone de suporte (abrir) e um X vermelho (fechar), com tooltip e nome acessível acompanhando o estado. Clicar no X fecha a ajuda e restaura o ícone original.
+
+### Ordenação da tabela de produtos — 21/10/2026
+Cabeçalhos ordenáveis exibem dois chevrons neutros; a coluna ativa mostra um único chevron crescente/decrescente. Tooltip e texto acessível acompanham a direção. Medida (UN constante) e o preenchimento vazio não mostram o indicador. Preservados o template nativo e os controles de redimensionamento. Detalhes em specs/2026-10-21-ordenacao-produtos.md.
+
+### Janelas de operação e hover — 21/10/2026
+A área de trabalho abaixo da Ribbon mantém várias janelas internas simultâneas de Mesas / comandas, Produtos, Histórico de vendas, Cozinha e Backup no modo de recuperação. Abrir novamente uma tela traz sua janela existente para a frente. Fechar remove somente aquela janela e preserva as demais e o estado dos modelos na sessão; bloqueio e saída/troca de perfil retiram todas as janelas da área. Título permite mover; quatro bordas e quatro cantos permitem redimensionar. Tamanho normal inicial de 1180 × 600 DIP, limitado à área disponível, com mínimo físico de 640 × 360 DIP quando houver espaço. Conteúdo usa uma área finita com rolagem quando necessário. Título ativo usa `RibbonHover`; títulos em segundo plano usam `RibbonBar`.
+
+Maximizar ocupa toda a largura e altura da área de trabalho, sem margens ou tetos, preservando Ribbon e rodapé. Restaurar recupera a geometria normal; redimensionar o sistema mantém as janelas dentro da área disponível. Ctrl+F6 e Ctrl+Shift+F6 alternam a janela ativa; Ctrl+F4 fecha e Ctrl+F10 maximiza/restaura. Janelas nativas filhas redimensionáveis da janela principal maximizam no retângulo da área de trabalho convertido para a tela e limitado à área útil do monitor; outros proprietários usam seu retângulo completo. A janela principal, a tela pública de senhas e a ajuda fixa ancorada ficam fora dessa regra.
+
+O recurso dinâmico `HoverOverlay` acrescenta uma camada neutra sobre botões e seletores: preto translúcido no claro (`#16000000`) e branco translúcido no escuro (`#26FFFFFF`). Os botões locais do atendimento usam o mesmo recurso. Controles desabilitados não mostram a camada; foco e pressionamento mantêm seus estados próprios. Barras sempre escuras de categorias, rodapé e título da janela interna usam a camada branca nos dois temas. Esta extensão preserva o sistema Windows inspirado no Consumer, a marca, a tipografia e as demais cores existentes. Comportamento, escopo e evidências em specs/2026-10-21-janelas-hover.md.
+
+### Grade de comandas — 21/10/2026
+Cartões distribuem a largura útil em colunas iguais, com referência de 144 DIP e mínimo de 128 DIP por coluna, sem reservar uma coluna vazia à direita. Linhas de 144 DIP, cartões de 136 DIP de altura e margens de 4 DIP. A grade tem barra vertical visível e rolagem horizontal desabilitada; mensagem vazia não reserva espaço no rodapé. Sem comanda em edição, a grade acompanha a moldura e usa sua própria rolagem. A edição mantém mínimo lógico de 760 × 540 DIP e rolagem externa para preservar o formulário. Detalhes e evidência dos 287 testes desktop em specs/2026-10-21-janelas-hover.md.
+
+### Ícones centralizados — 21/10/2026
+Os 21 vetores coloridos compartilham quadro transparente de 32 × 32 unidades e contorno pintado centralizado em até 28 × 28, incluindo a espessura dos traços e margem segura de 2 unidades. Escala uniforme preserva proporções e orientação do desenho. A Ribbon usa linhas fixas de 32 DIP para ícone e rótulo, mantendo os ícones no mesmo eixo mesmo quando o texto quebra linha. Ícones locais e os de ajuda recebem alinhamento horizontal e vertical centralizado; os da ajuda usam 22 × 22 DIP. Marca e cores permanecem; lápis e chave conservam suas diagonais intencionais. Evidência dos 289 testes desktop e capturas em specs/2026-10-21-icones-centralizados.md.
+
+A engrenagem de Configurações usa oito dentes simétricos, anéis concêntricos em cinza azulado e apresentação de 32 DIP na Ribbon, mantendo o quadro seguro compartilhado; esta correção específica substitui o desenho anterior sem alterar os demais ícones.
+
+### Backup e pastas sincronizadas — 21/10/2026
+
+A superfície de Backup segue o modo Operate e a organização da referência Consumer fornecida: configuração à esquerda, restauração à direita e separador fino entre as áreas. Google Drive e Dropbox têm cartões independentes com ícones vetoriais centralizados, pasta, situação e ações Configurar/Desconectar pasta. Os quatro novos vetores (Google Drive, Dropbox, Pasta e Fotos) seguem o mesmo quadro seguro dos demais ícones. A pasta local fica acima dos cartões. Usa Segoe UI de 12 DIP no corpo e títulos de 18 DIP, cantos retos, bordas finas, os recursos neutros dinâmicos `AjudaCanvas`, `AjudaSurface`, `AjudaInk`, `AjudaMuted` e `AjudaLine`, e ações verdes `AjudaAction`/`AjudaActionInk`. Esta extensão é específica da tela de Backup.
+
+O corpo tem rolagem para preservar a composição em 760 × 440 DIP; mensagens e a ação Fazer backup agora ficam no rodapé fixo. Em recuperação, o histórico abre expandido antes da configuração e o rodapé oferece Restaurar dados. Histórico vazio usa uma mensagem compacta, sem reservar a altura da lista. Restaurar dados e Restaurar somente fotos têm descrições distintas; atividade bloqueia interações concorrentes e fechamento durante criação manual ou restauração de fotos.
+
+Configurar Google Drive ou Dropbox significa selecionar uma pasta já sincronizada pelo aplicativo instalado neste computador. Exibir cópia gravada na pasta e avisos de indisponibilidade; não representar autenticação, upload confirmado ou sincronização concluída. As preferências ficam fora do banco para permitir recuperação com banco corrompido. Comportamento, limites, fontes e evidência dos 706 testes e oito capturas em specs/2026-10-21-backup-sincronizado.md. Documentação anterior e formato legado preservados; esta extensão não representa aprovação do restante do sistema.
