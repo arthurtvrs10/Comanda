@@ -37,7 +37,14 @@ public class CriarBackupAutomatico
                 }
             }
 
-            _backupService.CriarBackupGerenciado();
+            var resultadoLocal = _backupService.CriarBackupGerenciado();
+            if (!resultadoLocal.Sucesso)
+            {
+                _logger.Warning("Backup automático local falhou: {Mensagem}", string.Join(" ", resultadoLocal.Erros));
+                return;
+            }
+            if (!string.IsNullOrEmpty(resultadoLocal.Valor?.Mensagem))
+                _logger.Warning("Backup automático concluído com aviso: {Mensagem}", resultadoLocal.Valor.Mensagem);
 
             if (incondicional)
             {

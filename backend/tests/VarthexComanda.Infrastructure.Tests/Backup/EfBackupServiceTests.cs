@@ -65,6 +65,133 @@ public class EfBackupServiceTests : IDisposable
     }
 
     [Fact]
+    public void PastasSincronizadas_RecebemOMesmoBancoChecksumEFotosInclusiveQuandoInalteradas()
+    {
+        var drive = Directory.CreateDirectory(Path.Combine(_raizTeste, "Drive")).FullName;
+        var dropbox = Directory.CreateDirectory(Path.Combine(_raizTeste, "Dropbox")).FullName;
+        var local = Directory.CreateDirectory(Path.Combine(_raizTeste, "Local")).FullName;
+        new PreferenciasBackup(_paths).Salvar(new(local, drive, dropbox));
+        File.WriteAllText(Path.Combine(_paths.FotosDirectory, "produto.png"), "foto de teste");
+        var servico = new EfBackupService(_paths, _registros, new FakeClockDeIntegracao());
+        for (var i = 0; i < 2; i++)
+        {
+            var resultado = servico.CriarBackupGerenciado();
+            Assert.True(resultado.Sucesso);
+            Assert.Null(resultado.Valor!.Mensagem);
+            Assert.Equal(local, resultado.Valor.Destino);
+            var origem = Path.Combine(local, resultado.Valor.Arquivo);
+            foreach (var pasta in new[] { drive, dropbox })
+            {
+                var copia = Path.Combine(PreferenciasBackup.DestinoSincronizado(pasta), resultado.Valor.Arquivo);
+                Assert.Equal(File.ReadAllBytes(origem), File.ReadAllBytes(copia));
+                Assert.Equal(File.ReadAllText(origem + ".sha256"), File.ReadAllText(copia + ".sha256"));
+                Assert.True(servico.Validar(copia).Aprovado);
+                using var fotos = System.IO.Compression.ZipFile.OpenRead(copia + ".fotos.zip");
+                Assert.NotNull(fotos.GetEntry("produto.png"));
+            }
+        }
+    }
+
+    [Fact]
+    public void PastaDaNuvemIndisponivel_PreservaLocalECopiaParaOutroServicoSemRecriarRaiz()
+    {
+        var ausente = Path.Combine(_raizTeste, "Drive desconectado");
+        var dropbox = Directory.CreateDirectory(Path.Combine(_raizTeste, "Dropbox")).FullName;
+        new PreferenciasBackup(_paths).Salvar(new(GoogleDrive: ausente, Dropbox: dropbox));
+        var resultado = new EfBackupService(_paths, _registros, new FakeClockDeIntegracao()).CriarBackupGerenciado();
+        Assert.True(resultado.Sucesso);
+        Assert.Contains("Google Drive", resultado.Valor!.Mensagem);
+        Assert.False(Directory.Exists(ausente));
+        Assert.True(File.Exists(Path.Combine(resultado.Valor.Destino, resultado.Valor.Arquivo)));
+        Assert.True(File.Exists(Path.Combine(PreferenciasBackup.DestinoSincronizado(dropbox), resultado.Valor.Arquivo)));
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void FotosAtuaisBloqueadas_AvisaENaoReutilizaFotoAntigaComoAtual(bool parcial)
+    {
+        var drive = Directory.CreateDirectory(Path.Combine(_raizTeste, "Drive")).FullName;
+        new PreferenciasBackup(_paths).Salvar(new(GoogleDrive: drive));
+        var foto = Path.Combine(_paths.FotosDirectory, "produto.png");
+        File.WriteAllText(foto, "foto antiga");
+        var servico = new EfBackupService(_paths, _registros, new FakeClockDeIntegracao());
+        Assert.True(servico.CriarBackupGerenciado().Sucesso);
+        File.WriteAllText(foto, "foto atual modificada");
+        if (parcial) File.WriteAllText(Path.Combine(_paths.FotosDirectory, "outra.png"), "foto disponível");
+        using var bloqueio = new FileStream(foto, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+        var resultado = servico.CriarBackupGerenciado();
+        Assert.True(resultado.Sucesso);
+        Assert.Contains("fotos não puderam", resultado.Valor!.Mensagem);
+        var copia = Path.Combine(PreferenciasBackup.DestinoSincronizado(drive), resultado.Valor.Arquivo);
+        Assert.True(servico.Validar(copia).Aprovado);
+        if (parcial)
+        {
+            using var zip = System.IO.Compression.ZipFile.OpenRead(copia + ".fotos.zip");
+            Assert.Null(zip.GetEntry("produto.png")); Assert.NotNull(zip.GetEntry("outra.png"));
+        }
+        else Assert.False(File.Exists(copia + ".fotos.zip"));
+    }
+
+    [Fact]
+    public void PastaLocalAusente_UsaPastaPadraoEAvisa()
+    {
+        new PreferenciasBackup(_paths).Salvar(new(Local: Path.Combine(_raizTeste, "ausente")));
+        var resultado = new EfBackupService(_paths, _registros, new FakeClockDeIntegracao()).CriarBackupGerenciado();
+        Assert.True(resultado.Sucesso);
+        Assert.Equal(_paths.BackupsDirectory, resultado.Valor!.Destino);
+        Assert.Contains("pasta padrão", resultado.Valor.Mensagem);
+    }
+
+    [Fact]
+    public void PreferenciasCorrompidas_NaoImpedemBackupLocalEMostramAviso()
+    {
+        File.WriteAllText(Path.Combine(_paths.Root, "pastas-backup.json"), "JSON inválido");
+        var resultado = new EfBackupService(_paths, _registros, new FakeClockDeIntegracao()).CriarBackupGerenciado();
+        Assert.True(resultado.Sucesso);
+        Assert.Contains("configuradas", resultado.Valor!.Mensagem);
+        Assert.True(File.Exists(Path.Combine(resultado.Valor.Destino, resultado.Valor.Arquivo)));
+    }
+
+    [Fact]
+    public void RestaurarSomenteFotos_GuardaCopiaAnteriorEPreservaBanco()
+    {
+        var foto = Path.Combine(_paths.FotosDirectory, "produto.png");
+        File.WriteAllText(foto, "anterior");
+        SqliteConnection.ClearAllPools();
+        var bancoAntes = File.ReadAllBytes(_paths.DatabasePath);
+        var zip = Path.Combine(_raizTeste, "entrada.fotos.zip");
+        using (var arquivo = System.IO.Compression.ZipFile.Open(zip, System.IO.Compression.ZipArchiveMode.Create))
+        using (var escrita = new StreamWriter(arquivo.CreateEntry("produto.png").Open())) escrita.Write("restaurada");
+        var resultado = new EfBackupService(_paths, _registros, new FakeClockDeIntegracao()).RestaurarFotos(zip);
+        Assert.True(resultado.Sucesso);
+        Assert.Equal(1, resultado.Valor!.Quantidade);
+        Assert.Equal("restaurada", File.ReadAllText(foto));
+        Assert.Equal(bancoAntes, File.ReadAllBytes(_paths.DatabasePath));
+        var preventivo = Assert.Single(Directory.GetFiles(_paths.BackupsDirectory, "fotos-antes-restauracao-*.zip"));
+        using var anterior = System.IO.Compression.ZipFile.OpenRead(preventivo);
+        using var leitura = new StreamReader(anterior.GetEntry("produto.png")!.Open());
+        Assert.Equal("anterior", leitura.ReadToEnd());
+    }
+
+    [Theory]
+    [InlineData("../produto.png")]
+    [InlineData("subpasta/produto.png")]
+    [InlineData("programa.exe")]
+    public void RestaurarSomenteFotos_RejeitaZipInvalidoAntesDeAlterarFotos(string nome)
+    {
+        var foto = Path.Combine(_paths.FotosDirectory, "produto.png");
+        File.WriteAllText(foto, "anterior");
+        var zip = Path.Combine(_raizTeste, "entrada.fotos.zip");
+        using (var arquivo = System.IO.Compression.ZipFile.Open(zip, System.IO.Compression.ZipArchiveMode.Create))
+        using (var escrita = new StreamWriter(arquivo.CreateEntry(nome).Open())) escrita.Write("inválida");
+        var resultado = new EfBackupService(_paths, _registros, new FakeClockDeIntegracao()).RestaurarFotos(zip);
+        Assert.False(resultado.Sucesso);
+        Assert.Equal("anterior", File.ReadAllText(foto));
+        Assert.Empty(Directory.GetFiles(_paths.BackupsDirectory, "fotos-antes-restauracao-*.zip"));
+    }
+
+    [Fact]
     public void CriarBackupGerenciado_RegistraSucessoNoRepositorio()
     {
         var relogio = new FakeClockDeIntegracao();

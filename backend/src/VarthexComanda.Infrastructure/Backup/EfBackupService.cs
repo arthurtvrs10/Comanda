@@ -13,7 +13,7 @@ using VarthexComanda.Infrastructure.Storage;
 
 namespace VarthexComanda.Infrastructure.Backup;
 
-public class EfBackupService : IBackupService
+public class EfBackupService : IBackupService, IBackupFotosService
 {
     private readonly AppPaths _paths;
     private readonly IBackupRegistroRepository _registros;
@@ -42,19 +42,102 @@ public class EfBackupService : IBackupService
         _limiteTotalRestauracaoBytes = limiteTotalRestauracaoFotosBytes;
     }
 
-    public Resultado<BackupRegistro> CriarBackupGerenciado() =>
-        CriarBackupInterno(_paths.BackupsDirectory, aplicarRetencao: true);
+    public Resultado<BackupRegistro> CriarBackupGerenciado()
+    {
+        var avisos = new List<string>();
+        PastasBackup pastas;
+        try { pastas = new PreferenciasBackup(_paths).Ler(); }
+        catch (Exception ex)
+        {
+            _logger?.Warning(ex, "Falha ao ler pastas de backup");
+            pastas = new();
+            avisos.Add("Não foi possível ler as pastas configuradas. Revise a configuração de backup.");
+        }
+        var local = _paths.BackupsDirectory;
+        if (!string.IsNullOrWhiteSpace(pastas.Local))
+        {
+            _pastasMascaradas?.Adicionar(PastasMascaradas.TokenPastaBackupExterna, pastas.Local);
+            try { local = PreferenciasBackup.ValidarPasta(pastas.Local); }
+            catch (Exception ex)
+            {
+                _logger?.Warning(ex, "Pasta local de backup indisponível");
+                avisos.Add("A pasta local escolhida está indisponível. A cópia foi salva na pasta padrão do Varthex.");
+            }
+        }
+        var resultado = CriarBackupInterno(local, aplicarRetencao: true, out var fotos);
+        if (!resultado.Sucesso) return resultado;
+        if (!string.IsNullOrEmpty(resultado.Valor!.Mensagem)) avisos.Add(resultado.Valor.Mensagem);
+        foreach (var (nome, raiz) in new[] { ("Google Drive", pastas.GoogleDrive), ("Dropbox", pastas.Dropbox) })
+        {
+            if (string.IsNullOrWhiteSpace(raiz)) continue;
+            _pastasMascaradas?.Adicionar(PastasMascaradas.TokenPastaBackupExterna, raiz);
+            try { CopiarParaPastaSincronizada(resultado.Valor!, raiz, fotos.Arquivo); }
+            catch (Exception ex)
+            {
+                _logger?.Warning(ex, "Falha ao copiar backup para {Servico}", nome);
+                avisos.Add($"A cópia para {nome} falhou. Verifique se a pasta está disponível e tente novamente. O backup local foi preservado.");
+            }
+        }
+        if (avisos.Count > 0) resultado.Valor!.Mensagem = string.Join(" ", avisos);
+        return resultado;
+    }
+
+    private void CopiarParaPastaSincronizada(BackupRegistro registro, string raiz, string? fotos)
+    {
+        PreferenciasBackup.ValidarPasta(raiz);
+        var pasta = PreferenciasBackup.DestinoSincronizado(raiz);
+        _pastasMascaradas?.Adicionar(PastasMascaradas.TokenPastaBackupExterna, pasta);
+        Directory.CreateDirectory(pasta);
+        var origem = Path.Combine(registro.Destino, registro.Arquivo);
+        if (string.Equals(Path.GetFullPath(pasta), Path.GetFullPath(registro.Destino), StringComparison.OrdinalIgnoreCase)) return;
+        var destino = Path.Combine(pasta, registro.Arquivo);
+        for (var n = 1; File.Exists(destino); n++)
+            destino = Path.Combine(pasta, Path.GetFileNameWithoutExtension(registro.Arquivo) + $"-copia{n}.db");
+        var temporarios = new List<string>();
+        var publicados = new List<string>();
+        try
+        {
+            void Preparar(string fonte, string alvo)
+            {
+                var temp = alvo + "." + Guid.NewGuid().ToString("N") + ".tmp";
+                temporarios.Add(temp);
+                File.Copy(fonte, temp);
+                if (CalcularChecksumSha256(fonte) != CalcularChecksumSha256(temp))
+                    throw new IOException("A cópia não passou na verificação de integridade.");
+            }
+            Preparar(origem, destino);
+            Preparar(origem + ".sha256", destino + ".sha256");
+            if (fotos is not null) Preparar(fotos, destino + SufixoZipDeFotos);
+            // Publica o banco por último: um arquivo .db visível já tem os acompanhantes completos.
+            for (var i = temporarios.Count - 1; i >= 0; i--)
+            {
+                var alvo = i == 0 ? destino : i == 1 ? destino + ".sha256" : destino + SufixoZipDeFotos;
+                File.Move(temporarios[i], alvo);
+                publicados.Add(alvo);
+            }
+        }
+        catch
+        {
+            foreach (var arquivo in publicados) { try { File.Delete(arquivo); } catch { } }
+            throw;
+        }
+        finally
+        {
+            foreach (var arquivo in temporarios) { try { File.Delete(arquivo); } catch { } }
+        }
+    }
 
     public Resultado<BackupRegistro> CriarBackupExterno(string pastaExterna)
     {
         // RF26: a pasta externa e conhecida so em tempo de execucao; registra-se ANTES de usa-la para
         // que mensagens de erro contendo o caminho sejam mascaradas no log.
         _pastasMascaradas?.Adicionar(PastasMascaradas.TokenPastaBackupExterna, pastaExterna);
-        return CriarBackupInterno(pastaExterna, aplicarRetencao: false);
+        return CriarBackupInterno(pastaExterna, aplicarRetencao: false, out _);
     }
 
-    private Resultado<BackupRegistro> CriarBackupInterno(string pastaDestino, bool aplicarRetencao)
+    private Resultado<BackupRegistro> CriarBackupInterno(string pastaDestino, bool aplicarRetencao, out EstadoFotos fotos)
     {
+        fotos = new(null, true);
         var agora = _relogio.UtcNow;
         LimparZipsTemporariosAntigos(pastaDestino);
         var nomeArquivo = $"varthex-comanda-{agora:yyyy-MM-dd-HHmmss}.db";
@@ -130,7 +213,9 @@ public class EfBackupService : IBackupService
 
             // as fotos entram DEPOIS de o .db estar no lugar e registrado: qualquer falha ao zipar e so
             // registrada em log e nunca afeta o resultado do backup do banco
-            ZiparFotosDoBackup(destinoFinal + SufixoZipDeFotos, pastaDestino);
+            fotos = ZiparFotosDoBackup(destinoFinal + SufixoZipDeFotos, pastaDestino);
+            if (!fotos.Completo)
+                registro.Mensagem = "Backup dos dados criado, mas algumas fotos não puderam ser incluídas. Feche os arquivos em uso e faça outro backup. As cópias nas pastas da nuvem também podem estar sem essas fotos.";
 
             // a limpeza e "melhor esforco": falhar aqui nunca transforma um backup gravado em Falha
             if (aplicarRetencao)
@@ -351,6 +436,7 @@ public class EfBackupService : IBackupService
     private static bool EhArquivoDeFoto(string nome) => ArquivoFotoStorage.ExtensaoPermitida(nome);
 
     private readonly record struct FotoParaZip(string Caminho, string Nome, long Tamanho, long TicksDeEscrita);
+    private readonly record struct EstadoFotos(string? Arquivo, bool Completo);
 
     /// <summary>SHA-256 da lista ordenada (nome, tamanho, ultima escrita UTC) das fotos: identifica o conjunto.</summary>
     private static string ImpressaoDigitalDasFotos(IEnumerable<FotoParaZip> fotos)
@@ -390,14 +476,14 @@ public class EfBackupService : IBackupService
     /// puder; se nenhuma entrar, nao ha zip. O zip nasce como .tmp e so recebe o nome final quando completo.
     /// Nunca lanca: falhas viram Warning e o backup do banco segue valido.
     /// </summary>
-    private void ZiparFotosDoBackup(string caminhoZip, string pastaDestino)
+    private EstadoFotos ZiparFotosDoBackup(string caminhoZip, string pastaDestino)
     {
         var temporario = caminhoZip + ".tmp";
         try
         {
             if (!Directory.Exists(_paths.FotosDirectory))
             {
-                return;
+                return new(null, true);
             }
 
             var fotos = Directory.GetFiles(_paths.FotosDirectory)
@@ -410,14 +496,14 @@ public class EfBackupService : IBackupService
                 .ToList();
             if (fotos.Count == 0)
             {
-                return;
+                return new(null, true);
             }
 
             var impressaoDigital = ImpressaoDigitalDasFotos(fotos);
             var maisRecente = ListarZipsDeFotos(pastaDestino).FirstOrDefault();
             if (maisRecente is not null && LerManifesto(maisRecente) == impressaoDigital)
             {
-                return; // conjunto inalterado: o zip mais recente ja o contem
+                return new(maisRecente, true); // reutiliza somente depois de conferir o manifesto atual
             }
 
             var adicionadas = new List<FotoParaZip>();
@@ -460,10 +546,11 @@ public class EfBackupService : IBackupService
             if (adicionadas.Count == 0)
             {
                 File.Delete(temporario);
-                return;
+                return new(null, false);
             }
 
             File.Move(temporario, caminhoZip, overwrite: true);
+            return new(caminhoZip, adicionadas.Count == fotos.Count);
         }
         catch (Exception ex)
         {
@@ -479,6 +566,7 @@ public class EfBackupService : IBackupService
             {
                 _logger?.Warning(exLimpeza, "Falha em {Operacao}", "LimparZipTemporarioDeFotos");
             }
+            return new(null, false);
         }
     }
 
@@ -556,6 +644,77 @@ public class EfBackupService : IBackupService
     /// declarado acima de 10 MB são ignoradas, no máximo 5000 entradas são lidas e o total extraído para no
     /// limite configurado (2 GB). Nunca lança.
     /// </summary>
+    public Resultado<FotosRestauradas> RestaurarFotos(string arquivoZip)
+    {
+        var temporario = Path.Combine(_paths.Root, "fotos-restauracao-" + Guid.NewGuid().ToString("N"));
+        try
+        {
+            Directory.CreateDirectory(temporario);
+            using (var zip = ZipFile.OpenRead(arquivoZip))
+            {
+                if (zip.Entries.Count > MaximoEntradasNoZipDeFotos)
+                    throw new IOException("O arquivo excede o limite de 5.000 entradas.");
+                long total = 0;
+                foreach (var entrada in zip.Entries)
+                {
+                    if (entrada.Name == NomeDoManifesto) continue;
+                    var nome = entrada.FullName;
+                    if (nome != Path.GetFileName(nome) || nome.Contains('/') || nome.Contains('\\') ||
+                        nome.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0 || !EhArquivoDeFoto(nome))
+                        throw new IOException("O arquivo contém entradas que não são fotos válidas do Varthex.");
+                    if (entrada.Length > TamanhoMaximoFotoBytes)
+                        throw new IOException("Uma das fotos excede o limite de 10 MB.");
+                    using var origem = entrada.Open();
+                    using var destino = new FileStream(Path.Combine(temporario, nome), FileMode.CreateNew);
+                    var buffer = new byte[81920];
+                    long tamanho = 0;
+                    int lidos;
+                    while ((lidos = origem.Read(buffer, 0, buffer.Length)) > 0)
+                    {
+                        tamanho += lidos; total += lidos;
+                        if (tamanho > TamanhoMaximoFotoBytes || total > _limiteTotalRestauracaoBytes)
+                            throw new IOException("O arquivo excede os limites de tamanho permitidos para restauração.");
+                        destino.Write(buffer, 0, lidos);
+                    }
+                }
+            }
+            var fotos = Directory.GetFiles(temporario);
+            if (fotos.Length == 0) return Resultado<FotosRestauradas>.Falha("Nenhuma foto encontrada no arquivo selecionado.");
+            Directory.CreateDirectory(_paths.FotosDirectory);
+            Directory.CreateDirectory(_paths.BackupsDirectory);
+            // Só altera fotos depois de ler o ZIP inteiro e guardar as fotos atuais.
+            var preventivo = Path.Combine(_paths.BackupsDirectory, $"fotos-antes-restauracao-{Guid.NewGuid():N}.fotos.zip");
+            ZipFile.CreateFromDirectory(_paths.FotosDirectory, preventivo, CompressionLevel.Fastest, false);
+            try
+            {
+                foreach (var foto in fotos)
+                    File.Copy(foto, Path.Combine(_paths.FotosDirectory, Path.GetFileName(foto)), overwrite: true);
+            }
+            catch
+            {
+                using var anterior = ZipFile.OpenRead(preventivo);
+                foreach (var foto in fotos)
+                {
+                    var nome = Path.GetFileName(foto);
+                    var entrada = anterior.GetEntry(nome);
+                    if (entrada is null) File.Delete(Path.Combine(_paths.FotosDirectory, nome));
+                    else entrada.ExtractToFile(Path.Combine(_paths.FotosDirectory, nome), overwrite: true);
+                }
+                throw;
+            }
+            return Resultado<FotosRestauradas>.Ok(new(fotos.Length));
+        }
+        catch (Exception ex)
+        {
+            _logger?.Warning(ex, "Falha ao restaurar fotos");
+            return Resultado<FotosRestauradas>.Falha("Não foi possível restaurar as fotos: " + ex.Message);
+        }
+        finally
+        {
+            try { if (Directory.Exists(temporario)) Directory.Delete(temporario, recursive: true); } catch { }
+        }
+    }
+
     private void RestaurarFotosDoBackup(string? caminhoZip)
     {
         try
