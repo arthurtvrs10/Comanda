@@ -16,7 +16,7 @@ public class AlterarProduto
         _relogio = relogio;
     }
 
-    public Resultado<Produto> Executar(int id, string nome, int categoriaId, long precoCentavos, bool ativo)
+    public Resultado<Produto> Executar(int id, string nome, int categoriaId, long precoCentavos, bool ativo,DetalhesProduto? detalhes=null)
     {
         var produto = _produtos.BuscarPorId(id);
         if (produto is null)
@@ -39,11 +39,15 @@ public class AlterarProduto
             return Resultado<Produto>.Falha("Selecione uma categoria ativa.");
         }
 
+        if(detalhes?.Validar() is string erro)return Resultado<Produto>.Falha(erro);
+        if(!string.IsNullOrWhiteSpace(detalhes?.CodigoPersonalizado)&&_produtos.CodigoEmUso(detalhes.CodigoPersonalizado.Trim(),id))return Resultado<Produto>.Falha("Já existe um produto com este código personalizado.");
+        detalhes?.Aplicar(produto);
         produto.Nome = nomeNormalizado;
         produto.CategoriaId = categoriaId;
         produto.PrecoCentavos = precoCentavos;
         produto.Ativo = ativo;
         produto.AtualizadoEm = _relogio.UtcNow;
-        return Resultado<Produto>.Ok(_produtos.Salvar(produto));
+        try { return Resultado<Produto>.Ok(_produtos.Salvar(produto)); }
+        catch(CodigoProdutoDuplicadoException ex){return Resultado<Produto>.Falha(ex.Message);}
     }
 }

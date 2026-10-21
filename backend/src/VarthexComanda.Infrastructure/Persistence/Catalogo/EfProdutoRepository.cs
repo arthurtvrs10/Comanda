@@ -32,7 +32,7 @@ public class EfProdutoRepository : IProdutoRepository
         if (!string.IsNullOrWhiteSpace(texto))
         {
             var textoBusca = texto.Trim().ToLower();
-            consulta = consulta.Where(p => p.Nome.ToLower().Contains(textoBusca));
+            consulta = consulta.Where(p => p.Nome.ToLower().Contains(textoBusca)||(p.CodigoPersonalizado!=null&&p.CodigoPersonalizado.ToLower().Contains(textoBusca)));
         }
 
         return consulta.OrderBy(p => p.Nome).ToList();
@@ -59,7 +59,14 @@ public class EfProdutoRepository : IProdutoRepository
         {
             contexto.Produtos.Update(produto);
         }
-        contexto.SaveChanges();
+        try { contexto.SaveChanges(); }
+        catch(DbUpdateException ex) when(ex.InnerException is Microsoft.Data.Sqlite.SqliteException { SqliteExtendedErrorCode:2067 }&&!string.IsNullOrEmpty(produto.CodigoPersonalizado))
+        { throw new CodigoProdutoDuplicadoException(); }
         return produto;
+    }
+    public bool CodigoEmUso(string codigo,int? excetoId=null)
+    {
+        using var contexto=_fabricaContexto.CreateDbContext();
+        return contexto.Produtos.Any(p=>p.CodigoPersonalizado==codigo&&(excetoId==null||p.Id!=excetoId));
     }
 }

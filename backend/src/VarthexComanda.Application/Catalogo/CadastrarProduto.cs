@@ -16,7 +16,7 @@ public class CadastrarProduto
         _relogio = relogio;
     }
 
-    public Resultado<Produto> Executar(string nome, int categoriaId, long precoCentavos)
+    public Resultado<Produto> Executar(string nome, int categoriaId, long precoCentavos,DetalhesProduto? detalhes=null,bool ativo=true)
     {
         var nomeNormalizado = (nome ?? string.Empty).Trim();
         if (nomeNormalizado.Length == 0)
@@ -33,6 +33,8 @@ public class CadastrarProduto
             return Resultado<Produto>.Falha("Selecione uma categoria ativa.");
         }
 
+        if(detalhes?.Validar() is string erro)return Resultado<Produto>.Falha(erro);
+        if(!string.IsNullOrWhiteSpace(detalhes?.CodigoPersonalizado)&&_produtos.CodigoEmUso(detalhes.CodigoPersonalizado.Trim()))return Resultado<Produto>.Falha("Já existe um produto com este código personalizado.");
         var agora = _relogio.UtcNow;
         var produto = new Produto
         {
@@ -40,10 +42,12 @@ public class CadastrarProduto
             CategoriaId = categoriaId,
             Nome = nomeNormalizado,
             PrecoCentavos = precoCentavos,
-            Ativo = true,
+            Ativo = ativo,
             CriadoEm = agora,
             AtualizadoEm = agora
         };
-        return Resultado<Produto>.Ok(_produtos.Salvar(produto));
+        detalhes?.Aplicar(produto);
+        try { return Resultado<Produto>.Ok(_produtos.Salvar(produto)); }
+        catch(CodigoProdutoDuplicadoException ex){return Resultado<Produto>.Falha(ex.Message);}
     }
 }

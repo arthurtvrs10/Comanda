@@ -19,7 +19,7 @@ public class FakeProdutoRepository : IProdutoRepository
         }
         if (!string.IsNullOrWhiteSpace(texto))
         {
-            consulta = consulta.Where(p => p.Nome.Contains(texto, StringComparison.OrdinalIgnoreCase));
+            consulta = consulta.Where(p => p.Nome.Contains(texto, StringComparison.OrdinalIgnoreCase)||(p.CodigoPersonalizado?.Contains(texto,StringComparison.OrdinalIgnoreCase)??false));
         }
         return consulta.ToList();
     }

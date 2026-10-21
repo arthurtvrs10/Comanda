@@ -10,6 +10,16 @@ namespace VarthexComanda.Infrastructure.Tests.Catalogo;
 
 public class EfProdutoRepositoryTests : IDisposable
 {
+    [Fact]
+    public void DetalhesPersistemBuscaPorCodigoERestringeDuplicidade()
+    {
+        var repo=new EfProdutoRepository(_fabrica);var agora=DateTime.UtcNow;
+        var p=repo.Salvar(new Produto { Id=0,CategoriaId=_categoriaId,Nome="Refeição",PrecoCentavos=2500,CustoCentavos=1200,Descricao="Prato do dia",CodigoPersonalizado="REF-01",Ativo=true,CriadoEm=agora,AtualizadoEm=agora });
+        var salvo=repo.BuscarPorId(p.Id)!;Assert.Equal(1200,salvo.CustoCentavos);Assert.Equal("Prato do dia",salvo.Descricao);Assert.Equal("REF-01",salvo.CodigoPersonalizado);
+        Assert.Equal(p.Id,Assert.Single(repo.Pesquisar(null,"ref-01")).Id);
+        Assert.Throws<VarthexComanda.Application.Catalogo.CodigoProdutoDuplicadoException>(()=>repo.Salvar(new Produto { Id=0,CategoriaId=_categoriaId,Nome="Outro",PrecoCentavos=100,CodigoPersonalizado="ref-01",Ativo=true,CriadoEm=agora,AtualizadoEm=agora }));
+        Assert.Single(repo.Pesquisar(null,null));
+    }
     private readonly string _dbPath;
     private readonly ServiceProvider _provedor;
     private readonly IDbContextFactory<VarthexComandaDbContext> _fabrica;

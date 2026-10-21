@@ -10,4 +10,7 @@ public class Produto
     public required DateTime CriadoEm { get; set; }
     public required DateTime AtualizadoEm { get; set; }
     public string? FotoArquivo { get; set; }
+    public long CustoCentavos { get; set; }
+    public string? Descricao { get; set; }
+    public string? CodigoPersonalizado { get; set; }
 }
