@@ -59,7 +59,7 @@
             </Style></CheckBox.Style>
         </CheckBox>
         <TextBlock Text="Tab: navegar · 1–4: forma · Espaço: recebido · Enter: confirmar · Esc: voltar" FontSize="12" Foreground="{DynamicResource Text596D61}" TextWrapping="Wrap" Margin="0,0,0,12" />
-        <TextBlock Text="{Binding Mensagem}" Foreground="Red" TextWrapping="Wrap" Margin="0,0,0,12" />
+        <TextBlock Text="{Binding Mensagem}" Foreground="{DynamicResource TextB71C1C}" TextWrapping="Wrap" Margin="0,0,0,12" />
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
             <Button x:Name="BotaoVoltar" Content="Voltar" IsCancel="True" Command="{Binding VoltarCommand}" Height="56" FontSize="16" Padding="18,0" Margin="0,0,8,0" />

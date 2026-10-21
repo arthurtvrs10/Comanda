@@ -36,7 +36,7 @@
         <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,0,0,8">
             <TextBlock Text="Buscar comanda nº:" VerticalAlignment="Center" Margin="0,0,4,0" />
             <TextBox x:Name="CampoBuscaNumero" Width="120" ToolTip="Buscar comanda (Ctrl+F)" Text="{Binding TextoBuscaNumero, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,16,0" />
-            <TextBlock Text="{Binding Mensagem}" Foreground="Red" VerticalAlignment="Center" />
+            <TextBlock Text="{Binding Mensagem}" Foreground="{DynamicResource TextB71C1C}" VerticalAlignment="Center" />
         </StackPanel>
 
         <Grid Grid.Row="3">
@@ -49,12 +49,12 @@
             <StackPanel Grid.Column="0">
                 <TextBlock Text="{Binding MensagemListaVazia}"
                            Visibility="{Binding QuantidadeExibida, Converter={StaticResource VisivelSeVazio}}"
-                           Foreground="Gray" Margin="0,12,0,0" />
+                           Foreground="{DynamicResource Text52675A}" Margin="0,12,0,0" />
                 <ListView ItemsSource="{Binding Vendas}"
                           SelectedItem="{Binding VendaSelecionada}"
                           Visibility="{Binding QuantidadeExibida, Converter={StaticResource VisivelSePreenchido}}">
                     <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem">
+                        <Style TargetType="ListViewItem" BasedOn="{StaticResource {x:Type ListViewItem}}">
                             <Setter Property="MinHeight" Value="40" />
                             <Setter Property="VerticalContentAlignment" Value="Center" />
                         </Style>

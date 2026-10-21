@@ -71,6 +71,7 @@ public sealed class JanelaConfiguracoesSistema : Window
         {
             var estilo=new Style(tipo,System.Windows.Application.Current.TryFindResource(tipo) as Style);
             estilo.Setters.Add(new Setter(Control.FontSizeProperty,12.0));
+            estilo.Setters.Add(new Setter(Control.VerticalContentAlignmentProperty,VerticalAlignment.Center));
             estilo.Setters.Add(new Setter(FrameworkElement.MinHeightProperty,tipo==typeof(CheckBox)||tipo==typeof(RadioButton)?24.0:28.0));
             estilo.Setters.Add(new Setter(Control.PaddingProperty,tipo==typeof(Button)?new Thickness(12,5,12,5):new Thickness(5,3,5,3)));
             janela.Resources[tipo]=estilo;
@@ -193,7 +194,7 @@ public sealed class JanelaConfiguracoesSistema : Window
     {
         var barra=new StackPanel { Orientation=Orientation.Horizontal,HorizontalAlignment=HorizontalAlignment.Right,Margin=new Thickness(0,0,0,12) };_form.Children.Add(barra);
         var lista=new ListView { ItemsSource=_prefs.OrigensCliente,MinHeight=260,SelectionMode=SelectionMode.Single };var vista=new GridView();var coluna=new GridViewColumn { Header="Origens",Width=650,DisplayMemberBinding=new System.Windows.Data.Binding(".") };vista.Columns.Add(coluna);lista.View=vista;lista.SizeChanged+=(_,_)=>coluna.Width=Math.Max(100,lista.ActualWidth-30);
-        var estilo=new Style(typeof(ListViewItem));estilo.Setters.Add(new Setter(Control.PaddingProperty,new Thickness(6,4,6,4)));estilo.Setters.Add(new Setter(Control.HorizontalContentAlignmentProperty,HorizontalAlignment.Stretch));estilo.Setters.Add(new Setter(Control.BorderThicknessProperty,new Thickness(0,0,0,1)));estilo.Setters.Add(new Setter(Control.BorderBrushProperty,new DynamicResourceExtension("Line")));lista.ItemContainerStyle=estilo;
+        var estilo=new Style(typeof(ListViewItem),System.Windows.Application.Current.TryFindResource(typeof(ListViewItem)) as Style);estilo.Setters.Add(new Setter(Control.PaddingProperty,new Thickness(6,4,6,4)));estilo.Setters.Add(new Setter(Control.HorizontalContentAlignmentProperty,HorizontalAlignment.Stretch));estilo.Setters.Add(new Setter(Control.BorderThicknessProperty,new Thickness(0,0,0,1)));estilo.Setters.Add(new Setter(Control.BorderBrushProperty,new DynamicResourceExtension("Line")));lista.ItemContainerStyle=estilo;
         void Editar(int indice)
         {
             var janela=new Window { Title=indice<0?"Nova origem de cliente":"Editar origem de cliente",Owner=this,Width=460,Height=220,ResizeMode=ResizeMode.NoResize,WindowStartupLocation=WindowStartupLocation.CenterOwner,ShowInTaskbar=false };janela.SetResourceReference(BackgroundProperty,"Canvas");
