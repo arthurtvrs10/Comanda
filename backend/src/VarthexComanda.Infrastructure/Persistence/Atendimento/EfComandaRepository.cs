@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using VarthexComanda.Application.Atendimento;
+using VarthexComanda.Application.Configuracao;
 using VarthexComanda.Domain;
 
 namespace VarthexComanda.Infrastructure.Persistence.Atendimento;
@@ -11,6 +12,12 @@ public class EfComandaRepository : IComandaRepository
     public EfComandaRepository(IDbContextFactory<VarthexComandaDbContext> fabricaContexto)
     {
         _fabricaContexto = fabricaContexto;
+    }
+
+    public long ObterMaiorCodigoPedido()
+    {
+        using var contexto = _fabricaContexto.CreateDbContext();
+        return contexto.Comandas.Max(c => c.CodigoPedido) ?? 0;
     }
 
     public IReadOnlyList<Comanda> ListarAbertas()
@@ -41,10 +48,32 @@ public class EfComandaRepository : IComandaRepository
     public Comanda AbrirComanda(int numero, DateTime agora)
     {
         using var contexto = _fabricaContexto.CreateDbContext();
+        using var transacao = contexto.Database.BeginTransaction();
+        var configuracoes = contexto.Configuracoes.Where(c => c.Chave == NumeracaoPedidosService.ChaveAtiva
+            || c.Chave == NumeracaoPedidosService.ChaveInicio || c.Chave == NumeracaoPedidosService.ChaveUltimo).ToDictionary(c => c.Chave);
+        long? codigoPedido = null;
+        if (configuracoes.GetValueOrDefault(NumeracaoPedidosService.ChaveAtiva)?.Valor == "true")
+        {
+            var inicio = NumeracaoPedidosService.LerNumero(configuracoes.GetValueOrDefault(NumeracaoPedidosService.ChaveInicio)?.Valor, 100);
+            if (inicio < 1) throw new InvalidOperationException("O número inicial do pedido deve ser maior que zero.");
+            var ultimo = NumeracaoPedidosService.LerNumero(configuracoes.GetValueOrDefault(NumeracaoPedidosService.ChaveUltimo)?.Valor, 0);
+            var maior = contexto.Comandas.Max(c => c.CodigoPedido) ?? 0;
+            codigoPedido = Math.Max(inicio, Math.Max(ultimo, maior) + 1);
+            if (codigoPedido > NumeracaoPedidosService.LimiteNumero)
+                throw new InvalidOperationException("O limite da numeração de pedidos foi atingido. Desative a numeração personalizada para continuar.");
+            if (!configuracoes.TryGetValue(NumeracaoPedidosService.ChaveUltimo, out var contador))
+            {
+                contador = new VarthexComanda.Domain.Configuracao { Chave = NumeracaoPedidosService.ChaveUltimo, Valor = "0", AtualizadoEm = agora };
+                contexto.Configuracoes.Add(contador);
+            }
+            contador.Valor = codigoPedido.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            contador.AtualizadoEm = agora;
+        }
         var comanda = new Comanda
         {
             Id = 0,
             Numero = numero,
+            CodigoPedido = codigoPedido,
             Status = StatusComanda.Aberta,
             AbertaEm = agora,
             FechadaEm = null,
@@ -54,6 +83,7 @@ public class EfComandaRepository : IComandaRepository
         try
         {
             contexto.SaveChanges();
+            transacao.Commit();
         }
         catch (DbUpdateException)
         {

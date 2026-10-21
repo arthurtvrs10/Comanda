@@ -4,6 +4,7 @@ public class Comanda
 {
     public required int Id { get; set; }
     public required int Numero { get; set; }
+    public long? CodigoPedido { get; set; }
     public required StatusComanda Status { get; set; }
     public required DateTime AbertaEm { get; set; }
     public DateTime? FechadaEm { get; set; }

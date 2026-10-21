@@ -14,6 +14,54 @@ namespace VarthexComanda.Infrastructure.Tests.Atendimento;
 public class EfComandaRepositoryTests : IDisposable
 {
     [Fact]
+    public void NumeracaoPersonalizadaPersisteSemReutilizarCodigoAposCancelarOuReiniciar()
+    {
+        var repo = new EfComandaRepository(_fabrica);
+        var configRepo = new VarthexComanda.Infrastructure.Configuracao.EfConfiguracaoRepository(_fabrica);
+        var service = new VarthexComanda.Application.Configuracao.NumeracaoPedidosService(configRepo, repo.ObterMaiorCodigoPedido);
+        var semCodigo = repo.AbrirComanda(1, DateTime.UtcNow);
+        Assert.Null(semCodigo.CodigoPedido);
+        service.Salvar(new() { Ativa = true, Inicio = 100 }, DateTime.UtcNow);
+        var primeira = repo.AbrirComanda(2, DateTime.UtcNow);
+        Assert.Equal(100, primeira.CodigoPedido);
+        Assert.Equal(2, primeira.Numero);
+        repo.CancelarComanda(primeira.Id, DateTime.UtcNow);
+        service.Reiniciar(new() { Ativa = true, Inicio = 1 }, DateTime.UtcNow);
+        var segunda = new EfComandaRepository(_fabrica).AbrirComanda(2, DateTime.UtcNow);
+        Assert.Equal(101, segunda.CodigoPedido);
+        Assert.Equal(100, repo.BuscarComItens(primeira.Id)!.Comanda.CodigoPedido);
+        Assert.Null(repo.BuscarComItens(semCodigo.Id)!.Comanda.CodigoPedido);
+        Assert.Equal(101, service.Carregar().UltimoCriado);
+    }
+
+    [Fact]
+    public void FalhaAoAbrirNaoConsomeCodigoEAlterarInicioNaoRenumerarHistorico()
+    {
+        var repo = new EfComandaRepository(_fabrica);
+        var configRepo = new VarthexComanda.Infrastructure.Configuracao.EfConfiguracaoRepository(_fabrica);
+        var service = new VarthexComanda.Application.Configuracao.NumeracaoPedidosService(configRepo, repo.ObterMaiorCodigoPedido);
+        service.Salvar(new() { Ativa = true, Inicio = 100 }, DateTime.UtcNow);
+        var primeira = repo.AbrirComanda(1, DateTime.UtcNow);
+        Assert.Throws<VarthexComanda.Application.Atendimento.NumeroComandaOcupadoException>(() => repo.AbrirComanda(1, DateTime.UtcNow));
+        Assert.Equal(100, service.Carregar().UltimoCriado);
+        Assert.Equal(101, repo.AbrirComanda(2, DateTime.UtcNow).CodigoPedido);
+        service.Salvar(new() { Ativa = true, Inicio = 200 }, DateTime.UtcNow);
+        Assert.Equal(200, repo.AbrirComanda(3, DateTime.UtcNow).CodigoPedido);
+        service.Salvar(new() { Ativa = false, Inicio = 1 }, DateTime.UtcNow);
+        Assert.Null(repo.AbrirComanda(4, DateTime.UtcNow).CodigoPedido);
+        Assert.Equal(100, repo.BuscarComItens(primeira.Id)!.Comanda.CodigoPedido);
+    }
+
+    [Fact]
+    public async Task AberturasSimultaneasRecebemCodigosDistintos()
+    {
+        var configRepo = new VarthexComanda.Infrastructure.Configuracao.EfConfiguracaoRepository(_fabrica);
+        new VarthexComanda.Application.Configuracao.NumeracaoPedidosService(configRepo).Salvar(new() { Ativa = true, Inicio = 100 }, DateTime.UtcNow);
+        var codigos = await Task.WhenAll(Enumerable.Range(1, 8).Select(numero => Task.Run(() => new EfComandaRepository(_fabrica).AbrirComanda(numero, DateTime.UtcNow).CodigoPedido)));
+        Assert.Equal(Enumerable.Range(100, 8).Select(x => (long?)x), codigos.Order());
+    }
+
+    [Fact]
     public void OrigemClientePersisteENaoPodeSerAlteradaAposEncerramento()
     {
         var repo=new EfComandaRepository(_fabrica);var(produto,id)=PrepararComandaEProduto(repo);

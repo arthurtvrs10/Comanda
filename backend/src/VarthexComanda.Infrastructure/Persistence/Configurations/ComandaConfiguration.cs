@@ -11,6 +11,7 @@ public class ComandaConfiguration : IEntityTypeConfiguration<Comanda>
         builder.ToTable("comanda", t =>
         {
             t.HasCheckConstraint("CK_comanda_numero_positivo", "numero > 0");
+            t.HasCheckConstraint("CK_comanda_codigo_pedido_valido", "codigo_pedido IS NULL OR codigo_pedido BETWEEN 1 AND 999999999");
             t.HasCheckConstraint("CK_comanda_mesa_valida", "numero_mesa IS NULL OR numero_mesa BETWEEN 1 AND 999");
             t.HasCheckConstraint("CK_comanda_total_centavos_nao_negativo", "total_centavos >= 0");
             t.HasCheckConstraint(
@@ -22,6 +23,8 @@ public class ComandaConfiguration : IEntityTypeConfiguration<Comanda>
         builder.HasKey(c => c.Id);
         builder.Property(c => c.Id).HasColumnName("id");
         builder.Property(c => c.Numero).HasColumnName("numero").IsRequired();
+        builder.Property(c => c.CodigoPedido).HasColumnName("codigo_pedido");
+        builder.HasIndex(c => c.CodigoPedido).IsUnique().HasDatabaseName("uq_comanda_codigo_pedido").HasFilter("codigo_pedido IS NOT NULL");
         builder.Property(c => c.Status)
             .HasColumnName("status")
             .HasConversion(

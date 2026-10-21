@@ -4,6 +4,7 @@ namespace VarthexComanda.Application.Atendimento;
 
 public interface IComandaRepository
 {
+    long ObterMaiorCodigoPedido() => 0;
     IReadOnlyList<Comanda> ListarAbertas();
     ComandaComItens? BuscarComItens(int comandaId);
     Comanda AbrirComanda(int numero, DateTime agora);
