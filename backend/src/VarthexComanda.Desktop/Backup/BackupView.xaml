@@ -12,7 +12,7 @@
   <Style x:Key="Nota" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}"><Setter Property="Foreground" Value="{DynamicResource AjudaMuted}"/><Setter Property="LineHeight" Value="17"/></Style>
   <Style x:Key="Titulo" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}"><Setter Property="FontSize" Value="18"/><Setter Property="FontWeight" Value="SemiBold"/><Setter Property="Margin" Value="0,0,0,22"/></Style>
  </UserControl.Resources>
- <Grid><Grid x:Name="PaginaConfiguracao" Margin="18"><Grid.Style><Style TargetType="Grid"><Style.Triggers><DataTrigger Binding="{Binding ExibindoProgresso}" Value="True"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></Grid.Style>
+ <Grid><Grid x:Name="PaginaConfiguracao" Margin="18">
   <Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
   <ScrollViewer x:Name="RolagemBackup" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Padding="0,0,8,0">
    <StackPanel x:Name="CorpoBackup" MinWidth="680" Width="{Binding ViewportWidth, ElementName=RolagemBackup}" IsEnabled="{Binding PodeInteragir}">
@@ -89,32 +89,5 @@
    </Button>
   </Grid>
  </Grid>
- <Grid x:Name="PaginaProgresso" Margin="30,24,12,14">
-  <Grid.Style><Style TargetType="Grid"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding ExibindoProgresso}" Value="True"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></Grid.Style>
-  <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-  <StackPanel HorizontalAlignment="Center" Margin="0,0,0,16">
-   <Grid Height="24" Margin="0,0,0,7">
-    <StackPanel x:Name="PontosProgresso" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-     <StackPanel.Style><Style TargetType="StackPanel"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding EstadoProgresso}" Value="andamento"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></StackPanel.Style>
-     <Ellipse Width="6" Height="6" Fill="#6D2720" Margin="3,0"/><Ellipse Width="6" Height="6" Fill="#B94429" Margin="3,0"/><Ellipse Width="6" Height="6" Fill="#E98B42" Margin="3,0"/>
-    </StackPanel>
-    <Path Width="23" Height="23" Stretch="Uniform" StrokeThickness="2.2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" HorizontalAlignment="Center">
-     <Path.Style><Style TargetType="Path"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers>
-      <DataTrigger Binding="{Binding EstadoProgresso}" Value="sucesso"><Setter Property="Visibility" Value="Visible"/><Setter Property="Stroke" Value="#41A85F"/><Setter Property="Data" Value="M2,10 L8,16 L22,2"/></DataTrigger>
-      <DataTrigger Binding="{Binding EstadoProgresso}" Value="aviso"><Setter Property="Visibility" Value="Visible"/><Setter Property="Stroke" Value="{DynamicResource TextBF701F}"/><Setter Property="Data" Value="M12,1 L23,22 H1 Z M12,7 V14 M12,17 V18"/></DataTrigger>
-      <DataTrigger Binding="{Binding EstadoProgresso}" Value="falha"><Setter Property="Visibility" Value="Visible"/><Setter Property="Stroke" Value="{DynamicResource TextB71C1C}"/><Setter Property="Data" Value="M3,3 L21,21 M21,3 L3,21"/></DataTrigger>
-     </Style.Triggers></Style></Path.Style>
-    </Path>
-   </Grid>
-   <TextBlock Text="{Binding TituloProgresso}" TextAlignment="Center" AutomationProperties.LiveSetting="Polite"/>
-  </StackPanel>
-  <ScrollViewer x:Name="RolagemProgresso" Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="0,0,18,0" AutomationProperties.Name="Progresso do backup">
-   <ItemsControl ItemsSource="{Binding Progresso}"><ItemsControl.ItemTemplate><DataTemplate>
-    <TextBlock Text="{Binding Texto}" Margin="0,0,0,14" TextWrapping="Wrap" LineHeight="18"><TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Foreground" Value="{DynamicResource AjudaInk}"/><Style.Triggers><DataTrigger Binding="{Binding Aviso}" Value="True"><Setter Property="FontWeight" Value="SemiBold"/></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock>
-   </DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
-  </ScrollViewer>
-  <Button Grid.Row="2" HorizontalAlignment="Right" Margin="0,12,0,0" MinWidth="94" IsEnabled="{Binding PodeInteragir}" Click="VoltarProgresso_Click" ToolTip="Voltar às opções de backup após a conclusão">
-   <StackPanel Orientation="Horizontal"><Path Data="M10,1 L1,10 L10,19" Width="10" Height="18" Stretch="Uniform" Stroke="{DynamicResource AjudaMuted}" StrokeThickness="1.2" VerticalAlignment="Center" Margin="0,0,12,0"/><TextBlock Text="Voltar" VerticalAlignment="Center"/></StackPanel>
-  </Button>
- </Grid>
+
  </Grid></UserControl>

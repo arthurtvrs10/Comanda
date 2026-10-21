@@ -20,20 +20,16 @@ public partial class BackupView : UserControl
         IconeFotos.Content = IconesVarthex.Criar(IconeVarthex.Fotos, 24);
         IconeAlertaRestauracao.Content = IconesVarthex.Criar(IconeVarthex.Alerta, 24);
         ViewModel.SolicitouReinicio += ViewModel_SolicitouReinicio;
-        ViewModel.Progresso.CollectionChanged += (_, _) => Dispatcher.BeginInvoke(new Action(() => RolagemProgresso.ScrollToEnd()));
-        ViewModel.PropertyChanged += (_, e) =>
-        {
-            if (e.PropertyName != nameof(BackupViewModel.EmAndamento)) return;
-            if (ViewModel.EmAndamento && SystemParameters.ClientAreaAnimation)
-                PontosProgresso.BeginAnimation(OpacityProperty, new System.Windows.Media.Animation.DoubleAnimation(0.35, 1, TimeSpan.FromSeconds(0.65)) { AutoReverse = true, RepeatBehavior = System.Windows.Media.Animation.RepeatBehavior.Forever });
-            else PontosProgresso.BeginAnimation(OpacityProperty, null);
-        };
     }
 
-    private void VoltarProgresso_Click(object sender, RoutedEventArgs e) => ViewModel.VoltarConfiguracao();
+    public Task CriarBackupComProgressoAsync(string? pastaExterna = null)
+    {
+        if (!ViewModel.PodeCriarBackup) return Task.CompletedTask;
+        new JanelaProgressoBackup(ViewModel, pastaExterna) { Owner=Window.GetWindow(this) }.ShowDialog();
+        return Task.CompletedTask;
+    }
 
-    private async void CriarBackup_Click(object sender, RoutedEventArgs e) => await ViewModel.CriarBackupAsync();
-
+    private async void CriarBackup_Click(object sender, RoutedEventArgs e) => await CriarBackupComProgressoAsync();
     private void ConfigurarPasta_Click(object sender, RoutedEventArgs e)
     {
         var destino = (string)((Button)sender).Tag;

@@ -21,7 +21,7 @@ public class ProgressoBackupTests
     public async Task PaginaMostraEtapasReaisImpedeDuplicacaoEPermiteVoltarDepois(string estado, bool escuro)
     {
         using var servico = new BackupControlado(estado);
-        BackupViewModel vm = null!; BackupView view = null!; Task tarefa = Task.CompletedTask;
+        BackupViewModel vm = null!; JanelaProgressoBackup janela = null!; Task tarefa = Task.CompletedTask;
         try
         {
             ThreadingHelper.EmSta(() =>
@@ -29,19 +29,20 @@ public class ProgressoBackupTests
                 CarregamentoDeXamlTests.GarantirApp(); TemaInterface.Aplicar(escuro, false);
                 vm = new(new CriarBackupManual(servico), new RestaurarBackup(servico),
                     new ListarBackupsRecentes(new FakeBackupRegistroRepository()), new FakeConfirmadorDeBackup());
-                view = new(vm); tarefa = vm.CriarBackupAsync();
+                janela = new(vm) { ShowInTaskbar=false }; janela.Show();
             });
             Assert.True(await Task.Run(() => servico.Pronto.Wait(TimeSpan.FromSeconds(10))));
             ThreadingHelper.EmSta(() =>
             {
                 TemaInterface.Aplicar(escuro, false);
                 Assert.True(vm.ExibindoProgresso); Assert.True(vm.EmAndamento);
+                tarefa = janela.Operacao;
                 Assert.Equal(2, vm.Progresso.Count); Assert.False(vm.PodeInteragir);
                 vm.VoltarConfiguracao(); Assert.True(vm.ExibindoProgresso);
                 Assert.True(vm.CriarBackupAsync().IsCompletedSuccessfully); Assert.Equal(1, servico.Chamadas);
-                Renderizar(view, $"progresso-{estado}-{escuro}-andamento", estado == "sucesso");
-                Assert.Equal(Visibility.Collapsed, ((Grid)view.FindName("PaginaConfiguracao")).Visibility);
-                Assert.Equal(Visibility.Visible, ((Grid)view.FindName("PaginaProgresso")).Visibility);
+                janela.Close(); Assert.True(janela.IsVisible);
+                Assert.True(((ProgressBar)janela.Progresso.FindName("BarraBackup")).IsIndeterminate);
+                Renderizar(janela, $"progresso-{estado}-{escuro}-andamento", estado == "sucesso");
             });
             servico.Liberar.Set(); await tarefa.WaitAsync(TimeSpan.FromSeconds(10));
             ThreadingHelper.EmSta(() =>
@@ -50,9 +51,12 @@ public class ProgressoBackupTests
                 Assert.False(vm.EmAndamento); Assert.True(vm.ExibindoProgresso); Assert.Equal(estado, vm.EstadoProgresso);
                 Assert.Contains(vm.Progresso, p => p.Texto.Contains("Etapa final executada"));
                 Assert.Equal(estado != "sucesso", vm.MensagemErro);
-                Renderizar(view, $"progresso-{estado}-{escuro}-concluido", true);
-                vm.VoltarConfiguracao(); view.UpdateLayout(); Assert.False(vm.ExibindoProgresso);
-                Assert.Equal(Visibility.Visible, ((Grid)view.FindName("PaginaConfiguracao")).Visibility);
+                Assert.False(((ProgressBar)janela.Progresso.FindName("BarraBackup")).IsIndeterminate);
+                Assert.Equal(estado=="falha"?0:100,vm.ValorBarraProgresso);
+                Renderizar(janela, $"progresso-{estado}-{escuro}-concluido", true);
+                janela.Width=460;janela.Height=340;janela.UpdateLayout();
+                Renderizar(janela, $"progresso-{estado}-{escuro}-compacto", true);
+                janela.Close(); Assert.False(vm.ExibindoProgresso);
             });
         }
         finally
@@ -64,11 +68,11 @@ public class ProgressoBackupTests
 
     private static void Renderizar(FrameworkElement view, string nome, bool salvar)
     {
-        view.Measure(new Size(760, 460)); view.Arrange(new Rect(0, 0, 760, 460)); view.UpdateLayout();
+        view.UpdateLayout();
         var pasta = Environment.GetEnvironmentVariable("VARTHEX_PREVIAS_TESTE");
         if (!salvar || string.IsNullOrWhiteSpace(pasta)) return;
         Directory.CreateDirectory(pasta);
-        var bitmap = new RenderTargetBitmap(760, 460, 96, 96, PixelFormats.Pbgra32); bitmap.Render(view);
+        var bitmap = new RenderTargetBitmap((int)view.ActualWidth, (int)view.ActualHeight, 96, 96, PixelFormats.Pbgra32); bitmap.Render(view);
         var encoder = new PngBitmapEncoder(); encoder.Frames.Add(BitmapFrame.Create(bitmap));
         using var arquivo = File.Create(Path.Combine(pasta, nome + ".png")); encoder.Save(arquivo);
     }

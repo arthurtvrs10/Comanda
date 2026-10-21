@@ -425,7 +425,7 @@ public partial class MainWindow : Window
                 {
                     if (iniciou) return;
                     iniciou = true;
-                    await _backupView.ViewModel.CriarBackupAsync(_configuracaoView.ViewModel.PastaBackupExterna);
+                    await _backupView.CriarBackupComProgressoAsync(_configuracaoView.ViewModel.PastaBackupExterna);
                 };
             }
             try { janela.ShowDialog(); } finally { janela.Content=null; }

@@ -18,6 +18,8 @@ public partial class BackupViewModel : ObservableObject
     [ObservableProperty] private bool exibindoProgresso;
     [ObservableProperty] private string tituloProgresso = "Aguarde, fazendo o backup…";
     [ObservableProperty] private string estadoProgresso = "andamento";
+    public double ValorBarraProgresso => EstadoProgresso is "sucesso" or "aviso" ? 100 : 0;
+    partial void OnEstadoProgressoChanged(string value) => OnPropertyChanged(nameof(ValorBarraProgresso));
     private readonly CriarBackupManual _criarBackupManual;
     private readonly RestaurarBackup _restaurarBackup;
     private readonly ListarBackupsRecentes _listarBackupsRecentes;
