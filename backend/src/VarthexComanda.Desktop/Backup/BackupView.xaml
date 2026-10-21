@@ -1,49 +1,99 @@
 <UserControl x:Class="VarthexComanda.Desktop.Backup.BackupView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:local="clr-namespace:VarthexComanda.Desktop.Backup"
-             mc:Ignorable="d">
-    <UserControl.Resources>
-        <local:UtcParaDataHoraLocalConverter x:Key="DataHora" />
-    </UserControl.Resources>
-    <Grid Margin="12">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-
-        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,12">
-            <Button Content="Criar backup agora" Padding="18,0" Height="56" FontSize="16" Margin="0,0,8,0" Command="{Binding CriarBackupCommand}" />
-            <Button Content="Escolher pasta externa e criar backup..." Padding="18,0" Height="56" FontSize="16" Click="EscolherPastaExterna_Click" IsEnabled="{Binding PodeCriarBackup}" />
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:local="clr-namespace:VarthexComanda.Desktop.Backup"
+ Background="{DynamicResource AjudaCanvas}" Foreground="{DynamicResource AjudaInk}" FontFamily="Segoe UI" FontSize="12">
+ <UserControl.Resources>
+  <local:UtcParaDataHoraLocalConverter x:Key="DataHora"/>
+  <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+   <Setter Property="MinHeight" Value="36"/><Setter Property="FontSize" Value="12"/><Setter Property="Padding" Value="12,7"/>
+   <Setter Property="Foreground" Value="{DynamicResource AjudaInk}"/><Setter Property="Background" Value="{DynamicResource AjudaSurface}"/><Setter Property="BorderBrush" Value="{DynamicResource AjudaLine}"/>
+   <Setter Property="HorizontalContentAlignment" Value="Center"/><Setter Property="VerticalContentAlignment" Value="Center"/>
+  </Style>
+  <Style TargetType="TextBlock"><Setter Property="TextWrapping" Value="Wrap"/></Style>
+  <Style x:Key="Nota" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}"><Setter Property="Foreground" Value="{DynamicResource AjudaMuted}"/><Setter Property="LineHeight" Value="17"/></Style>
+  <Style x:Key="Titulo" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}"><Setter Property="FontSize" Value="18"/><Setter Property="FontWeight" Value="SemiBold"/><Setter Property="Margin" Value="0,0,0,22"/></Style>
+ </UserControl.Resources>
+ <Grid Margin="18">
+  <Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+  <ScrollViewer x:Name="RolagemBackup" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Padding="0,0,8,0">
+   <StackPanel x:Name="CorpoBackup" MinWidth="680" Width="{Binding ViewportWidth, ElementName=RolagemBackup}" IsEnabled="{Binding PodeInteragir}">
+    <Grid Margin="0,0,0,22">
+     <Grid.ColumnDefinitions><ColumnDefinition Width="2*"/><ColumnDefinition Width="28"/><ColumnDefinition Width="1"/><ColumnDefinition Width="22"/><ColumnDefinition Width="*" MinWidth="240"/></Grid.ColumnDefinitions>
+     <StackPanel Grid.Column="0">
+      <TextBlock Text="Configurar backup" Style="{StaticResource Titulo}"/>
+      <TextBlock Text="Backups automáticos neste computador" FontWeight="SemiBold" Margin="0,0,0,5"/>
+      <TextBlock Text="Pasta onde os backups locais são guardados:" Style="{StaticResource Nota}" Margin="0,0,0,8"/>
+      <Grid IsEnabled="{Binding PodeCriarBackup}" Margin="0,0,0,7">
+       <Grid.ColumnDefinitions><ColumnDefinition Width="32"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+       <ContentControl x:Name="IconePasta" VerticalAlignment="Center"/>
+       <TextBox Grid.Column="1" Text="{Binding PastaLocal, Mode=OneWay}" ToolTip="{Binding PastaLocal}" IsReadOnly="True" VerticalContentAlignment="Center" MinHeight="36" FontSize="12" Padding="7,4" Margin="0,0,8,0" Background="{DynamicResource AjudaSurface}" Foreground="{DynamicResource AjudaInk}" BorderBrush="{DynamicResource AjudaLine}" AutomationProperties.Name="Pasta de backup local"/>
+       <Button Grid.Column="2" Content="Alterar pasta" Tag="local" Click="ConfigurarPasta_Click"/>
+      </Grid>
+      <TextBlock Text="{Binding ResumoPastas}" Style="{StaticResource Nota}" Margin="0,0,0,26"/>
+      <TextBlock Text="Backups nas pastas da nuvem" FontWeight="SemiBold" Margin="0,0,0,5"/>
+      <TextBlock Text="Selecione uma pasta já sincronizada pelo Google Drive ou Dropbox neste computador." Style="{StaticResource Nota}" Margin="0,0,0,12"/>
+      <Grid IsEnabled="{Binding PodeCriarBackup}">
+       <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="12"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+       <Border BorderBrush="{DynamicResource AjudaLine}" BorderThickness="1" Padding="14">
+        <StackPanel>
+         <ContentControl x:Name="IconeDrive" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+         <TextBlock Text="Google Drive" FontWeight="SemiBold" TextAlignment="Center" Margin="0,0,0,8"/>
+         <TextBlock Text="{Binding PastaGoogleDrive}" ToolTip="{Binding PastaGoogleDrive}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" Style="{StaticResource Nota}" Margin="0,0,0,6"/>
+         <TextBlock Text="{Binding StatusGoogleDrive}" Style="{StaticResource Nota}" MinHeight="34" Margin="0,0,0,12"/>
+         <Button Content="Configurar" Tag="drive" Click="ConfigurarPasta_Click" AutomationProperties.Name="Configurar Google Drive"/>
+         <Button Content="Desconectar pasta" Tag="drive" Click="DesconectarPasta_Click" Margin="0,6,0,0" MinHeight="28"><Button.Style><Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding GoogleDriveConfigurado}" Value="True"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></Button.Style></Button>
         </StackPanel>
-
-        <ListView Grid.Row="1" ItemsSource="{Binding Backups}" SelectedItem="{Binding BackupSelecionado}">
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem" BasedOn="{StaticResource {x:Type ListViewItem}}">
-                    <Setter Property="MinHeight" Value="40" />
-                    <Setter Property="VerticalContentAlignment" Value="Center" />
-                </Style>
-            </ListView.ItemContainerStyle>
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="Arquivo" DisplayMemberBinding="{Binding Arquivo}" Width="220" />
-                    <GridViewColumn Header="Destino" DisplayMemberBinding="{Binding Destino}" Width="180" />
-                    <GridViewColumn Header="Data" DisplayMemberBinding="{Binding CriadoEm, Converter={StaticResource DataHora}}" Width="140" />
-                    <GridViewColumn Header="Status" DisplayMemberBinding="{Binding Status}" Width="80" />
-                    <GridViewColumn Header="Checksum" DisplayMemberBinding="{Binding Checksum}" Width="220" />
-                </GridView>
-            </ListView.View>
-        </ListView>
-
-        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,12,0,0">
-            <Button Content="Restaurar backup selecionado" Padding="18,0" Height="56" FontSize="16" Margin="0,0,8,0" Command="{Binding RestaurarCommand}" />
-            <Button Content="Selecionar arquivo..." Padding="18,0" Height="56" FontSize="16" Click="SelecionarArquivo_Click" />
+       </Border>
+       <Border Grid.Column="2" BorderBrush="{DynamicResource AjudaLine}" BorderThickness="1" Padding="14">
+        <StackPanel>
+         <ContentControl x:Name="IconeDropbox" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+         <TextBlock Text="Dropbox" FontWeight="SemiBold" TextAlignment="Center" Margin="0,0,0,8"/>
+         <TextBlock Text="{Binding PastaDropbox}" ToolTip="{Binding PastaDropbox}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" Style="{StaticResource Nota}" Margin="0,0,0,6"/>
+         <TextBlock Text="{Binding StatusDropbox}" Style="{StaticResource Nota}" MinHeight="34" Margin="0,0,0,12"/>
+         <Button Content="Configurar" Tag="dropbox" Click="ConfigurarPasta_Click" AutomationProperties.Name="Configurar Dropbox"/>
+         <Button Content="Desconectar pasta" Tag="dropbox" Click="DesconectarPasta_Click" Margin="0,6,0,0" MinHeight="28"><Button.Style><Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding DropboxConfigurado}" Value="True"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></Button.Style></Button>
         </StackPanel>
-
-        <TextBlock Grid.Row="3" Text="{Binding Mensagem}" Foreground="{DynamicResource TextB71C1C}" TextWrapping="Wrap" Margin="0,12,0,0" />
+       </Border>
+      </Grid>
+      <TextBlock Text="O Varthex grava em Varthex\Backups dentro da pasta escolhida. O envio à nuvem depende do aplicativo de sincronização; confira nele se o envio terminou." Style="{StaticResource Nota}" Margin="0,10,0,0"/>
+     </StackPanel>
+     <Border Grid.Column="2" Background="{DynamicResource AjudaLine}"/>
+     <StackPanel Grid.Column="4">
+      <TextBlock Text="Restaurar backup" Style="{StaticResource Titulo}"/>
+      <TextBlock Text="Restaurar um backup existente" FontWeight="SemiBold" Margin="0,0,0,5"/>
+      <TextBlock Text="Escolha um arquivo salvo neste computador ou na pasta sincronizada da nuvem." Style="{StaticResource Nota}" Margin="0,0,0,20"/>
+      <TextBlock Text="Os dados atuais serão substituídos. O sistema guarda uma cópia de segurança antes de restaurar e reinicia ao concluir." Style="{StaticResource Nota}" Margin="0,0,0,18"/>
+      <Button Click="SelecionarArquivo_Click" Margin="0,0,0,10" HorizontalContentAlignment="Left"><StackPanel Orientation="Horizontal"><ContentControl x:Name="IconeDados" Margin="0,0,9,0"/><TextBlock Text="Restaurar dados" VerticalAlignment="Center"/></StackPanel></Button>
+      <TextBlock Text="Selecione o arquivo .db. Para recuperar as fotos junto com os dados, mantenha o .fotos.zip na mesma pasta do backup." Style="{StaticResource Nota}" Margin="0,0,0,22"/>
+      <Button Click="RestaurarFotos_Click" IsEnabled="{Binding PodeRestaurarFotos}" Margin="0,0,0,10" HorizontalContentAlignment="Left"><StackPanel Orientation="Horizontal"><ContentControl x:Name="IconeFotos" Margin="0,0,9,0"/><TextBlock Text="Restaurar somente fotos" VerticalAlignment="Center"/></StackPanel></Button>
+      <TextBlock Text="Selecione um .fotos.zip do Varthex. As fotos atuais são guardadas antes; os dados permanecem como estão." Style="{StaticResource Nota}"/>
+     </StackPanel>
     </Grid>
+    <Expander Header="Backups recentes — selecionar e restaurar" Padding="0,4" x:Name="HistoricoBackup">
+     <StackPanel Margin="0,10,0,0">
+      <ListView ItemsSource="{Binding Backups}" SelectedItem="{Binding BackupSelecionado}" Height="170" AutomationProperties.Name="Backups recentes">
+       <ListView.Style><Style TargetType="ListView" BasedOn="{StaticResource {x:Type ListView}}"><Style.Triggers><DataTrigger Binding="{Binding Backups.Count}" Value="0"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></ListView.Style>
+       <ListView.View><GridView><GridViewColumn Header="Arquivo" DisplayMemberBinding="{Binding Arquivo}" Width="265"/><GridViewColumn Header="Pasta" DisplayMemberBinding="{Binding Destino}" Width="280"/><GridViewColumn Header="Criado em" DisplayMemberBinding="{Binding CriadoEm, Converter={StaticResource DataHora}}" Width="140"/><GridViewColumn Header="Status" DisplayMemberBinding="{Binding Status}" Width="80"/></GridView></ListView.View>
+      </ListView>
+      <TextBlock Text="Nenhum backup encontrado nas pastas disponíveis. Use Restaurar dados para escolher um arquivo.">
+       <TextBlock.Style><Style TargetType="TextBlock" BasedOn="{StaticResource Nota}"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding Backups.Count}" Value="0"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></TextBlock.Style>
+      </TextBlock>
+      <TextBlock Text="Escolha um registro para restaurar. Para buscar um arquivo de outra pasta, use Restaurar dados." Style="{StaticResource Nota}" Margin="0,8,0,0"/>
+      <Button Content="Restaurar backup selecionado" Command="{Binding RestaurarCommand}" HorizontalAlignment="Right" Margin="0,8,0,0"/>
+     </StackPanel>
+    </Expander>
+   </StackPanel>
+  </ScrollViewer>
+  <Grid Grid.Row="1" Margin="0,14,0,0">
+   <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="18"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+   <TextBlock Text="{Binding Mensagem}" VerticalAlignment="Center" AutomationProperties.LiveSetting="Polite"><TextBlock.Style><Style TargetType="TextBlock" BasedOn="{StaticResource Nota}"><Style.Triggers><DataTrigger Binding="{Binding MensagemErro}" Value="True"><Setter Property="Foreground" Value="{DynamicResource TextB71C1C}"/></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock>
+   <Button Grid.Column="2" Content="Fazer backup agora" Click="CriarBackup_Click" IsEnabled="{Binding PodeCriarBackup}" Background="{DynamicResource AjudaAction}" Foreground="{DynamicResource AjudaActionInk}">
+    <Button.Style><Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}"><Style.Triggers><DataTrigger Binding="{Binding ModoRestauracao}" Value="True"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></Button.Style>
+   </Button>
+   <Button Grid.Column="2" Content="Restaurar dados" Click="SelecionarArquivo_Click" IsEnabled="{Binding PodeInteragir}" Background="{DynamicResource AjudaAction}" Foreground="{DynamicResource AjudaActionInk}">
+    <Button.Style><Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding ModoRestauracao}" Value="True"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></Button.Style>
+   </Button>
+  </Grid>
+ </Grid>
 </UserControl>
