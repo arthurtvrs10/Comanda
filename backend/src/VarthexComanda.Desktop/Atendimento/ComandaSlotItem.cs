@@ -14,12 +14,12 @@ public class ComandaSlotItem : ObservableObject
     public required string TotalFormatado { get; init; }
     public DateTime? AbertaEm { get; init; }
     public PrioridadeComanda Prioridade { get; init; }
-    public string PrioridadeTexto => Aberta ? Prioridade.ToString() : "Livre";
+    public string PrioridadeTexto => Aberta ? AtendimentoViewModel.NomePrioridade(Prioridade) : "Livre";
     public string CorPrioridade => !Aberta ? "#777777" : Prioridade switch
     {
-        PrioridadeComanda.Alta => "#925600",
-        PrioridadeComanda.Urgente => "#B71C1C",
-        _ => "#28653F"
+        PrioridadeComanda.Alta => "#F2CB59",
+        PrioridadeComanda.Urgente => "#B6322C",
+        _ => "#2D8050"
     };
     private string _tempoFormatado = string.Empty;
     public required string TempoFormatado { get => _tempoFormatado; set => SetProperty(ref _tempoFormatado, value); }

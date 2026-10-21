@@ -81,12 +81,9 @@ public class MenuComandaTests
                         var pagar = AlinhamentoInterfaceTests.Filhos(view).OfType<Button>().Single(b => b.Command == vm.VerTotalCommand);
                         Assert.True(pagar.ActualWidth >= 170);
                         Assert.True(pagar.TranslatePoint(new Point(0,pagar.ActualHeight),view).Y <= altura);
-                        Assert.Equal(Visibility.Collapsed, ((FrameworkElement)view.FindName("PainelMenu")).Visibility);
+                        Assert.Null(view.FindName("PainelMenu"));
                         if (largura == 800)
                         {
-                            ((Button)view.FindName("BotaoProdutosPedido")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-                            Renderizar(view, largura, altura, nome + "-produtos");
-                            ((FrameworkElement)view.FindName("PainelMenu")).Visibility = Visibility.Collapsed;
                             vm.ComandaAtual = new VarthexComanda.Domain.Comanda { Id=vm.ComandaAtual.Id,Numero=vm.ComandaAtual.Numero,Status=vm.ComandaAtual.Status,AbertaEm=vm.ComandaAtual.AbertaEm,TotalCentavos=1000,Bloqueada=true };
                             Renderizar(view, largura, altura, nome + "-bloqueado");
                             var botao = (Button)view.FindName("BotaoMaisOpcoes");

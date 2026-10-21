@@ -88,7 +88,7 @@ public class OperacoesComandaRegressaoTests
         });
     }
 
-    private static AtendimentoViewModel Criar(BancoDeHomologacao banco, IComandaRepository repo)
+    internal static AtendimentoViewModel Criar(BancoDeHomologacao banco, IComandaRepository repo)
     {
         var clock = new RelogioFixo();
         var produtos = new EfProdutoRepository(banco.Fabrica);

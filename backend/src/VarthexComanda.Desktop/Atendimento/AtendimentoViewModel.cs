@@ -306,33 +306,29 @@ public partial class AtendimentoViewModel : ObservableObject
     private bool PodeVerTotal() => ComandaAtual is not null && Itens.Count > 0;
 
     [RelayCommand]
-    private void AdicionarProdutoAoItem(Produto produto)
-    {
-        if (!PermitirAlteracao()) return;
-        if (ComandaAtual is null)
-        {
-            return;
-        }
+    private void AdicionarProdutoAoItem(Produto produto) => AdicionarProduto(produto, 1, ObservacaoNovoItem);
 
+    public bool AdicionarProduto(Produto produto, int quantidade, string? observacao)
+    {
+        if (!PermitirAlteracao() || ComandaAtual is null) return false;
         try
         {
-            var resultado = _adicionarItem.Executar(ComandaAtual.Id, produto.Id, 1, ObservacaoNovoItem, ObterOperador?.Invoke());
+            var resultado = _adicionarItem.Executar(ComandaAtual.Id, produto.Id, quantidade, observacao, ObterOperador?.Invoke());
             AplicarResultado(resultado, produto.Id);
-            if (resultado.Sucesso)
-            {
-                var observacao = string.IsNullOrWhiteSpace(ObservacaoNovoItem) ? null : ObservacaoNovoItem.Trim();
-                ItemSelecionadoId = resultado.Valor!.ItemAlteradoId ?? resultado.Valor.Itens.First(i => i.ProdutoId == produto.Id
-                    && i.PrecoUnitarioCentavos == produto.PrecoCentavos && i.Observacao == observacao).Id;
-                ObservacaoNovoItem = string.Empty;
-            }
+            if (!resultado.Sucesso) return false;
+            var texto = string.IsNullOrWhiteSpace(observacao) ? null : observacao.Trim();
+            ItemSelecionadoId = resultado.Valor!.ItemAlteradoId ?? resultado.Valor.Itens.First(i => i.ProdutoId == produto.Id
+                && i.PrecoUnitarioCentavos == produto.PrecoCentavos && i.Observacao == texto).Id;
+            ObservacaoNovoItem = string.Empty;
+            return true;
         }
         catch (Exception ex)
         {
             _logger?.Error(ex, "Falha em {Operacao}", "AdicionarItem");
             Mensagem = "Não foi possível adicionar o produto à comanda. Tente novamente.";
+            return false;
         }
     }
-
     [RelayCommand]
     private void AumentarQuantidade(ItemComanda item)
     {
@@ -727,7 +723,7 @@ public partial class AtendimentoViewModel : ObservableObject
             OnPropertyChanged(nameof(ComandaAtual));
             OnPropertyChanged(nameof(CorPrioridadeAtual));
             AtualizarComandasAbertas();
-            Mensagem = "Prioridade alterada para " + prioridade + ".";
+            Mensagem = "Prioridade alterada para " + NomePrioridade(prioridade) + ".";
         }
         catch (Exception ex)
         {

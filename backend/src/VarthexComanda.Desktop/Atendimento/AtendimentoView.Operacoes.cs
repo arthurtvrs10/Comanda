@@ -49,17 +49,26 @@ public partial class AtendimentoView
         if (!SalvarObservacaoPendente()) { BloqueioPedido.IsChecked=ViewModel.ComandaAtual?.Bloqueada; return; }
         ViewModel.DefinirBloqueio(BloqueioPedido.IsChecked == true);
         BloqueioPedido.IsChecked = ViewModel.ComandaAtual?.Bloqueada;
-        if (!ViewModel.PodeAlterarPedido) PainelMenu.Visibility = Visibility.Collapsed;
     }
     private void ProdutosPedido_Click(object sender, RoutedEventArgs e)
     {
-        PainelMenu.Visibility = Visibility.Visible;
-        CampoBusca.Focus();
+        if (!ViewModel.PodeAlterarPedido || !SalvarObservacaoPendente()) return;
+        new LocalizarProdutoView(ViewModel) { Owner=_janelaComanda ?? Window.GetWindow(this) }.ShowDialog();
     }
-    private void FecharProdutosPedido_Click(object sender, RoutedEventArgs e)
+    private void PrioridadePedido_Click(object sender, RoutedEventArgs e) => CriarMenuPrioridade((Button)sender).IsOpen = true;
+    internal ContextMenu CriarMenuPrioridade(Button botao)
     {
-        PainelMenu.Visibility = Visibility.Collapsed;
-        BotaoProdutosPedido.Focus();
+        var menu = MenuPedido(botao);
+        foreach(var prioridade in Enum.GetValues<PrioridadeComanda>())
+        {
+            var item=Acao(menu,AtendimentoViewModel.NomePrioridade(prioridade),()=>ViewModel.AlterarPrioridadeCommand.Execute(prioridade));
+            item.IsCheckable=true;item.IsChecked=ViewModel.ComandaAtual?.Prioridade==prioridade;
+            var cabecalho=new StackPanel { Orientation=Orientation.Horizontal };
+            cabecalho.Children.Add(new System.Windows.Shapes.Ellipse { Width=10,Height=10,Margin=new Thickness(0,0,10,0),Fill=new SolidColorBrush((Color)ColorConverter.ConvertFromString(prioridade switch {PrioridadeComanda.Urgente=>"#B6322C",PrioridadeComanda.Alta=>"#F2CB59",_=>"#2D8050"})) });
+            cabecalho.Children.Add(new TextBlock { Text=AtendimentoViewModel.NomePrioridade(prioridade)+(item.IsChecked?" (atual)":""),VerticalAlignment=VerticalAlignment.Center });
+            item.Header=cabecalho;
+        }
+        return menu;
     }
 
     private ContextMenu MenuPedido(Button botao)
@@ -101,7 +110,7 @@ public partial class AtendimentoView
         Acao(dados, "Alterar quantidade de pessoas", () => new EditarDadosComandaView(ViewModel, "pessoas") { Owner = _janelaComanda ?? Window.GetWindow(this) }.ShowDialog());
         var prioridades = Acao(dados, "Prioridade", () => { });
         foreach (var prioridade in Enum.GetValues<PrioridadeComanda>())
-            Acao(prioridades, prioridade.ToString(), () => ViewModel.AlterarPrioridadeCommand.Execute(prioridade));
+            Acao(prioridades, AtendimentoViewModel.NomePrioridade(prioridade), () => ViewModel.AlterarPrioridadeCommand.Execute(prioridade));
         Acao(dados, "Origem do cliente", () => OrigemCliente_Click(botao, new RoutedEventArgs()));
         menu.Items.Add(new Separator());
         Acao(menu, "Excluir pedido…", () => ViewModel.CancelarComandaAtualCommand.Execute(null));

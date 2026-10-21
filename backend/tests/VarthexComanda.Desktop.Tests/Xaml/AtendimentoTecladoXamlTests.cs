@@ -149,14 +149,7 @@ public class AtendimentoTecladoXamlTests
             Assert.Contains((UIElement)view.FindName("BotaoProdutosPedido"), ordem);
             Assert.Contains(ordem, e => e is Button b && b.Command == vm.VerTotalCommand);
             Assert.DoesNotContain(ordem, e => e is Grid { Name: "PainelComanda" });
-            var catalogo = (FrameworkElement)view.FindName("PainelMenu");
-            Assert.Equal(Visibility.Collapsed, catalogo.Visibility);
-            ((Button)view.FindName("BotaoProdutosPedido")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-            view.UpdateLayout();
-            Assert.Equal(Visibility.Visible, catalogo.Visibility);
-            ordem = OrdemDeTab(view).ToList();
-            Assert.True(PosicaoDoBotao(ordem, "Todas") < PosicaoDoBotao(ordem, "Bebidas"));
-            Assert.Contains(ordem, e => e is Button b && b.Command == vm.AdicionarProdutoAoItemCommand);
+            Assert.Null(view.FindName("PainelMenu"));
         });
     }
     [Fact]
@@ -217,7 +210,7 @@ public class AtendimentoTecladoXamlTests
 
     // ---- teclas: eventos roteados reais (PreviewKeyDown) contra a view, sem exibir janela ----
 
-    private static bool Pressionar(AtendimentoView view, Key tecla, IInputElement origem)
+    private static bool Pressionar(UIElement view, Key tecla, IInputElement origem)
     {
         using var fonte = new HwndSource(new HwndSourceParameters("teste-teclado"));
         var evento = new KeyEventArgs(Keyboard.PrimaryDevice, fonte, Environment.TickCount, tecla)
@@ -302,11 +295,12 @@ public class AtendimentoTecladoXamlTests
             var (viewModel, _) = CarregamentoDeXamlTests.CriarAtendimento();
             var view = new AtendimentoView(viewModel);
             CarregamentoDeXamlTests.MedirEOrganizar(view);
-            var menu = (DependencyObject)view.FindName("PainelMenu");
-            var botaoDoMenu = Descendentes(menu).OfType<Button>().First();
+            var localizador = new LocalizarProdutoView(viewModel);
+            var botaoDoMenu = new Button();
             viewModel.ItemSelecionadoId = viewModel.Itens[0].Id;
 
-            var tratada = Pressionar(view, tecla, botaoDoMenu);
+            var tratada = Pressionar(localizador, tecla, botaoDoMenu);
+            localizador.Close();
 
             Assert.False(tratada);
             Assert.Single(viewModel.Itens);

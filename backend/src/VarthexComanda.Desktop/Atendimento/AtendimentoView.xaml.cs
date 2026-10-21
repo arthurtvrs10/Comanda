@@ -183,42 +183,6 @@ public partial class AtendimentoView : UserControl
         new EditarDadosComandaView(ViewModel, campo) { Owner = _janelaComanda ?? Window.GetWindow(this) }.ShowDialog();
     }
 
-    private void AlterarPrioridade_Click(object sender, RoutedEventArgs e)
-    {
-        var botao = (Button)sender;
-        var menu = new ContextMenu { PlacementTarget = botao, Placement = PlacementMode.Top };
-        foreach (var prioridade in Enum.GetValues<PrioridadeComanda>())
-        {
-            var cor = prioridade switch
-            {
-                PrioridadeComanda.Alta => "#925600",
-                PrioridadeComanda.Urgente => "#B71C1C",
-                _ => "#28653F"
-            };
-            var cabecalho = new StackPanel { Orientation = Orientation.Horizontal };
-            cabecalho.Children.Add(new System.Windows.Shapes.Ellipse
-            {
-                Width = 10, Height = 10, Margin = new Thickness(0, 0, 10, 0),
-                VerticalAlignment = VerticalAlignment.Center,
-                Fill = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFromString(cor)!
-            });
-            cabecalho.Children.Add(new TextBlock { Text = prioridade.ToString(), VerticalAlignment = VerticalAlignment.Center });
-            var item = new MenuItem { Header = cabecalho, IsCheckable = true,
-                IsChecked = ViewModel.ComandaAtual?.Prioridade == prioridade,
-                Command = ViewModel.AlterarPrioridadeCommand, CommandParameter = prioridade, Padding = new Thickness(16,10,16,10) };
-            System.Windows.Automation.AutomationProperties.SetName(item, prioridade.ToString());
-            menu.Items.Add(item);
-        }
-        botao.ContextMenu = menu;
-        menu.IsOpen = true;
-    }
-
-    private void AnotarPedido_Click(object sender, RoutedEventArgs e)
-    {
-        CampoBusca.Focus();
-        CampoBusca.SelectAll();
-    }
-
     public AtendimentoView(AtendimentoViewModel viewModel)
     {
         InitializeComponent();
@@ -365,12 +329,7 @@ public partial class AtendimentoView : UserControl
 
         if (e.Key == Key.Escape)
         {
-            if (PainelMenu.Visibility == Visibility.Visible)
-            {
-                PainelMenu.Visibility = Visibility.Collapsed;
-                BotaoProdutosPedido.Focus();
-            }
-            else if (emBusca && !string.IsNullOrEmpty(CampoBusca.Text))
+            if (emBusca && !string.IsNullOrEmpty(CampoBusca.Text))
             {
                 ViewModel.TextoBuscaCatalogo = string.Empty;
             }
@@ -393,7 +352,7 @@ public partial class AtendimentoView : UserControl
         // O "+" da linha principal e digitado com Shift em varios layouts, entao OemPlus tolera Shift.
         var semModificador = modificadores == ModifierKeys.None;
         var teclaMaisComShift = e.Key == Key.OemPlus && modificadores == ModifierKeys.Shift;
-        if (EstaNoMenu(e) || !(semModificador || teclaMaisComShift))
+        if (!(semModificador || teclaMaisComShift))
         {
             return;
         }
@@ -424,9 +383,6 @@ public partial class AtendimentoView : UserControl
 
     private static bool EstaEmCampoDeTexto(KeyEventArgs e) =>
         e.OriginalSource is TextBoxBase || Keyboard.FocusedElement is TextBoxBase;
-
-    private bool EstaNoMenu(KeyEventArgs e) =>
-        e.OriginalSource is DependencyObject origem && PainelMenu.IsAncestorOf(origem);
 
     // As linhas sao recriadas a cada alteracao; se o foco estava num botao da linha ele some junto e o
     // teclado (inclusive o F4) deixaria de chegar aqui. Recolhe o foco no painel da comanda.

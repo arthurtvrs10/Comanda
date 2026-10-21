@@ -14,6 +14,9 @@ public partial class AtendimentoViewModel
     public bool PodeAlterarPedido => ComandaAtual is { Bloqueada: false };
     public string SituacaoPedido => ComandaAtual?.Bloqueada == true ? "Bloqueado" : "Em aberto";
     public string IdentificacaoPedido => $"Pedido #{ComandaAtual?.CodigoPedido ?? ComandaAtual?.Id}";
+    public string NumeroPedidoDestacado => $"#{ComandaAtual?.CodigoPedido ?? ComandaAtual?.Id}";
+    public string DescricaoPrioridadePedido => "Prioridade: " + NomePrioridade(ComandaAtual?.Prioridade ?? PrioridadeComanda.Normal) + ". Clique para alterar.";
+    public static string NomePrioridade(PrioridadeComanda prioridade) => prioridade switch { PrioridadeComanda.Urgente => "Alta", PrioridadeComanda.Alta => "Mediana", _ => "Normal" };
     public string AberturaPedido => ComandaAtual is null ? "" : FusoBrasilia.ParaLocal(ComandaAtual.AbertaEm).ToString("dd/MM HH:mm");
     public string AutorPedido => ComandaAtual?.CriadoPor ?? "Não informado";
     public string ClientePedido => string.IsNullOrWhiteSpace(ComandaAtual?.NomeCliente) ? "Vincular cliente" : ComandaAtual.NomeCliente;
@@ -22,7 +25,7 @@ public partial class AtendimentoViewModel
 
     private void AtualizarResumoPedido()
     {
-        foreach (var nome in new[] { nameof(PodeAlterarPedido), nameof(SituacaoPedido), nameof(IdentificacaoPedido), nameof(AberturaPedido), nameof(AutorPedido), nameof(ClientePedido), nameof(TotalPedido), nameof(CabecalhoItens) })
+        foreach (var nome in new[] { nameof(PodeAlterarPedido), nameof(SituacaoPedido), nameof(IdentificacaoPedido), nameof(NumeroPedidoDestacado), nameof(DescricaoPrioridadePedido), nameof(AberturaPedido), nameof(AutorPedido), nameof(ClientePedido), nameof(TotalPedido), nameof(CabecalhoItens) })
             OnPropertyChanged(nome);
     }
     public void NotificarItensPedido() => AtualizarResumoPedido();

@@ -73,6 +73,11 @@ public static class TemaInterface
         Ajuda("Action", "#245640", "#98D6B4");
         Ajuda("ActionHover", "#1B4433", "#B0E3C7");
         Ajuda("ActionInk", "#FFFFFF", "#173725");
+        void Prioridade(string chave, string cor) => recursos["Prioridade" + chave] = new SolidColorBrush((Color)ColorConverter.ConvertFromString(cor));
+        Prioridade("Normal", "#2D8050"); Prioridade("Mediana", "#F2CB59"); Prioridade("Alta", "#B6322C");
+        Prioridade("NumeroNormal", escuro ? "#80D59F" : "#286D44");
+        Prioridade("NumeroMediana", escuro ? "#F2CB59" : "#8B6900");
+        Prioridade("NumeroAlta", escuro ? "#FF9993" : "#B6322C");
         recursos["AjudaLogo"] = new System.Windows.Media.Imaging.BitmapImage(new Uri(
             "pack://application:,,,/VarthexComanda;component/Assets/" + (escuro ? "LogoAjudaEscura.png" : "LogoAjudaClara.png")));
         foreach(var key in new[]{SystemColors.WindowBrushKey,SystemColors.ControlBrushKey,SystemColors.ControlLightBrushKey,SystemColors.ControlLightLightBrushKey,SystemColors.MenuBrushKey})recursos[key]=Pincel("#FFFFFF");
