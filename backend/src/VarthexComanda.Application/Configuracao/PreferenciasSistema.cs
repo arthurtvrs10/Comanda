@@ -56,6 +56,7 @@ public sealed class ConfiguracoesSistemaService(IConfiguracaoRepository reposito
         Validar(preferencias);
         if (string.IsNullOrWhiteSpace(nome) || nome.Trim().Length > 120) throw new ArgumentException("Informe o nome do estabelecimento com até 120 caracteres.");
         if (quantidade is <= 0 or > 9999) throw new ArgumentException("Informe de 1 a 9999 comandas ou deixe vazio.");
+        NumeracaoComandasService.ValidarFaixa(new NumeracaoComandasService(repositorio).Carregar().PrimeiroNumero,quantidade ?? 20);
         repositorio.DefinirValores(new Dictionary<string,string>
         {
             [Chave]=JsonSerializer.Serialize(preferencias),

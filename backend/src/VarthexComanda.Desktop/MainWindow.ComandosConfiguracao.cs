@@ -11,8 +11,12 @@ public partial class MainWindow
     private void AbrirNumeracaoPedidos()
     {
         if (!PodeGerir() || _repositorioSistema is null) return;
-        AbrirComandoConfiguracao(() => new JanelaNumeracaoPedidos(new NumeracaoPedidosService(
-            _repositorioSistema, _atendimentoView.ViewModel.ConsultarMaiorCodigoPedido)) { Owner=this }.ShowDialog());
+        AbrirComandoConfiguracao(()=>
+        {
+            var resultado=new JanelaNumeracaoPedidos(new NumeracaoComandasService(_repositorioSistema)) { Owner=this }.ShowDialog();
+            if(resultado==true)_atendimentoView.ViewModel.AtualizarComandasAbertas();
+            return resultado;
+        });
     }
 
     private void AbrirImpressoras()

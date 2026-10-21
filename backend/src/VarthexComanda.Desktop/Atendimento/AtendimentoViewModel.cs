@@ -580,7 +580,9 @@ public partial class AtendimentoViewModel : ObservableObject
         var agora = _relogio.UtcNow;
 
         Slots.Clear();
-        for (var numero = 1; numero <= tamanho; numero++)
+        var inicio = configuracao.NumeroInicialComandas;
+        var final = inicio + tamanho - 1;
+        for (var numero = inicio; numero <= final; numero++)
         {
             var comanda = ComandasAbertas.FirstOrDefault(c => c.Numero == numero);
             if (comanda is not null)
@@ -609,7 +611,7 @@ public partial class AtendimentoViewModel : ObservableObject
             }
         }
 
-        foreach (var comanda in ComandasAbertas.Where(c => c.Numero > tamanho))
+        foreach (var comanda in ComandasAbertas.Where(c => c.Numero < inicio || c.Numero > final))
         {
             Slots.Add(new ComandaSlotItem
             {
@@ -651,7 +653,9 @@ public partial class AtendimentoViewModel : ObservableObject
                 case "mover":
                     if (!int.TryParse(valor, out var numero) || numero <= 0)
                     { Mensagem = "Informe o número de uma comanda livre."; return false; }
-                    var maximo = _obterConfiguracao.Executar().QuantidadeMaximaComandas;
+                    var faixa = _obterConfiguracao.Executar();
+                    if(numero < faixa.NumeroInicialComandas){Mensagem=$"O número da comanda deve ser no mínimo {faixa.NumeroInicialComandas}.";return false;}
+                    var maximo = faixa.QuantidadeMaximaComandas is int quantidadeFaixa ? (int?)(faixa.NumeroInicialComandas + quantidadeFaixa - 1) : null;
                     if (maximo is int limite && numero > limite)
                     { Mensagem = $"O número da comanda deve ser no máximo {limite}."; return false; }
                     atualizada = _comandas.MoverPara(ComandaAtual.Id, numero);

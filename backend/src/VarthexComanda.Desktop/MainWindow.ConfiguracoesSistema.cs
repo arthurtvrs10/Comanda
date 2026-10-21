@@ -63,8 +63,8 @@ public partial class MainWindow
         var comanda=_atendimentoView.ViewModel.ComandaAtual;
         if(comanda is null||_bloqueado)return;
         var owner=System.Windows.Application.Current.Windows.OfType<Window>().FirstOrDefault(w=>w.IsActive)??this;
-        var numeracao=_repositorioSistema is null ? null : new NumeracaoPedidosService(_repositorioSistema).Carregar();
+        var numeracao=_repositorioSistema is null ? null : new NumeracaoComandasService(_repositorioSistema).Carregar();
         var impressora=_repositorioSistema is null ? null : new ConfiguracoesImpressaoService(_repositorioSistema).ObterCaixaConfigurado();
-        ComprovanteConta.Visualizar(owner,ComprovanteConta.MontarTexto(LerPreferencias(),_configuracaoView.ViewModel.NomeEstabelecimento,comanda.Numero,_atendimentoView.ViewModel.Itens,comanda.CodigoPedido,numeracao?.UsarComoSenhaAtendimento==true),impressora);
+        ComprovanteConta.Visualizar(owner,ComprovanteConta.MontarTexto(LerPreferencias(),_configuracaoView.ViewModel.NomeEstabelecimento,comanda.Numero,_atendimentoView.ViewModel.Itens,comanda.CodigoPedido,false,numeracao?.UsarComoSenhaAtendimento==true?comanda.Numero:null),impressora);
     }
 }

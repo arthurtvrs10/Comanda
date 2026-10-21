@@ -20,7 +20,7 @@ public sealed class JanelaNumeracaoPedidosTests
             CarregamentoDeXamlTests.GarantirApp();
             var repo = new FakeConfiguracaoRepository();
             repo.Definir(NumeracaoPedidosService.ChaveUltimo, "114", DateTime.UtcNow);
-            var service = new NumeracaoPedidosService(repo);
+            var service = new NumeracaoComandasService(repo);
             service.Salvar(new() { Ativa = true, Inicio = 100, UsarComoSenhaAtendimento = true }, DateTime.UtcNow);
             var janela = new JanelaNumeracaoPedidos(service);
             var raiz = (FrameworkElement)janela.Content;
@@ -54,7 +54,7 @@ public sealed class JanelaNumeracaoPedidosTests
             salvar.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Assert.False(janela.TemAlteracoes);
             Assert.Equal(200, service.Carregar().Inicio);
-            Assert.Equal(114, service.Carregar().UltimoCriado);
+            Assert.Equal("114",repo.ObterValor(NumeracaoPedidosService.ChaveUltimo));
             TemaInterface.Aplicar(false);
         });
     }

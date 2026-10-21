@@ -10,7 +10,7 @@ namespace VarthexComanda.Desktop.Configuracao;
 
 public static class ComprovanteConta
 {
-    public static string MontarTexto(PreferenciasSistema p,string estabelecimento,int numero,IEnumerable<ItemComanda> itens,long? codigoPedido=null,bool senhaAtendimento=false)
+    public static string MontarTexto(PreferenciasSistema p,string estabelecimento,int numero,IEnumerable<ItemComanda> itens,long? codigoPedido=null,bool senhaAtendimento=false,int? senhaComanda=null)
     {
         var lista=itens.ToList();var linhas=new List<string> { estabelecimento,p.CabecalhoCupom,$"Comanda {numero:00}",DateTime.Now.ToString("dd/MM/yyyy HH:mm") };
         if(codigoPedido is long codigo)linhas.Add($"Pedido: {codigo}");
@@ -26,7 +26,8 @@ public static class ComprovanteConta
         }
         linhas.Add(new string('-',38));linhas.Add("TOTAL: "+Atendimento.CentavosParaMoedaConverter.Formatar(lista.Sum(i=>i.SubtotalCentavos)));
         linhas.Add("NÃO É DOCUMENTO FISCAL");linhas.Add(p.RodapeCupom);
-        if(senhaAtendimento && codigoPedido is long senha)linhas.Add($"SENHA DE ATENDIMENTO: {senha}");
+        if(senhaComanda is int numeroSenha)linhas.Add($"SENHA DE ATENDIMENTO: {numeroSenha}");
+        else if(senhaAtendimento && codigoPedido is long senha)linhas.Add($"SENHA DE ATENDIMENTO: {senha}");
         return string.Join("\n",linhas.Where(x=>!string.IsNullOrWhiteSpace(x)));
     }
     public static void VisualizarExemplo(Window owner,PreferenciasSistema prefs,string nome)=>Visualizar(owner,MontarTexto(prefs,nome,1,[new ItemComanda { Id=0,ComandaId=0,ProdutoId=0,NomeProduto="Produto de exemplo (dados fictícios)",PrecoUnitarioCentavos=1000,Quantidade=1,SubtotalCentavos=1000,Observacao="Exemplo de observação",CriadoEm=DateTime.UtcNow,AtualizadoEm=DateTime.UtcNow }]));

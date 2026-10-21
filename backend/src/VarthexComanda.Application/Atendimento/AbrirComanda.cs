@@ -26,7 +26,10 @@ public class AbrirComanda
         }
 
         var configuracao = _obterConfiguracao.Executar();
-        if (configuracao.QuantidadeMaximaComandas is int maximo && numero > maximo)
+        if(numero < configuracao.NumeroInicialComandas)
+            return Resultado<Comanda>.Falha($"O número da comanda deve ser no mínimo {configuracao.NumeroInicialComandas}.");
+        var maximo = configuracao.QuantidadeMaximaComandas is int quantidade ? (int?)checked(configuracao.NumeroInicialComandas + quantidade - 1) : null;
+        if (maximo is int limite && numero > limite)
         {
             return Resultado<Comanda>.Falha($"O número da comanda deve ser no máximo {maximo}.");
         }
