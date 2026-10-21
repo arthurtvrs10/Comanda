@@ -174,6 +174,7 @@
 <SolidColorBrush x:Key="ColorFFF5F3" Color="#FFF5F3"/>
 <SolidColorBrush x:Key="ColorFFFFFF" Color="#FFFFFF"/>
 <SolidColorBrush x:Key="Surface" Color="#FFFFFF"/><SolidColorBrush x:Key="Canvas" Color="#F3F5F2"/><SolidColorBrush x:Key="Ink" Color="#263C32"/><SolidColorBrush x:Key="Accent" Color="#245640"/><SolidColorBrush x:Key="Line" Color="#87988E"/>
+<SolidColorBrush x:Key="HoverOverlay" Color="#16000000"/>
 
         <!-- Foco visivel de alto contraste (RNF18): contorno azul solido de 3 px, sem pontilhado. -->
         <Style x:Key="FocoVisivel" TargetType="Control">
@@ -201,7 +202,7 @@
             <Setter Property="Padding" Value="8,6" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ComboBox"><Grid>
-<ToggleButton Focusable="False" IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" Foreground="{TemplateBinding Foreground}"><ToggleButton.Template><ControlTemplate TargetType="ToggleButton"><Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1"><Path Data="M0,0 L4,4 L8,0" Stroke="{TemplateBinding Foreground}" StrokeThickness="1.5" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,12,0"/></Border></ControlTemplate></ToggleButton.Template></ToggleButton>
+<ToggleButton Focusable="False" IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" Foreground="{TemplateBinding Foreground}"><ToggleButton.Template><ControlTemplate TargetType="ToggleButton"><Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1"><Grid><Border x:Name="HoverFeedback" Background="{DynamicResource HoverOverlay}" Opacity="0" IsHitTestVisible="False"/><Path Data="M0,0 L4,4 L8,0" Stroke="{TemplateBinding Foreground}" StrokeThickness="1.5" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,12,0"/></Grid></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="HoverFeedback" Property="Opacity" Value="1"/></Trigger><Trigger Property="IsEnabled" Value="False"><Setter TargetName="HoverFeedback" Property="Opacity" Value="0"/></Trigger></ControlTemplate.Triggers></ControlTemplate></ToggleButton.Template></ToggleButton>
 <ContentPresenter Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" ContentStringFormat="{TemplateBinding SelectionBoxItemStringFormat}" Margin="10,4,30,4" VerticalAlignment="Center" IsHitTestVisible="False"/>
 <Popup x:Name="PART_Popup" IsOpen="{TemplateBinding IsDropDownOpen}" Placement="Bottom" AllowsTransparency="True" Focusable="False"><Border Background="{DynamicResource Surface}" BorderBrush="{DynamicResource Line}" BorderThickness="1" MinWidth="{Binding ActualWidth,RelativeSource={RelativeSource TemplatedParent}}" MaxHeight="300"><ScrollViewer><ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained"/></ScrollViewer></Border></Popup>
 </Grid><ControlTemplate.Triggers><Trigger Property="IsEnabled" Value="False"><Setter Property="Opacity" Value="0.5"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style>
@@ -227,13 +228,16 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="0" Padding="{TemplateBinding Padding}">
-                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" RecognizesAccessKey="True" />
+                        <Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="0">
+                            <Grid>
+                                <Border x:Name="HoverFeedback" Background="{DynamicResource HoverOverlay}" Opacity="0" IsHitTestVisible="False"/>
+                                <ContentPresenter Margin="{TemplateBinding Padding}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" RecognizesAccessKey="True" />
+                            </Grid>
                         </Border>
                         <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="BorderBrush" Value="{DynamicResource Color1F5FBF}" /></Trigger>
+                            <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="BorderBrush" Value="{DynamicResource Color1F5FBF}" /><Setter TargetName="HoverFeedback" Property="Opacity" Value="1"/></Trigger>
                             <Trigger Property="IsPressed" Value="True"><Setter TargetName="Surface" Property="Opacity" Value="0.75" /></Trigger>
-                            <Trigger Property="IsEnabled" Value="False"><Setter TargetName="Surface" Property="Opacity" Value="0.45" /></Trigger>
+                            <Trigger Property="IsEnabled" Value="False"><Setter TargetName="Surface" Property="Opacity" Value="0.45" /><Setter TargetName="HoverFeedback" Property="Opacity" Value="0"/></Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>

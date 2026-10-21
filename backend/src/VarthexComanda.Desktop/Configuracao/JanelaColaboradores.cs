@@ -68,7 +68,7 @@ public sealed class JanelaColaboradores : Window
 
     private static Path Icone(string dados)
     {
-        var icone = new Path { Data = Geometry.Parse(dados),Width = 17,Height = 17,Stretch = Stretch.Uniform,StrokeThickness = 1.5,Margin = new Thickness(0,0,8,0) };
+        var icone = new Path { Data = Geometry.Parse(dados),Width = 17,Height = 17,Stretch = Stretch.Uniform,StrokeThickness = 1.5,Margin = new Thickness(0,0,8,0),VerticalAlignment=VerticalAlignment.Center,HorizontalAlignment=HorizontalAlignment.Center };
         icone.SetResourceReference(Shape.StrokeProperty,"Ink");return icone;
     }
     private static Button Botao(string texto,string dados,Action acao)

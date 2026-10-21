@@ -16,7 +16,7 @@ public sealed class JanelaMinhaAssinatura : Window
         var raiz=new Grid { Margin=new Thickness(12) };raiz.SetResourceReference(Panel.BackgroundProperty,"Canvas");Content=raiz;
         raiz.RowDefinitions.Add(new(){Height=GridLength.Auto});raiz.RowDefinitions.Add(new());raiz.RowDefinitions.Add(new(){Height=GridLength.Auto});raiz.RowDefinitions.Add(new(){Height=GridLength.Auto});
         var cabecalho=new StackPanel { Orientation=Orientation.Horizontal,Margin=new Thickness(0,0,0,14) };
-        var chave=new System.Windows.Shapes.Path { Data=Geometry.Parse("M14,8 A6,6 0 1 1 2,8 A6,6 0 1 1 14,8 M12,12 L23,23 M16,16 L19,13 M20,20 L23,17"),Width=38,Height=38,StrokeThickness=2,Stretch=Stretch.Uniform,Margin=new Thickness(0,0,16,0) };chave.SetResourceReference(System.Windows.Shapes.Shape.StrokeProperty,"Accent");cabecalho.Children.Add(chave);
+        var chave=new System.Windows.Shapes.Path { Data=Geometry.Parse("M14,8 A6,6 0 1 1 2,8 A6,6 0 1 1 14,8 M12,12 L23,23 M16,16 L19,13 M20,20 L23,17"),Width=38,Height=38,StrokeThickness=2,Stretch=Stretch.Uniform,Margin=new Thickness(0,0,16,0),VerticalAlignment=VerticalAlignment.Center };chave.SetResourceReference(System.Windows.Shapes.Shape.StrokeProperty,"Accent");cabecalho.Children.Add(chave);
         cabecalho.Children.Add(new TextBlock { Text="Minha assinatura",FontSize=22,FontWeight=FontWeights.SemiBold,VerticalAlignment=VerticalAlignment.Center });raiz.Children.Add(cabecalho);
         _dados=new TextBox { IsReadOnly=true,AcceptsReturn=true,TextWrapping=TextWrapping.Wrap,VerticalContentAlignment=VerticalAlignment.Top,VerticalScrollBarVisibility=ScrollBarVisibility.Auto,Padding=new Thickness(14),FontSize=12 };
         Grid.SetRow(_dados,1);raiz.Children.Add(_dados);

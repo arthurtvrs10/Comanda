@@ -54,7 +54,7 @@ public sealed class JanelaImpressoras : Window
         foreach (var nome in new[] { Caixa }.Concat(_service.CarregarLocais().Select(x => x.Nome)))
         {
             var item = new ListBoxItem { Tag = nome, Padding = new Thickness(8), MinHeight = 44, HorizontalContentAlignment = HorizontalAlignment.Stretch };
-            var linha = new DockPanel(); var icone = new Path { Data = Geometry.Parse("M3,8 L3,2 13,2 13,8 M3,12 L1,12 1,6 15,6 15,12 13,12 M3,10 L13,10 13,15 3,15 Z M11,8 L13,8"), Width = 18, Height = 18, Stretch = Stretch.Uniform, StrokeThickness = 1.2, Margin = new Thickness(0, 0, 10, 0) };
+            var linha = new DockPanel(); var icone = new Path { Data = Geometry.Parse("M3,8 L3,2 13,2 13,8 M3,12 L1,12 1,6 15,6 15,12 13,12 M3,10 L13,10 13,15 3,15 Z M11,8 L13,8"), Width = 18, Height = 18, Stretch = Stretch.Uniform, StrokeThickness = 1.2, Margin = new Thickness(0, 0, 10, 0),VerticalAlignment=VerticalAlignment.Center };
             icone.SetResourceReference(Shape.StrokeProperty, "Ink"); DockPanel.SetDock(icone, Dock.Left); linha.Children.Add(icone);
             linha.Children.Add(new TextBlock { Text = nome, VerticalAlignment = VerticalAlignment.Center, TextWrapping = TextWrapping.Wrap }); item.Content = linha;
             System.Windows.Automation.AutomationProperties.SetName(item, nome); _locais.Items.Add(item);

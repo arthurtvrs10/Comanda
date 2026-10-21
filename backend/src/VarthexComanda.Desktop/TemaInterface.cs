@@ -56,9 +56,25 @@ public static class TemaInterface
         recursos["Line"]=Pincel("#87988E");
         recursos["RibbonBar"]=new SolidColorBrush((Color)ColorConverter.ConvertFromString("#0A0A0A"));
         recursos["RibbonHover"]=new SolidColorBrush((Color)ColorConverter.ConvertFromString("#484644"));
+        recursos["HoverOverlay"] = new SolidColorBrush((Color)ColorConverter.ConvertFromString(escuro ? "#26FFFFFF" : "#16000000"));
         recursos["RibbonSurface"]=new SolidColorBrush((Color)ColorConverter.ConvertFromString(escuro?"#323130":"#E5E4E3"));
         recursos["RibbonSubtitle"]=new SolidColorBrush((Color)ColorConverter.ConvertFromString(escuro?"#B1B9BD":"#59666E"));
         recursos["RibbonInk"]=new SolidColorBrush((Color)ColorConverter.ConvertFromString(escuro?"#F1F3F2":"#263C32"));
+        // A central de ajuda usa cinzas neutros; o verde fica nas ações.
+        void Ajuda(string chave, string claro, string noturno) => recursos["Ajuda" + chave] =
+            new SolidColorBrush((Color)ColorConverter.ConvertFromString(escuro ? noturno : claro));
+        Ajuda("Canvas", "#F1F1F1", "#252525");
+        Ajuda("Surface", "#FAFAFA", "#303030");
+        Ajuda("Ink", "#292929", "#F0F0F0");
+        Ajuda("Muted", "#616161", "#BDBDBD");
+        Ajuda("Line", "#D1D1D1", "#505050");
+        Ajuda("Soft", "#E7E7E7", "#383838");
+        Ajuda("Hover", "#D4D4D4", "#4B4B4B");
+        Ajuda("Action", "#245640", "#98D6B4");
+        Ajuda("ActionHover", "#1B4433", "#B0E3C7");
+        Ajuda("ActionInk", "#FFFFFF", "#173725");
+        recursos["AjudaLogo"] = new System.Windows.Media.Imaging.BitmapImage(new Uri(
+            "pack://application:,,,/VarthexComanda;component/Assets/" + (escuro ? "LogoAjudaEscura.png" : "LogoAjudaClara.png")));
         foreach(var key in new[]{SystemColors.WindowBrushKey,SystemColors.ControlBrushKey,SystemColors.ControlLightBrushKey,SystemColors.ControlLightLightBrushKey,SystemColors.MenuBrushKey})recursos[key]=Pincel("#FFFFFF");
         foreach(var key in new[]{SystemColors.WindowTextBrushKey,SystemColors.ControlTextBrushKey,SystemColors.MenuTextBrushKey})recursos[key]=Pincel("#263C32");
         recursos[SystemColors.HighlightBrushKey]=new SolidColorBrush(Color.FromRgb(36,86,64));

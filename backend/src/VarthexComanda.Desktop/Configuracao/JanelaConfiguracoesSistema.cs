@@ -31,13 +31,14 @@ public sealed class JanelaConfiguracoesSistema : Window
     private string _secao="Geral";
     private Panel? _camposGeral;
     public bool TemAlteracoes => _snapshot != Estado();
+    private int _inicioComandas = 1;
     private string Estado()=>JsonSerializer.Serialize(new { Preferencias=_prefs,Nome=_nome,Quantidade=_quantidade });
 
     public JanelaConfiguracoesSistema(ConfiguracoesSistemaService service, ConfiguracaoEstabelecimento atual,
         Func<int> maiorComanda, Func<IReadOnlyList<Produto>> produtos, Func<string> diagnostico, Action<string> acao, Action salvo,
         Func<VarthexComanda.Application.Licenciamento.DadosLicenca?>? assinatura=null)
     {
-        _service=service;_prefs=service.Carregar();_nome=atual.NomeEstabelecimento;_quantidade=atual.QuantidadeMaximaComandas?.ToString()??"";
+        _service=service;_prefs=service.Carregar();_nome=atual.NomeEstabelecimento;_quantidade=atual.QuantidadeMaximaComandas?.ToString()??"";_inicioComandas=atual.NumeroInicialComandas;
         _maiorComanda=maiorComanda;_produtos=produtos;_diagnostico=diagnostico;_acao=acao;_salvo=salvo;_snapshot=Estado();
         _assinatura=assinatura??(()=>new Licenciamento.ServicoLicenca().Verificar());
         Title="Configurações do sistema";Width=Math.Min(1180,SystemParameters.WorkArea.Width);Height=Math.Min(760,SystemParameters.WorkArea.Height);
@@ -307,7 +308,7 @@ public sealed class JanelaConfiguracoesSistema : Window
     private void Salvar()=>Executar(()=>
     {
         int? quantidade=null;if(!string.IsNullOrWhiteSpace(_quantidade)){if(!int.TryParse(_quantidade,out var n))throw new ArgumentException("Informe uma quantidade válida de comandas.");quantidade=n;}
-        if(quantidade is int limite&&_maiorComanda()>limite)throw new ArgumentException("Há comandas abertas acima desse limite. Encerre ou transfira antes de reduzir.");
+        if(quantidade is int limite&&_maiorComanda()>(long)_inicioComandas+limite-1)throw new ArgumentException("Há comandas abertas acima desse limite. Encerre ou transfira antes de reduzir.");
         _service.Salvar(_prefs,_nome,quantidade,DateTime.UtcNow);_snapshot=Estado();_mensagem.Text="Configurações salvas.";_salvo();
     });
 }

@@ -9,6 +9,8 @@
     <Resource Include="Assets\VarthexComanda.ico" />
     <Resource Include="Assets\LogoBranca.png" />
     <Resource Include="Assets\LogoRodape.png" />
+    <Resource Include="Assets\LogoAjudaClara.png" />
+    <Resource Include="Assets\LogoAjudaEscura.png" />
     <EmbeddedResource Include="Licenciamento\licenca-publica.pem" LogicalName="VarthexComanda.licenca-publica.pem" />
   </ItemGroup>
 

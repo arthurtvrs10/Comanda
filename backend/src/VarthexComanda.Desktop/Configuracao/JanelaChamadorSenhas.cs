@@ -156,8 +156,8 @@ public sealed class JanelaChamadorSenhas : Window
     }
     private static StackPanel ConteudoAcao(string texto,string geometria)
     {
-        var linha=new StackPanel { Orientation=Orientation.Horizontal,HorizontalAlignment=HorizontalAlignment.Center };
-        var icone=new System.Windows.Shapes.Path { Data=Geometry.Parse(geometria),Width=23,Height=23,StrokeThickness=1,Stretch=Stretch.Uniform,Margin=new Thickness(0,0,9,0) };icone.SetResourceReference(System.Windows.Shapes.Shape.StrokeProperty,"Line");linha.Children.Add(icone);
+        var linha=new StackPanel { Orientation=Orientation.Horizontal,HorizontalAlignment=HorizontalAlignment.Center,VerticalAlignment=VerticalAlignment.Center };
+        var icone=new System.Windows.Shapes.Path { Data=Geometry.Parse(geometria),Width=23,Height=23,StrokeThickness=1,Stretch=Stretch.Uniform,Margin=new Thickness(0,0,9,0),VerticalAlignment=VerticalAlignment.Center,HorizontalAlignment=HorizontalAlignment.Center };icone.SetResourceReference(System.Windows.Shapes.Shape.StrokeProperty,"Line");linha.Children.Add(icone);
         linha.Children.Add(new TextBlock { Text=texto,VerticalAlignment=VerticalAlignment.Center });return linha;
     }
     private Button BotaoAcao(string texto,string geometria,Func<string> acao)
