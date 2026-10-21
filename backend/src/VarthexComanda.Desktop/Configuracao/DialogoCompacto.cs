@@ -7,6 +7,7 @@ public static class DialogoCompacto
 {
     public static void Aplicar(Window janela)
     {
+        AparenciaJanelaModal.Aplicar(janela);
         janela.FontSize = 12;
         janela.ShowInTaskbar = false;
         janela.WindowStartupLocation = WindowStartupLocation.CenterOwner;

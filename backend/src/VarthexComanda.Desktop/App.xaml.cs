@@ -33,7 +33,11 @@ public partial class App : System.Windows.Application
     {
         EventManager.RegisterClassHandler(typeof(Window), FrameworkElement.LoadedEvent, new RoutedEventHandler((sender, e) =>
         {
-            if (sender is Window janela && ReferenceEquals(e.OriginalSource, janela)) LimitesJanelaModal.Aplicar(janela);
+            if (sender is Window janela && ReferenceEquals(e.OriginalSource, janela))
+            {
+                AparenciaJanelaModal.Aplicar(janela);
+                LimitesJanelaModal.Aplicar(janela);
+            }
         }));
     }
     private SingleInstanceGuard? _guard;
