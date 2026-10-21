@@ -145,7 +145,7 @@ no computador da loja) está descrito em `docs/homologacao/`.
 
 - `AtendimentoTecladoXamlTests.AtendimentoView_ExpoeCampoDeNumeroEDeBusca` (Desktop.Tests)
 - `AtendimentoTecladoXamlTests.AtendimentoView_ItemSelecionado_TemLinhaComFundoDestacado` (Desktop.Tests)
-- `AtendimentoTecladoXamlTests.AtendimentoView_OrdemDeTab_BuscaCategoriasCardsItensVoltarCancelarFinalizar` (Desktop.Tests)
+- `AtendimentoTecladoXamlTests.AtendimentoView_OrdemDeTab_BuscaProdutosItensEPagamentoComCatalogoSobDemanda` (Desktop.Tests)
 - `AtendimentoTecladoXamlTests.AtendimentoView_SemComandaSelecionada_InstanciaOsSlotsComFocoVisivel` (Desktop.Tests)
 - `AtendimentoTecladoXamlTests.Enter_NaBuscaSemResultado_MostraMensagem` (Desktop.Tests)
 - `AtendimentoTecladoXamlTests.Enter_NaBuscaVazia_NaoAdicionaNada` (Desktop.Tests)
