@@ -179,6 +179,7 @@ public class AtendimentoTecladoXamlTests
         ThreadingHelper.EmSta(() =>
         {
             CarregamentoDeXamlTests.GarantirApp();
+            TemaInterface.Aplicar(false,false);
             var (viewModel, _) = CarregamentoDeXamlTests.CriarAtendimento();
             var view = new AtendimentoView(viewModel);
             var destaque = Color.FromRgb(0xFB, 0xE3, 0xC2);
@@ -196,6 +197,9 @@ public class AtendimentoTecladoXamlTests
     [Fact]
     public void ItemSelecionadoParaCorConverter_DestacaSoALinhaSelecionada()
     {
+        ThreadingHelper.EmSta(()=>
+        {
+        CarregamentoDeXamlTests.GarantirApp();TemaInterface.Aplicar(false,false);
         var conversor = new ItemSelecionadoParaCorConverter();
 
         var fundoSelecionada = Assert.IsAssignableFrom<SolidColorBrush>(conversor.Convert(new object[] { 5, 5 }, typeof(Brush), null!, CultureInfo.InvariantCulture));
@@ -207,6 +211,7 @@ public class AtendimentoTecladoXamlTests
         Assert.Equal(Color.FromRgb(0xD9, 0x82, 0x2B), marcaSelecionada.Color);
         Assert.Same(Brushes.Transparent, outra);
         Assert.Same(Brushes.Transparent, semSelecao);
+        });
     }
 
     [Theory]

@@ -1,11 +1,11 @@
-﻿<UserControl x:Class="VarthexComanda.Desktop.Catalogo.ProdutosView"
+<UserControl x:Class="VarthexComanda.Desktop.Catalogo.ProdutosView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:local="clr-namespace:VarthexComanda.Desktop.Catalogo"
              xmlns:atendimento="clr-namespace:VarthexComanda.Desktop.Atendimento"
-             mc:Ignorable="d">
+             mc:Ignorable="d" Foreground="{DynamicResource Ink}">
     <UserControl.Resources>
         <local:FotoArquivoParaImagemConverter x:Key="FotoImagem" />
         <local:CaminhoArquivoParaImagemConverter x:Key="CaminhoImagem" />
@@ -16,6 +16,7 @@
         <atendimento:NuloParaVisibilidadeInversoConverter x:Key="VisivelSeNovo" />
         <!-- Enter grava: so o botao de gravar visivel (Cadastrar ou Salvar) e o padrao; o colapsado nunca compete -->
         <Style x:Key="BotaoGravarPadrao" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="MinHeight" Value="28"/><Setter Property="FontSize" Value="12"/><Setter Property="Padding" Value="16,5"/>
             <Style.Triggers>
                 <Trigger Property="Visibility" Value="Visible">
                     <Setter Property="IsDefault" Value="True" />
@@ -24,102 +25,112 @@
         </Style>
     </UserControl.Resources>
     <Grid Background="{DynamicResource BackgroundF3F5F2}">
-        <Grid x:Name="Catalogo" Margin="24">
-            <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition/></Grid.RowDefinitions>
-            <Grid Margin="0,0,0,20"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="180"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                <StackPanel Margin="0,0,12,0"><TextBlock Text="Buscar produto" Foreground="{DynamicResource Text52675A}" Margin="0,0,0,6"/><TextBox x:Name="CampoBuscaProduto" Text="{Binding TextoBusca, UpdateSourceTrigger=PropertyChanged}" ToolTip="Buscar produto (Ctrl+F)" AutomationProperties.Name="Buscar produto"/></StackPanel>
-                <StackPanel Grid.Column="1" Margin="0,0,12,0"><TextBlock Text="Categoria" Foreground="{DynamicResource Text52675A}" Margin="0,0,0,6"/><ComboBox ItemsSource="{Binding Categorias}" DisplayMemberPath="Nome" SelectedItem="{Binding CategoriaFiltro}" ToolTip="Todas as categorias" AutomationProperties.Name="Filtrar categoria"/></StackPanel>
-                <Button Grid.Column="2" VerticalAlignment="Bottom" Content="Limpar filtro" Command="{Binding LimparFiltroCommand}"/>
-                <Button x:Name="BotaoNovoProduto" Grid.Column="3" VerticalAlignment="Bottom" Margin="12,0,0,0" Content="Novo produto" Click="NovoProduto_Click" Background="{DynamicResource Background245640}" Foreground="White" Padding="20,10"/>
-            </Grid>
-            <ListBox Grid.Row="1" ItemsSource="{Binding Produtos}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderBrush="{DynamicResource ColorC5D0C8}" Background="{DynamicResource BackgroundFFFFFF}" HorizontalContentAlignment="Stretch">
-                <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem"><Setter Property="Padding" Value="0"/><Setter Property="HorizontalContentAlignment" Value="Stretch"/></Style></ListBox.ItemContainerStyle>
-                <ListBox.ItemTemplate><DataTemplate><Button Click="EditarProduto_Click" Padding="12,8" Background="{DynamicResource BackgroundFFFFFF}" BorderBrush="{DynamicResource ColorDCE3DD}" BorderThickness="0,0,0,1" HorizontalContentAlignment="Stretch" AutomationProperties.Name="{Binding Nome}">
-                    <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="56"/><ColumnDefinition/><ColumnDefinition Width="130"/><ColumnDefinition Width="110"/><ColumnDefinition Width="80"/></Grid.ColumnDefinitions>
-                        <Border Background="{DynamicResource BackgroundF3F5F2}" Width="56" Height="56"><Image Source="{Binding FotoArquivo, Converter={StaticResource FotoImagem}}" Stretch="Uniform"/></Border>
-                        <TextBlock Grid.Column="1" Text="{Binding Nome}" FontWeight="SemiBold" VerticalAlignment="Center" Margin="16,0" TextTrimming="CharacterEllipsis"/>
-                        <TextBlock Grid.Column="2" VerticalAlignment="Center" Foreground="{DynamicResource Text52675A}" TextTrimming="CharacterEllipsis"><TextBlock.Text><MultiBinding Converter="{StaticResource CategoriaNome}"><Binding Path="CategoriaId"/><Binding Path="DataContext.Categorias" RelativeSource="{RelativeSource AncestorType=UserControl}"/></MultiBinding></TextBlock.Text></TextBlock>
-                        <TextBlock Grid.Column="3" Text="{Binding PrecoCentavos, Converter={StaticResource Moeda}}" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="16"/>
-                        <TextBlock Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="12"><TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Text" Value="Ativo"/><Setter Property="Foreground" Value="{DynamicResource Text52675A}"/><Style.Triggers><DataTrigger Binding="{Binding Ativo}" Value="False"><Setter Property="Text" Value="Inativo"/><Setter Property="Foreground" Value="{DynamicResource Text87582D}"/></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock>
-                    </Grid>
-                </Button></DataTemplate></ListBox.ItemTemplate>
-            </ListBox>
+        <Grid x:Name="Catalogo" Margin="10">
+            <Grid.Resources>
+                <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}"><Setter Property="Height" Value="38"/><Setter Property="MinHeight" Value="38"/><Setter Property="MinWidth" Value="102"/><Setter Property="VerticalContentAlignment" Value="Center"/><Setter Property="FontSize" Value="12"/><Setter Property="Padding" Value="12,5"/></Style>
+                <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}"><Setter Property="MinHeight" Value="28"/><Setter Property="FontSize" Value="12"/><Setter Property="Padding" Value="5,3"/></Style>
+            </Grid.Resources>
+            <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+            <DockPanel Margin="0,0,0,12">
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                                        <Button Click="OpcoesProdutos_Click" Margin="0,0,8,0" AutomationProperties.Name="Opções de produtos"><StackPanel Orientation="Horizontal"><Path Data="M4,12 A2,2 0 1 1 0,12 A2,2 0 1 1 4,12 M14,12 A2,2 0 1 1 10,12 A2,2 0 1 1 14,12 M24,12 A2,2 0 1 1 20,12 A2,2 0 1 1 24,12" Stroke="{DynamicResource RibbonSubtitle}" StrokeThickness="1.2" Width="23" Height="7" Stretch="Uniform" Margin="0,0,8,0" VerticalAlignment="Center"/><TextBlock Text="Opções" VerticalAlignment="Center"/><Path Data="M0,0 L3,3 L6,0 Z" Fill="{DynamicResource RibbonSubtitle}" Width="6" Height="3" Margin="10,0,0,0" VerticalAlignment="Center"/></StackPanel></Button>
+                                        <Button Click="EditarSelecionado_Click" Margin="0,0,8,0" AutomationProperties.Name="Editar produto"><StackPanel Orientation="Horizontal"><Path Data="M3,19 L1,25 L7,23 L24,6 L20,2 Z M17,5 L21,9 M3,19 L7,23" Stroke="{DynamicResource RibbonSubtitle}" StrokeThickness="1.4" Width="23" Height="23" Stretch="Uniform" Margin="0,0,9,0"/><TextBlock Text="Editar" VerticalAlignment="Center"/></StackPanel></Button>
+                                        <Button x:Name="BotaoNovoProduto" ToolTip="Adicionar produto" Click="NovoProduto_Click" AutomationProperties.Name="Novo produto"><StackPanel Orientation="Horizontal"><Path Data="M12,2 V22 M2,12 H22" Stroke="{DynamicResource RibbonSubtitle}" StrokeThickness="1.4" Width="23" Height="23" Stretch="Uniform" Margin="0,0,9,0"/><TextBlock Text="Novo" VerticalAlignment="Center"/></StackPanel></Button>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center"><Path Data="M14,7 A7,7 0 1 1 0,7 A7,7 0 1 1 14,7 M12,12 L19,19" Stroke="{DynamicResource Line}" StrokeThickness="1.3" Width="19" Height="19" Stretch="Uniform" Margin="0,0,7,0"/><TextBox x:Name="CampoBuscaProduto" Width="275" Text="{Binding TextoBusca, UpdateSourceTrigger=PropertyChanged}" ToolTip="Pesquisar produto (Ctrl+F)" AutomationProperties.Name="Buscar produto"/></StackPanel>
+            </DockPanel>
+            <Border Grid.Row="1" BorderBrush="{DynamicResource Accent}" BorderThickness="0,0,0,2" HorizontalAlignment="Left" Padding="10,3,10,7"><TextBlock Text="{Binding Produtos.Count,StringFormat=Produtos ({0})}" FontSize="12"/></Border>
+            <DataGrid x:Name="TabelaProdutos" Grid.Row="2" ItemsSource="{Binding Produtos}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" SelectionMode="Single" SelectionUnit="FullRow" RowHeight="32" ColumnHeaderHeight="34" FontSize="12" HeadersVisibility="Column" GridLinesVisibility="Horizontal" BorderBrush="{DynamicResource Line}" BorderThickness="1" Background="{DynamicResource Surface}" Foreground="{DynamicResource Ink}" RowBackground="{DynamicResource Surface}" AlternatingRowBackground="{DynamicResource Canvas}" HorizontalGridLinesBrush="{DynamicResource Line}" MouseDoubleClick="TabelaProdutos_MouseDoubleClick" KeyDown="TabelaProdutos_KeyDown">
+                <DataGrid.Resources>
+                    <Style TargetType="TextBlock"><Setter Property="VerticalAlignment" Value="Center"/><Setter Property="TextTrimming" Value="CharacterEllipsis"/></Style>
+                    <Style TargetType="DataGridColumnHeader"><Setter Property="VerticalContentAlignment" Value="Center"/><Setter Property="Background" Value="{DynamicResource Canvas}"/><Setter Property="Foreground" Value="{DynamicResource Ink}"/><Setter Property="Padding" Value="7,4"/><Setter Property="BorderBrush" Value="{DynamicResource Line}"/><Setter Property="BorderThickness" Value="0,0,1,1"/></Style>
+                    <Style TargetType="DataGridCell" BasedOn="{StaticResource CelulaTabela}"/>
+                </DataGrid.Resources>
+                <DataGrid.Columns>
+                    <DataGridTextColumn ElementStyle="{StaticResource NumeroTabela}" Header="Cód. sistema" Binding="{Binding Id}" Width="95"/>
+                    <DataGridTemplateColumn Header="Categoria" Width="140"><DataGridTemplateColumn.CellTemplate><DataTemplate><TextBlock Style="{StaticResource TextoTabela}"><TextBlock.Text><MultiBinding Converter="{StaticResource CategoriaNome}"><Binding Path="CategoriaId"/><Binding Path="DataContext.Categorias" RelativeSource="{RelativeSource AncestorType=UserControl}"/></MultiBinding></TextBlock.Text></TextBlock></DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
+                    <DataGridTextColumn ElementStyle="{StaticResource TextoTabela}" Header="Nome" Binding="{Binding Nome}" Width="*" MinWidth="160"/>
+                    <DataGridTextColumn ElementStyle="{StaticResource NumeroTabela}" Header="Preço custo" Binding="{Binding CustoCentavos,Converter={StaticResource Moeda}}" Width="115"/>
+                    <DataGridTextColumn ElementStyle="{StaticResource NumeroTabela}" Header="Preço venda" Binding="{Binding PrecoCentavos,Converter={StaticResource Moeda}}" Width="115"/>
+                    <DataGridTemplateColumn Header="Medida" Width="75"><DataGridTemplateColumn.CellTemplate><DataTemplate><TextBlock Text="UN" Style="{StaticResource TextoTabela}"/></DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Status venda" Width="105"><DataGridTemplateColumn.CellTemplate><DataTemplate><StackPanel Orientation="Horizontal" VerticalAlignment="Center"><Ellipse Width="10" Height="10" VerticalAlignment="Center" Margin="0,0,6,0"><Ellipse.Style><Style TargetType="Ellipse"><Setter Property="Fill" Value="#35B85B"/><Style.Triggers><DataTrigger Binding="{Binding Ativo}" Value="False"><Setter Property="Fill" Value="#9BA5A8"/></DataTrigger></Style.Triggers></Style></Ellipse.Style></Ellipse><TextBlock><TextBlock.Style><Style TargetType="TextBlock" BasedOn="{StaticResource TextoTabela}"><Setter Property="Text" Value="Ativo"/><Style.Triggers><DataTrigger Binding="{Binding Ativo}" Value="False"><Setter Property="Text" Value="Inativo"/></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock></StackPanel></DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
+                    <DataGridTextColumn ElementStyle="{StaticResource NumeroTabela}" Header="Cód. personalizado" Binding="{Binding CodigoPersonalizado}" Width="135"/>
+                </DataGrid.Columns>
+            </DataGrid>
+            <Border Grid.Row="3" BorderBrush="{DynamicResource Line}" BorderThickness="1,0,1,1" Background="{DynamicResource Surface}" Padding="12,7"><TextBlock Text="{Binding ResumoCatalogo}" FontSize="12" HorizontalAlignment="Center"/></Border>
         </Grid>
         <Grid x:Name="ModalProduto" Visibility="Collapsed" Background="#9916271F" KeyboardNavigation.TabNavigation="Cycle" KeyboardNavigation.ControlTabNavigation="Cycle">
-        <Border Width="600"  Margin="20" HorizontalAlignment="Center" VerticalAlignment="Center"
-                BorderBrush="{DynamicResource ColorC4C4C4}" BorderThickness="1" Background="{DynamicResource BackgroundFFFFFF}" Padding="16">
+        <Border Width="800" Margin="12" HorizontalAlignment="Center" VerticalAlignment="Center"
+                BorderBrush="{DynamicResource Line}" BorderThickness="1" Background="{DynamicResource Canvas}" Padding="12" TextElement.FontSize="12" TextElement.Foreground="{DynamicResource Ink}">
+            <Border.Resources>
+                <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}"><Setter Property="MinHeight" Value="28"/><Setter Property="FontSize" Value="12"/><Setter Property="Padding" Value="5,3"/></Style>
+                <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}"><Setter Property="MinHeight" Value="28"/><Setter Property="FontSize" Value="12"/><Setter Property="Padding" Value="5,3"/></Style>
+                <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}"><Setter Property="MinHeight" Value="28"/><Setter Property="FontSize" Value="12"/><Setter Property="Padding" Value="12,5"/></Style>
+                <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}"><Setter Property="MinHeight" Value="24"/><Setter Property="FontSize" Value="12"/></Style>
+            </Border.Resources>
             <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-
-                <TextBlock Grid.Row="0" Text="{Binding TituloFormulario}" FontWeight="Bold" FontSize="14"
-                           Foreground="{DynamicResource Text23252A}" Margin="0,0,0,12" />
-
-                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-                    <StackPanel>
-                        <TextBlock Text="FOTO" FontWeight="Bold" FontSize="12" Foreground="{DynamicResource Text4A4A47}" Margin="0,0,0,4" />
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
-                            <Grid Width="100" Height="100" Background="{DynamicResource BackgroundEDEDEA}" ClipToBounds="True">
-                                <Image Source="{Binding FotoArquivoAtual, Converter={StaticResource FotoImagem}}" Stretch="UniformToFill" />
-                                <Image Source="{Binding FotoPendenteCaminho, Converter={StaticResource CaminhoImagem}}" Stretch="UniformToFill" />
-                            </Grid>
-                            <StackPanel Margin="12,0,0,0" VerticalAlignment="Top">
-                                <Button Content="Escolher foto..." Click="EscolherFoto_Click" Padding="12,6" Margin="0,0,0,6" />
-                                <Button Content="Remover foto" Command="{Binding RemoverFotoCommand}" Padding="12,6" Margin="0,0,0,6" />
-                                <TextBlock Text="JPG, PNG ou BMP · até 10 MB" FontSize="11" Foreground="{DynamicResource Text6B6B67}" />
-                            </StackPanel>
-                        </StackPanel>
-
-                        <TextBlock Text="NOME DO PRODUTO" FontWeight="Bold" FontSize="12" Foreground="{DynamicResource Text4A4A47}" Margin="0,0,0,4" />
-                        <TextBox x:Name="CampoNomeProduto" Text="{Binding NomeProduto, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12" />
-
-                        <TextBlock Text="CATEGORIA" FontWeight="Bold" FontSize="12" Foreground="{DynamicResource Text4A4A47}" Margin="0,0,0,4" />
-                        <Grid Margin="0,0,0,12">
-                            <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                            <ComboBox x:Name="SeletorCategoriaProduto" ItemsSource="{Binding Categorias}" DisplayMemberPath="Nome" SelectedItem="{Binding CategoriaProduto}" />
-                            <TextBox x:Name="CampoNovaCategoria" Visibility="Collapsed" Text="{Binding NovaCategoriaNome, UpdateSourceTrigger=PropertyChanged}" KeyDown="CampoNovaCategoria_KeyDown" ToolTip="Digite a nova categoria e pressione Enter para adicionar ou Esc para cancelar" AutomationProperties.Name="Nome da nova categoria"/>
-                            <Button x:Name="BotaoNovaCategoria" Grid.Column="1" Width="46" Margin="8,0,0,0" Click="NovaCategoria_Click" ToolTip="Adicionar nova categoria" AutomationProperties.Name="Adicionar nova categoria">
-                                <Path Data="M8,0 V16 M0,8 H16" Stroke="{DynamicResource Color245640}" StrokeThickness="2" Width="16" Height="16"/>
-                            </Button>
-                        </Grid>
-
-
-
-
-
-                    </StackPanel>
-                </ScrollViewer>
-
-                <StackPanel Grid.Row="2" Background="{DynamicResource BackgroundFFFFFF}" Margin="0,12,0,0">
-                        <TextBlock Text="PREÇO (R$)" FontWeight="Bold" FontSize="12" Foreground="{DynamicResource Text4A4A47}" Margin="0,0,0,4" />
-                        <TextBox x:Name="CampoPrecoProduto" Text="{Binding PrecoProdutoReais, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12" />
-
-                        <CheckBox x:Name="CampoProdutoAtivo" Content="Ativo" IsChecked="{Binding ProdutoAtivo}" Margin="0,0,0,12"
-                                  Visibility="{Binding ProdutoSelecionado, Converter={StaticResource VisivelSeEdicao}}" />
-                <TextBlock Text="{Binding Mensagem}" Foreground="{DynamicResource TextB23B32}" TextWrapping="Wrap" Margin="0,8,0,0" />
+                <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                <StackPanel Margin="0,0,0,12">
+                    <Border BorderBrush="{DynamicResource Accent}" BorderThickness="0,0,0,2" HorizontalAlignment="Left" Padding="10,4,10,7" Margin="0,0,0,10"><TextBlock Text="Principal" Foreground="{DynamicResource Ink}"/></Border>
+                    <DockPanel LastChildFill="True">
+                        <CheckBox x:Name="CampoProdutoAtivo" Content="Ativo" IsChecked="{Binding ProdutoAtivo}" DockPanel.Dock="Right"/>
+                        <TextBlock Text="{Binding ProdutoSelecionado.Id, StringFormat='Código do sistema: {0}', TargetNullValue='Código do sistema: gerado ao salvar', FallbackValue='Código do sistema: gerado ao salvar'}" Foreground="{DynamicResource Ink}" VerticalAlignment="Center"/>
+                    </DockPanel>
                 </StackPanel>
-
-                <DockPanel Grid.Row="3" Margin="0,12,0,0">
-<Button Content="Cancelar" Click="Cancelar_Click" DockPanel.Dock="Left" Margin="0,0,8,0" Visibility="{Binding ProdutoSelecionado, Converter={StaticResource VisivelSeNovo}}" />
-                    <Button x:Name="BotaoCadastrar" Click="Gravar_Click" Style="{StaticResource BotaoGravarPadrao}" DockPanel.Dock="Right" Content="Cadastrar produto" Padding="20,0" Height="60" FontSize="16"
-                            Background="{DynamicResource Background3F8F5F}" Foreground="White" FontWeight="Bold"
-                            Command="{Binding SalvarCommand}"
-                            Visibility="{Binding ProdutoSelecionado, Converter={StaticResource VisivelSeNovo}}" />
-                    <Button x:Name="BotaoSalvar" Click="Gravar_Click" Style="{StaticResource BotaoGravarPadrao}" DockPanel.Dock="Right" Content="Salvar" Padding="20,0" Height="60" FontSize="16"
-                            Background="{DynamicResource Background3F8F5F}" Foreground="White" FontWeight="Bold"
-                            Command="{Binding SalvarCommand}"
-                            Visibility="{Binding ProdutoSelecionado, Converter={StaticResource VisivelSeEdicao}}" />
-                    <StackPanel Orientation="Horizontal"
-                                Visibility="{Binding ProdutoSelecionado, Converter={StaticResource VisivelSeEdicao}}">
-                        <Button Content="Cancelar" Padding="16,0" Height="60" FontSize="16"
-                                Click="Cancelar_Click" Margin="0,0,8,0" />
-                        <Button Content="Desativar" Click="Gravar_Click" Padding="16,0" Height="60" FontSize="16" Foreground="{DynamicResource TextB23B32}"
-                                Command="{Binding DesativarCommand}" />
-                    </StackPanel>
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <Grid>
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="210"/><ColumnDefinition/></Grid.ColumnDefinitions>
+                        <StackPanel Margin="0,0,18,0">
+                            <Border Height="200" BorderBrush="{DynamicResource Line}" BorderThickness="1" Background="{DynamicResource BackgroundEDEDEA}">
+                                <Grid ClipToBounds="True">
+                                    <Grid>
+                                        <Grid.Style><Style TargetType="Grid"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><MultiDataTrigger><MultiDataTrigger.Conditions><Condition Binding="{Binding FotoArquivoAtual}" Value="{x:Null}"/><Condition Binding="{Binding FotoPendenteCaminho}" Value="{x:Null}"/></MultiDataTrigger.Conditions><Setter Property="Visibility" Value="Visible"/></MultiDataTrigger></Style.Triggers></Style></Grid.Style>
+                                        <Viewbox Margin="30"><Path Data="M85,60 A35,35 0 1 1 15,60 A35,35 0 1 1 85,60 M76,60 A26,26 0 1 1 24,60 A26,26 0 1 1 76,60 M3,27 V48 M8,27 V48 M13,27 V48 M3,42 Q8,57 13,42 M8,50 V93 M96,27 V93 M96,27 Q86,38 96,55" Stroke="{DynamicResource Text6B6B67}" StrokeThickness="2" Stretch="Uniform"/></Viewbox>
+                                    </Grid>
+                                    <Image Source="{Binding FotoArquivoAtual, Converter={StaticResource FotoImagem}}" Stretch="Uniform"/>
+                                    <Image Source="{Binding FotoPendenteCaminho, Converter={StaticResource CaminhoImagem}}" Stretch="Uniform"/>
+                                </Grid>
+                            </Border>
+                            <Button Content="Selecionar imagem…" Click="EscolherFoto_Click" Margin="0,6,0,6"/>
+                            <Button Content="Remover foto" Command="{Binding RemoverFotoCommand}" Margin="0,0,0,10"/>
+                            <TextBlock Text="Sugestão: 600 × 600 pixels.&#10;JPG, PNG ou BMP · até 10 MB." FontSize="11" TextWrapping="Wrap" Foreground="{DynamicResource Text6B6B67}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1">
+                            <Label Content="Nome" Target="{Binding ElementName=CampoNomeProduto}" Padding="0,0,0,4"/>
+                            <TextBox x:Name="CampoNomeProduto" Text="{Binding NomeProduto, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,10" AutomationProperties.Name="Nome do produto"/>
+                            <Grid Margin="0,0,0,10">
+                                <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="175"/></Grid.ColumnDefinitions>
+                                <StackPanel Margin="0,0,12,0">
+                                    <Label Content="Categoria" Target="{Binding ElementName=SeletorCategoriaProduto}" Padding="0,0,0,4"/>
+                                    <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                        <ComboBox x:Name="SeletorCategoriaProduto" ItemsSource="{Binding Categorias}" DisplayMemberPath="Nome" SelectedItem="{Binding CategoriaProduto}" AutomationProperties.Name="Categoria do produto"/>
+                                        <TextBox x:Name="CampoNovaCategoria" Visibility="Collapsed" Text="{Binding NovaCategoriaNome, UpdateSourceTrigger=PropertyChanged}" KeyDown="CampoNovaCategoria_KeyDown" ToolTip="Digite a categoria e pressione Enter; Esc cancela" AutomationProperties.Name="Nome da nova categoria"/>
+                                        <Button x:Name="BotaoNovaCategoria" Grid.Column="1" Width="30" Margin="5,0,0,0" Click="NovaCategoria_Click" ToolTip="Adicionar nova categoria" AutomationProperties.Name="Adicionar nova categoria" Padding="5">
+                                            <Path Data="M8,0 V16 M0,8 H16" Stroke="{DynamicResource Accent}" StrokeThickness="1.5" Width="13" Height="13" Stretch="Uniform"/>
+                                        </Button>
+                                    </Grid>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1"><TextBlock Text="Vender este item como" Margin="0,0,0,4"/><Border BorderBrush="{DynamicResource Line}" BorderThickness="1" Padding="6,5"><TextBlock Text="Unidade (UN)"/></Border></StackPanel>
+                            </Grid>
+                            <Grid Margin="0,0,0,10"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition/></Grid.ColumnDefinitions>
+                                <StackPanel Margin="0,0,6,0"><Label Content="Preço de custo (R$)" Target="{Binding ElementName=CampoCustoProduto}" Padding="0,0,0,4"/><TextBox x:Name="CampoCustoProduto" Text="{Binding CustoProdutoReais, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Preço de custo"/></StackPanel>
+                                <StackPanel Grid.Column="1" Margin="6,0,0,0"><Label Content="Preço de venda (R$)" Target="{Binding ElementName=CampoPrecoProduto}" Padding="0,0,0,4"/><TextBox x:Name="CampoPrecoProduto" Text="{Binding PrecoProdutoReais, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Preço de venda"/></StackPanel>
+                            </Grid>
+                            <Label Content="Descrição" Target="{Binding ElementName=CampoDescricaoProduto}" Padding="0,0,0,4"/>
+                            <TextBox x:Name="CampoDescricaoProduto" Text="{Binding DescricaoProduto, UpdateSourceTrigger=PropertyChanged}" MaxLength="2000" AcceptsReturn="True" TextWrapping="Wrap" Height="76" VerticalContentAlignment="Top" VerticalScrollBarVisibility="Auto" Margin="0,0,0,10" AutomationProperties.Name="Descrição do produto"/>
+                            <Label Content="Código personalizado" Target="{Binding ElementName=CampoCodigoProduto}" Padding="0,0,0,4"/>
+                            <TextBox x:Name="CampoCodigoProduto" Text="{Binding CodigoPersonalizadoProduto, UpdateSourceTrigger=PropertyChanged}" MaxLength="40" Width="290" HorizontalAlignment="Left" Margin="0,0,0,14" AutomationProperties.Name="Código personalizado do produto"/>
+                            <TextBlock Text="Disponibilidade" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                            <TextBlock Text="Os produtos ativos ficam disponíveis no catálogo e no lançamento de comandas. Os locais de preparo são definidos em Configurações do sistema → Locais / cozinhas." TextWrapping="Wrap" Foreground="{DynamicResource Text6B6B67}"/>
+                        </StackPanel>
+                    </Grid>
+                </ScrollViewer>
+                <TextBlock Grid.Row="2" Text="{Binding Mensagem}" Foreground="{DynamicResource TextB23B32}" TextWrapping="Wrap" Margin="0,8,0,0"/>
+                <DockPanel Grid.Row="3" Margin="0,12,0,0" LastChildFill="False">
+                    <Button Content="Voltar" Click="Cancelar_Click" DockPanel.Dock="Left" Margin="0,0,8,0"/>
+                    <Button x:Name="BotaoCadastrar" Click="Gravar_Click" Style="{StaticResource BotaoGravarPadrao}" DockPanel.Dock="Right" Content="Salvar" MinWidth="100" Command="{Binding SalvarCommand}" Visibility="{Binding ProdutoSelecionado, Converter={StaticResource VisivelSeNovo}}"/>
+                    <Button x:Name="BotaoSalvar" Click="Gravar_Click" Style="{StaticResource BotaoGravarPadrao}" DockPanel.Dock="Right" Content="Salvar" MinWidth="100" Command="{Binding SalvarCommand}" Visibility="{Binding ProdutoSelecionado, Converter={StaticResource VisivelSeEdicao}}"/>
+                    <Button Content="Desativar" Click="Gravar_Click" DockPanel.Dock="Left" Command="{Binding DesativarCommand}" Foreground="{DynamicResource TextB23B32}" Visibility="{Binding ProdutoSelecionado, Converter={StaticResource VisivelSeEdicao}}"/>
                 </DockPanel>
             </Grid>
         </Border>

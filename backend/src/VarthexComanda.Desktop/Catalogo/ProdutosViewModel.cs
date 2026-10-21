@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -47,6 +47,7 @@ public partial class ProdutosViewModel : ObservableObject
 
         Categorias = new ObservableCollection<Categoria>();
         Produtos = new ObservableCollection<Produto>();
+        Produtos.CollectionChanged += (_,_) => OnPropertyChanged(nameof(ResumoCatalogo));
 
         // Com o banco corrompido (modo de restauração) estas leituras lançam; a construção
         // não pode falhar, senão a MainWindow nem abre. Segue com listas vazias.
@@ -63,6 +64,7 @@ public partial class ProdutosViewModel : ObservableObject
         }
     }
 
+    public string ResumoCatalogo => $"Total de itens: {Produtos.Count}     ·     Custo médio: {(Produtos.Count == 0 ? 0 : Produtos.Average(p => p.CustoCentavos) / 100d).ToString("C2", CulturaMoeda)}     ·     Venda média: {(Produtos.Count == 0 ? 0 : Produtos.Average(p => p.PrecoCentavos) / 100d).ToString("C2", CulturaMoeda)}";
     public ObservableCollection<Categoria> Categorias { get; }
     public ObservableCollection<Produto> Produtos { get; }
 
@@ -99,6 +101,13 @@ public partial class ProdutosViewModel : ObservableObject
     private string precoProdutoReais = string.Empty;
 
     [ObservableProperty]
+    private string custoProdutoReais = string.Empty;
+    [ObservableProperty]
+    private string descricaoProduto = string.Empty;
+    [ObservableProperty]
+    private string codigoPersonalizadoProduto = string.Empty;
+
+    [ObservableProperty]
     private bool produtoAtivo = true;
 
     [ObservableProperty]
@@ -118,6 +127,7 @@ public partial class ProdutosViewModel : ObservableObject
             NomeProduto = string.Empty;
             CategoriaProduto = null;
             PrecoProdutoReais = string.Empty;
+            CustoProdutoReais=string.Empty;DescricaoProduto=string.Empty;CodigoPersonalizadoProduto=string.Empty;
             ProdutoAtivo = true;
             FotoArquivoAtual = null;
             FotoPendenteCaminho = null;
@@ -128,6 +138,8 @@ public partial class ProdutosViewModel : ObservableObject
         NomeProduto = value.Nome;
         CategoriaProduto = Categorias.FirstOrDefault(c => c.Id == value.CategoriaId);
         PrecoProdutoReais = (value.PrecoCentavos / 100m).ToString("0.00", CulturaMoeda);
+        CustoProdutoReais=(value.CustoCentavos/100m).ToString("0.00",CulturaMoeda);
+        DescricaoProduto=value.Descricao??string.Empty;CodigoPersonalizadoProduto=value.CodigoPersonalizado??string.Empty;
         ProdutoAtivo = value.Ativo;
         FotoArquivoAtual = value?.FotoArquivo;
         FotoPendenteCaminho = null;
@@ -162,6 +174,7 @@ public partial class ProdutosViewModel : ObservableObject
         NomeProduto = string.Empty;
         CategoriaProduto = null;
         PrecoProdutoReais = string.Empty;
+        CustoProdutoReais=string.Empty;DescricaoProduto=string.Empty;CodigoPersonalizadoProduto=string.Empty;
         ProdutoAtivo = true;
         FotoPendenteCaminho = null;
         Mensagem = string.Empty;
@@ -182,12 +195,16 @@ public partial class ProdutosViewModel : ObservableObject
         }
 
         var criando = ProdutoSelecionado is null;
+        long custoCentavos=0;
+        if(!string.IsNullOrWhiteSpace(CustoProdutoReais)&&!TentarConverterPreco(CustoProdutoReais,out custoCentavos,true))
+        {Mensagem="Informe um preço de custo válido, maior ou igual a zero.";return;}
+        var detalhes=new DetalhesProduto(custoCentavos,DescricaoProduto,CodigoPersonalizadoProduto);
 
         try
         {
             var resultado = ProdutoSelecionado is null
-                ? _cadastrarProduto.Executar(NomeProduto, CategoriaProduto.Id, precoCentavos)
-                : _alterarProduto.Executar(ProdutoSelecionado.Id, NomeProduto, CategoriaProduto.Id, precoCentavos, ProdutoAtivo);
+                ? _cadastrarProduto.Executar(NomeProduto, CategoriaProduto.Id, precoCentavos,detalhes,ProdutoAtivo)
+                : _alterarProduto.Executar(ProdutoSelecionado.Id, NomeProduto, CategoriaProduto.Id, precoCentavos, ProdutoAtivo,detalhes);
 
             if (!resultado.Sucesso)
             {
@@ -393,7 +410,7 @@ public partial class ProdutosViewModel : ObservableObject
         }
     }
 
-    private static bool TentarConverterPreco(string texto, out long precoCentavos)
+    private static bool TentarConverterPreco(string texto, out long precoCentavos,bool permitirZero=false)
     {
         precoCentavos = 0;
         const NumberStyles estilo = NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite;
@@ -401,7 +418,7 @@ public partial class ProdutosViewModel : ObservableObject
         {
             return false;
         }
-        if (valor <= 0)
+        if (valor < 0 || (!permitirZero&&valor==0) || valor>long.MaxValue/100m)
         {
             return false;
         }

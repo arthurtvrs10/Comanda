@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Microsoft.Win32;
@@ -51,6 +51,28 @@ public partial class ProdutosView : UserControl
         }
     }
 
+    private void EditarSelecionado_Click(object sender,RoutedEventArgs e)
+    {
+        if(TabelaProdutos.SelectedItem is not VarthexComanda.Domain.Produto produto)return;
+        ((ProdutosViewModel)DataContext).ProdutoSelecionado=produto;AbrirModal();
+    }
+    private void TabelaProdutos_MouseDoubleClick(object sender,MouseButtonEventArgs e)
+    {
+        if(ItemsControl.ContainerFromElement(TabelaProdutos,e.OriginalSource as DependencyObject) is DataGridRow)EditarSelecionado_Click(sender,e);
+    }
+    private void TabelaProdutos_KeyDown(object sender,KeyEventArgs e)
+    {
+        if(e.Key==Key.Enter){EditarSelecionado_Click(sender,e);e.Handled=true;}
+        else if(e.Key==Key.F2){NovoProduto_Click(sender,e);e.Handled=true;}
+    }
+    private void OpcoesProdutos_Click(object sender,RoutedEventArgs e)
+    {
+        var menu=new ContextMenu { PlacementTarget=(Button)sender };
+        var limpar=new MenuItem { Header="Limpar pesquisa e filtro",Command=((ProdutosViewModel)DataContext).LimparFiltroCommand };menu.Items.Add(limpar);
+        var categorias=new MenuItem { Header="Filtrar por categoria" };
+        foreach(var categoria in ((ProdutosViewModel)DataContext).Categorias){var item=new MenuItem { Header=categoria.Nome };item.Click+=(_,_)=>((ProdutosViewModel)DataContext).CategoriaFiltro=categoria;categorias.Items.Add(item);}
+        menu.Items.Add(categorias);menu.IsOpen=true;
+    }
     private void AbrirModal()
     {
         EncerrarNovaCategoria();
@@ -66,8 +88,8 @@ public partial class ProdutosView : UserControl
         {
             Title = vm.TemProdutoSelecionado ? "Editar produto" : "Novo produto",
             Owner = Window.GetWindow(this), WindowStartupLocation = WindowStartupLocation.CenterOwner,
-            Width = 620, Height = Math.Min(660, SystemParameters.WorkArea.Height - 40),
-            MinWidth = 480, MinHeight = 420, ResizeMode = ResizeMode.NoResize,
+            Width = Math.Min(820,SystemParameters.WorkArea.Width), Height = Math.Min(700, SystemParameters.WorkArea.Height - 30),
+            MinWidth = 760, MinHeight = 520, ResizeMode = ResizeMode.CanResize,
             ShowInTaskbar = false, Content = formulario, DataContext = vm,
             Background = TemaInterface.Pincel("#FFFFFF")
         };

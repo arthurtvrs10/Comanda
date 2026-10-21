@@ -8,6 +8,18 @@ namespace VarthexComanda.Desktop.Tests.Catalogo;
 
 public class ProdutosViewModelTests
 {
+    [Fact]
+    public void NovoEEdicaoSalvamDetalhesEVoltarNaoAlteraRegistro()
+    {
+        var categorias=new FakeCategoriaRepository();var categoria=new CadastrarCategoria(categorias,new FakeClock()).Executar("Refeições").Valor!;
+        var produtos=new FakeProdutoRepository();var vm=CriarViewModel(categorias,produtos);
+        vm.NomeProduto="Prato";vm.CategoriaProduto=categoria;vm.PrecoProdutoReais="25,00";vm.CustoProdutoReais="12,50";vm.DescricaoProduto="Prato do dia";vm.CodigoPersonalizadoProduto="REF-01";
+        vm.SalvarCommand.Execute(null);var criado=Assert.Single(vm.Produtos);Assert.Equal(1250,criado.CustoCentavos);Assert.Equal("REF-01",criado.CodigoPersonalizado);Assert.Empty(vm.Mensagem);
+        vm.ProdutoSelecionado=criado;Assert.Equal("12,50",vm.CustoProdutoReais);Assert.Equal("Prato do dia",vm.DescricaoProduto);
+        vm.DescricaoProduto="Descartar";vm.NovoCommand.Execute(null);Assert.Equal("Prato do dia",criado.Descricao);Assert.Empty(vm.DescricaoProduto);Assert.Empty(vm.CodigoPersonalizadoProduto);
+        vm.ProdutoSelecionado=criado;vm.CustoProdutoReais="13,00";vm.DescricaoProduto="Atualizado";vm.SalvarCommand.Execute(null);
+        Assert.Equal(1300,Assert.Single(vm.Produtos).CustoCentavos);Assert.Equal("Atualizado",Assert.Single(vm.Produtos).Descricao);
+    }
     private static ProdutosViewModel CriarViewModel(FakeCategoriaRepository categorias, FakeProdutoRepository produtos, IFotoStorage? fotos = null)
     {
         var relogio = new FakeClock();
