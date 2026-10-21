@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
@@ -18,6 +18,7 @@ public partial class MainWindow : Window
     public static readonly RoutedCommand IrParaConfiguracoesCommand = new();
 
     private readonly AcessoGestor _acesso;
+    private readonly ServicoColaboradores _colaboradores;
     private bool _restauracao;
     private bool _bloqueado = true;
     private bool _cozinhaAtiva;
@@ -37,6 +38,7 @@ public partial class MainWindow : Window
         InitializeComponent();
         Title = $"Varthex Comanda · Versão {VersaoDoAplicativo.Atual}";
         _acesso = new AcessoGestor(System.IO.Path.Combine((paths ?? new VarthexComanda.Infrastructure.Storage.AppPaths()).Root, "gestor.credencial"));
+        _colaboradores = new ServicoColaboradores(System.IO.Path.Combine((paths ?? new VarthexComanda.Infrastructure.Storage.AppPaths()).Root, "colaboradores.json"));
         _acessoAtendimento = new AcessoAtendimento(System.IO.Path.Combine((paths ?? new VarthexComanda.Infrastructure.Storage.AppPaths()).Root, "atendimento.credencial"));
         _acessoAtendimento.GarantirPinInicial();
         _bloqueioView = new BloqueioAtendimentoView(_acessoAtendimento);
@@ -73,6 +75,7 @@ public partial class MainWindow : Window
             catch { return "Não foi possível confirmar a licença. Abra a ativação para verificar."; }
         };
         Closing += (_, e) => { if (!_bloqueado && !PodeSairDasConfiguracoes()) e.Cancel=true; };
+        Closed += (_,_) => _painelSenhas?.Dispose();
         _atendimentoView.ViewModel.AtendimentoConcluido += BloquearAtendimento;
         MostrarInicio();
     }
@@ -193,9 +196,11 @@ public partial class MainWindow : Window
 
     private void BloquearAtendimento()
     {
+        _painelSenhas?.FecharChamador();
         _bloqueado = true;
         _acesso.Sair();
         _acessoAtendimento.Bloquear();
+        _colaboradores.Sair();
         ConteudoPrincipal.Content = null;
         _cozinhaAtiva = false;
         AreaSistema.IsEnabled = false;
@@ -317,6 +322,7 @@ public partial class MainWindow : Window
 
     private void AtualizarPerfil()
     {
+        if (_acesso.Autenticado && !_acesso.AutenticadoPorColaborador) _colaboradores.Sair();
         foreach (var botao in new[] { BotaoProdutos, BotaoBackup, BotaoConfiguracoes, BotaoLicenca })
         {
             botao.Visibility = _acesso.Autenticado ? Visibility.Visible : Visibility.Collapsed;
@@ -332,7 +338,7 @@ public partial class MainWindow : Window
         BotaoCozinha.Visibility = _cozinhaAtiva ? Visibility.Visible : Visibility.Collapsed;
         BotaoCozinha.IsEnabled = !_bloqueado && _cozinhaAtiva && !_restauracao;
         RotuloPerfil.Text = _cozinhaAtiva ? "Cozinha · consulta" : _acesso.Autenticado ? "Gestor" : "Garçom";
-        UsuarioRodape.Text = $"Usuário: {Environment.UserName} · {(_bloqueado ? "Acesso bloqueado" : RotuloPerfil.Text)}";
+        UsuarioRodape.Text = $"Usuário: {_colaboradores.SessaoAtual?.Nome ?? Environment.UserName} · {(_bloqueado ? "Acesso bloqueado" : RotuloPerfil.Text)}";
         LicencaRodape.Text = _configuracaoView.ConsultarLicenca?.Invoke() ?? "Licença: consultar ativação";
         LicencaRodape.ToolTip = LicencaRodape.Text;
         BotaoBackupRodape.IsEnabled = true;
@@ -368,8 +374,7 @@ public partial class MainWindow : Window
         if(_bloqueado || !_acesso.Autenticado || _restauracao) return;
         if(acao is "senha" or "pin")
         {
-            if(new JanelaAlterarAcesso(_acesso,_acessoAtendimento,acao=="pin") { Owner=_configuracoesModal??(Window)this }.ShowDialog()==true)
-            { _configuracaoView.ViewModel.MensagemErro=false;_configuracaoView.ViewModel.Mensagem="Credencial alterada com sucesso."; }
+            AbrirAlteracaoAcesso(acao=="pin");
         }
         else if(acao=="licenca") { ((App)System.Windows.Application.Current).RenovarLicenca();_configuracaoView.AtualizarSecao(); }
         else if(acao=="criar-backup")

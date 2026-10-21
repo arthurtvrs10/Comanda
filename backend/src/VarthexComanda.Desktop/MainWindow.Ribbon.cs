@@ -11,7 +11,7 @@ namespace VarthexComanda.Desktop;
 public partial class MainWindow
 {
     private string _categoriaRibbon = "Principal";
-    private sealed record DestinoRibbon(string Categoria, string Grupo, string Nome, string Icone, Func<bool> Permitido, Action Abrir);
+    private sealed record DestinoRibbon(string Categoria, string Grupo, string Nome, IconeVarthex Icone, Func<bool> Permitido, Action Abrir);
     private sealed record ResultadoPesquisa(string Nome, Action Abrir);
     private List<DestinoRibbon> _destinosRibbon = new();
     private void InicializarRibbon(string pasta)
@@ -20,14 +20,20 @@ public partial class MainWindow
         ModoEscuro.IsChecked = TemaInterface.Escuro;
         _destinosRibbon = new()
         {
-            new("Principal", "Pedido", "Mesas / comandas", "M3,3 H10 V10 H3 Z M14,3 H21 V10 H14 Z M3,14 H10 V21 H3 Z M14,14 H21 V21 H14 Z", () => !_bloqueado && !_cozinhaAtiva && !_restauracao, IrParaAtendimento),
-            new("Apps", "Operação", "Cozinha", "M4,3 H20 V21 H4 Z M8,7 H16 M8,12 H16 M8,17 H16", () => !_bloqueado && !_restauracao, () => { _cozinhaView.Atualizar(); MostrarConteudo(_cozinhaView); }),
-            new("Produtos", "Catálogo", "Produtos e categorias", "M3,7 L12,3 L21,7 V21 H3 Z M3,7 L12,11 L21,7 M12,11 V21", PodeGerir, IrParaProdutos),
-            new("Produtos", "Cadastro", "Novo produto", "M12,3 V21 M3,12 H21", PodeGerir, () => { IrParaProdutos(); _produtosView.AbrirNovoProduto(); }),
-            new("Financeiro", "Vendas", "Histórico de vendas", "M4,5 H20 V21 H4 Z M8,2 V8 M16,2 V8 M4,11 H20 M8,15 H16", () => !_bloqueado && !_cozinhaAtiva && !_restauracao, IrParaHistorico),
-            new("Configurações", "Sistema", "Configurações do sistema", "M9,2 H15 L16,5 L19,6 L22,5 L24,10 L21,12 V15 L24,17 L21,22 L18,21 L15,23 H10 L9,20 L6,19 L3,20 L1,15 L4,13 V10 L1,8 L4,3 L7,4 Z M16,12 A4,4 0 1 1 8,12 A4,4 0 1 1 16,12", PodeGerir, IrParaConfiguracoes),
-            new("Configurações", "Segurança", "Alterar senha", "M5,10 H19 V22 H5 Z M8,10 V6 A4,4 0 0 1 16,6 V10", PodeGerir, () => AcaoConfiguracao("senha")),
-            new("Configurações", "Dados", "Backup e restauração", "M4,16 V4 H20 V16 M12,10 V22 M8,18 L12,22 L16,18", () => !_bloqueado && _acesso.Autenticado, IrParaBackup)
+            new("Principal", "Pedido", "Mesas / comandas", IconeVarthex.Mesas, () => !_bloqueado && !_cozinhaAtiva && !_restauracao, IrParaAtendimento),
+            new("Apps", "Operação", "Cozinha", IconeVarthex.Cozinha, () => !_bloqueado && !_restauracao, () => { _cozinhaView.Atualizar(); MostrarConteudo(_cozinhaView); }),
+            new("Apps", "Atendimento", "Painel de senhas", IconeVarthex.Painel, PodeChamarSenha, AbrirPainelSenhas),
+            new("Produtos", "Catálogo", "Produtos", IconeVarthex.Produtos, PodeGerir, IrParaProdutos),
+            new("Financeiro", "Vendas", "Histórico de vendas", IconeVarthex.Historico, () => !_bloqueado && !_cozinhaAtiva && !_restauracao, IrParaHistorico),
+            new("Configurações", "Configurações", "Configurações do sistema", IconeVarthex.Configuracoes, PodeGerir, IrParaConfiguracoes),
+            new("Configurações", "Configurações", "Numeração de pedidos", IconeVarthex.Numeracao, PodeGerir, AbrirNumeracaoPedidos),
+            new("Configurações", "Configurações", "Impressoras", IconeVarthex.Impressoras, PodeGerir, AbrirImpressoras),
+            new("Configurações", "Configurações", "Colaboradores", IconeVarthex.Colaboradores, PodeGerir, AbrirColaboradores),
+            new("Configurações", "Configurações", "Alterar senha", IconeVarthex.Senha, PodeAlterarSenha, () => AbrirAlteracaoAcesso(false)),
+            new("Configurações", "Configurações", "Backup e restauração", IconeVarthex.Backup, () => !_bloqueado && _acesso.Autenticado, IrParaBackup),
+            new("Configurações", "Versão premium", "Minha assinatura", IconeVarthex.Assinatura, PodeGerir, AbrirMinhaAssinatura),
+            new("Configurações", "Ajuda e suporte", "Ajuda e suporte", IconeVarthex.Ajuda, () => !_bloqueado, AbrirAjuda),
+            new("Configurações", "Ajuda e suporte", "Diagnóstico de serviços", IconeVarthex.Diagnostico, PodeGerir, AbrirDiagnostico)
 
         };
         foreach (var nome in new[] { "Principal", "Produtos", "Marketing", "Financeiro", "Apps", "Configurações" })
@@ -68,17 +74,19 @@ public partial class MainWindow
             foreach (var destino in grupo)
             {
                 var conteudo = new StackPanel();
-                var icone = new System.Windows.Shapes.Path { Data=Geometry.Parse(destino.Icone), Width=24, Height=24, Stretch=Stretch.Uniform, StrokeThickness=1.6, Margin=new Thickness(0,0,0,6) };
-                icone.SetResourceReference(System.Windows.Shapes.Shape.StrokeProperty,"Accent");
+                var icone = IconesVarthex.Criar(destino.Icone);
+                icone.Margin = new Thickness(0,0,0,6);
                 conteudo.Children.Add(icone);
                 conteudo.Children.Add(new TextBlock { Text=destino.Nome, TextWrapping=TextWrapping.Wrap, TextAlignment=TextAlignment.Center, MaxWidth=130 });
-                var b=new Button { Content=conteudo, Padding=new Thickness(10,6,10,6), MinWidth=100, Height=74, Margin=new Thickness(0,0,4,0), BorderThickness=new Thickness(0), Background=Brushes.Transparent, FontSize=12 };
+                var b=new Button { Content=conteudo, Padding=new Thickness(10,6,10,6), MinWidth=100, Height=78, Margin=new Thickness(0,0,4,0), BorderThickness=new Thickness(0), Background=Brushes.Transparent, FontSize=12 };
                 System.Windows.Automation.AutomationProperties.SetName(b,destino.Nome);
                 b.Click+=(_,_)=>ExecutarDestino(destino);
                 comandos.Children.Add(b);
             }
             painel.Children.Add(comandos);
-            painel.Children.Add(new TextBlock { Text=grupo.Key, FontSize=11, HorizontalAlignment=HorizontalAlignment.Center, Margin=new Thickness(0,4,0,0) });
+            var subtitulo=new TextBlock { Text=grupo.Key, FontSize=11, HorizontalAlignment=HorizontalAlignment.Center, Margin=new Thickness(0,4,0,0) };
+            subtitulo.SetResourceReference(TextBlock.ForegroundProperty,"RibbonSubtitle");
+            painel.Children.Add(subtitulo);
             var borda=new Border { Child=painel, BorderThickness=new Thickness(0,0,1,0), Padding=new Thickness(4,0,12,0), Margin=new Thickness(0,0,8,0) };
             borda.SetResourceReference(Border.BorderBrushProperty,"Line");
             GruposRibbon.Children.Add(borda);
@@ -117,7 +125,7 @@ public partial class MainWindow
         }
         else
         {
-            var login=new JanelaLogin(_acesso,_acessoAtendimento) { Owner=this };
+            var login=new JanelaLogin(_acesso,_acessoAtendimento,colaboradores:_colaboradores) { Owner=this };
             if (login.ShowDialog()!=true) return false;
             if (login.Perfil=="gestor" && _acesso.Autenticado)
             {
@@ -151,7 +159,7 @@ public partial class MainWindow
         foreach(var grupo in _destinosRibbon.Where(d=>d.Categoria==_categoriaRibbon).GroupBy(d=>d.Grupo))
         {
             var item=new MenuItem { Header=grupo.Key };
-            foreach(var destino in grupo){var comando=new MenuItem { Header=destino.Nome };comando.Click+=(_,_)=>ExecutarDestino(destino);item.Items.Add(comando);}
+            foreach(var destino in grupo){var comando=new MenuItem { Header=destino.Nome, Icon=IconesVarthex.Criar(destino.Icone,20) };comando.Click+=(_,_)=>ExecutarDestino(destino);item.Items.Add(comando);}
             menu.Items.Add(item);
         }
         if(menu.Items.Count==0)menu.Items.Add(new MenuItem { Header="Nenhum comando disponível",IsEnabled=false });
@@ -217,7 +225,7 @@ public partial class MainWindow
     {
         if (!PodeSairDasConfiguracoes()) return;
         MostrarInicio();
-        var login = new JanelaLogin(_acesso, _acessoAtendimento, _restauracao) { Owner=this };
+        var login = new JanelaLogin(_acesso, _acessoAtendimento, _restauracao, _colaboradores) { Owner=this };
         if (login.ShowDialog()!=true) return;
         if (login.Perfil=="gestor" && _acesso.Autenticado)
         {

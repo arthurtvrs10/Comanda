@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using System.Windows.Controls;
 using VarthexComanda.Application.Atendimento;
 using VarthexComanda.Application.Backup;
@@ -308,19 +308,20 @@ public class CarregamentoDeXamlTests
                 void Categoria(string nome)=>categorias.Children.OfType<Button>().Single(b=>Equals(b.Content,nome)).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
                 void Comando(string nome)=>Descendentes((FrameworkElement)janela.FindName("GruposRibbon")).OfType<Button>().Single(b=>System.Windows.Automation.AutomationProperties.GetName(b)==nome).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
                 Categoria("Produtos");Assert.Same(atendimento,conteudo.Content);
-                Comando("Produtos e categorias");var produtos=Assert.IsType<ProdutosView>(conteudo.Content);
+                Comando("Produtos");var produtos=Assert.IsType<ProdutosView>(conteudo.Content);
                 ((ProdutosViewModel)produtos.DataContext).TextoBusca="Refrigerante";
+                Assert.Equal("Refrigerante",((ProdutosViewModel)produtos.DataContext).TextoBusca);
                 Categoria("Marketing");Assert.Same(produtos,conteudo.Content);
                 Assert.Empty(Descendentes((FrameworkElement)janela.FindName("GruposRibbon")).OfType<Button>());
                 Categoria("Principal");Comando("Mesas / comandas");
                 Assert.Equal("Sem cebola",atendimento.ViewModel.ObservacaoNovoItem);
                 Categoria("Configurações");
-                Assert.Equal(3,Descendentes((FrameworkElement)janela.FindName("GruposRibbon")).OfType<Button>().Count());
+                Assert.Equal(new[]{"Configurações do sistema","Numeração de pedidos","Impressoras","Colaboradores","Alterar senha","Backup e restauração","Minha assinatura","Ajuda e suporte","Diagnóstico de serviços"},Descendentes((FrameworkElement)janela.FindName("GruposRibbon")).OfType<Button>().Select(b=>System.Windows.Automation.AutomationProperties.GetName(b)));
                 var config=(ConfiguracaoView)tipo.GetField("_configuracaoView",flags)!.GetValue(janela)!;config.ViewModel.NomeEstabelecimento="Nome em edição";
-                Categoria("Produtos");Comando("Produtos e categorias");Assert.Equal("Refrigerante",((ProdutosViewModel)produtos.DataContext).TextoBusca);
+                Categoria("Produtos");Comando("Produtos");Assert.Equal("Refrigerante",((ProdutosViewModel)produtos.DataContext).TextoBusca);
                 Categoria("Configurações");Assert.Equal("Nome em edição",config.ViewModel.NomeEstabelecimento);
                 config.ViewModel.DescartarCommand.Execute(null);
-                Categoria("Produtos");Comando("Produtos e categorias");
+                Categoria("Produtos");Comando("Produtos");
                 var pesquisa=(TextBox)janela.FindName("PesquisaGlobal");pesquisa.Text="backup";
                 var resultados=(ListBox)janela.FindName("ResultadosPesquisa");Assert.NotEmpty(resultados.Items.Cast<object>());
                 pesquisa.Clear();
@@ -349,12 +350,12 @@ public class CarregamentoDeXamlTests
                     Categoria("Configurações");
                     raiz.Measure(new Size(1280,780));raiz.Arrange(new Rect(0,0,1280,780));raiz.UpdateLayout();
                     SalvarPrevia(raiz,$"ribbon-configuracoes-{(escuro?"escuro":"claro")}");
-                    Categoria("Produtos");Comando("Produtos e categorias");
+                    Categoria("Produtos");Comando("Produtos");
                     TemaInterface.Inicializar(pasta);Assert.Equal(escuro,TemaInterface.Escuro);
                 }
                 acesso.Sair();tipo.GetMethod("AtualizarPerfil",flags)!.Invoke(janela,null);
                 pesquisa.Text="backup";Assert.NotEmpty(resultados.Items.Cast<object>());
-                Categoria("Produtos");Assert.Equal(2,Descendentes((FrameworkElement)janela.FindName("GruposRibbon")).OfType<Button>().Count());
+                Categoria("Produtos");Assert.Single(Descendentes((FrameworkElement)janela.FindName("GruposRibbon")).OfType<Button>());
                 Assert.False(MainWindow.IrParaProdutosCommand.CanExecute(null,janela));
                 TemaInterface.Aplicar(false);
             });
