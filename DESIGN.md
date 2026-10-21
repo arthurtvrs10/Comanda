@@ -40,3 +40,15 @@ Paleta da amostra fornecida: barra #0A0A0A e faixa/aba ativa #323130 no tema esc
 A tela inicial de blocos Garçom/Cozinha/Gestor deixa de ser exibida. Abrir na área de trabalho com a Ribbon em Principal. Acesso a Mesas/comandas solicita PIN; as áreas de atendimento, cozinha e gestor ficam no menu de usuário. Permissões, bloqueio e recuperação preservados.
 
 Configurações do sistema: modal central redimensionável com navegação lateral de sete seções e ações Salvar/Opções avançadas no rodapé. Usa recursos de tema existentes; Backup e Alterar senha permanecem no Ribbon. Detalhes em specs/2026-10-20-configuracoes-sistema.md.
+
+### Comandos específicos de Configurações
+Ao lado da central do sistema ficam Numeração de pedidos, Impressoras e Colaboradores, seguidos de Alterar senha e Backup. Modais compactos com Segoe UI 12, controles de 28 px e temas dinâmicos. Senha em janela de 350 px com três campos; listas administrativas em janelas redimensionáveis. Referência: specs/2026-10-20-comandos-configuracao.md.
+
+### Painel de senhas e editor de produto
+Apps contém um chamador compacto com teclado e prévia e uma tela pública independente: senha atual grande e cinco anteriores na coluna direita. Cores da tela pública são configuráveis, independentes do tema administrativo. Produto novo/edição usam foto de200 px à esquerda, formulário à direita e ações compactas de28 px. Grupo Configurações reúne também Alterar senha. Detalhes em specs/2026-10-20-painel-senhas.md e specs/2026-10-20-editor-produtos.md.
+
+### Alinhamento compartilhado — revisão de 21/10/2026
+Tabelas usam o apresentador com altura completa e conteúdo centralizado verticalmente. Texto e indicadores compartilham o centro da linha, inclusive em alturas diferentes. Preços e códigos numéricos ficam à direita; nomes e categorias à esquerda. Listas e cabeçalhos administrativos herdam a regra comum; campos multilinha preservam alinhamento superior. Evidência e limites em specs/2026-10-21-revisao-interface.md.
+
+### Produtos em janela interna — 21/10/2026
+A listagem Produtos abre como janela filha dentro da área de trabalho, sobre o fundo configurado, com título e botões maximizar/restaurar e fechar. A Ribbon permanece disponível. Janela normal de até1180×600, limitada ao espaço interno e movível pelo título. Maximizar não cobre categorias ou rodapé. Detalhes e testes em specs/2026-10-21-janela-interna-produtos.md.

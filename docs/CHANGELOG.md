@@ -288,3 +288,15 @@ Pendente (a homologação humana **ainda não aconteceu**):
 - Modal de configurações com sete seções, preferências persistidas, origem de clientes e filtros de cozinha.
 - Diagnóstico real, fundo personalizável e comprovante não fiscal configurável.
 - 638 testes aprovados; limites de impressão automática e etiquetas por quilo registrados em specs/2026-10-20-configuracoes-sistema.md.
+
+## Interface - 2026-10-20 - Comandos de configuração
+
+- Ribbon conectado a numeração transacional, seleção real de impressoras, colaboradores com login individual e senha própria.
+- Modais compactos nos dois temas; 659 testes integrados aprovados.
+- Limites: impressão física depende do equipamento; impressão automática de cozinha e fiscal não incluídas.
+
+## Interface - 2026-10-20 - Painel de senhas e cadastro de produtos
+
+- Painel em Apps com monitor configurável, histórico à direita, voz/beep opcionais e preferências persistidas.
+- Editor de produtos baseado na referência, com custo, descrição e código personalizado persistidos e pesquisa por código.
+- Alterar senha no grupo Configurações; 674 testes aprovados. Venda fracionada e módulos ausentes permanecem pendentes.
