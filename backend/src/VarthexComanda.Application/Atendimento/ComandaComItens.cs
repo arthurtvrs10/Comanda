@@ -6,4 +6,5 @@ public class ComandaComItens
 {
     public required Comanda Comanda { get; init; }
     public required IReadOnlyList<ItemComanda> Itens { get; init; }
+    public int? ItemAlteradoId { get; init; }
 }

@@ -5,7 +5,7 @@ using VarthexComanda.Domain;
 
 namespace VarthexComanda.Infrastructure.Persistence.Atendimento;
 
-public class EfComandaRepository : IComandaRepository
+public partial class EfComandaRepository : IComandaRepository
 {
     private readonly IDbContextFactory<VarthexComandaDbContext> _fabricaContexto;
 
@@ -175,6 +175,8 @@ public class EfComandaRepository : IComandaRepository
             ?? throw new InvalidOperationException("Comanda de destino não encontrada.");
         if (origem.Status != StatusComanda.Aberta || destino.Status != StatusComanda.Aberta)
             throw new ComandaNaoAbertaException();
+        ExigirDesbloqueada(origem);
+        ExigirDesbloqueada(destino);
         var itensOrigem = contexto.ItensComanda.Where(i => i.ComandaId == origemId).ToList();
         if (itensOrigem.Count == 0) throw new InvalidOperationException("A comanda de origem não tem itens para transferir.");
         var itensDestino = contexto.ItensComanda.Where(i => i.ComandaId == destinoId).ToList();
@@ -196,6 +198,9 @@ public class EfComandaRepository : IComandaRepository
     }
 
     public ComandaComItens AdicionarItem(int comandaId, Produto produto, int quantidade, DateTime agora, string? observacao = null)
+        => AdicionarItem(comandaId, produto, quantidade, agora, observacao, null);
+
+    public ComandaComItens AdicionarItem(int comandaId, Produto produto, int quantidade, DateTime agora, string? observacao, string? operador)
     {
         observacao = string.IsNullOrWhiteSpace(observacao) ? null : observacao.Trim();
         if (observacao?.Length > 300) throw new ArgumentException("A observação deve ter no máximo 300 caracteres.", nameof(observacao));
@@ -207,8 +212,9 @@ public class EfComandaRepository : IComandaRepository
             throw new ComandaNaoAbertaException();
         }
 
+        ExigirDesbloqueada(comanda);
         var itens = contexto.ItensComanda.Where(i => i.ComandaId == comandaId).OrderBy(i => i.Id).ToList();
-        var itemExistente = itens.FirstOrDefault(i => i.ProdutoId == produto.Id && i.PrecoUnitarioCentavos == produto.PrecoCentavos && i.Observacao == observacao);
+        var itemExistente = itens.FirstOrDefault(i => i.ProdutoId == produto.Id && i.PrecoUnitarioCentavos == produto.PrecoCentavos && i.Observacao == observacao && i.LancadoPor == operador);
 
         if (itemExistente is not null)
         {
@@ -225,6 +231,7 @@ public class EfComandaRepository : IComandaRepository
                 ProdutoId = produto.Id,
                 NomeProduto = produto.Nome,
                 Observacao = observacao,
+                LancadoPor = operador,
                 PrecoUnitarioCentavos = produto.PrecoCentavos,
                 Quantidade = quantidade,
                 SubtotalCentavos = produto.PrecoCentavos * quantidade,
@@ -238,7 +245,7 @@ public class EfComandaRepository : IComandaRepository
         comanda.TotalCentavos = itens.Sum(i => i.SubtotalCentavos);
         contexto.SaveChanges();
 
-        return new ComandaComItens { Comanda = comanda, Itens = itens };
+        return new ComandaComItens { Comanda = comanda, Itens = itens, ItemAlteradoId = itemExistente?.Id ?? itens.Last().Id };
     }
 
     public ComandaComItens AlterarQuantidade(int itemId, int quantidade, DateTime agora)
@@ -253,6 +260,9 @@ public class EfComandaRepository : IComandaRepository
             throw new ComandaNaoAbertaException();
         }
 
+        ExigirDesbloqueada(comanda);
+        item.QuantidadeCozinha = Math.Min(item.QuantidadeCozinha, quantidade);
+        item.QuantidadeFicha = Math.Min(item.QuantidadeFicha, quantidade);
         item.Quantidade = quantidade;
         item.SubtotalCentavos = item.PrecoUnitarioCentavos * quantidade;
         item.AtualizadoEm = agora;
@@ -276,6 +286,7 @@ public class EfComandaRepository : IComandaRepository
             throw new ComandaNaoAbertaException();
         }
 
+        ExigirDesbloqueada(comanda);
         contexto.ItensComanda.Remove(item);
 
         var itensRestantes = contexto.ItensComanda

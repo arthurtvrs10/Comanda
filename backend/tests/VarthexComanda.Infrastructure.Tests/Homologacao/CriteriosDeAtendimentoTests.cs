@@ -166,7 +166,8 @@ public sealed class CriteriosDeAtendimentoTests : IDisposable
     public void CT06_QuantidadeEInteiraEmToda_ACadeiaDeLancamento()
     {
         static Type TipoDaQuantidade(Type tipo, string metodo) =>
-            tipo.GetMethod(metodo)!.GetParameters().Single(p => p.Name == "quantidade").ParameterType;
+            tipo.GetMethods().Where(m => m.Name == metodo).SelectMany(m => m.GetParameters())
+                .Where(p => p.Name == "quantidade").Select(p => p.ParameterType).Distinct().Single();
 
         Assert.Equal(typeof(int), TipoDaQuantidade(typeof(AdicionarItem), nameof(AdicionarItem.Executar)));
         Assert.Equal(typeof(int), TipoDaQuantidade(typeof(AlterarQuantidade), nameof(AlterarQuantidade.Executar)));

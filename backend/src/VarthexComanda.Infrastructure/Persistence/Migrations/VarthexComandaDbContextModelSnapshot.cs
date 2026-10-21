@@ -106,9 +106,20 @@ namespace VarthexComanda.Infrastructure.Persistence.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnName("aberta_em");
 
+                    b.Property<bool>("Bloqueada")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(false)
+                        .HasColumnName("bloqueada");
+
                     b.Property<long?>("CodigoPedido")
                         .HasColumnType("INTEGER")
                         .HasColumnName("codigo_pedido");
+
+                    b.Property<string>("CriadoPor")
+                        .HasMaxLength(120)
+                        .HasColumnType("TEXT")
+                        .HasColumnName("criado_por");
 
                     b.Property<DateTime?>("FechadaEm")
                         .HasColumnType("TEXT")
@@ -147,6 +158,11 @@ namespace VarthexComanda.Infrastructure.Persistence.Migrations
                         .HasColumnType("INTEGER")
                         .HasDefaultValue(1)
                         .HasColumnName("quantidade_pessoas");
+
+                    b.Property<string>("Responsavel")
+                        .HasMaxLength(120)
+                        .HasColumnType("TEXT")
+                        .HasColumnName("responsavel");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -226,6 +242,11 @@ namespace VarthexComanda.Infrastructure.Persistence.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnName("criado_em");
 
+                    b.Property<string>("LancadoPor")
+                        .HasMaxLength(120)
+                        .HasColumnType("TEXT")
+                        .HasColumnName("lancado_por");
+
                     b.Property<string>("NomeProduto")
                         .IsRequired()
                         .HasColumnType("TEXT")
@@ -246,6 +267,18 @@ namespace VarthexComanda.Infrastructure.Persistence.Migrations
                     b.Property<int>("Quantidade")
                         .HasColumnType("INTEGER")
                         .HasColumnName("quantidade");
+
+                    b.Property<int>("QuantidadeCozinha")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(0)
+                        .HasColumnName("quantidade_cozinha");
+
+                    b.Property<int>("QuantidadeFicha")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(0)
+                        .HasColumnName("quantidade_ficha");
 
                     b.Property<long>("SubtotalCentavos")
                         .HasColumnType("INTEGER")

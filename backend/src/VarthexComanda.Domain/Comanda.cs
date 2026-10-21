@@ -10,6 +10,9 @@ public class Comanda
     public DateTime? FechadaEm { get; set; }
     public required long TotalCentavos { get; set; }
     public string? Observacao { get; set; }
+    public bool Bloqueada { get; set; }
+    public string? CriadoPor { get; set; }
+    public string? Responsavel { get; set; }
     public string? NomeCliente { get; set; }
     public int? NumeroMesa { get; set; }
     public string? OrigemCliente { get; set; }

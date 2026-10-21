@@ -16,7 +16,7 @@ public class AdicionarItem
         _relogio = relogio;
     }
 
-    public Resultado<ComandaComItens> Executar(int comandaId, int produtoId, int quantidade, string? observacao = null)
+    public Resultado<ComandaComItens> Executar(int comandaId, int produtoId, int quantidade, string? observacao = null, string? operador = null)
     {
         observacao = string.IsNullOrWhiteSpace(observacao) ? null : observacao.Trim();
         if (observacao?.Length > 300)
@@ -34,7 +34,7 @@ public class AdicionarItem
 
         try
         {
-            return Resultado<ComandaComItens>.Ok(_comandas.AdicionarItem(comandaId, produto, quantidade, _relogio.UtcNow, observacao));
+            return Resultado<ComandaComItens>.Ok(_comandas.AdicionarItem(comandaId, produto, quantidade, _relogio.UtcNow, observacao, operador));
         }
         catch (ComandaNaoAbertaException ex)
         {

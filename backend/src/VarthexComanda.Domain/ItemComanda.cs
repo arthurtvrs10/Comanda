@@ -10,6 +10,9 @@ public class ItemComanda
     public required int Quantidade { get; set; }
     public required long SubtotalCentavos { get; set; }
     public string? Observacao { get; set; }
+    public string? LancadoPor { get; set; }
+    public int QuantidadeCozinha { get; set; }
+    public int QuantidadeFicha { get; set; }
     public required DateTime CriadoEm { get; set; }
     public required DateTime AtualizadoEm { get; set; }
 }

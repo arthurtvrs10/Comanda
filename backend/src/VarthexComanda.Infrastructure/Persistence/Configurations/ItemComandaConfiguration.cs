@@ -25,6 +25,9 @@ public class ItemComandaConfiguration : IEntityTypeConfiguration<ItemComanda>
         builder.Property(i => i.Quantidade).HasColumnName("quantidade").IsRequired();
         builder.Property(i => i.SubtotalCentavos).HasColumnName("subtotal_centavos").IsRequired();
         builder.Property(i => i.Observacao).HasColumnName("observacao");
+        builder.Property(i => i.LancadoPor).HasColumnName("lancado_por").HasMaxLength(120);
+        builder.Property(i => i.QuantidadeCozinha).HasColumnName("quantidade_cozinha").HasDefaultValue(0);
+        builder.Property(i => i.QuantidadeFicha).HasColumnName("quantidade_ficha").HasDefaultValue(0);
         builder.Property(i => i.CriadoEm).HasColumnName("criado_em").IsRequired();
         builder.Property(i => i.AtualizadoEm).HasColumnName("atualizado_em").IsRequired();
 

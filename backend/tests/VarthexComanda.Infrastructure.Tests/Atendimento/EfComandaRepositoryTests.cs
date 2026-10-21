@@ -11,7 +11,7 @@ using Xunit;
 
 namespace VarthexComanda.Infrastructure.Tests.Atendimento;
 
-public class EfComandaRepositoryTests : IDisposable
+public partial class EfComandaRepositoryTests : IDisposable
 {
     [Fact]
     public void NumeracaoPersonalizadaPersisteSemReutilizarCodigoAposCancelarOuReiniciar()
