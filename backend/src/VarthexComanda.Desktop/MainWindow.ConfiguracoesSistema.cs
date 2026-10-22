@@ -44,19 +44,14 @@ public partial class MainWindow
         var preferencias=LerPreferencias();
         try
         {
-            FundoTrabalho.Background=(Brush)new BrushConverter().ConvertFromString(preferencias.CorFundo)!;
-            var imagem=JanelaConfiguracoesSistema.CriarImagem(preferencias.ImagemFundo);
-            if(imagem is null){ImagemTrabalho.Background=null;return;}
-            var brush=new ImageBrush(imagem)
-            {
-                Stretch=preferencias.PosicaoImagem switch {"Preencher"=>Stretch.Fill,"Zoom"=>Stretch.UniformToFill,_=>Stretch.None},
-                AlignmentX=AlignmentX.Center,AlignmentY=AlignmentY.Center
-            };
-            if(preferencias.PosicaoImagem=="Repetir")
-            {brush.TileMode=TileMode.Tile;brush.ViewportUnits=BrushMappingMode.Absolute;brush.Viewport=new Rect(0,0,imagem.Width,imagem.Height);}
-            ImagemTrabalho.Background=brush;
+            FundoTrabalho.Background=(Brush)new BrushConverter().ConvertFromString(FundoSistema.Cor(preferencias))!;
+            ImagemTrabalho.Background=FundoSistema.CriarPincel(preferencias);
         }
-        catch{ImagemTrabalho.Background=null;FundoTrabalho.SetResourceReference(System.Windows.Controls.Border.BackgroundProperty,"Canvas");}
+        catch
+        {
+            FundoTrabalho.Background=(Brush)new BrushConverter().ConvertFromString(PreferenciasSistema.CorFundoPadrao)!;
+            ImagemTrabalho.Background=FundoSistema.CriarPincel(new());
+        }
     }
     private void ImprimirConta()
     {

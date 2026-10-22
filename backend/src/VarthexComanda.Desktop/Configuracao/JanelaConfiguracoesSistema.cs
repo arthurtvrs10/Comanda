@@ -153,17 +153,14 @@ public sealed class JanelaConfiguracoesSistema : Window
     }
     private void Fundo()
     {
+        _prefs.CorFundo=FundoSistema.Cor(_prefs);
         Subtitulo("Cor de fundo");
         var paleta=new WrapPanel { Margin=new Thickness(0,0,0,14) };_form.Children.Add(paleta);
         var previa=new Border { Height=250,Width=430,MaxWidth=430,BorderThickness=new Thickness(1),ClipToBounds=true,HorizontalAlignment=HorizontalAlignment.Left };previa.SetResourceReference(Border.BorderBrushProperty,"Line");
         void Atualizar()
         {
             previa.Background=(Brush)new BrushConverter().ConvertFromString(_prefs.CorFundo)!;
-            var imagem=CriarImagem(_prefs.ImagemFundo);
-            if(imagem is null){previa.Child=null;return;}
-            var pincel=new ImageBrush(imagem) { Stretch=_prefs.PosicaoImagem switch { "Preencher"=>Stretch.Fill,"Zoom"=>Stretch.UniformToFill,_=>Stretch.None },AlignmentX=AlignmentX.Center,AlignmentY=AlignmentY.Center };
-            if(_prefs.PosicaoImagem=="Repetir"){pincel.TileMode=TileMode.Tile;pincel.ViewportUnits=BrushMappingMode.Absolute;pincel.Viewport=new Rect(0,0,imagem.Width,imagem.Height);}
-            previa.Child=new Border { Background=pincel };
+            previa.Child=new Border { Background=FundoSistema.CriarPincel(_prefs) };
         }
         foreach(var (nome,cor) in new[]{("Branco","#FFFFFF"),("Cinza 5%","#F2F2F2"),("Cinza 20%","#CCCCCC"),("Cinza 30%","#B3B3B3"),("Cinza 40%","#999999"),("Cinza 50%","#808080"),("Cinza 60%","#666666"),("Preto","#000000")})
         {
@@ -184,7 +181,7 @@ public sealed class JanelaConfiguracoesSistema : Window
             if(new FileInfo(arquivo.FileName).Length>3*1024*1024)throw new ArgumentException("Escolha uma imagem de até 3 MB.");
             var dados=Convert.ToBase64String(File.ReadAllBytes(arquivo.FileName));var bitmap=CriarImagem(dados)??throw new ArgumentException("Imagem inválida.");if(bitmap.PixelWidth>8000||bitmap.PixelHeight>8000)throw new ArgumentException("A imagem deve ter até 8000 pixels por dimensão.");_prefs.ImagemFundo=dados;Atualizar();
         });
-        Acao("Restaurar padrão",()=>{_prefs.ImagemFundo="";_prefs.CorFundo="#F3F5F2";_prefs.PosicaoImagem="Centralizar";Mostrar("Imagem de fundo");});
+        Acao("Restaurar padrão",()=>{_prefs.ImagemFundo="";_prefs.CorFundo=PreferenciasSistema.CorFundoPadrao;_prefs.PosicaoImagem="Centralizar";Mostrar("Imagem de fundo");});
     }
     public static BitmapImage? CriarImagem(string dados)
     {

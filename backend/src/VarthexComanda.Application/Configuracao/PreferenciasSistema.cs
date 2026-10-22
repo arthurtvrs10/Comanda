@@ -21,7 +21,8 @@ public sealed class PreferenciasSistema
     public bool ExibirDocumentoCupom { get; set; } = true;
     public string CabecalhoCupom { get; set; } = "CONFERÊNCIA DA CONTA\nCOMPROVANTE NÃO FISCAL";
     public string RodapeCupom { get; set; } = "Obrigado pela preferência!";
-    public string CorFundo { get; set; } = "#F3F5F2";
+    public const string CorFundoPadrao = "#F2F2F2";
+    public string CorFundo { get; set; } = CorFundoPadrao;
     public string ImagemFundo { get; set; } = "";
     public string PosicaoImagem { get; set; } = "Centralizar";
     public List<string> OrigensCliente { get; set; } = ["Indefinido", "Indicação de amigo", "Google", "Instagram"];
