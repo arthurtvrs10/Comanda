@@ -83,7 +83,7 @@
 </StackPanel>
 </WrapPanel>
 <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="8,0" VerticalAlignment="Top">
-<CheckBox x:Name="ModoEscuro" Content="Modo escuro" Foreground="White" FontSize="12" Margin="0,0,12,0" VerticalAlignment="Center" Click="ModoEscuro_Click"/>
+<CheckBox x:Name="ModoEscuro" Style="{StaticResource AlternanciaCompacta}" Content="Modo escuro" Foreground="White" Margin="0,0,12,0" VerticalAlignment="Center" Checked="ModoEscuro_Changed" Unchecked="ModoEscuro_Changed" ToolTip="Ativar ou desativar o modo escuro. A preferência é salva neste computador." AutomationProperties.Name="Modo escuro"/>
 <Button Content="Bloquear ou trocar usuário" Click="MenuSessao_Click" Background="Transparent" Foreground="White" BorderThickness="0" FontSize="12" MinHeight="34" Padding="8,4"/>
 </StackPanel>
 </Grid>

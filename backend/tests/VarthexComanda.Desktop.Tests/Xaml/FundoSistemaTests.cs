@@ -38,6 +38,7 @@ public class FundoSistemaTests
                     foreach(var escuro in new[]{false,true})
                     {
                         TemaInterface.Aplicar(escuro,false);
+                        ((System.Windows.Controls.CheckBox)janela.FindName("ModoEscuro")).IsChecked=escuro;
                         var raiz=(System.Windows.FrameworkElement)janela.Content;
                         raiz.Measure(new System.Windows.Size(1280,720));raiz.Arrange(new System.Windows.Rect(0,0,1280,720));raiz.UpdateLayout();
                         var bitmap=new RenderTargetBitmap(1280,720,96,96,PixelFormats.Pbgra32);bitmap.Render(raiz);

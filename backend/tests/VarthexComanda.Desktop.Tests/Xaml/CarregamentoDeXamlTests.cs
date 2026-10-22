@@ -386,10 +386,14 @@ public class CarregamentoDeXamlTests
                 var resultados=(ListBox)janela.FindName("ResultadosPesquisa");Assert.NotEmpty(resultados.Items.Cast<object>());
                 pesquisa.Clear();
                 var raiz=(FrameworkElement)janela.Content;
+                var modoEscuro=(CheckBox)janela.FindName("ModoEscuro");
+                var alternancia=(System.Windows.Automation.Provider.IToggleProvider)new System.Windows.Automation.Peers.CheckBoxAutomationPeer(modoEscuro)
+                    .GetPattern(System.Windows.Automation.Peers.PatternInterface.Toggle)!;
                 foreach(var escuro in new[]{false,true})
                 {
-                    TemaInterface.Aplicar(escuro,true);
-                    ((CheckBox)janela.FindName("ModoEscuro")).IsChecked=escuro;
+                    if(modoEscuro.IsChecked!=escuro)alternancia.Toggle();
+                    Assert.Equal(escuro,TemaInterface.Escuro);
+                    Assert.Equal(escuro,modoEscuro.IsChecked);
                     foreach(var tamanho in new[]{new Size(1280,780),new Size(800,600)})
                     {
                         janela.Width=tamanho.Width;tipo.GetMethod("AtualizarRibbonCompacta",flags)!.Invoke(janela,null);
@@ -559,6 +563,9 @@ public class CarregamentoDeXamlTests
             Assert.Same(viewModel, view.DataContext);
             Assert.NotNull(view.Content);
             MedirEOrganizar(view);
+            var moldura = new Border { Background = TemaInterface.Pincel("#F3F5F2"), Child = view };
+            MedirEOrganizar(moldura);
+            SalvarPrevia(moldura, "historico-atual");
         });
     }
 

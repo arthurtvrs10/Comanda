@@ -220,8 +220,9 @@ public partial class MainWindow
     private void ResultadosPesquisa_KeyDown(object sender,KeyEventArgs e){if(e.Key==Key.Enter){AbrirResultadoPesquisa();e.Handled=true;}else if(e.Key==Key.Escape){PesquisaGlobal.Clear();PesquisaGlobal.Focus();e.Handled=true;}}
     private void ResultadosPesquisa_MouseDoubleClick(object sender,MouseButtonEventArgs e)=>AbrirResultadoPesquisa();
     private void AbrirResultadoPesquisa(){if(ResultadosPesquisa.SelectedItem is ResultadoPesquisa r){r.Abrir();RecolherPesquisa();}}
-    private void ModoEscuro_Click(object sender,RoutedEventArgs e)
+    private void ModoEscuro_Changed(object sender,RoutedEventArgs e)
     {
+        if (ModoEscuro.IsChecked == TemaInterface.Escuro) return;
         try { TemaInterface.Aplicar(ModoEscuro.IsChecked==true,true); }
         catch(Exception ex) when(ex is System.IO.IOException or UnauthorizedAccessException){JanelaAviso.Mostrar("Aparência","O tema foi aplicado, mas não foi possível salvar a preferência.",TipoAviso.Aviso);}
     }
