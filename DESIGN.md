@@ -1,4 +1,38 @@
-# VComanda — tela principal
+# Comanda, por Varthex — tela principal
+
+## Identidade aplicada — 22/10/2026
+
+### Histórico de vendas no padrão de pedidos
+
+Os resumos no rodapé dos dois históricos ficam alinhados à esquerda. Na categoria RELATÓRIOS, os botões Histórico de pedidos e Histórico de vendas compartilham um único grupo Vendas, sem separador entre os dois.
+
+Tabela única com largura completa, linhas de 34 DIP e cabeçalhos, cores e alinhamento compartilhados em `Atendimento/EstilosHistorico.xaml`. Barra de ações compacta com data, número da comanda, Atualizar, Mais colunas, Exportar Excel, Imprimir e Detalhes. A barra quebra linha em janelas estreitas. Auto ajustar colunas alterna larguras proporcionais e fixas; colunas podem ser reordenadas e ocultadas sem ocultar todas.
+
+Detalhes abrem por botão, duplo clique na linha ou Enter, em modal com número real da comanda e itens. Preservar Ctrl+F e a consulta de vendas concluídas por dia. Rodapé distingue registros exibidos dos indicadores do dia (quantidade, total e ticket médio); filtro de número não recalcula os indicadores diários. Exportação e impressão seguem filtro, ordenação e colunas visíveis; o impresso identifica o total exibido separadamente dos indicadores do dia. Nenhuma alteração nos registros de vendas ou regras de pagamento.
+
+### Paleta operacional consolidada — revisão após auditoria
+
+#### Ajuste solicitado: botões neutros, ícone branco e Relatórios
+
+Navegação atualizada: Principal mantém Mesas / comandas. Histórico de pedidos e Histórico de vendas ficam em **Relatórios**. **Financeiro** permanece como categoria independente, sem histórico e sem comandos para funções financeiras ainda não implementadas.
+
+Todas as categorias da barra superior são exibidas em caixa alta: PRINCIPAL, PRODUTOS, MARKETING, FINANCEIRO, RELATÓRIOS, APPS, CONFIGURAÇÕES e AJUDA. A transformação é somente visual; preservar os nomes internos, pesquisa, seleção e navegação.
+
+Na grade, o corpo dos cartões permanece neutro em todos os estados. A identificação fica em uma faixa horizontal no topo, com o nome dentro: Livre em neutro, Normal em verde, Mediana em amarelo, Alta em vermelho e Em fechamento em amarelo (prevalece sobre a prioridade). Preservar os nomes de prioridade já usados na operação. Número, cliente, mesa e total usam o texto padrão do tema. A pesquisa continua destacando somente a borda do cartão. Não preencher todo o cartão com a cor de estado.
+
+Esta decisão substitui o uso de botões laranja descrito abaixo: botões usam branco/#303336, texto #17252C/#F4F6F7, borda Line e hover #E8ECEF/#383C40. Toggles usam cinza próprio. A identidade continua no logo e o contraste das comandas abertas permanece corrigido. Ícone do aplicativo: símbolo laranja em fundo branco. A categoria Financeiro passa a se chamar **Relatórios**, abrigando o Histórico de vendas atual e permitindo organizar futuramente histórico de produtos, ranking de atendimentos e itens mais vendidos, sem criar comandos para relatórios ainda não implementados.
+
+Esta seção prevalece sobre as cores de controles nas revisões anteriores. Fonte de verdade: `PaletaComanda.cs`, com papéis explícitos claro/escuro. Canvas #F4F5F6/#242628, Surface #FFFFFF/#303336, Ink #17252C/#F4F6F7, textos secundários #535D65/#BEC5CB, bordas #859099/#78838C. Manter o shell azul profundo #17252C e a imagem de fundo padrão já aprovada.
+
+Ações primárias usam #FF5934 com texto #17252C nos dois temas; hover #FF795B. `BotaoPrimario` concentra o estilo de entrada, gravação de produto e confirmação de pagamento; densidades específicas permanecem locais. Seleção usa #FFE3D9/#53352D e texto #17252C/#FFF4EF. Comandas abertas usam laranja da marca e texto azul profundo (5,03:1). Verde é reservado para estados positivos; amarelo e vermelho preservam prioridade e urgência. Recursos Ajuda* de superfície são aliases da paleta comum; novas ações usam ActionPrimary/ActionPrimaryInk. A compatibilidade com recursos legados evita reintroduzir superfícies verdes.
+
+Esta revisão substitui as referências anteriores à marca Varthex Comanda e à palavra VARTHEX como fundo. O produto se chama **Comanda**, com assinatura **por Varthex**. A matriz está em `brand/comanda-varthex/fontes/vetores/`; as entregas ficam em `brand/comanda-varthex/exportacoes/`.
+
+Modo Operate: preservar Ribbon, posições dos comandos, perfis e cores semânticas de prioridade e erro. A marca usa laranja #FF5934, azul profundo #17252C e marfim #FFF9F1. Barra e rodapé em azul profundo; logo vetorial no fundo padrão, entrada e rodapé. Ajuda usa logo preto no tema claro e branco no escuro. Ações da ajuda usam azul profundo no claro e laranja com texto azul profundo no escuro. Manter fundos personalizados e a preferência de tema. Não acrescentar cabeçalho de marca acima da Ribbon.
+
+O background padrão acompanha o toggle de tema: no escuro, fundo #17252C e marca central laranja/branca; no claro, fundo cinza original e marca laranja/azul. A troca não altera preferências salvas de imagem ou cor personalizada. Arquivos do fundo escuro em `brand/comanda-varthex/exportacoes/background/escuro/`.
+
+Recursos vetoriais WPF ficam em Assets/MarcaComanda.xaml. O ícone multirresolução usa o símbolo laranja sobre azul profundo. Sincronizar os recursos com `brand/comanda-varthex/scripts/aplicar-desktop.py` quando as matrizes forem alteradas. Nomes técnicos de assemblies, caminhos de dados e contratos de licença permanecem compatíveis com instalações existentes.
 
 A tela inicial segue o esboço fornecido pelo usuário: Garçom ocupa o bloco principal à esquerda, Cozinha e Gestor dividem a coluna central e os atalhos administrativos ficam à direita. É uma tela de operação para estabelecimentos, com uso frequente por toque e teclado.
 
@@ -184,3 +218,11 @@ Ao iniciar, Comanda apresenta uma janela transitória sem moldura de 760 × 490 
 A apresentação aguarda somente o restante de um mínimo de 5 segundos contado desde ContentRendered; trabalho mais demorado não recebe outra espera. A janela fecha antes de licença, erro ou recuperação e, no caminho normal, logo após exibir a principal. Fechar manualmente cancela a inicialização. Não há novo fluxo de autenticação ou alteração das regras de negócio. A textura foi incorporada sem mudar os pixels, com procedência embutida; nenhum ativo foi gerado por ImageGen.
 
 Detalhes, procedência, duas capturas WPF e limites em specs/2026-10-22-tela-abertura.md. Evidências: compilação do aplicativo com zero avisos e erros, 11/11 testes focados e 330/330 Desktop aprovados, além de abertura real até a tela principal 1.4.0. Os testes focados estão contidos na suíte Desktop; o log de testes conserva dois avisos preexistentes do analisador xUnit. Revisão independente retornou `ship` sem achados materiais no escopo. As capturas são renderizações WPF controladas; movimento, duração percebida e todos os caminhos de falha não foram observados visualmente. Versão, instaladores e publicação permanecem fora desta extensão. Formato legado, conteúdo anterior e ausências documentais preexistentes preservados.
+
+### Atualização da pré-release 1.4.0 — 22/10/2026
+
+Esta entrega consolida a identidade Comanda, por Varthex, a paleta operacional e o Histórico de vendas já registrados no início deste documento, junto ao Histórico de pedidos e à abertura de cinco segundos. Preservar o modo Operate, WPF, Segoe UI, cantos retos, temas, perfis e preferências existentes. Relatórios / Vendas reúne os dois históricos; suas barras quebram linha a 800 DIP e Produtos conserva rolagem em largura reduzida. A atualização não introduz um novo sistema visual nem redefine os tokens existentes. Fontes: MainWindow.Ribbon, TemaInterface, PaletaComanda, HistoricoView, EstilosHistorico, FundoSistema e JanelaAbertura.
+
+O README em modo Read passa de seis a oito capturas WPF atuais: principal clara e escura, abertura, grade de comandas, comanda, produtos e os dois históricos. As imagens usam dados fictícios, têm procedência incorporada sem alteração de pixels e preservam os bytes das capturas de origem. Quatro capturas complementares cobrem a área de trabalho maximizada, os dois históricos a 800 DIP e Produtos em largura reduzida. A revisão independente retornou `ship`, sem achados materiais no README, nas 12 capturas inspecionadas e nas fontes amostradas.
+
+Detalhes, mapeamento de imagens, logs, 770 testes distintos aprovados em Release e hashes dos instaladores normal e demonstração em specs/2026-10-22-atualizacao-release-1.4.0.md. Os 21 testes de captura repetem testes já incluídos nessa contagem; o teste inicial da espera de abertura falhou por arredondamento e os 330 Desktop passaram após a correção monotônica. A versão permanece 1.4.0 por escolha do usuário, com pacotes anteriores preservados localmente. Publicação externa ainda pendente neste registro. Windows limpo, impressão física, leitor de tela completo, múltiplos monitores/DPI e Google com conta real continuam fora da validação. Preservados o formato legado e os desvios preexistentes de PRODUCT.md e .impeccable/design.json.

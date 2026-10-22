@@ -1,32 +1,36 @@
-# Varthex Comanda
+# Comanda · por Varthex
+
+A identidade **Comanda · por Varthex** aparece na abertura, área de trabalho, ajuda e rodapé. [Logos e recursos da marca](brand/comanda-varthex/README.md).
 
 Sistema Windows para organizar mesas, comandas e consumo em pequenos estabelecimentos de alimentação. Produtos, atendimento, fechamento e histórico funcionam localmente, sem depender da internet.
 
-**Nova release: 1.4.0 · 22/10/2026 · versão em testes.** Disponível nas edições normal e demonstração. Ambas incluem o .NET e exigem ativação offline.
+**Release 1.4.0 atualizada em 22/10/2026 · versão em testes.** Edições normal e demonstração recompiladas com a nova identidade, os históricos e a abertura de 5 segundos. Ambas incluem o .NET e exigem ativação offline.
 
-<img src="docs/design/principal-claro.png" alt="Área de trabalho Varthex com fundo neutro, nome centralizado e toggle de modo escuro no cabeçalho" width="1000">
+<img src="docs/design/principal-claro.png" alt="Área de trabalho Comanda com fundo cinza, logo centralizado e alternância de modo escuro" width="1000">
 
 ## Baixar para Windows
 
 | Edição 1.4.0 | Para quem | Download |
 | --- | --- | --- |
-| **Normal — sem demonstração** | Cadastrar os produtos reais do estabelecimento; catálogo vazio em uma instalação nova | [Baixar instalador Windows x64](https://github.com/arthurtvrs10/Varthex-Orders/releases/download/v1.4.0/VarthexComanda-1.4.0-Setup-win-x64.exe) · [SHA-256](downloads/windows/VarthexComanda-1.4.0-Setup-win-x64.exe.sha256) |
-| **Demonstração** | Conhecer o sistema com 12 produtos fictícios, fotos e preços de teste | [Baixar instalador Windows x64](https://github.com/arthurtvrs10/Varthex-Orders/releases/download/v1.4.0/VarthexComanda-Demo-1.4.0-Setup-win-x64.exe) · [SHA-256](downloads/demo/VarthexComanda-Demo-1.4.0-Setup-win-x64.exe.sha256) |
+| **Normal — sem demonstração** | Cadastrar os produtos reais do estabelecimento; catálogo vazio em uma instalação nova | [Baixar instalador Windows x64](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.0/VarthexComanda-1.4.0-Setup-win-x64.exe) · [SHA-256](downloads/windows/VarthexComanda-1.4.0-Setup-win-x64.exe.sha256) |
+| **Demonstração** | Conhecer o sistema com 12 produtos fictícios, fotos e preços de teste | [Baixar instalador Windows x64](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.0/VarthexComanda-Demo-1.4.0-Setup-win-x64.exe) · [SHA-256](downloads/demo/VarthexComanda-Demo-1.4.0-Setup-win-x64.exe.sha256) |
 
-[Notas da release 1.4.0](https://github.com/arthurtvrs10/Varthex-Orders/releases/tag/v1.4.0) · [Instalação normal](downloads/windows/README.md) · [Instalação da demonstração](downloads/demo/README.md)
+[Notas da release 1.4.0](https://github.com/arthurtvrs10/Comanda/releases/tag/v1.4.0) · [Instalação normal](downloads/windows/README.md) · [Instalação da demonstração](downloads/demo/README.md)
 
 Instalação por usuário, sem administrador, em Windows x64. Feche o aplicativo antes de atualizar. Reinstalar ou atualizar preserva os dados e a licença existentes. Os instaladores não possuem assinatura de código.
 
-A release é uma **pré-release**: instalação em Windows limpo e autorização/envio com uma conta Google real continuam pendentes. A [versão estável anterior 1.2.2](https://github.com/arthurtvrs10/Varthex-Orders/releases/tag/v1.2.2) permanece disponível.
+A release é uma **pré-release**: instalação em Windows limpo e autorização/envio com uma conta Google real continuam pendentes. A [versão estável anterior 1.2.2](https://github.com/arthurtvrs10/Comanda/releases/tag/v1.2.2) permanece disponível.
 
 ## Novidades da 1.4.0
 
 - **Área de trabalho com janelas internas:** abra, mova, redimensione, maximize e organize os módulos abaixo da Ribbon. A antiga tela de seleção de perfis foi removida.
-- **Modo escuro por toggle:** ative ou desative no cabeçalho; a preferência fica salva neste computador. Fundo padrão cinza neutro com VARTHEX ao centro, preservando imagens personalizadas.
+- **Abertura com a marca:** arte abstrata, logo central, versão e indicação de carregamento. Permanece por pelo menos 5 segundos antes de apresentar a tela principal.
+- **Modo escuro por toggle:** ative ou desative no cabeçalho; a preferência fica salva neste computador. Fundo padrão com logo central: cinza no claro e azul profundo no escuro, preservando imagens e cores personalizadas. Controles com superfícies neutras nos dois temas.
 - **Mesas e comandas:** observações, responsável, prioridades por cor, transferência/cópia de itens e indicação amarela de **Em fechamento**. Numeração inicial configurável.
 - **Catálogo e lançamento:** produtos com fotos ou em lista, filtro por categoria, ordenação visível e personalização de quantidade e observações. Venda por **UN, KG ou L**, com até três casas decimais para KG/L.
 - **Backup com progresso:** janela própria, barra e mensagens da execução, restauração de dados e fotos, Google Drive por OAuth preparado e OneDrive por pasta sincronizada.
 - **Ajuda:** painel compacto ao lado do atalho, WhatsApp, RustDesk, sugestões e tutorial guiado. A central de ajuda está em preparação.
+- **Relatórios:** Histórico de pedidos e Histórico de vendas reunidos no grupo Vendas. Pesquisa, colunas, ordenação, exportação Excel e prévia de impressão; detalhes preservam os registros originais.
 
 ## Recursos
 
@@ -35,7 +39,7 @@ A release é uma **pré-release**: instalação em Windows limpo e autorização
 | Produtos | Categorias, preço de custo e venda, fotos, unidades de venda e ativação/desativação |
 | Atendimento | Mesas opcionais, comandas numeradas, cliente opcional, itens, quantidades, observações e total |
 | Fechamento | Conferência e confirmação manual da cobrança externa, com registro da forma informada |
-| Histórico | Consulta de vendas, itens e resumo diário |
+| Relatórios | Históricos de pedidos e vendas, filtros, colunas, detalhes, Excel, impressão e resumo diário |
 | Continuidade | Backup automático/manual local, checksum, restauração, recuperação de comandas e logs |
 | Acesso | PIN de atendimento, acesso de gestor, colaboradores e ativação offline vinculada ao computador |
 
@@ -45,7 +49,7 @@ A cobrança é realizada fora do sistema; não há integração com maquininha, 
 
 1. Escolha a edição normal ou demonstração e execute o instalador.
 2. Ative o aplicativo com a licença fornecida pelo responsável.
-3. Entre no perfil adequado. Na edição normal, cadastre categorias e produtos; a demonstração já traz o catálogo fictício.
+3. Após a abertura, desbloqueie o acesso adequado. Na edição normal, cadastre categorias e produtos; a demonstração já traz o catálogo fictício.
 4. Abra **Principal → Mesas / comandas**, selecione o número e lance os produtos.
 5. Confira o total, realize a cobrança externamente e confirme o fechamento no sistema.
 
@@ -57,11 +61,15 @@ Em **Configurações → Backup e restauração**, escolha a pasta local e faça
 
 ## Telas da release
 
-Capturas da interface WPF da 1.4.0, geradas com dados fictícios de teste. Não contêm registros de clientes. O fundo da área de trabalho permanece neutro nos dois temas.
+Capturas da interface WPF desta atualização, geradas com dados fictícios de teste. Não contêm registros de clientes.
+
+**Tela de abertura**
+
+<img src="docs/design/abertura.png" alt="Abertura Comanda por Varthex com arte abstrata, logo branco, carregamento e versão 1.4.0" width="760">
 
 **Modo escuro e toggle ativado**
 
-<img src="docs/design/principal-escuro.png" alt="Tema escuro da Ribbon com toggle ativado e fundo VARTHEX neutro" width="1000">
+<img src="docs/design/principal-escuro.png" alt="Tema escuro com alternância ativada, fundo azul profundo e marca Comanda centralizada" width="1000">
 
 **Grade de comandas**
 
@@ -78,6 +86,10 @@ Capturas da interface WPF da 1.4.0, geradas com dados fictícios de teste. Não 
 **Histórico de vendas**
 
 <img src="docs/design/historico.png" alt="Histórico com filtro de data, vendas e detalhes dos itens" width="1000">
+
+**Histórico de pedidos**
+
+<img src="docs/design/historico-pedidos.png" alt="Histórico de pedidos com pesquisa por período, colunas, situação, totais e exportação" width="1000">
 
 ## Android — gerador de licenças
 
@@ -103,14 +115,14 @@ Distribua somente os pacotes preparados. A pasta `artifacts` pode conter materia
 
 ## Documentação e validação
 
-**Em desenvolvimento após a 1.4.0:** Histórico de pedidos em Principal, com
-pesquisa por status/período, colunas e agrupamento configuráveis, detalhes,
-exportação Excel e prévia de impressão. O Histórico de vendas é preservado.
-Esta extensão ainda não está nos instaladores publicados acima.
-[Contrato e evidências](specs/2026-10-22-historico-pedidos.md).
+Esta atualização da 1.4.0 inclui os dois históricos em **Relatórios → Vendas** e a tela de abertura com duração mínima de 5 segundos. Os instaladores e os arquivos SHA-256 foram substituídos juntos; quem baixou a compilação anterior deve baixar novamente.
+
+Validação: **770 testes distintos aprovados em Release** (4 Domain, 133 Application, 303 Infrastructure e 330 Desktop). Instalação em Windows limpo, impressão física e OAuth com conta Google real permanecem pendentes.
 
 - [Índice completo](docs/README.md)
 - [Notas e evidências da 1.4.0](specs/2026-10-22-release-1.4.0.md)
+- [Atualização da 1.4.0, capturas e novos pacotes](specs/2026-10-22-atualizacao-release-1.4.0.md)
+- [Abertura do sistema](specs/2026-10-22-tela-abertura.md)
 - [Histórico de alterações](docs/CHANGELOG.md)
 - [Drive, medidas e migração](specs/2026-10-22-drive-oauth-medidas-venda.md)
 - [Plano de evolução](docs/docs/21-evolucao-atendimento.md)

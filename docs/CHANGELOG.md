@@ -1,13 +1,21 @@
 # Histórico de alterações
 
-## Não lançado — 2026-10-22 — Histórico de pedidos
+## Aplicativo 1.4.0 — 2026-10-22 — atualização da pré-release
+
+- Nova identidade Comanda · por Varthex aplicada em logos, ícone, títulos, ajuda e rodapé. Superfícies neutras, com fundo padrão cinza no claro e azul profundo no escuro; imagem e cor personalizadas preservadas.
+- Tela de abertura com arte fornecida pelo usuário, logo centralizado, versão e progresso. Prazo mínimo de cinco segundos confirmado por relógio monotônico, inclusive quando o temporizador arredonda a espera.
+- Histórico de pedidos e Histórico de vendas reunidos em Relatórios → Vendas. Vendas passam a usar tabela integral, colunas, exportação e impressão, preservando filtros, totais diários e dados históricos.
+- Instaladores normal e demonstração recompilados, capturas do README renovadas e links atualizados para o repositório Comanda. A tag e os quatro anexos da pré-release 1.4.0 são atualizados juntos; a 1.2.2 permanece estável. Quem baixou antes deve baixar os novos arquivos e conferir os novos hashes.
+- Validação final: 770 testes distintos em Release (4 Domain, 133 Application, 303 Infrastructure, 330 Desktop). A primeira passagem encontrou arredondamento no tempo da abertura; a suíte Desktop completa passou após a correção. RNF03/RNF07/RNF18, CT17; RNF09/RNF14/RNF17, CT21; RF30/UC11/CT25. Sem nova regra de pagamento ou mudança de banco. [Pacotes e limites desta atualização](../specs/2026-10-22-atualizacao-release-1.4.0.md).
+
+### Histórico de pedidos incluído nesta atualização
 
 - Novo destino Principal → Histórico de pedidos, preservando Histórico de vendas em Financeiro. Janela interna com tabela integral, ordenação, rolagem, totais e ajuste automático de colunas.
 - Pesquisa por status, abertura/fechamento, período com horários, seis atalhos de datas, cliente, colaborador, códigos e cancelados. Códigos usam a numeração do pedido quando existente; período segue Brasília e inclui o minuto final.
 - Mais colunas com árvore de campos existentes, agrupamento e preferência local. Detalhes somente de leitura; comandas abertas podem voltar ao atendimento com suas permissões.
 - Exportação XLSX das colunas visíveis e prévia de impressão. Textos semelhantes a fórmulas permanecem literais na planilha; valores são numéricos. Nenhuma consulta cria venda ou altera o banco.
 - RF30/UC11/CT25; 762 testes distintos aprovados em Debug, com SQLite real, interface nos dois temas e leitura da planilha por openpyxl. Revisão Impeccable `ship` restrita à tela e dois modais. Impressora física, leitor de tela completo e base grande não homologados. [Evidências e limites](../specs/2026-10-22-historico-pedidos.md).
-- Os instaladores da pré-release 1.4.0 publicada permanecem inalterados; esta extensão está na compilação de desenvolvimento.
+- Esta extensão passa a integrar os instaladores recompilados da pré-release 1.4.0.
 
 ## Aplicativo 1.4.0 — 2026-10-22 — pré-release normal e demonstração
 
