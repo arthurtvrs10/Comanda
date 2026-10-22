@@ -140,6 +140,12 @@ public partial class App : System.Windows.Application
         services.AddTransient<BuscarItensDaVenda>();
         services.AddTransient<HistoricoViewModel>();
         services.AddTransient<HistoricoView>();
+        services.AddTransient<IHistoricoPedidosRepository, EfHistoricoPedidosRepository>();
+        services.AddTransient<ConsultarHistoricoPedidos>();
+        services.AddTransient<HistoricoPedidosViewModel>(sp => new HistoricoPedidosViewModel(
+            sp.GetRequiredService<ConsultarHistoricoPedidos>(), sp.GetRequiredService<IClock>(),
+            sp.GetRequiredService<ILogger>(), Path.Combine(sp.GetRequiredService<AppPaths>().Root, "historico-pedidos.json")));
+        services.AddTransient<HistoricoPedidosView>();
         services.AddTransient<IBackupRegistroRepository, EfBackupRegistroRepository>();
         services.AddSingleton<IGoogleDriveConnection>(sp => new GoogleDriveConnection(sp.GetRequiredService<AppPaths>(), new System.Net.Http.HttpClient(new System.Net.Http.HttpClientHandler { AllowAutoRedirect=false }) { Timeout=TimeSpan.FromMinutes(3) }));
         services.AddSingleton<IGoogleDriveBackup>(sp => new GoogleDriveBackup(sp.GetRequiredService<IGoogleDriveConnection>(), new System.Net.Http.HttpClient(new System.Net.Http.HttpClientHandler { AllowAutoRedirect=false }) { Timeout=TimeSpan.FromMinutes(10) }));

@@ -29,11 +29,12 @@ public partial class MainWindow : Window
     private readonly AtendimentoView _atendimentoView;
     private readonly ProdutosView _produtosView;
     private readonly HistoricoView _historicoView;
+    private readonly HistoricoPedidosView? _historicoPedidosView;
     private readonly BackupView _backupView;
     private readonly ConfiguracaoView _configuracaoView;
 
 
-    public MainWindow(AtendimentoView atendimentoView, ProdutosView produtosView, HistoricoView historicoView, BackupView backupView, ConfiguracaoView configuracaoView, VarthexComanda.Infrastructure.Storage.AppPaths? paths = null, VarthexComanda.Application.Configuracao.IConfiguracaoRepository? configuracoes = null)
+    public MainWindow(AtendimentoView atendimentoView, ProdutosView produtosView, HistoricoView historicoView, BackupView backupView, ConfiguracaoView configuracaoView, VarthexComanda.Infrastructure.Storage.AppPaths? paths = null, VarthexComanda.Application.Configuracao.IConfiguracaoRepository? configuracoes = null, HistoricoPedidosView? historicoPedidosView = null)
     {
         InitializeComponent();
         Title = $"Varthex Comanda · Versão {VersaoDoAplicativo.Atual}";
@@ -55,6 +56,13 @@ public partial class MainWindow : Window
         _atendimentoView = atendimentoView;
         _produtosView = produtosView;
         _historicoView = historicoView;
+        _historicoPedidosView = historicoPedidosView;
+        if (_historicoPedidosView is not null) _historicoPedidosView.AbrirComandaSolicitado = comanda =>
+        {
+            if (_bloqueado || _cozinhaAtiva || _restauracao) return;
+            _atendimentoView.ViewModel.SelecionarComandaCommand.Execute(comanda);
+            MostrarConteudo(_atendimentoView);
+        };
         _backupView = backupView;
         _configuracaoView = configuracaoView;
         ConteudoPrincipal.JanelaAtivaAlterada += AtualizarAbaAtiva;
@@ -157,8 +165,8 @@ public partial class MainWindow : Window
     private JanelaInterna ObterJanela(UIElement view)
     {
         if(_janelasInternas.TryGetValue(view,out var existente))return existente;
-        var titulo=view==_atendimentoView?"Mesas / comandas":view==_produtosView?"Produtos":view==_historicoView?"Histórico de vendas":view==_cozinhaView?"Cozinha":view==_backupView?"Backup e restauração":"Configurações";
-        var janela=new JanelaInterna(titulo,view,view==_atendimentoView?760:720,view==_atendimentoView?540:360);
+        var titulo=view==_atendimentoView?"Mesas / comandas":view==_produtosView?"Produtos":view==_historicoView?"Histórico de vendas":view==_historicoPedidosView?"Histórico de pedidos":view==_cozinhaView?"Cozinha":view==_backupView?"Backup e restauração":"Configurações";
+        var janela=new JanelaInterna(titulo,view,view==_historicoPedidosView?0:view==_atendimentoView?760:720,view==_historicoPedidosView?0:view==_atendimentoView?540:360);
         if(view==_atendimentoView)
         {
             void AjustarMinimoAtendimento()=>janela.DefinirMinimoConteudo(_atendimentoView.ViewModel.ComandaAtual is null?0:760,_atendimentoView.ViewModel.ComandaAtual is null?0:540);
@@ -189,6 +197,13 @@ public partial class MainWindow : Window
         if (_bloqueado || _cozinhaAtiva || _restauracao) return;
         _historicoView.ViewModel.AtualizarVendas();
         MostrarConteudo(_historicoView);
+    }
+
+    private void IrParaHistoricoPedidos()
+    {
+        if (_bloqueado || _cozinhaAtiva || _restauracao || _historicoPedidosView is null) return;
+        _historicoPedidosView.ViewModel.Atualizar();
+        MostrarConteudo(_historicoPedidosView);
     }
 
     private void IrParaBackup()

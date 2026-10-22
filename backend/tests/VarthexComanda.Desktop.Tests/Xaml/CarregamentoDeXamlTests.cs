@@ -155,7 +155,7 @@ public class CarregamentoDeXamlTests
         return new ConfiguracaoViewModel(new ObterConfiguracao(repositorio), new SalvarConfiguracao(repositorio, new FakeClock()));
     }
 
-    internal static MainWindow CriarMainWindow(VarthexComanda.Infrastructure.Storage.AppPaths? paths = null)
+    internal static MainWindow CriarMainWindow(VarthexComanda.Infrastructure.Storage.AppPaths? paths = null, HistoricoPedidosView? historicoPedidos = null)
     {
         var (atendimento, _) = CriarAtendimento();
         return new MainWindow(
@@ -163,7 +163,7 @@ public class CarregamentoDeXamlTests
             new ProdutosView(CriarProdutos()),
             new HistoricoView(CriarHistorico()),
             new BackupView(CriarBackup()),
-            new ConfiguracaoView(CriarConfiguracao()), paths);
+            new ConfiguracaoView(CriarConfiguracao()), paths, historicoPedidosView: historicoPedidos);
     }
 
     // ---- testes ----

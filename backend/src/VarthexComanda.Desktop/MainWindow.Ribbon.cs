@@ -22,6 +22,7 @@ public partial class MainWindow
         _destinosRibbon = new()
         {
             new("Principal", "Pedido", "Mesas / comandas", IconeVarthex.Mesas, () => !_bloqueado && !_cozinhaAtiva && !_restauracao, IrParaAtendimento),
+            new("Principal", "Vendas", "Histórico de pedidos", IconeVarthex.Historico, () => !_bloqueado && !_cozinhaAtiva && !_restauracao && _historicoPedidosView is not null, IrParaHistoricoPedidos),
             new("Apps", "Operação", "Cozinha", IconeVarthex.Cozinha, () => !_bloqueado && !_restauracao, () => { _cozinhaView.Atualizar(); MostrarConteudo(_cozinhaView); }),
             new("Apps", "Atendimento", "Painel de senhas", IconeVarthex.Painel, PodeChamarSenha, AbrirPainelSenhas),
             new("Produtos", "Catálogo", "Produtos", IconeVarthex.Produtos, PodeGerir, IrParaProdutos),
