@@ -12,6 +12,7 @@ public sealed record ProdutoLocalizado(Produto Produto, string Categoria)
     public string Nome => Produto.Nome;
     public string? Foto => Produto.FotoArquivo;
     public string Preco => CentavosParaMoedaConverter.Formatar(Produto.PrecoCentavos);
+    public string PrecoVenda => (Produto.PrecoCentavos / 100m).ToString("N2", System.Globalization.CultureInfo.GetCultureInfo("pt-BR"));
 }
 
 public partial class LocalizarProdutoViewModel : ObservableObject, IDisposable

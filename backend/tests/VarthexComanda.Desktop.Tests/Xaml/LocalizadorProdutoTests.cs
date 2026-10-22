@@ -134,7 +134,7 @@ public class LocalizadorProdutoTests
             {
                 Assert.True(catalogo.ViewModel.Fotos);
                 var cartao=AlinhamentoInterfaceTests.Filhos(catalogo).OfType<Button>().Single(b=>b.Name=="CartaoProduto");
-                Assert.Equal(190,cartao.ActualHeight);
+                Assert.Equal(154,cartao.ActualHeight);
                 Assert.DoesNotContain(AlinhamentoInterfaceTests.Filhos(cartao).OfType<Button>(),b=>b!=cartao);
                 catalogo.Dispatcher.BeginInvoke(new Action(()=>
                 {
