@@ -13,8 +13,8 @@ public partial class MainWindow
         if (!PodeGerir() || _repositorioSistema is null) return;
         AbrirComandoConfiguracao(()=>
         {
-            var resultado=new JanelaNumeracaoPedidos(new NumeracaoComandasService(_repositorioSistema)) { Owner=this }.ShowDialog();
-            if(resultado==true)_atendimentoView.ViewModel.AtualizarComandasAbertas();
+            var resultado=new JanelaNumeracaoPedidos(new NumeracaoComandasService(_repositorioSistema),()=>_atendimentoView.ViewModel.ComandasAbertas.Select(c=>c.Numero).DefaultIfEmpty(0).Max()) { Owner=this }.ShowDialog();
+            if(resultado==true){_configuracaoView.ViewModel.Carregar();_atendimentoView.ViewModel.AtualizarComandasAbertas();}
             return resultado;
         });
     }

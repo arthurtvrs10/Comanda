@@ -4,6 +4,7 @@ namespace VarthexComanda.Application.Configuracao;
 
 public sealed class PreferenciasSistema
 {
+    public bool SolicitarSenha { get; set; } = true;
     public string RazaoSocial { get; set; } = "";
     public string Documento { get; set; } = "";
     public string InscricaoEstadual { get; set; } = "";

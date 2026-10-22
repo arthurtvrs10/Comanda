@@ -44,7 +44,7 @@ public sealed class JanelaNumeracaoPedidosTests
                     encoder.Save(stream);
                 }
             }
-            var inicio = Descendentes(raiz).OfType<TextBox>().Single();
+            var inicio = Descendentes(raiz).OfType<TextBox>().Single(t=>System.Windows.Automation.AutomationProperties.GetName(t)=="Começa com");
             inicio.Text = "0";
             var salvar = Descendentes(raiz).OfType<Button>().Single(b => Equals(b.Content, "Salvar"));
             salvar.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));

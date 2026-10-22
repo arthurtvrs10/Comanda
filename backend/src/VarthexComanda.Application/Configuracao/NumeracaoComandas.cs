@@ -23,13 +23,17 @@ public sealed class NumeracaoComandasService(IConfiguracaoRepository repositorio
         if(inicio<1)throw new InvalidOperationException("Informe um número inicial de comanda maior que zero.");
         return new() { Ativa=ativa=="true",Inicio=(int)inicio,UsarComoSenhaAtendimento=(repositorio.ObterValor(ChaveSenha)??repositorio.ObterValor(NumeracaoPedidosService.ChaveSenhaAtendimento))=="true" };
     }
-    public void Salvar(ConfiguracaoNumeracaoComandas configuracao,DateTime agora)
+    public int? Quantidade => int.TryParse(repositorio.ObterValor("comandas.quantidade_maxima"),out var n)?n:null;
+    public void Salvar(ConfiguracaoNumeracaoComandas configuracao,DateTime agora) => Salvar(configuracao,agora,Quantidade);
+    public void Salvar(ConfiguracaoNumeracaoComandas configuracao,DateTime agora,int? limite)
     {
         if(configuracao.Inicio is <1 or >999_999_999)throw new ArgumentException("Informe um número inicial de 1 a 999.999.999.");
-        var quantidade=int.TryParse(repositorio.ObterValor("comandas.quantidade_maxima"),out var q)?q:20;
+        if(limite is <=0 or >9999)throw new ArgumentException("Informe de 1 a 9999 comandas ou deixe vazio.");
+        var quantidade=limite??20;
         ValidarFaixa(configuracao.PrimeiroNumero,quantidade);
         repositorio.DefinirValores(new Dictionary<string,string>
         {
+            ["comandas.quantidade_maxima"]=limite?.ToString(CultureInfo.InvariantCulture)??"",
             [ChaveAtiva]=configuracao.Ativa?"true":"false",[ChaveInicio]=configuracao.Inicio.ToString(CultureInfo.InvariantCulture),
             [ChaveSenha]=configuracao.UsarComoSenhaAtendimento?"true":"false",
             // Este menu controla a grade; não aloca um segundo contador para novos pedidos.

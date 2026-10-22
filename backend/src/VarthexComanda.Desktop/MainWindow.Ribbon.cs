@@ -115,6 +115,11 @@ public partial class MainWindow
             JanelaAviso.Mostrar("Recuperação", "Restaure um backup antes de acessar esta função.", TipoAviso.Informacao);
             return false;
         }
+        if (PodeDispensarSenha)
+        {
+            _acesso.EntrarSemSenha();_acessoAtendimento.EntrarSemSenha();_bloqueado=false;_cozinhaAtiva=false;
+            AreaSistema.IsEnabled=true;CamadaBloqueio.Visibility=Visibility.Collapsed;AtualizarPerfil();
+        }
         if (destino.Permitido()) return true;
         if (_bloqueado && destino.Nome=="Mesas / comandas")
         {
@@ -234,6 +239,7 @@ public partial class MainWindow
     {
         if (!PodeSairDasConfiguracoes()) return;
         MostrarAreaPrincipal();
+        if(PodeDispensarSenha)return;
         var login = new JanelaLogin(_acesso, _acessoAtendimento, _restauracao, _colaboradores) { Owner=this };
         if (login.ShowDialog()!=true) return;
         if (login.Perfil=="gestor" && _acesso.Autenticado)

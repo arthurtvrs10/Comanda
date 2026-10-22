@@ -155,7 +155,7 @@ public class CarregamentoDeXamlTests
         return new ConfiguracaoViewModel(new ObterConfiguracao(repositorio), new SalvarConfiguracao(repositorio, new FakeClock()));
     }
 
-    internal static MainWindow CriarMainWindow(VarthexComanda.Infrastructure.Storage.AppPaths? paths = null, HistoricoPedidosView? historicoPedidos = null)
+    internal static MainWindow CriarMainWindow(VarthexComanda.Infrastructure.Storage.AppPaths? paths = null, HistoricoPedidosView? historicoPedidos = null, VarthexComanda.Application.Configuracao.IConfiguracaoRepository? configuracoes = null)
     {
         var (atendimento, _) = CriarAtendimento();
         return new MainWindow(
@@ -163,7 +163,7 @@ public class CarregamentoDeXamlTests
             new ProdutosView(CriarProdutos()),
             new HistoricoView(CriarHistorico()),
             new BackupView(CriarBackup()),
-            new ConfiguracaoView(CriarConfiguracao()), paths, historicoPedidosView: historicoPedidos);
+            new ConfiguracaoView(CriarConfiguracao()), paths, configuracoes, historicoPedidosView: historicoPedidos);
     }
 
     // ---- testes ----
@@ -227,6 +227,7 @@ public class CarregamentoDeXamlTests
             GarantirApp();
             var repo=new VarthexComanda.Application.Tests.Configuracao.FakeConfiguracaoRepository();
             var service=new VarthexComanda.Application.Configuracao.ConfiguracoesSistemaService(repo);
+            service.Salvar(new() { CorFundo="#F3F5F2" },"Loja de teste",20,DateTime.UtcNow);
             var atual=new VarthexComanda.Application.Configuracao.ConfiguracaoEstabelecimento { NomeEstabelecimento="Loja de teste",QuantidadeMaximaComandas=20 };
             var janela=new VarthexComanda.Desktop.Configuracao.JanelaConfiguracoesSistema(service,atual,()=>0,()=>Array.Empty<Produto>(),()=>"VARTHEX — diagnóstico de teste",_=>{},()=>{},()=>null);
             Assert.Equal(ResizeMode.CanResize,janela.ResizeMode);
@@ -242,6 +243,7 @@ public class CarregamentoDeXamlTests
                         raiz.Measure(new Size(largura,700));raiz.Arrange(new Rect(0,0,largura,700));raiz.UpdateLayout();
                         Descendentes(raiz).OfType<RadioButton>().Single(b=>Equals(b.Content,secao)).IsChecked=true;
                         raiz.Measure(new Size(largura,700));raiz.Arrange(new Rect(0,0,largura,700));raiz.UpdateLayout();
+                        Assert.False(janela.TemAlteracoes);
                         SalvarPrevia(raiz,$"sistema-{Array.IndexOf(VarthexComanda.Desktop.Configuracao.JanelaConfiguracoesSistema.Secoes,secao)}-{(escuro?"escuro":"claro")}-{largura}");
                     }
                 }
@@ -250,6 +252,8 @@ public class CarregamentoDeXamlTests
             raiz.Measure(new Size(1180,700));raiz.Arrange(new Rect(0,0,1180,700));raiz.UpdateLayout();
             Descendentes(raiz).OfType<TextBox>().Single(t=>System.Windows.Automation.AutomationProperties.GetName(t)=="Cidade").Text="Curitiba";
             Assert.True(janela.TemAlteracoes);
+            var cidade=Descendentes(raiz).OfType<TextBox>().Single(t=>System.Windows.Automation.AutomationProperties.GetName(t)=="Cidade");
+            cidade.Text="";Assert.False(janela.TemAlteracoes);cidade.Text="Curitiba";
             Descendentes(raiz).OfType<Button>().Single(b=>Equals(b.Content,"Salvar alterações")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Assert.False(janela.TemAlteracoes);Assert.Equal("Curitiba",service.Carregar().Cidade);
             TemaInterface.Aplicar(false);

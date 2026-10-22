@@ -20,6 +20,16 @@ public class NumeracaoComandasTests
         service.Salvar(new(){Ativa=false,Inicio=100},DateTime.UtcNow);Assert.Equal(1,new ObterConfiguracao(repo).Executar().NumeroInicialComandas);
     }
     [Fact]
+    public void QuantidadeSalvaJuntoDaFaixaEValidaAntesDePersistir()
+    {
+        var repo=new FakeConfiguracaoRepository();var service=new NumeracaoComandasService(repo);
+        service.Salvar(new(){Ativa=true,Inicio=100},DateTime.UtcNow,50);
+        Assert.Equal(50,service.Quantidade);
+        Assert.Throws<ArgumentException>(()=>service.Salvar(new(){Ativa=true,Inicio=200},DateTime.UtcNow,0));
+        Assert.Equal(100,service.Carregar().Inicio);Assert.Equal(50,service.Quantidade);
+        service.Salvar(new(){Ativa=false},DateTime.UtcNow,null);Assert.Null(service.Quantidade);
+    }
+    [Fact]
     public void InicioAntigoPreenchidoNaJanelaEInterpretadoComoInicioDaGrade()
     {
         var repo=new FakeConfiguracaoRepository();repo.Definir(NumeracaoPedidosService.ChaveAtiva,"true",DateTime.UtcNow);repo.Definir(NumeracaoPedidosService.ChaveInicio,"100",DateTime.UtcNow);

@@ -90,6 +90,7 @@ public partial class MainWindow : Window
         Closed += (_,_) => _painelSenhas?.Dispose();
         _atendimentoView.ViewModel.AtendimentoConcluido += BloquearAtendimento;
         MostrarAreaPrincipal();
+        BloquearAtendimento(false);
     }
 
     /// <summary>
@@ -229,6 +230,7 @@ public partial class MainWindow : Window
             _acesso.Sair();
             ConteudoPrincipal.Limpar();
         }
+        else if(PodeDispensarSenha)_acesso.EntrarSemSenha();
         else if (new JanelaAcessoGestor(_acesso) { Owner = this }.ShowDialog() == true && _restauracao)
             IrParaBackup();
         AtualizarPerfil();
@@ -239,11 +241,16 @@ public partial class MainWindow : Window
         if (!PodeSairDasConfiguracoes()) return;
         if (_atendimentoView.ViewModel.ComandaAtual is not null)
             _atendimentoView.ViewModel.FecharEdicaoCommand.Execute(null);
-        else BloquearAtendimento();
+        BloquearAtendimento(false);
     }
 
-    private void BloquearAtendimento()
+    private bool _exigirAutenticacao=true;
+    private bool PodeDispensarSenha => !_exigirAutenticacao&&!_restauracao&&!LerPreferencias().SolicitarSenha;
+
+    private void BloquearAtendimento() => BloquearAtendimento(true);
+    private void BloquearAtendimento(bool permitirAcessoSemSenha)
     {
+        if(!permitirAcessoSemSenha)_exigirAutenticacao=true;
         _painelSenhas?.FecharChamador();
         _bloqueado = true;
         _acesso.Sair();
@@ -256,6 +263,7 @@ public partial class MainWindow : Window
         CamadaBloqueio.Visibility = Visibility.Visible;
         _bloqueioView.Reiniciar();
         AtualizarPerfil();
+        if(permitirAcessoSemSenha&&PodeDispensarSenha){_acessoAtendimento.EntrarSemSenha();DesbloquearAtendimento();}
         Dispatcher.BeginInvoke(new Action(() => { if (_bloqueado && CamadaBloqueio.Visibility == Visibility.Visible) _bloqueioView.Focus(); }));
     }
 
@@ -281,7 +289,7 @@ public partial class MainWindow : Window
         }
         catch
         {
-            BloquearAtendimento();
+            BloquearAtendimento(false);
             throw;
         }
     }
@@ -315,7 +323,8 @@ public partial class MainWindow : Window
         }
         if (_restauracao && area is not ("gestor" or "backup"))
         { JanelaAviso.Mostrar("Recuperação", "Somente a restauração de backup está disponível.", TipoAviso.Informacao); return; }
-        if (new JanelaAcessoGestor(_acesso) { Owner = this }.ShowDialog() != true) return;
+        if(PodeDispensarSenha)_acesso.EntrarSemSenha();
+        else if (new JanelaAcessoGestor(_acesso) { Owner = this }.ShowDialog() != true) return;
         _bloqueado = false;
         _cozinhaAtiva = false;
         CamadaBloqueio.Visibility = Visibility.Collapsed;
@@ -365,6 +374,7 @@ public partial class MainWindow : Window
 
     private void AtualizarPerfil()
     {
+        if(_acesso.Autenticado||_acessoAtendimento.Autenticado)_exigirAutenticacao=false;
         SugerirConexaoDriveAposLogin();
         if (_acesso.Autenticado && !_acesso.AutenticadoPorColaborador) _colaboradores.Sair();
         foreach (var botao in new[] { BotaoProdutos, BotaoBackup, BotaoConfiguracoes, BotaoLicenca })

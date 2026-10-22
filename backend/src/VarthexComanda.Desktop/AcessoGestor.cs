@@ -8,6 +8,7 @@ public sealed class AcessoGestor(string caminho)
     public bool Configurado => File.Exists(caminho);
     public bool Autenticado { get; private set; }
     public bool AutenticadoPorColaborador { get; private set; }
+    internal void EntrarSemSenha() { Autenticado=true; AutenticadoPorColaborador=false; }
     public void Sair() { Autenticado = false; AutenticadoPorColaborador = false; }
 
     public bool EntrarColaborador(ServicoColaboradores colaboradores)

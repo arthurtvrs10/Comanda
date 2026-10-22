@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using System.Security.Cryptography;
 
 namespace VarthexComanda.Desktop;
@@ -10,6 +10,7 @@ public sealed class AcessoAtendimento(string caminho, TimeProvider? relogio = nu
     private DateTimeOffset _aguardarAte;
     public bool Configurado => File.Exists(caminho);
     public bool Autenticado { get; private set; }
+    internal void EntrarSemSenha() => Autenticado=true;
     public void Bloquear() => Autenticado = false;
     public bool EntrarColaborador(ServicoColaboradores colaboradores)
     {

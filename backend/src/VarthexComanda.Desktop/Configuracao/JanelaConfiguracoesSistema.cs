@@ -13,7 +13,7 @@ namespace VarthexComanda.Desktop.Configuracao;
 
 public sealed class JanelaConfiguracoesSistema : Window
 {
-    public static readonly string[] Secoes = ["Geral", "Ajustes de cupom", "Imagem de fundo", "Origem do Cliente", "Locais / cozinhas", "Código de Barras por Kg", "Sobre"];
+    public static readonly string[] Secoes = ["Geral", "Segurança", "Ajustes de cupom", "Imagem de fundo", "Origem do Cliente", "Locais / cozinhas", "Código de Barras por Kg", "Sobre"];
     private readonly ConfiguracoesSistemaService _service;
     private readonly Func<int> _maiorComanda;
     private readonly Func<IReadOnlyList<Produto>> _produtos;
@@ -52,6 +52,12 @@ public sealed class JanelaConfiguracoesSistema : Window
         foreach(var secao in Secoes)
         {
             var b=new RadioButton { Content=secao,GroupName="SecoesSistema",MinHeight=40,Padding=new Thickness(8),FontSize=12,IsChecked=secao=="Geral" };
+            var layout=new FrameworkElementFactory(typeof(StackPanel));layout.SetValue(StackPanel.OrientationProperty,Orientation.Horizontal);
+            var icone=new FrameworkElementFactory(typeof(Image));icone.SetValue(FrameworkElement.WidthProperty,20.0);icone.SetValue(FrameworkElement.HeightProperty,20.0);icone.SetValue(FrameworkElement.MarginProperty,new Thickness(0,0,8,0));
+            var tipo=secao switch { "Segurança"=>IconeVarthex.Senha,"Ajustes de cupom"=>IconeVarthex.Impressoras,"Imagem de fundo"=>IconeVarthex.Fotos,"Origem do Cliente"=>IconeVarthex.Colaboradores,"Locais / cozinhas"=>IconeVarthex.Cozinha,"Código de Barras por Kg"=>IconeVarthex.Numeracao,"Sobre"=>IconeVarthex.Ajuda,_=>IconeVarthex.Configuracoes };
+            icone.SetValue(Image.SourceProperty,((Image)IconesVarthex.Criar(tipo,20)).Source);layout.AppendChild(icone);
+            var rotulo=new FrameworkElementFactory(typeof(TextBlock));rotulo.SetBinding(TextBlock.TextProperty,new System.Windows.Data.Binding("."));rotulo.SetValue(TextBlock.TextWrappingProperty,TextWrapping.Wrap);layout.AppendChild(rotulo);
+            b.ContentTemplate=new DataTemplate { VisualTree=layout };
             b.Template=template;b.FocusVisualStyle=(Style)FindResource("FocoVisivel");
             b.Checked+=(_,_)=>Mostrar(secao);navegacao.Children.Add(b);
         }
@@ -110,6 +116,7 @@ public sealed class JanelaConfiguracoesSistema : Window
         switch(secao)
         {
             case "Geral": Geral();break;
+            case "Segurança": Seguranca();break;
             case "Ajustes de cupom": Cupom();break;
             case "Imagem de fundo": Fundo();break;
             case "Origem do Cliente": Origens();break;
@@ -138,8 +145,14 @@ public sealed class JanelaConfiguracoesSistema : Window
         Campo("Número",_prefs.Numero,v=>_prefs.Numero=v);Campo("Complemento",_prefs.Complemento,v=>_prefs.Complemento=v);
         Campo("Bairro",_prefs.Bairro,v=>_prefs.Bairro=v);Campo("CEP",_prefs.Cep,v=>_prefs.Cep=v);Campo("Cidade",_prefs.Cidade,v=>_prefs.Cidade=v);Campo("UF",_prefs.Uf,v=>_prefs.Uf=v);
         _camposGeral=null;
-        Subtitulo("Atendimento");var limite=Campo("Quantidade de comandas",_quantidade,v=>_quantidade=v);limite.Width=140;limite.HorizontalAlignment=HorizontalAlignment.Left;
-        Texto("Deixe vazio para a quantidade automática. Comandas abertas são preservadas; taxa de serviço não é aplicada nesta versão.");
+    }
+    private void Seguranca()
+    {
+        Subtitulo("Solicitação de senha");
+        Marcar("Pedir senha e PIN a cada acesso durante o uso",_prefs.SolicitarSenha,v=>_prefs.SolicitarSenha=v);
+        Texto("Ativado: solicita senha ou PIN ao acessar áreas protegidas e após concluir o atendimento.");
+        Texto("Desativado: após entrar, permite navegar e continuar os pedidos sem repetir a senha ou PIN.");
+        Texto("A senha ou PIN sempre será solicitada ao iniciar o sistema e ao clicar em Bloquear. Clique em Salvar alterações para aplicar.");
     }
     private void Cupom()
     {
@@ -154,13 +167,13 @@ public sealed class JanelaConfiguracoesSistema : Window
     }
     private void Fundo()
     {
-        _prefs.CorFundo=FundoSistema.Cor(_prefs);
+        // Visiting this section must not modify saved preferences.
         Subtitulo("Cor de fundo");
         var paleta=new WrapPanel { Margin=new Thickness(0,0,0,14) };_form.Children.Add(paleta);
         var previa=new Border { Height=250,Width=430,MaxWidth=430,BorderThickness=new Thickness(1),ClipToBounds=true,HorizontalAlignment=HorizontalAlignment.Left };previa.SetResourceReference(Border.BorderBrushProperty,"Line");
         void Atualizar()
         {
-            previa.Background=(Brush)new BrushConverter().ConvertFromString(_prefs.CorFundo)!;
+            previa.Background=(Brush)new BrushConverter().ConvertFromString(FundoSistema.Cor(_prefs))!;
             previa.Child=new Border { Background=FundoSistema.CriarPincel(_prefs) };
         }
         foreach(var (nome,cor) in new[]{("Branco","#FFFFFF"),("Cinza 5%","#F2F2F2"),("Cinza 20%","#CCCCCC"),("Cinza 30%","#B3B3B3"),("Cinza 40%","#999999"),("Cinza 50%","#808080"),("Cinza 60%","#666666"),("Preto","#000000")})
