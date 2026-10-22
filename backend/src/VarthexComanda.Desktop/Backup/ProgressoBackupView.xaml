@@ -20,7 +20,7 @@
     </Path>
    </Grid>
    <TextBlock Text="{Binding TituloProgresso}" TextAlignment="Center" AutomationProperties.LiveSetting="Polite"/>
-   <ProgressBar x:Name="BarraBackup" Height="9" Margin="0,14,18,0" Minimum="0" Maximum="100" IsIndeterminate="{Binding EmAndamento}" Value="{Binding ValorBarraProgresso, Mode=OneWay}" Background="{DynamicResource AjudaSoft}" Foreground="{DynamicResource AjudaAction}" BorderThickness="0" AutomationProperties.Name="Andamento do backup"/>
+   <ProgressBar x:Name="BarraBackup" Height="9" Margin="0,14,18,0" Minimum="0" Maximum="100" IsIndeterminate="{Binding EmAndamento}" Value="{Binding ValorBarraProgresso, Mode=OneWay}" Background="{DynamicResource AjudaSoft}" Foreground="{DynamicResource Focus}" BorderThickness="0" AutomationProperties.Name="Andamento do backup"/>
   </StackPanel>
   <ScrollViewer x:Name="RolagemProgresso" Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="0,0,18,0" AutomationProperties.Name="Progresso do backup">
    <ItemsControl ItemsSource="{Binding Progresso}"><ItemsControl.ItemTemplate><DataTemplate>

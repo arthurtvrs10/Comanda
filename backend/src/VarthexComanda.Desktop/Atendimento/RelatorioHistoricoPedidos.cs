@@ -18,6 +18,9 @@ internal static class RelatorioHistoricoPedidos
     };
 
     public static void ExportarExcel(Stream destino, IReadOnlyList<ColunaHistoricoPedido> colunas, IReadOnlyList<PedidoHistoricoResumo> pedidos)
+        => ExportarTabelaExcel(destino, colunas.Select(c=>c.Titulo).ToArray(), pedidos.Select(p=>colunas.Select(c=>c.Valor(p)).ToArray()).ToArray(), "Pedidos");
+
+    internal static void ExportarTabelaExcel(Stream destino, IReadOnlyList<string> titulos, IReadOnlyList<object?[]> linhas, string nome)
     {
         using var zip = new ZipArchive(destino, ZipArchiveMode.Create, true);
         XNamespace planilha = "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
@@ -33,7 +36,7 @@ internal static class RelatorioHistoricoPedidos
             new XElement(tipos + "Override", new XAttribute("PartName", "/xl/worksheets/sheet1.xml"), new XAttribute("ContentType", "application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml")),
             new XElement(tipos + "Override", new XAttribute("PartName", "/xl/styles.xml"), new XAttribute("ContentType", "application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml")))));
         Gravar("_rels/.rels", new(new XElement(pacote + "Relationships", new XElement(pacote + "Relationship", new XAttribute("Id", "rId1"), new XAttribute("Type", rel.NamespaceName + "/officeDocument"), new XAttribute("Target", "xl/workbook.xml")))));
-        Gravar("xl/workbook.xml", new(new XElement(planilha + "workbook", new XAttribute(XNamespace.Xmlns + "r", rel), new XElement(planilha + "sheets", new XElement(planilha + "sheet", new XAttribute("name", "Pedidos"), new XAttribute("sheetId", 1), new XAttribute(rel + "id", "rId1"))))));
+        Gravar("xl/workbook.xml", new(new XElement(planilha + "workbook", new XAttribute(XNamespace.Xmlns + "r", rel), new XElement(planilha + "sheets", new XElement(planilha + "sheet", new XAttribute("name", nome), new XAttribute("sheetId", 1), new XAttribute(rel + "id", "rId1"))))));
         Gravar("xl/_rels/workbook.xml.rels", new(new XElement(pacote + "Relationships",
             new XElement(pacote + "Relationship", new XAttribute("Id", "rId1"), new XAttribute("Type", rel.NamespaceName + "/worksheet"), new XAttribute("Target", "worksheets/sheet1.xml")),
             new XElement(pacote + "Relationship", new XAttribute("Id", "rId2"), new XAttribute("Type", rel.NamespaceName + "/styles"), new XAttribute("Target", "styles.xml")))));
@@ -50,8 +53,8 @@ internal static class RelatorioHistoricoPedidos
         XElement Celula(object? valor) => valor is int or long or decimal
             ? new(planilha + "c", new XAttribute("s", valor is decimal ? 1 : 0), new XElement(planilha + "v", Convert.ToString(valor, CultureInfo.InvariantCulture)))
             : new(planilha + "c", new XAttribute("t", "inlineStr"), new XElement(planilha + "is", new XElement(planilha + "t", new XAttribute(XNamespace.Xml + "space", "preserve"), LimparXml(Formatar(valor)))));
-        var dados = new XElement(planilha + "sheetData", new XElement(planilha + "row", colunas.Select(c => Celula(c.Titulo))));
-        foreach (var pedido in pedidos) dados.Add(new XElement(planilha + "row", colunas.Select(c => Celula(c.Valor(pedido)))));
+        var dados = new XElement(planilha + "sheetData", new XElement(planilha + "row", titulos.Select(t => Celula(t))));
+        foreach (var linha in linhas) dados.Add(new XElement(planilha + "row", linha.Select(Celula)));
         Gravar("xl/worksheets/sheet1.xml", new(new XElement(planilha + "worksheet", dados)));
     }
 

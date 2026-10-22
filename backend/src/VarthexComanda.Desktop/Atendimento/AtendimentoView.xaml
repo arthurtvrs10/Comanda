@@ -128,18 +128,8 @@
                                         <Setter Property="BorderBrush" Value="{DynamicResource ColorC4C4C4}" />
                                         <Setter Property="BorderThickness" Value="1" />
                                         <Setter Property="Foreground" Value="{DynamicResource Text23252A}" />
+                                        <Setter Property="AutomationProperties.ItemStatus" Value="{Binding SituacaoTexto}" />
                                         <Style.Triggers>
-                                            <DataTrigger Binding="{Binding Aberta}" Value="True">
-                                                <Setter Property="Background" Value="{DynamicResource BackgroundD9822B}" />
-                                                <Setter Property="BorderBrush" Value="{DynamicResource ColorBF701F}" />
-                                                <Setter Property="Foreground" Value="White" />
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding EmFechamento}" Value="True">
-                                                <Setter Property="Background" Value="{DynamicResource PrioridadeMediana}" />
-                                                <Setter Property="BorderBrush" Value="{DynamicResource PrioridadeMediana}" />
-                                                <Setter Property="Foreground" Value="#302500" />
-                                                <Setter Property="AutomationProperties.ItemStatus" Value="Em fechamento" />
-                                            </DataTrigger>
                                             <DataTrigger Value="True">
                                                 <DataTrigger.Binding>
                                                     <MultiBinding Converter="{StaticResource NumeroPesquisado}">
@@ -160,10 +150,40 @@
                                         <RowDefinition Height="*" />
                                         <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
-                                    <StackPanel Grid.Row="0"><DockPanel>
-                                        <Ellipse DockPanel.Dock="Right" Width="10" Height="10" Margin="6,0,0,0" Fill="{Binding CorPrioridade}" ToolTip="{Binding PrioridadeTexto}" AutomationProperties.Name="{Binding PrioridadeTexto}" />
-                                        <TextBlock Text="{Binding SituacaoTexto}" FontSize="11" FontWeight="Bold" />
-                                    </DockPanel>
+                                    <StackPanel Grid.Row="0">
+                                    <Border x:Name="FaixaSituacaoComanda" Padding="3,4" Margin="0,0,0,2">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Setter Property="Background" Value="{DynamicResource Soft}"/>
+                                                <Setter Property="TextElement.Foreground" Value="{DynamicResource Ink}"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Aberta}" Value="True">
+                                                        <Setter Property="Background" Value="{DynamicResource PrioridadeNormal}"/>
+                                                        <Setter Property="TextElement.Foreground" Value="White"/>
+                                                    </DataTrigger>
+                                                    <MultiDataTrigger><MultiDataTrigger.Conditions>
+                                                        <Condition Binding="{Binding Aberta}" Value="True"/>
+                                                        <Condition Binding="{Binding Prioridade}" Value="Alta"/>
+                                                    </MultiDataTrigger.Conditions>
+                                                        <Setter Property="Background" Value="{DynamicResource PrioridadeMediana}"/>
+                                                        <Setter Property="TextElement.Foreground" Value="#302500"/>
+                                                    </MultiDataTrigger>
+                                                    <MultiDataTrigger><MultiDataTrigger.Conditions>
+                                                        <Condition Binding="{Binding Aberta}" Value="True"/>
+                                                        <Condition Binding="{Binding Prioridade}" Value="Urgente"/>
+                                                    </MultiDataTrigger.Conditions>
+                                                        <Setter Property="Background" Value="{DynamicResource PrioridadeAlta}"/>
+                                                        <Setter Property="TextElement.Foreground" Value="White"/>
+                                                    </MultiDataTrigger>
+                                                    <DataTrigger Binding="{Binding EmFechamento}" Value="True">
+                                                        <Setter Property="Background" Value="{DynamicResource PrioridadeMediana}"/>
+                                                        <Setter Property="TextElement.Foreground" Value="#302500"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                        <TextBlock Text="{Binding SituacaoTexto}" FontSize="11" FontWeight="Bold" TextAlignment="Center"/>
+                                    </Border>
                                     <TextBlock Text="{Binding TempoFormatado}" FontSize="10" Margin="0,2,0,0" />
                                     </StackPanel>
                                     <StackPanel Grid.Row="1" VerticalAlignment="Center">
@@ -281,7 +301,7 @@
                     <Border Grid.Row="1" BorderBrush="{DynamicResource AjudaLine}" BorderThickness="1,0,1,1" Padding="8">
                         <DockPanel LastChildFill="False">
                             <Button x:Name="BotaoImprimirPedido" DockPanel.Dock="Left" Click="ImprimirPedido_Click" Style="{StaticResource BotaoPedido}"><StackPanel Orientation="Horizontal"><Path Data="M6 8V2H18V8 M6 18H3V8H21V18H18 M6 14H18V23H6Z" Style="{StaticResource IconePedido}"/><TextBlock Text="Imprimir" VerticalAlignment="Center"/></StackPanel></Button>
-                            <Button DockPanel.Dock="Right" Content="PAGAMENTO" Command="{Binding VerTotalCommand}" Style="{StaticResource BotaoPedido}" Background="{DynamicResource AjudaAction}" Foreground="{DynamicResource AjudaActionInk}" FontWeight="Bold" Width="178" ToolTip="Pagamento da comanda (F4)"/>
+                            <Button DockPanel.Dock="Right" Content="PAGAMENTO" Command="{Binding VerTotalCommand}" Style="{StaticResource BotaoPedido}" Background="{DynamicResource ActionPrimary}" Foreground="{DynamicResource ActionPrimaryInk}" FontWeight="Bold" Width="178" ToolTip="Pagamento da comanda (F4)"/>
                         </DockPanel>
                     </Border>
                 </Grid>

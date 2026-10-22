@@ -100,7 +100,9 @@ public class MenuComandaTests
                             var atual=vm.ComandaAtual;vm.ComandaAtual=null;
                             Renderizar(view,largura,altura,$"grade-fechamento-{(escuro?"escuro":"claro")}");
                             var cartao=AlinhamentoInterfaceTests.Filhos(view).OfType<Button>().Single(b=>b.DataContext is ComandaSlotItem);
-                            Assert.Equal(Color.FromRgb(242,203,89),((SolidColorBrush)cartao.Background).Color);
+                            Assert.Equal(((SolidColorBrush)System.Windows.Application.Current.Resources["Surface"]).Color,((SolidColorBrush)cartao.Background).Color);
+                            var faixa=AlinhamentoInterfaceTests.Filhos(cartao).OfType<Border>().Single(b=>b.Name=="FaixaSituacaoComanda");
+                            Assert.Equal(Color.FromRgb(242,203,89),((SolidColorBrush)faixa.Background).Color);
                             vm.ComandaAtual=atual;
                             var botao = (Button)view.FindName("BotaoMaisOpcoes");
                             CapturarMenu(view.CriarMenuMaisOpcoes(botao), $"menu-opcoes-{(escuro ? "escuro" : "claro")}");

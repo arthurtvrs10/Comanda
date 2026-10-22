@@ -60,7 +60,8 @@ public sealed class JanelaConfiguracoesSistema : Window
         var rodape=new DockPanel { Margin=new Thickness(12,0,12,8),LastChildFill=true };
         var acoes=new StackPanel { Orientation=Orientation.Horizontal };
         var avancadas=new Button { Content="Opções avançadas",Margin=new Thickness(0,0,8,0) };avancadas.Click+=(_,_)=>Avancadas(avancadas);acoes.Children.Add(avancadas);
-        var salvar=new Button { Content="Salvar alterações",MinWidth=105 };salvar.Click+=(_,_)=>Salvar();acoes.Children.Add(salvar);
+        var salvar=new Button { Content="Salvar alterações",MinWidth=105,MinHeight=28,FontSize=12,Padding=new Thickness(12,5,12,5) };
+        salvar.SetResourceReference(StyleProperty,"BotaoPrimario");salvar.Click+=(_,_)=>Salvar();acoes.Children.Add(salvar);
         DockPanel.SetDock(acoes,Dock.Right);rodape.Children.Add(acoes);rodape.Children.Add(_mensagem);Grid.SetRow(rodape,1);Grid.SetColumnSpan(rodape,2);raiz.Children.Add(rodape);
         Closing+=(_,e)=>{if(TemAlteracoes && !new Atendimento.JanelaConfirmador().Confirmar("Descartar alterações?","Há alterações não salvas. Deseja descartá-las e fechar?"))e.Cancel=true;};
         Mostrar("Geral");

@@ -155,7 +155,7 @@ public static class ImpressaoWindows
         return resultado.DistinctBy(x => x.Caminho, StringComparer.OrdinalIgnoreCase).OrderBy(x => x.Nome).ToArray();
     }
     public static void Testar(PreferenciaImpressora impressora) => ImprimirTexto(impressora,
-        $"VARTHEX COMANDA\nTESTE DE IMPRESSÃO\n{DateTime.Now:dd/MM/yyyy HH:mm:ss}\n\nImpressora: {impressora.Caminho}\n\nSe você leu este cupom, a saída está funcionando.", "Teste de impressão Varthex");
+        $"COMANDA · POR VARTHEX\nTESTE DE IMPRESSÃO\n{DateTime.Now:dd/MM/yyyy HH:mm:ss}\n\nImpressora: {impressora.Caminho}\n\nSe você leu este cupom, a saída está funcionando.", "Teste de impressão Varthex");
     public static void ImprimirTexto(PreferenciaImpressora impressora, string texto, string titulo)
     {
         ConfiguracoesImpressaoService.Validar(impressora, false);

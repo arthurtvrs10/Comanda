@@ -10,6 +10,48 @@ namespace VarthexComanda.Desktop.Tests.Xaml;
 public class GradeComandasLayoutTests
 {
     [Fact]
+    public void CartoesMantemFundoNeutroEIdentificamSituacaoSomenteNaFaixa()
+    {
+        ThreadingHelper.EmSta(()=>
+        {
+            CarregamentoDeXamlTests.GarantirApp();
+            try
+            {
+                foreach(var escuro in new[]{false,true})
+                {
+                    TemaInterface.Aplicar(escuro);
+                    var (vm,_)=CarregamentoDeXamlTests.CriarAtendimento();vm.FecharEdicaoCommand.Execute(null);vm.Slots.Clear();
+                    var estados=new[]{
+                        (false,false,VarthexComanda.Domain.PrioridadeComanda.Normal,"Livre","Soft"),
+                        (true,false,VarthexComanda.Domain.PrioridadeComanda.Normal,"Normal","PrioridadeNormal"),
+                        (true,false,VarthexComanda.Domain.PrioridadeComanda.Alta,"Mediana","PrioridadeMediana"),
+                        (true,false,VarthexComanda.Domain.PrioridadeComanda.Urgente,"Alta","PrioridadeAlta"),
+                        (true,true,VarthexComanda.Domain.PrioridadeComanda.Urgente,"Em fechamento","PrioridadeMediana")};
+                    foreach(var (aberta,fechando,prioridade,_,_) in estados)
+                        vm.Slots.Add(new ComandaSlotItem { Numero=vm.Slots.Count+1,Aberta=aberta,Bloqueada=fechando,Prioridade=prioridade,TotalFormatado="R$ 10,00",TempoFormatado=aberta?"00:05:00":"" });
+                    var view=new AtendimentoView(vm);
+                    view.Measure(new Size(800,350));view.Arrange(new Rect(0,0,800,350));Atualizar(view);
+                    var cartoes=AlinhamentoInterfaceTests.Filhos(view).OfType<Button>().Where(b=>b.CommandParameter is ComandaSlotItem).ToArray();
+                    Assert.Equal(estados.Length,cartoes.Length);
+                    for(var i=0;i<cartoes.Length;i++)
+                    {
+                        Color Cor(string chave)=>((SolidColorBrush)System.Windows.Application.Current.Resources[chave]).Color;
+                        var faixa=AlinhamentoInterfaceTests.Filhos(cartoes[i]).OfType<Border>().Single(b=>b.Name=="FaixaSituacaoComanda");
+                        Assert.Equal(Cor("Surface"),((SolidColorBrush)cartoes[i].Background).Color);
+                        Assert.Equal(Cor(estados[i].Item5),((SolidColorBrush)faixa.Background).Color);
+                        Assert.Equal(estados[i].Item4,Assert.IsType<TextBlock>(faixa.Child).Text);
+                    }
+                    SalvarPrevia(view,$"faixas-situacoes-{(escuro?"escuro":"claro")}");
+                    vm.Slots[1].Bloqueada=true;Atualizar(view);
+                    var atualizada=AlinhamentoInterfaceTests.Filhos(cartoes[1]).OfType<Border>().Single(b=>b.Name=="FaixaSituacaoComanda");
+                    Assert.Equal("Em fechamento",Assert.IsType<TextBlock>(atualizada.Child).Text);
+                }
+            }
+            finally { TemaInterface.Aplicar(false); }
+        });
+    }
+
+    [Fact]
     public void GradeDistribuiCartoesAteALateralERolaAteAUltimaComanda()
     {
         ThreadingHelper.EmSta(()=>

@@ -20,7 +20,7 @@ public sealed class JanelaExibicaoSenhas : Window
     public JanelaExibicaoSenhas(EstadoPainelSenhas estado,PreferenciasPainelSenhas preferencias)
     {
         _estado=estado;_preferencias=preferencias;
-        Title="Varthex · Painel de senhas";Width=1100;Height=700;MinWidth=500;MinHeight=300;ShowActivated=false;
+        Title="Comanda · Painel de senhas";Width=1100;Height=700;MinWidth=500;MinHeight=300;ShowActivated=false;
         _raiz=new Grid { Margin=new Thickness(0) };Content=_raiz;
         _raiz.ColumnDefinitions.Add(new(){Width=new GridLength(1,GridUnitType.Star)});
         _raiz.ColumnDefinitions.Add(new(){Width=new GridLength(0.28,GridUnitType.Star)});
@@ -29,7 +29,7 @@ public sealed class JanelaExibicaoSenhas : Window
         _legenda=new TextBlock { FontSize=36,FontWeight=FontWeights.SemiBold,TextAlignment=TextAlignment.Center,Margin=new Thickness(0,12,0,12) };principal.Children.Add(_legenda);
         _numero=new TextBlock { FontSize=240,FontWeight=FontWeights.Bold,FontFamily=new FontFamily("Segoe UI"),Text="—" };
         var destaque=new Viewbox { Child=_numero,Margin=new Thickness(0,10,0,10),Stretch=Stretch.Uniform };Grid.SetRow(destaque,1);principal.Children.Add(destaque);
-        var marca=new TextBlock { Text="VARTHEX COMANDA",FontSize=18,TextAlignment=TextAlignment.Center,Margin=new Thickness(0,12,0,6) };Grid.SetRow(marca,2);principal.Children.Add(marca);
+        var marca=new TextBlock { Text="COMANDA · POR VARTHEX",FontSize=18,TextAlignment=TextAlignment.Center,Margin=new Thickness(0,12,0,6) };Grid.SetRow(marca,2);principal.Children.Add(marca);
         var anteriores=new DockPanel { Margin=new Thickness(20,28,20,28) };
         var titulo=new TextBlock { Text="ANTERIORES",FontSize=20,FontWeight=FontWeights.SemiBold,Margin=new Thickness(0,0,0,24),TextAlignment=TextAlignment.Center };DockPanel.SetDock(titulo,Dock.Top);anteriores.Children.Add(titulo);
         _historico=new StackPanel();anteriores.Children.Add(new Viewbox { Child=_historico,Stretch=Stretch.Uniform,StretchDirection=StretchDirection.DownOnly,VerticalAlignment=VerticalAlignment.Top });

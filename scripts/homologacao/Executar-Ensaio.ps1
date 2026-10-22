@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
     Ensaios de homologacao com o aplicativo real (Etapa 8), por UI Automation.
 
@@ -190,7 +190,7 @@ function New-PastaDeDados([string]$nome) {
 function Ensaio-E1 {
     Titulo "E1 (RNF03) - tempo de abertura ate a janela principal, media de $VezesAbertura aberturas"
     $dados = (New-PastaDeDados 'dados-E1').Pasta
-    Registrar 'Cronometro: do Process.Start ate MainWindowHandle visivel com o titulo "Varthex Comanda".'
+    Registrar 'Cronometro: do Process.Start ate MainWindowHandle visivel com o titulo "Comanda".'
     $tempos = @()
     for ($i = 1; $i -le $VezesAbertura; $i++) {
         Assert-SemAppEmExecucao
@@ -221,17 +221,17 @@ function Ensaio-E2 {
 
     $segundo = Start-App -Exe $script:Exe -PastaDados $dados -RaizPermitida $Saida
     Registrar "  2a instancia: PID $($segundo.Id) iniciada com as mesmas variaveis"
-    $aviso = Wait-Janela -ProcessId $segundo.Id -Titulo 'Varthex Comanda' -ContendoTexto 'aberto neste computador' -Segundos 15
+    $aviso = Wait-Janela -ProcessId $segundo.Id -Titulo 'Comanda' -ContendoTexto 'aberto neste computador' -Segundos 15
     $textoAviso = ''
     if ($aviso) { $textoAviso = (@(Get-TextosDe $aviso) | Where-Object { $_ -and $_.Length -gt 10 }) -join ' ' }
     Registrar "  aviso da 2a instancia: '$textoAviso'"
 
-    $mensagemEsperada = 'O Varthex Comanda já está aberto neste computador.'
+    $mensagemEsperada = 'O Comanda já está aberto neste computador.'
     $textoConfere = $textoAviso -like "*$mensagemEsperada*"
 
     $janelasPrincipais = @()
     foreach ($j in @(Get-JanelasDoProcesso $primeiro.Id)) {
-        if ($j.Current.Name -eq 'Varthex Comanda' -and $j.Current.ClassName -eq 'Window') { $janelasPrincipais += $j }
+        if ($j.Current.Name -eq 'Comanda' -and $j.Current.ClassName -eq 'Window') { $janelasPrincipais += $j }
     }
     Registrar "  janelas principais vivas na 1a instancia: $($janelasPrincipais.Count)"
 
@@ -250,9 +250,9 @@ function Ensaio-E2 {
         $saiu = $false
     }
 
-    $inicios = @(Get-LinhasDoLog $dados 'Iniciando Varthex Comanda')
+    $inicios = @(Get-LinhasDoLog $dados 'Iniciando Comanda')
     $bancos = @(Get-LinhasDoLog $dados 'Banco pronto')
-    Registrar "  log: 'Iniciando Varthex Comanda' = $($inicios.Count) | 'Banco pronto' = $($bancos.Count)"
+    Registrar "  log: 'Iniciando Comanda' = $($inicios.Count) | 'Banco pronto' = $($bancos.Count)"
     foreach ($l in $inicios) { Registrar "    $l" }
 
     [void](Close-App $primeiro)
@@ -392,10 +392,10 @@ function Ensaio-E5 {
     $confirmacao = Wait-Janela -ProcessId $processo.Id -Titulo 'Restaurar backup' -Segundos 15
     if (-not $confirmacao) { throw 'A confirmacao "Restaurar backup" nao apareceu.' }
     Registrar "  confirmacao: $((@(Get-TextosDe $confirmacao) | Where-Object { $_.Length -gt 20 }) -join ' ')"
-    $iniciosAntesDoReinicio = @(Get-LinhasDoLog $dados 'Iniciando Varthex Comanda').Count
+    $iniciosAntesDoReinicio = @(Get-LinhasDoLog $dados 'Iniciando Comanda').Count
     Invoke-Elemento (Find-Elemento -Raiz $confirmacao -Nome 'Sim' -Tipo 'Button' -Segundos 5)
 
-    $avisoOk = Wait-Janela -ProcessId $processo.Id -Titulo 'Varthex Comanda' -ContendoTexto 'Backup restaurado' -Segundos 30
+    $avisoOk = Wait-Janela -ProcessId $processo.Id -Titulo 'Comanda' -ContendoTexto 'Backup restaurado' -Segundos 30
     if (-not $avisoOk) { throw 'O aviso "Backup restaurado com sucesso" nao apareceu.' }
     Registrar "  aviso: $((@(Get-TextosDe $avisoOk) | Where-Object { $_.Length -gt 20 }) -join ' ')"
     Invoke-Elemento (Find-Elemento -Raiz $avisoOk -Nome 'OK' -Tipo 'Button' -Segundos 5)
@@ -412,17 +412,17 @@ function Ensaio-E5 {
     if (-not $reiniciado) { throw 'O aplicativo nao reiniciou sozinho apos a restauracao.' }
     Registrar "  o app reiniciou sozinho: PID $($reiniciado.Id)"
     # antes de interagir: o processo reiniciado tem de estar nos dados DESCARTAVEIS (e nao nos reais da loja).
-    # Prova: uma linha NOVA 'Iniciando Varthex Comanda' apareceu em <dados>\logs depois do reinicio.
+    # Prova: uma linha NOVA 'Iniciando Comanda' apareceu em <dados>\logs depois do reinicio.
     $iniciou = $false
     $limiteLog = (Get-Date).AddSeconds(30)
     while ((Get-Date) -lt $limiteLog -and -not $iniciou) {
-        $iniciou = @(Get-LinhasDoLog $dados 'Iniciando Varthex Comanda').Count -gt $iniciosAntesDoReinicio
+        $iniciou = @(Get-LinhasDoLog $dados 'Iniciando Comanda').Count -gt $iniciosAntesDoReinicio
         if (-not $iniciou) { Start-Sleep -Milliseconds 300 }
     }
     if (-not $iniciou) {
         throw 'O app reiniciado nao registrou "Iniciando" no log da pasta descartavel: nao ha prova de que usa os dados do ensaio. Abortado sem interagir.'
     }
-    Registrar "  o reinicio esta nos dados descartaveis: 'Iniciando Varthex Comanda' passou de $iniciosAntesDoReinicio para $(@(Get-LinhasDoLog $dados 'Iniciando Varthex Comanda').Count) no log de <dados>\logs"
+    Registrar "  o reinicio esta nos dados descartaveis: 'Iniciando Comanda' passou de $iniciosAntesDoReinicio para $(@(Get-LinhasDoLog $dados 'Iniciando Comanda').Count) no log de <dados>\logs"
     $janela2 = Wait-JanelaPrincipal -Processo $reiniciado -Segundos 40
     Start-Sleep -Milliseconds 1200
     $slots = @(Wait-Slots $janela2)
@@ -523,7 +523,7 @@ function Ensaio-E6 {
 
 $codigoDeSaida = 0
 try {
-    Titulo 'Ensaios de homologacao do Varthex Comanda (app real, UI Automation)'
+    Titulo 'Ensaios de homologacao do Comanda (app real, UI Automation)'
     Registrar ("Data/hora ........ {0}" -f (Get-Date -Format 'yyyy-MM-dd HH:mm:ss zzz'))
     Registrar ("Maquina .......... {0} ({1})" -f $env:COMPUTERNAME, [Environment]::OSVersion.VersionString)
     Registrar ("PowerShell ....... {0}" -f $PSVersionTable.PSVersion)

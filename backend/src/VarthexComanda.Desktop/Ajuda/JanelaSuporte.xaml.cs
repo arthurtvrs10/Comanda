@@ -130,7 +130,7 @@ public partial class JanelaSuporte : Window
     }
 
     private void Whatsapp_Click(object sender, RoutedEventArgs e) => Executar(
-        () => _abrir(CanaisAjuda.Whatsapp("Olá! Preciso de suporte com o Varthex Comanda.")),
+        () => _abrir(CanaisAjuda.Whatsapp("Olá! Preciso de suporte com o Comanda.")),
         "Não foi possível abrir o WhatsApp. Confira o navegador padrão e a conexão. Suporte: " + CanaisAjuda.Telefone);
     private void RustDesk_Click(object sender, RoutedEventArgs e) => Executar(
         () => _abrir(CanaisAjuda.RustDesk),

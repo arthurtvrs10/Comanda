@@ -12,7 +12,7 @@ public static class DiagnosticoSistema
     {
         var texto=new StringBuilder();
         void Secao(string nomeSecao){texto.AppendLine();texto.AppendLine(new string('=',52));texto.AppendLine(nomeSecao);texto.AppendLine(new string('=',52));}
-        Secao("VARTHEX COMANDA — REGISTRO E AMBIENTE");
+        Secao("COMANDA · POR VARTHEX — REGISTRO E AMBIENTE");
         texto.AppendLine($"Versão: {VersaoDoAplicativo.Atual}\nAplicação: Windows · Operação local\nEstabelecimento: {nome}");
         try
         {

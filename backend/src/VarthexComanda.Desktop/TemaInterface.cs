@@ -17,6 +17,7 @@ public static class TemaInterface
         public void Atualizar(Color cor){Color=cor;PropertyChanged?.Invoke(this,new(nameof(Color)));}
     }
     public static bool Escuro { get; private set; }
+    public static SolidColorBrush PincelDoPapel(string papel) => Pincel("@" + papel);
     public static SolidColorBrush Pincel(string cor)
     {
         if(!Pinceis.TryGetValue(cor,out var pincel))
@@ -41,38 +42,21 @@ public static class TemaInterface
         foreach(var (cor,pincel) in Pinceis)
             ((CorTema)System.Windows.Data.BindingOperations.GetBinding(pincel,SolidColorBrush.ColorProperty)!.Source).Atualizar(Converter(cor,escuro));
         var recursos=System.Windows.Application.Current.Resources;
+        foreach (var papel in PaletaComanda.Papeis.Keys)
+            recursos[papel] = new SolidColorBrush(PaletaComanda.Cor(papel, escuro));
         foreach(var cor in Cores) recursos["Color"+cor.TrimStart('#')]=Pincel(cor);
         foreach(var cor in Cores)
         {
             var original=(Color)ColorConverter.ConvertFromString(cor);
             var luz=(Math.Max(original.R,Math.Max(original.G,original.B))+Math.Min(original.R,Math.Min(original.G,original.B)))/2;
-            recursos["Background"+cor.TrimStart('#')]=new SolidColorBrush(!escuro?original:luz>180?Converter(cor,true):original);
-            recursos["Text"+cor.TrimStart('#')]=new SolidColorBrush(escuro&&luz>180?Color.FromRgb(223,233,227):Converter(cor,escuro));
+            var papel = PaletaComanda.PapelNeutro(cor);
+            recursos["Background"+cor.TrimStart('#')]=new SolidColorBrush(papel is "Ink" or "TextMuted" ? original : papel is not null ? PaletaComanda.Cor(papel,escuro) : !escuro?original:luz>180?Converter(cor,true):original);
+            recursos["Text"+cor.TrimStart('#')]=new SolidColorBrush(papel is "Surface" or "Canvas" or "Soft" or "Selection" ? (escuro ? PaletaComanda.Cor("Ink",true) : original) : Converter(cor,escuro));
         }
-        recursos["Surface"]=Pincel("#FFFFFF");
-        recursos["Canvas"]=Pincel("#F3F5F2");
-        recursos["Ink"]=Pincel("#263C32");
-        recursos["Accent"]=new SolidColorBrush((Color)ColorConverter.ConvertFromString(escuro?"#8FD5B0":"#245640"));
-        recursos["Line"]=Pincel("#87988E");
-        recursos["RibbonBar"]=new SolidColorBrush((Color)ColorConverter.ConvertFromString("#0A0A0A"));
-        recursos["RibbonHover"]=new SolidColorBrush((Color)ColorConverter.ConvertFromString("#484644"));
         recursos["HoverOverlay"] = new SolidColorBrush((Color)ColorConverter.ConvertFromString(escuro ? "#26FFFFFF" : "#16000000"));
-        recursos["RibbonSurface"]=new SolidColorBrush((Color)ColorConverter.ConvertFromString(escuro?"#323130":"#E5E4E3"));
-        recursos["RibbonSubtitle"]=new SolidColorBrush((Color)ColorConverter.ConvertFromString(escuro?"#B1B9BD":"#59666E"));
-        recursos["RibbonInk"]=new SolidColorBrush((Color)ColorConverter.ConvertFromString(escuro?"#F1F3F2":"#263C32"));
-        // A central de ajuda usa cinzas neutros; o verde fica nas ações.
-        void Ajuda(string chave, string claro, string noturno) => recursos["Ajuda" + chave] =
-            new SolidColorBrush((Color)ColorConverter.ConvertFromString(escuro ? noturno : claro));
-        Ajuda("Canvas", "#F1F1F1", "#252525");
-        Ajuda("Surface", "#FAFAFA", "#303030");
-        Ajuda("Ink", "#292929", "#F0F0F0");
-        Ajuda("Muted", "#616161", "#BDBDBD");
-        Ajuda("Line", "#D1D1D1", "#505050");
-        Ajuda("Soft", "#E7E7E7", "#383838");
-        Ajuda("Hover", "#D4D4D4", "#4B4B4B");
-        Ajuda("Action", "#245640", "#98D6B4");
-        Ajuda("ActionHover", "#1B4433", "#B0E3C7");
-        Ajuda("ActionInk", "#FFFFFF", "#173725");
+        // A marca fica nos pontos de identificação e ação; cores de estado permanecem semânticas.
+        foreach(var (antigo,papel) in new[] { ("Canvas","Canvas"),("Surface","Surface"),("Ink","Ink"),("Muted","TextMuted"),("Line","Line"),("Soft","Soft"),("Hover","SurfaceRaised"),("Action","ActionPrimary"),("ActionHover","ActionPrimaryHover"),("ActionInk","ActionPrimaryInk") })
+            recursos["Ajuda"+antigo] = recursos[papel];
         void Prioridade(string chave, string cor) => recursos["Prioridade" + chave] = new SolidColorBrush((Color)ColorConverter.ConvertFromString(cor));
         Prioridade("Normal", "#2D8050"); Prioridade("Mediana", "#F2CB59"); Prioridade("Alta", "#B6322C");
         Prioridade("NumeroNormal", escuro ? "#80D59F" : "#286D44");
@@ -80,14 +64,18 @@ public static class TemaInterface
         Prioridade("NumeroAlta", escuro ? "#FF9993" : "#B6322C");
         recursos["AjudaLogo"] = new System.Windows.Media.Imaging.BitmapImage(new Uri(
             "pack://application:,,,/VarthexComanda;component/Assets/" + (escuro ? "LogoAjudaEscura.png" : "LogoAjudaClara.png")));
+        recursos["MarcaLogo"] = escuro ? MarcaComanda.LogoEscuro : MarcaComanda.LogoClaro;
+        recursos["MarcaLogoRodape"] = MarcaComanda.LogoEscuro;
         foreach(var key in new[]{SystemColors.WindowBrushKey,SystemColors.ControlBrushKey,SystemColors.ControlLightBrushKey,SystemColors.ControlLightLightBrushKey,SystemColors.MenuBrushKey})recursos[key]=Pincel("#FFFFFF");
         foreach(var key in new[]{SystemColors.WindowTextBrushKey,SystemColors.ControlTextBrushKey,SystemColors.MenuTextBrushKey})recursos[key]=Pincel("#263C32");
-        recursos[SystemColors.HighlightBrushKey]=new SolidColorBrush(Color.FromRgb(36,86,64));
+        recursos[SystemColors.HighlightBrushKey]=new SolidColorBrush(Color.FromRgb(23,37,44));
         recursos[SystemColors.HighlightTextBrushKey]=Brushes.White;
         if(salvar && _arquivo!=null){Directory.CreateDirectory(Path.GetDirectoryName(_arquivo)!);File.WriteAllText(_arquivo,escuro?"escuro":"claro");}
     }
     private static Color Converter(string cor,bool escuro)
     {
+        if (cor.StartsWith('@')) return PaletaComanda.Cor(cor[1..], escuro);
+        if (PaletaComanda.PapelNeutro(cor) is string papel) return PaletaComanda.Cor(papel, escuro);
         var c=(Color)ColorConverter.ConvertFromString(cor);
         if(!escuro)return c;
         if(cor is "#E1E8E4" or "#EDEDEA" or "#CCDCD1" or "#CCE3D6")return Color.FromRgb(52,77,63);

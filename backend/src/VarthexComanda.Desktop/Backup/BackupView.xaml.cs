@@ -84,8 +84,8 @@ public partial class BackupView : UserControl
     private void ViewModel_SolicitouReinicio(object? sender, EventArgs e)
     {
         JanelaAviso.Mostrar(
-            "Varthex Comanda",
-            "Backup restaurado com sucesso. O Varthex Comanda vai reiniciar agora.",
+            "Comanda",
+            "Backup restaurado com sucesso. O Comanda vai reiniciar agora.",
             TipoAviso.Informacao);
 
         ((App)System.Windows.Application.Current).ReiniciarAplicativo();

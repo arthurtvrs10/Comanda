@@ -356,7 +356,7 @@ public class CarregamentoDeXamlTests
                 atendimento.ViewModel.ObservacaoNovoItem="Sem cebola";
                 atendimento.ViewModel.TextoBuscaCatalogo="Refrigerante";
                 var categorias=(WrapPanel)janela.FindName("CategoriasRibbon");
-                Assert.Equal(new[]{"Principal","Produtos","Marketing","Financeiro","Apps","Configurações","Ajuda"},categorias.Children.OfType<Button>().Select(b=>(string)b.Content));
+                Assert.Equal(new[]{"Principal","Produtos","Marketing","Financeiro","Relatórios","Apps","Configurações","Ajuda"},categorias.Children.OfType<Button>().Select(b=>(string)b.Content));
                 void Categoria(string nome)=>categorias.Children.OfType<Button>().Single(b=>Equals(b.Content,nome)).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
                 void Comando(string nome)=>Descendentes((FrameworkElement)janela.FindName("GruposRibbon")).OfType<Button>().Single(b=>System.Windows.Automation.AutomationProperties.GetName(b)==nome).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
                 Categoria("Produtos");Assert.Same(janelaAtendimento,conteudo.JanelaAtiva);
@@ -398,6 +398,8 @@ public class CarregamentoDeXamlTests
                     {
                         janela.Width=tamanho.Width;tipo.GetMethod("AtualizarRibbonCompacta",flags)!.Invoke(janela,null);
                         raiz.Measure(tamanho);raiz.Arrange(new Rect(new Point(0,0),tamanho));raiz.UpdateLayout();
+                        foreach(var categoria in categorias.Children.OfType<Button>())
+                            Assert.Contains(Descendentes(categoria).OfType<TextBlock>(),t=>t.Text==categoria.Content.ToString()!.ToUpper(System.Globalization.CultureInfo.GetCultureInfo("pt-BR")));
                         SalvarPrevia(raiz,$"ribbon-produtos-{(escuro?"escuro":"claro")}-{tamanho.Width}");
                     }
                     janela.Width=1280;

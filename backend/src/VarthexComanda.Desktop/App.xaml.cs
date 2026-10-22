@@ -61,8 +61,8 @@ public partial class App : System.Windows.Application
         if (!_guard.TryAcquire())
         {
             JanelaAviso.Mostrar(
-                "Varthex Comanda",
-                "O Varthex Comanda já está aberto neste computador.",
+                "Comanda",
+                "O Comanda já está aberto neste computador.",
                 TipoAviso.Informacao);
             Shutdown();
             return;
@@ -93,7 +93,7 @@ public partial class App : System.Windows.Application
         catch (Exception ex)
         {
             FecharAbertura();
-            JanelaAviso.Mostrar("Varthex Comanda", "Não foi possível verificar a licença. " + ex.Message, TipoAviso.Erro);
+            JanelaAviso.Mostrar("Comanda", "Não foi possível verificar a licença. " + ex.Message, TipoAviso.Erro);
             Shutdown();
             return;
         }
@@ -114,15 +114,15 @@ public partial class App : System.Windows.Application
         var pastasMascaradas = new PastasMascaradas();
         pastasMascaradas.AdicionarDados(paths.Root);
         _logger = LoggingConfigurator.CreateLogger(paths.LogsDirectory, pastas: pastasMascaradas);
-        _logger.Information("Iniciando Varthex Comanda {Versao}", VersaoDoAplicativo.Atual);
+        _logger.Information("Iniciando Comanda {Versao}", VersaoDoAplicativo.Atual);
 
         DispatcherUnhandledException += (sender, args) =>
         {
             _logger?.Error(args.Exception, "Erro nao tratado na interface");
             FecharAbertura();
             JanelaAviso.Mostrar(
-                "Varthex Comanda",
-                "Ocorreu um erro inesperado no Varthex Comanda. Consulte os logs.",
+                "Comanda",
+                "Ocorreu um erro inesperado no Comanda. Consulte os logs.",
                 TipoAviso.Erro);
             args.Handled = true;
         };
@@ -269,8 +269,8 @@ public partial class App : System.Windows.Application
             _logger.Error(ex, "Falha ao preparar o banco de dados");
             FecharAbertura();
             JanelaAviso.Mostrar(
-                "Varthex Comanda",
-                "Não foi possível preparar o banco de dados do Varthex Comanda. Consulte os logs.",
+                "Comanda",
+                "Não foi possível preparar o banco de dados do Comanda. Consulte os logs.",
                 TipoAviso.Erro);
             Shutdown();
             return;
@@ -380,7 +380,7 @@ public partial class App : System.Windows.Application
         {
             _logger!.Error(ex, "Falha em {Operacao}", "AbrirModoRestauracao");
             JanelaAviso.Mostrar(
-                "Varthex Comanda",
+                "Comanda",
                 "O banco de dados está corrompido e não foi possível abrir a tela de restauração. Consulte os logs.",
                 TipoAviso.Erro);
             Shutdown();
@@ -396,7 +396,7 @@ public partial class App : System.Windows.Application
             _backupInicial.GetAwaiter().GetResult();
             _serviceProvider?.GetRequiredService<CriarBackupAutomatico>().Executar(incondicional: true);
         }
-        _logger?.Information("Encerrando Varthex Comanda");
+        _logger?.Information("Encerrando Comanda");
         _serviceProvider?.Dispose();
         (_logger as IDisposable)?.Dispose();
         _guard?.Dispose();
@@ -420,8 +420,8 @@ public partial class App : System.Windows.Application
         {
             _logger?.Warning(ex, "Falha em {Operacao}", "ReiniciarAplicativo");
             JanelaAviso.Mostrar(
-                "Varthex Comanda",
-                "A restauração foi concluída, mas não foi possível reiniciar automaticamente. Feche e abra o Varthex Comanda manualmente.",
+                "Comanda",
+                "A restauração foi concluída, mas não foi possível reiniciar automaticamente. Feche e abra o Comanda manualmente.",
                 TipoAviso.Aviso);
         }
         finally

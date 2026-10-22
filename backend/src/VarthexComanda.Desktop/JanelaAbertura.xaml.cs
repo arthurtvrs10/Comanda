@@ -27,9 +27,14 @@ public partial class JanelaAbertura : Window
 
     public async Task AguardarExibicaoMinimaAsync()
     {
-        var restante = _tempoMinimo - Stopwatch.GetElapsedTime(_inicio);
-        if (restante <= TimeSpan.Zero || _fechamento.IsCancellationRequested) return;
-        try { await Task.Delay(restante, _fechamento.Token).ConfigureAwait(false); }
-        catch (OperationCanceledException) when (_fechamento.IsCancellationRequested) { }
+        while (!_fechamento.IsCancellationRequested)
+        {
+            var restante = _tempoMinimo - Stopwatch.GetElapsedTime(_inicio);
+            if (restante <= TimeSpan.Zero) return;
+            // O temporizador pode arredondar milissegundos; o relógio monotônico confirma o mínimo.
+            var espera = TimeSpan.FromMilliseconds(Math.Ceiling(restante.TotalMilliseconds));
+            try { await Task.Delay(espera, _fechamento.Token).ConfigureAwait(false); }
+            catch (OperationCanceledException) when (_fechamento.IsCancellationRequested) { return; }
+        }
     }
 }

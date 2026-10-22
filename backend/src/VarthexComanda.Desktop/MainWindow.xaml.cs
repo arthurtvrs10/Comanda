@@ -37,7 +37,7 @@ public partial class MainWindow : Window
     public MainWindow(AtendimentoView atendimentoView, ProdutosView produtosView, HistoricoView historicoView, BackupView backupView, ConfiguracaoView configuracaoView, VarthexComanda.Infrastructure.Storage.AppPaths? paths = null, VarthexComanda.Application.Configuracao.IConfiguracaoRepository? configuracoes = null, HistoricoPedidosView? historicoPedidosView = null)
     {
         InitializeComponent();
-        Title = $"Varthex Comanda · Versão {VersaoDoAplicativo.Atual}";
+        Title = $"Comanda · Versão {VersaoDoAplicativo.Atual}";
         _acesso = new AcessoGestor(System.IO.Path.Combine((paths ?? new VarthexComanda.Infrastructure.Storage.AppPaths()).Root, "gestor.credencial"));
         _colaboradores = new ServicoColaboradores(System.IO.Path.Combine((paths ?? new VarthexComanda.Infrastructure.Storage.AppPaths()).Root, "colaboradores.json"));
         _acessoAtendimento = new AcessoAtendimento(System.IO.Path.Combine((paths ?? new VarthexComanda.Infrastructure.Storage.AppPaths()).Root, "atendimento.credencial"));
@@ -336,7 +336,7 @@ public partial class MainWindow : Window
         catch
         {
             MostrarAreaPrincipal();
-            JanelaAviso.Mostrar("Varthex Comanda", "Não foi possível abrir essa área. Tente novamente.", TipoAviso.Erro);
+            JanelaAviso.Mostrar("Comanda", "Não foi possível abrir essa área. Tente novamente.", TipoAviso.Erro);
         }
     }
 

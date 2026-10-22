@@ -22,11 +22,11 @@ public partial class MainWindow
         _destinosRibbon = new()
         {
             new("Principal", "Pedido", "Mesas / comandas", IconeVarthex.Mesas, () => !_bloqueado && !_cozinhaAtiva && !_restauracao, IrParaAtendimento),
-            new("Principal", "Vendas", "Histórico de pedidos", IconeVarthex.Historico, () => !_bloqueado && !_cozinhaAtiva && !_restauracao && _historicoPedidosView is not null, IrParaHistoricoPedidos),
+            new("Relatórios", "Vendas", "Histórico de pedidos", IconeVarthex.Historico, () => !_bloqueado && !_cozinhaAtiva && !_restauracao && _historicoPedidosView is not null, IrParaHistoricoPedidos),
             new("Apps", "Operação", "Cozinha", IconeVarthex.Cozinha, () => !_bloqueado && !_restauracao, () => { _cozinhaView.Atualizar(); MostrarConteudo(_cozinhaView); }),
             new("Apps", "Atendimento", "Painel de senhas", IconeVarthex.Painel, PodeChamarSenha, AbrirPainelSenhas),
             new("Produtos", "Catálogo", "Produtos", IconeVarthex.Produtos, PodeGerir, IrParaProdutos),
-            new("Financeiro", "Vendas", "Histórico de vendas", IconeVarthex.Historico, () => !_bloqueado && !_cozinhaAtiva && !_restauracao, IrParaHistorico),
+            new("Relatórios", "Vendas", "Histórico de vendas", IconeVarthex.Historico, () => !_bloqueado && !_cozinhaAtiva && !_restauracao, IrParaHistorico),
             new("Configurações", "Configurações", "Configurações do sistema", IconeVarthex.Configuracoes, PodeGerir, IrParaConfiguracoes),
             new("Configurações", "Configurações", "Numeração de pedidos", IconeVarthex.Numeracao, PodeGerir, AbrirNumeracaoPedidos),
             new("Configurações", "Configurações", "Impressoras", IconeVarthex.Impressoras, PodeGerir, AbrirImpressoras),
@@ -40,9 +40,10 @@ public partial class MainWindow
             new("Ajuda", "Verificações", "Diagnóstico de serviços", IconeVarthex.Diagnostico, PodeGerir, AbrirDiagnostico, false)
 
         };
-        foreach (var nome in new[] { "Principal", "Produtos", "Marketing", "Financeiro", "Apps", "Configurações", "Ajuda" })
+        foreach (var nome in new[] { "Principal", "Produtos", "Marketing", "Financeiro", "Relatórios", "Apps", "Configurações", "Ajuda" })
         {
             var botao = new Button { Content = nome, Tag = nome, Padding = new Thickness(16,7,16,7), MinHeight = 36, FontSize = 12, Style = (Style)FindResource("AbaNavegacao"), Foreground=Brushes.White };
+            botao.ContentTemplate = (DataTemplate)FindResource("RotuloCategoriaRibbon");
             botao.SetResourceReference(Control.BackgroundProperty,"RibbonBar");
             botao.Click += (_,_) => SelecionarCategoriaRibbon(nome);
             CategoriasRibbon.Children.Add(botao);
@@ -223,9 +224,10 @@ public partial class MainWindow
     private void AbrirResultadoPesquisa(){if(ResultadosPesquisa.SelectedItem is ResultadoPesquisa r){r.Abrir();RecolherPesquisa();}}
     private void ModoEscuro_Changed(object sender,RoutedEventArgs e)
     {
-        if (ModoEscuro.IsChecked == TemaInterface.Escuro) return;
+        if (ModoEscuro.IsChecked == TemaInterface.Escuro) { AplicarFundoSistema(); return; }
         try { TemaInterface.Aplicar(ModoEscuro.IsChecked==true,true); }
         catch(Exception ex) when(ex is System.IO.IOException or UnauthorizedAccessException){JanelaAviso.Mostrar("Aparência","O tema foi aplicado, mas não foi possível salvar a preferência.",TipoAviso.Aviso);}
+        finally { AplicarFundoSistema(); }
     }
 
     private void MenuSessao_Click(object sender,RoutedEventArgs e)

@@ -64,7 +64,7 @@
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
             <Button x:Name="BotaoVoltar" Content="Voltar" IsCancel="True" Command="{Binding VoltarCommand}" Height="56" FontSize="16" Padding="18,0" Margin="0,0,8,0" />
             <Button x:Name="BotaoConfirmarEncerrar" Content="Confirmar pagamento" IsDefault="True" Command="{Binding ConfirmarEncerrarCommand}" Height="56" FontSize="16" Padding="18,0"
-                    Background="{DynamicResource Background245640}" Foreground="White" FontWeight="Bold" />
+                    Style="{StaticResource BotaoPrimario}" FontWeight="Bold" />
         </StackPanel>
     </StackPanel>
     </ScrollViewer>

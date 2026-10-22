@@ -19,6 +19,11 @@ public sealed class JanelaLogin : Window
         SetResourceReference(ForegroundProperty, "Ink");
         var painel = new StackPanel { Margin = new Thickness(24) };
         Content = painel;
+        var marca = new Image { Width = 240, Height = 60, Stretch = System.Windows.Media.Stretch.Uniform,
+            HorizontalAlignment = HorizontalAlignment.Left, Margin = new Thickness(0, 0, 0, 24) };
+        marca.SetResourceReference(Image.SourceProperty, "MarcaLogo");
+        System.Windows.Automation.AutomationProperties.SetName(marca, "Comanda, por Varthex");
+        painel.Children.Add(marca);
         painel.Children.Add(new TextBlock { Text = "Entrar no sistema", FontSize = 23, FontWeight = FontWeights.SemiBold });
         painel.Children.Add(new TextBlock { Text = "Informe sua credencial para desbloquear o acesso.", TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0,8,0,18) });
         var perfis = new ComboBox { MinHeight = 46, SelectedValuePath = "Tag", DisplayMemberPath = "Content" };
@@ -46,6 +51,7 @@ public sealed class JanelaLogin : Window
         erro.SetResourceReference(TextBlock.ForegroundProperty,"TextB22222");
         painel.Children.Add(erro);
         var entrar = new Button { Content = "Entrar", IsDefault = true, MinHeight = 46 };
+        entrar.SetResourceReference(StyleProperty, "BotaoPrimario");
         painel.Children.Add(entrar);
         painel.Children.Add(new Button { Content="Cancelar", IsCancel=true, Margin=new Thickness(0,8,0,0) });
         perfis.SelectionChanged += (_,_) => {

@@ -17,8 +17,8 @@ internal static class AparenciaJanelaModal
     {
         if (janela is MainWindow or JanelaExibicaoSenhas or JanelaAbertura || Aplicadas.TryGetValue(janela, out _)) return;
         Aplicadas.Add(janela, new object());
-        if (janela.Title == "Varthex Comanda") janela.Title = "Aviso";
-        else if (janela.Title == "Ativação — Varthex Comanda") janela.Title = "Ativação";
+        if (janela.Title == "Comanda") janela.Title = "Aviso";
+        else if (janela.Title == "Ativação — Comanda") janela.Title = "Ativação";
         janela.WindowStyle = WindowStyle.None;
         WindowChrome.SetWindowChrome(janela, new WindowChrome
         {

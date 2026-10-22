@@ -11,8 +11,8 @@ namespace VarthexComanda.Desktop.Atendimento;
 /// </summary>
 public class ItemSelecionadoParaCorConverter : IMultiValueConverter
 {
-    private static Brush Fundo => TemaInterface.Pincel("#FBE3C2");
-    private static Brush Marca => TemaInterface.Pincel("#D9822B");
+    private static Brush Fundo => TemaInterface.PincelDoPapel("Selection");
+    private static Brush Marca => TemaInterface.PincelDoPapel("ComandaAberta");
 
     public object Convert(object[] values, Type targetType, object? parameter, CultureInfo culture)
     {

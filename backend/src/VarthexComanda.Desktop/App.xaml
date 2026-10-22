@@ -9,7 +9,7 @@
 <Style x:Key="CelulaTabela" TargetType="DataGridCell">
     <Setter Property="Padding" Value="7,0"/><Setter Property="VerticalContentAlignment" Value="Stretch"/><Setter Property="HorizontalContentAlignment" Value="Stretch"/><Setter Property="BorderThickness" Value="0"/>
     <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="DataGridCell"><Border x:Name="Borda" Background="{TemplateBinding Background}" BorderBrush="{DynamicResource Accent}" BorderThickness="0" Padding="{TemplateBinding Padding}"><Grid><ContentPresenter VerticalAlignment="Stretch" HorizontalAlignment="Stretch" SnapsToDevicePixels="True"/></Grid></Border><ControlTemplate.Triggers><Trigger Property="IsKeyboardFocusWithin" Value="True"><Setter TargetName="Borda" Property="BorderThickness" Value="1"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter>
-    <Style.Triggers><Trigger Property="IsSelected" Value="True"><Setter Property="Background" Value="{DynamicResource Accent}"/><Setter Property="Foreground" Value="{DynamicResource Surface}"/></Trigger></Style.Triggers>
+    <Style.Triggers><Trigger Property="IsSelected" Value="True"><Setter Property="Background" Value="{DynamicResource Selection}"/><Setter Property="Foreground" Value="{DynamicResource SelectionInk}"/></Trigger></Style.Triggers>
 </Style>
 <SolidColorBrush x:Key="Text1F5FBF" Color="#1F5FBF"/>
 <SolidColorBrush x:Key="Text20372C" Color="#20372C"/>
@@ -173,15 +173,25 @@
 <SolidColorBrush x:Key="ColorFBE3C2" Color="#FBE3C2"/>
 <SolidColorBrush x:Key="ColorFFF5F3" Color="#FFF5F3"/>
 <SolidColorBrush x:Key="ColorFFFFFF" Color="#FFFFFF"/>
-<SolidColorBrush x:Key="Surface" Color="#FFFFFF"/><SolidColorBrush x:Key="Canvas" Color="#F3F5F2"/><SolidColorBrush x:Key="Ink" Color="#263C32"/><SolidColorBrush x:Key="Accent" Color="#245640"/><SolidColorBrush x:Key="Line" Color="#87988E"/>
+<SolidColorBrush x:Key="Surface" Color="#FFFFFF"/><SolidColorBrush x:Key="Canvas" Color="#F4F5F6"/><SolidColorBrush x:Key="Ink" Color="#17252C"/><SolidColorBrush x:Key="Accent" Color="#B33418"/><SolidColorBrush x:Key="Line" Color="#859099"/>
 <SolidColorBrush x:Key="HoverOverlay" Color="#16000000"/>
+<SolidColorBrush x:Key="ActionPrimary" Color="#FFFFFF"/>
+<SolidColorBrush x:Key="ActionPrimaryInk" Color="#17252C"/>
+<SolidColorBrush x:Key="ActionPrimaryHover" Color="#E8ECEF"/>
+<SolidColorBrush x:Key="ToggleActive" Color="#535D65"/>
+<SolidColorBrush x:Key="ToggleInk" Color="#FFFFFF"/>
+<SolidColorBrush x:Key="Focus" Color="#1F5FBF"/>
+<SolidColorBrush x:Key="Selection" Color="#FFE3D9"/>
+<SolidColorBrush x:Key="SelectionInk" Color="#17252C"/>
+<SolidColorBrush x:Key="ComandaAberta" Color="#FF5934"/>
+<SolidColorBrush x:Key="ComandaAbertaInk" Color="#17252C"/>
 
         <!-- Foco visivel de alto contraste (RNF18): contorno azul solido de 3 px, sem pontilhado. -->
         <Style x:Key="FocoVisivel" TargetType="Control">
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Control">
-                        <Rectangle Stroke="{DynamicResource Color1F5FBF}" StrokeThickness="3" Margin="-3"
+                        <Rectangle Stroke="{DynamicResource Focus}" StrokeThickness="3" Margin="-3"
                                    SnapsToDevicePixels="True" IsHitTestVisible="False" />
                     </ControlTemplate>
                 </Setter.Value>
@@ -228,7 +238,7 @@
                     <ContentPresenter Grid.Column="1" ContentSource="Content" RecognizesAccessKey="True" VerticalAlignment="Center" Margin="6,0,0,0"/>
                 </Grid>
                 <ControlTemplate.Triggers>
-                    <Trigger Property="IsChecked" Value="True"><Setter TargetName="Trilho" Property="Background" Value="{DynamicResource AjudaAction}"/><Setter TargetName="Trilho" Property="BorderBrush" Value="{DynamicResource AjudaAction}"/><Setter TargetName="Pino" Property="HorizontalAlignment" Value="Right"/><Setter TargetName="Pino" Property="Fill" Value="{DynamicResource AjudaActionInk}"/></Trigger>
+                    <Trigger Property="IsChecked" Value="True"><Setter TargetName="Trilho" Property="Background" Value="{DynamicResource ToggleActive}"/><Setter TargetName="Trilho" Property="BorderBrush" Value="{DynamicResource ToggleActive}"/><Setter TargetName="Pino" Property="HorizontalAlignment" Value="Right"/><Setter TargetName="Pino" Property="Fill" Value="{DynamicResource ToggleInk}"/></Trigger>
                     <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Trilho" Property="BorderBrush" Value="{DynamicResource AjudaInk}"/></Trigger>
                     <Trigger Property="IsEnabled" Value="False"><Setter Property="Opacity" Value="0.5"/></Trigger>
                 </ControlTemplate.Triggers>
@@ -265,6 +275,13 @@
             <Setter Property="FontSize" Value="15" />
             <Setter Property="Padding" Value="16,8" />
         </Style>
+    <Style x:Key="BotaoPrimario" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+        <Setter Property="Background" Value="{DynamicResource ActionPrimary}"/>
+        <Setter Property="Foreground" Value="{DynamicResource ActionPrimaryInk}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource Line}"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Style.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter Property="Background" Value="{DynamicResource ActionPrimaryHover}"/></Trigger></Style.Triggers>
+    </Style>
     <Style TargetType="Window"><Setter Property="Foreground" Value="{DynamicResource Ink}"/><Setter Property="Background" Value="{DynamicResource Surface}"/></Style>
 <Style TargetType="UserControl"><Setter Property="Foreground" Value="{DynamicResource Ink}"/><Setter Property="Background" Value="{DynamicResource Surface}"/></Style>
 <Style TargetType="ListBox"><Setter Property="Foreground" Value="{DynamicResource Ink}"/><Setter Property="Background" Value="{DynamicResource Surface}"/></Style>

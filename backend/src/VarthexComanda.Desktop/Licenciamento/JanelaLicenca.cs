@@ -10,12 +10,12 @@ public sealed class JanelaLicenca : Window
 {
     public JanelaLicenca(ServicoLicenca servico, string mensagem)
     {
-        Title = "Ativação — Varthex Comanda";
+        Title = "Ativação — Comanda";
         Width = 650; Height = Math.Min(760, SystemParameters.WorkArea.Height); WindowStartupLocation = WindowStartupLocation.CenterScreen;
         Background = TemaInterface.Pincel("#F3F5F2");
         var painel = new StackPanel { Margin = new Thickness(24) };
         Content = new ScrollViewer { Content = painel, VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
-        painel.Children.Add(new TextBlock { Text = "Licença do Varthex Comanda", FontSize = 24, Margin = new Thickness(0, 0, 0, 16) });
+        painel.Children.Add(new TextBlock { Text = "Licença do Comanda", FontSize = 24, Margin = new Thickness(0, 0, 0, 16) });
         var aviso = new TextBlock { Text = mensagem, TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 0, 0, 16) };
         painel.Children.Add(aviso);
         painel.Children.Add(new TextBlock { Text = "Escaneie com o aplicativo Varthex Licenças", FontSize = 16, TextWrapping = TextWrapping.Wrap });

@@ -1,0 +1,156 @@
+{
+  "referencia": "02-logos/comanda-horizontal-transparente.png",
+  "metodo": "Contornos vetoriais simplificados; cores sólidas; sem imagens incorporadas",
+  "svg": {
+    "exportacoes/logo-horizontal/colorida/svg/comanda-logo-horizontal-colorida.svg": {
+      "width": 2070,
+      "height": 436
+    },
+    "exportacoes/logo-horizontal/preta/svg/comanda-logo-horizontal-preta.svg": {
+      "width": 2070,
+      "height": 436
+    },
+    "exportacoes/logo-horizontal/branca/svg/comanda-logo-horizontal-branca.svg": {
+      "width": 2070,
+      "height": 436
+    },
+    "exportacoes/logo-horizontal/negativa/svg/comanda-logo-horizontal-negativa.svg": {
+      "width": 2070,
+      "height": 436
+    },
+    "exportacoes/logo-sem-assinatura/colorida/svg/comanda-logo-sem-assinatura-colorida.svg": {
+      "width": 2070,
+      "height": 401
+    },
+    "exportacoes/logo-sem-assinatura/preta/svg/comanda-logo-sem-assinatura-preta.svg": {
+      "width": 2070,
+      "height": 401
+    },
+    "exportacoes/logo-sem-assinatura/branca/svg/comanda-logo-sem-assinatura-branca.svg": {
+      "width": 2070,
+      "height": 401
+    },
+    "exportacoes/logo-sem-assinatura/negativa/svg/comanda-logo-sem-assinatura-negativa.svg": {
+      "width": 2070,
+      "height": 401
+    },
+    "exportacoes/logotipo/colorida/svg/comanda-logotipo-colorida.svg": {
+      "width": 1673,
+      "height": 304
+    },
+    "exportacoes/logotipo/preta/svg/comanda-logotipo-preta.svg": {
+      "width": 1673,
+      "height": 304
+    },
+    "exportacoes/logotipo/branca/svg/comanda-logotipo-branca.svg": {
+      "width": 1673,
+      "height": 304
+    },
+    "exportacoes/logotipo/negativa/svg/comanda-logotipo-negativa.svg": {
+      "width": 1673,
+      "height": 304
+    },
+    "exportacoes/simbolo/colorida/svg/comanda-simbolo-colorida.svg": {
+      "width": 366,
+      "height": 401
+    },
+    "exportacoes/simbolo/preta/svg/comanda-simbolo-preta.svg": {
+      "width": 366,
+      "height": 401
+    },
+    "exportacoes/simbolo/branca/svg/comanda-simbolo-branca.svg": {
+      "width": 366,
+      "height": 401
+    },
+    "exportacoes/simbolo/negativa/svg/comanda-simbolo-negativa.svg": {
+      "width": 366,
+      "height": 401
+    }
+  },
+  "png": [
+    "exportacoes/logo-horizontal/colorida/png/comanda-logo-horizontal-colorida-256px.png",
+    "exportacoes/logo-horizontal/colorida/png/comanda-logo-horizontal-colorida-512px.png",
+    "exportacoes/logo-horizontal/colorida/png/comanda-logo-horizontal-colorida-1024px.png",
+    "exportacoes/logo-horizontal/colorida/png/comanda-logo-horizontal-colorida-2048px.png",
+    "exportacoes/logo-horizontal/colorida/png/comanda-logo-horizontal-colorida-4096px.png",
+    "exportacoes/logo-horizontal/preta/png/comanda-logo-horizontal-preta-256px.png",
+    "exportacoes/logo-horizontal/preta/png/comanda-logo-horizontal-preta-512px.png",
+    "exportacoes/logo-horizontal/preta/png/comanda-logo-horizontal-preta-1024px.png",
+    "exportacoes/logo-horizontal/preta/png/comanda-logo-horizontal-preta-2048px.png",
+    "exportacoes/logo-horizontal/preta/png/comanda-logo-horizontal-preta-4096px.png",
+    "exportacoes/logo-horizontal/branca/png/comanda-logo-horizontal-branca-256px.png",
+    "exportacoes/logo-horizontal/branca/png/comanda-logo-horizontal-branca-512px.png",
+    "exportacoes/logo-horizontal/branca/png/comanda-logo-horizontal-branca-1024px.png",
+    "exportacoes/logo-horizontal/branca/png/comanda-logo-horizontal-branca-2048px.png",
+    "exportacoes/logo-horizontal/branca/png/comanda-logo-horizontal-branca-4096px.png",
+    "exportacoes/logo-horizontal/negativa/png/comanda-logo-horizontal-negativa-256px.png",
+    "exportacoes/logo-horizontal/negativa/png/comanda-logo-horizontal-negativa-512px.png",
+    "exportacoes/logo-horizontal/negativa/png/comanda-logo-horizontal-negativa-1024px.png",
+    "exportacoes/logo-horizontal/negativa/png/comanda-logo-horizontal-negativa-2048px.png",
+    "exportacoes/logo-horizontal/negativa/png/comanda-logo-horizontal-negativa-4096px.png",
+    "exportacoes/logo-sem-assinatura/colorida/png/comanda-logo-sem-assinatura-colorida-256px.png",
+    "exportacoes/logo-sem-assinatura/colorida/png/comanda-logo-sem-assinatura-colorida-512px.png",
+    "exportacoes/logo-sem-assinatura/colorida/png/comanda-logo-sem-assinatura-colorida-1024px.png",
+    "exportacoes/logo-sem-assinatura/colorida/png/comanda-logo-sem-assinatura-colorida-2048px.png",
+    "exportacoes/logo-sem-assinatura/colorida/png/comanda-logo-sem-assinatura-colorida-4096px.png",
+    "exportacoes/logo-sem-assinatura/preta/png/comanda-logo-sem-assinatura-preta-256px.png",
+    "exportacoes/logo-sem-assinatura/preta/png/comanda-logo-sem-assinatura-preta-512px.png",
+    "exportacoes/logo-sem-assinatura/preta/png/comanda-logo-sem-assinatura-preta-1024px.png",
+    "exportacoes/logo-sem-assinatura/preta/png/comanda-logo-sem-assinatura-preta-2048px.png",
+    "exportacoes/logo-sem-assinatura/preta/png/comanda-logo-sem-assinatura-preta-4096px.png",
+    "exportacoes/logo-sem-assinatura/branca/png/comanda-logo-sem-assinatura-branca-256px.png",
+    "exportacoes/logo-sem-assinatura/branca/png/comanda-logo-sem-assinatura-branca-512px.png",
+    "exportacoes/logo-sem-assinatura/branca/png/comanda-logo-sem-assinatura-branca-1024px.png",
+    "exportacoes/logo-sem-assinatura/branca/png/comanda-logo-sem-assinatura-branca-2048px.png",
+    "exportacoes/logo-sem-assinatura/branca/png/comanda-logo-sem-assinatura-branca-4096px.png",
+    "exportacoes/logo-sem-assinatura/negativa/png/comanda-logo-sem-assinatura-negativa-256px.png",
+    "exportacoes/logo-sem-assinatura/negativa/png/comanda-logo-sem-assinatura-negativa-512px.png",
+    "exportacoes/logo-sem-assinatura/negativa/png/comanda-logo-sem-assinatura-negativa-1024px.png",
+    "exportacoes/logo-sem-assinatura/negativa/png/comanda-logo-sem-assinatura-negativa-2048px.png",
+    "exportacoes/logo-sem-assinatura/negativa/png/comanda-logo-sem-assinatura-negativa-4096px.png",
+    "exportacoes/logotipo/colorida/png/comanda-logotipo-colorida-256px.png",
+    "exportacoes/logotipo/colorida/png/comanda-logotipo-colorida-512px.png",
+    "exportacoes/logotipo/colorida/png/comanda-logotipo-colorida-1024px.png",
+    "exportacoes/logotipo/colorida/png/comanda-logotipo-colorida-2048px.png",
+    "exportacoes/logotipo/colorida/png/comanda-logotipo-colorida-4096px.png",
+    "exportacoes/logotipo/preta/png/comanda-logotipo-preta-256px.png",
+    "exportacoes/logotipo/preta/png/comanda-logotipo-preta-512px.png",
+    "exportacoes/logotipo/preta/png/comanda-logotipo-preta-1024px.png",
+    "exportacoes/logotipo/preta/png/comanda-logotipo-preta-2048px.png",
+    "exportacoes/logotipo/preta/png/comanda-logotipo-preta-4096px.png",
+    "exportacoes/logotipo/branca/png/comanda-logotipo-branca-256px.png",
+    "exportacoes/logotipo/branca/png/comanda-logotipo-branca-512px.png",
+    "exportacoes/logotipo/branca/png/comanda-logotipo-branca-1024px.png",
+    "exportacoes/logotipo/branca/png/comanda-logotipo-branca-2048px.png",
+    "exportacoes/logotipo/branca/png/comanda-logotipo-branca-4096px.png",
+    "exportacoes/logotipo/negativa/png/comanda-logotipo-negativa-256px.png",
+    "exportacoes/logotipo/negativa/png/comanda-logotipo-negativa-512px.png",
+    "exportacoes/logotipo/negativa/png/comanda-logotipo-negativa-1024px.png",
+    "exportacoes/logotipo/negativa/png/comanda-logotipo-negativa-2048px.png",
+    "exportacoes/logotipo/negativa/png/comanda-logotipo-negativa-4096px.png",
+    "exportacoes/simbolo/colorida/png/comanda-simbolo-colorida-32px.png",
+    "exportacoes/simbolo/colorida/png/comanda-simbolo-colorida-64px.png",
+    "exportacoes/simbolo/colorida/png/comanda-simbolo-colorida-128px.png",
+    "exportacoes/simbolo/colorida/png/comanda-simbolo-colorida-256px.png",
+    "exportacoes/simbolo/colorida/png/comanda-simbolo-colorida-512px.png",
+    "exportacoes/simbolo/colorida/png/comanda-simbolo-colorida-1024px.png",
+    "exportacoes/simbolo/preta/png/comanda-simbolo-preta-32px.png",
+    "exportacoes/simbolo/preta/png/comanda-simbolo-preta-64px.png",
+    "exportacoes/simbolo/preta/png/comanda-simbolo-preta-128px.png",
+    "exportacoes/simbolo/preta/png/comanda-simbolo-preta-256px.png",
+    "exportacoes/simbolo/preta/png/comanda-simbolo-preta-512px.png",
+    "exportacoes/simbolo/preta/png/comanda-simbolo-preta-1024px.png",
+    "exportacoes/simbolo/branca/png/comanda-simbolo-branca-32px.png",
+    "exportacoes/simbolo/branca/png/comanda-simbolo-branca-64px.png",
+    "exportacoes/simbolo/branca/png/comanda-simbolo-branca-128px.png",
+    "exportacoes/simbolo/branca/png/comanda-simbolo-branca-256px.png",
+    "exportacoes/simbolo/branca/png/comanda-simbolo-branca-512px.png",
+    "exportacoes/simbolo/branca/png/comanda-simbolo-branca-1024px.png",
+    "exportacoes/simbolo/negativa/png/comanda-simbolo-negativa-32px.png",
+    "exportacoes/simbolo/negativa/png/comanda-simbolo-negativa-64px.png",
+    "exportacoes/simbolo/negativa/png/comanda-simbolo-negativa-128px.png",
+    "exportacoes/simbolo/negativa/png/comanda-simbolo-negativa-256px.png",
+    "exportacoes/simbolo/negativa/png/comanda-simbolo-negativa-512px.png",
+    "exportacoes/simbolo/negativa/png/comanda-simbolo-negativa-1024px.png"
+  ]
+}

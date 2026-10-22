@@ -22,10 +22,15 @@ public class FundoSistemaTests
             var personalizado=FundoSistema.CriarPincel(p);
             Assert.IsType<BitmapImage>(personalizado.ImageSource);Assert.Equal(TileMode.Tile,personalizado.TileMode);
             Assert.Equal("#F3F5F2",FundoSistema.Cor(p));
+            Assert.IsType<BitmapImage>(FundoSistema.CriarPincel(p,true).ImageSource);
+            Assert.Equal("#F3F5F2",FundoSistema.Cor(p,true));
             p.ImagemFundo="";
             Assert.Same(FundoSistema.ImagemPadrao,FundoSistema.CriarPincel(p).ImageSource);
             Assert.Equal(PreferenciasSistema.CorFundoPadrao,FundoSistema.Cor(p));
+            Assert.Same(FundoSistema.ImagemPadraoEscura,FundoSistema.CriarPincel(p,true).ImageSource);
+            Assert.Equal("#17252C",FundoSistema.Cor(p,true));
             p.CorFundo="#CCCCCC";Assert.Equal("#CCCCCC",FundoSistema.Cor(p));
+            Assert.Equal("#CCCCCC",FundoSistema.Cor(p,true));
             var capturas=Environment.GetEnvironmentVariable("VARTHEX_PREVIAS_TESTE");
             if(!string.IsNullOrWhiteSpace(capturas))
             {

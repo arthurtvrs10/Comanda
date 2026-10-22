@@ -44,13 +44,13 @@ public partial class MainWindow
         var preferencias=LerPreferencias();
         try
         {
-            FundoTrabalho.Background=(Brush)new BrushConverter().ConvertFromString(FundoSistema.Cor(preferencias))!;
-            ImagemTrabalho.Background=FundoSistema.CriarPincel(preferencias);
+            FundoTrabalho.Background=(Brush)new BrushConverter().ConvertFromString(FundoSistema.Cor(preferencias, TemaInterface.Escuro))!;
+            ImagemTrabalho.Background=FundoSistema.CriarPincel(preferencias, TemaInterface.Escuro);
         }
         catch
         {
-            FundoTrabalho.Background=(Brush)new BrushConverter().ConvertFromString(PreferenciasSistema.CorFundoPadrao)!;
-            ImagemTrabalho.Background=FundoSistema.CriarPincel(new());
+            FundoTrabalho.Background=(Brush)new BrushConverter().ConvertFromString(FundoSistema.Cor(new(), TemaInterface.Escuro))!;
+            ImagemTrabalho.Background=FundoSistema.CriarPincel(new(), TemaInterface.Escuro);
         }
     }
     private void ImprimirConta()

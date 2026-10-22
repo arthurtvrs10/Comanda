@@ -4,7 +4,7 @@
 
 [Setup]
 AppId={{7C6D4F08-6BE2-4DCC-A515-D574AC1C2901}
-AppName=Varthex Comanda
+AppName=Comanda
 AppVersion={#AppVersion}
 AppPublisher=Varthex
 DefaultDirName={localappdata}\Programs\VarthexComanda
@@ -23,7 +23,7 @@ SolidCompression=yes
 WizardStyle=modern
 CloseApplications=yes
 RestartApplications=no
-UninstallDisplayName=Varthex Comanda
+UninstallDisplayName=Comanda
 
 [Languages]
 Name: "brazilianportuguese"; MessagesFile: "compiler:Languages\BrazilianPortuguese.isl"
@@ -35,8 +35,8 @@ Name: "desktopicon"; Description: "Criar atalho na Área de Trabalho"; GroupDesc
 Source: "{#PublishPath}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
-Name: "{userprograms}\Varthex Comanda"; Filename: "{app}\VarthexComanda.exe"
-Name: "{userdesktop}\Varthex Comanda"; Filename: "{app}\VarthexComanda.exe"; Tasks: desktopicon
+Name: "{userprograms}\Comanda"; Filename: "{app}\VarthexComanda.exe"
+Name: "{userdesktop}\Comanda"; Filename: "{app}\VarthexComanda.exe"; Tasks: desktopicon
 
 [Run]
-Filename: "{app}\VarthexComanda.exe"; Description: "Abrir Varthex Comanda"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\VarthexComanda.exe"; Description: "Abrir Comanda"; Flags: nowait postinstall skipifsilent

@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
     Funcoes de apoio aos ensaios de homologacao (UI Automation, sem teclas).
 
@@ -192,7 +192,7 @@ function Wait-JanelaPrincipal {
         Espera a janela principal aparecer e ficar visivel; devolve o tempo medido.
         O cronometro do chamador deve comecar antes do Start-App (RNF03).
     #>
-    param([Parameter(Mandatory = $true)]$Processo, [int]$Segundos = 60, [string]$Titulo = 'Varthex Comanda')
+    param([Parameter(Mandatory = $true)]$Processo, [int]$Segundos = 60, [string]$Titulo = 'Comanda')
     $limite = (Get-Date).AddSeconds($Segundos)
     while ((Get-Date) -lt $limite) {
         if ($Processo.HasExited) { throw "O processo $($Processo.Id) encerrou antes de mostrar a janela." }

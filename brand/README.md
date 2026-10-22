@@ -1,5 +1,9 @@
 # Identidade visual
 
+## COMANDA · por Varthex — proposta de 22/10/2026
+
+O novo pacote está em [comanda-varthex/](comanda-varthex/README.md), com 16 SVGs, 84 PNGs transparentes em vários tamanhos, versões colorida, preta, branca e negativa, paleta e guia de uso. Abra o [catálogo visual](comanda-varthex/catalogo.html) para escolher os arquivos. A estrutura abaixo documenta a identidade anterior.
+
 Identidade **Comanda Organizada**, aprovada em 30/09/2026: símbolo de ficha de pedido independente do nome Varthex, com laranja e grafite.
 
 ![Identidade visual aprovada](comanda-organizada/out/board/brand-board@1x.png)

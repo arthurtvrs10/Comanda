@@ -115,10 +115,10 @@ public class AjudaXamlTests
             {
                 TemaInterface.Aplicar(escuro,false);Renderizar(raiz,470,810,"ajuda-canais");
                 var logo=AlinhamentoInterfaceTests.Filhos(raiz).OfType<Image>().Single(i=>i.Source is BitmapSource);Assert.True(((BitmapSource)logo.Source).PixelWidth>0);
-                foreach(var chave in new[]{"AjudaCanvas","AjudaSurface","AjudaSoft","AjudaInk","AjudaMuted"})
+                foreach(var (chave,papel) in new[]{("AjudaCanvas","Canvas"),("AjudaSurface","Surface"),("AjudaSoft","Soft"),("AjudaMuted","TextMuted"),("AjudaInk","Ink")})
                 {
                     var cor=((SolidColorBrush)System.Windows.Application.Current.FindResource(chave)).Color;
-                    Assert.Equal(cor.R,cor.G);Assert.Equal(cor.G,cor.B);
+                    Assert.Equal(((SolidColorBrush)System.Windows.Application.Current.FindResource(papel)).Color,cor);
                 }
             }
             ((Button)janela.FindName("BotaoFecharOcultar")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));Assert.True(ocultou);
