@@ -15,7 +15,7 @@ internal static class AparenciaJanelaModal
 
     public static void Aplicar(Window janela)
     {
-        if (janela is MainWindow or JanelaExibicaoSenhas || Aplicadas.TryGetValue(janela, out _)) return;
+        if (janela is MainWindow or JanelaExibicaoSenhas or JanelaAbertura || Aplicadas.TryGetValue(janela, out _)) return;
         Aplicadas.Add(janela, new object());
         if (janela.Title == "Varthex Comanda") janela.Title = "Aviso";
         else if (janela.Title == "Ativação — Varthex Comanda") janela.Title = "Ativação";

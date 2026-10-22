@@ -48,8 +48,10 @@ public partial class App : System.Windows.Application
     private DispatcherTimer? _timerLicenca;
     private bool _ativando;
     private Task _backupInicial = Task.CompletedTask;
+    private JanelaAbertura? _abertura;
+    private bool _cancelouInicializacao;
 
-    protected override void OnStartup(StartupEventArgs e)
+    protected override async void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
         ShutdownMode = ShutdownMode.OnExplicitShutdown;
@@ -68,16 +70,37 @@ public partial class App : System.Windows.Application
 
         try
         {
+            await MostrarAberturaAsync();
+            if (!_cancelouInicializacao) await InicializarSistemaAsync(e);
+        }
+        catch (Exception ex)
+        {
+            _logger?.Error(ex, "Falha na inicialização do sistema");
+            FecharAbertura();
+            JanelaAviso.Mostrar("Inicialização", "Não foi possível iniciar o sistema. Confira as permissões da pasta de dados e tente novamente.", TipoAviso.Erro);
+            Shutdown();
+        }
+        finally { FecharAbertura(); }
+    }
+
+    private async Task InicializarSistemaAsync(StartupEventArgs e)
+    {
+        try
+        {
             _licenca = new ServicoLicenca();
             if (!GarantirLicenca()) { Shutdown(); return; }
         }
         catch (Exception ex)
         {
+            FecharAbertura();
             JanelaAviso.Mostrar("Varthex Comanda", "Não foi possível verificar a licença. " + ex.Message, TipoAviso.Erro);
             Shutdown();
             return;
         }
 
+        await MostrarAberturaAsync();
+        if (_cancelouInicializacao) return;
+        _abertura?.AtualizarEtapa("Preparando os dados…");
         var demonstracao = ModoExecucao.Demonstracao(e.Args, AppContext.BaseDirectory);
         var raizDados = ModoExecucao.RaizDados(demonstracao,
             Environment.GetEnvironmentVariable("VARTHEX_COMANDA_DADOS"),
@@ -96,6 +119,7 @@ public partial class App : System.Windows.Application
         DispatcherUnhandledException += (sender, args) =>
         {
             _logger?.Error(args.Exception, "Erro nao tratado na interface");
+            FecharAbertura();
             JanelaAviso.Mostrar(
                 "Varthex Comanda",
                 "Ocorreu um erro inesperado no Varthex Comanda. Consulte os logs.",
@@ -220,8 +244,13 @@ public partial class App : System.Windows.Application
 
                 RegistrarFotosSemProduto(paths);
 
+                _abertura?.AtualizarEtapa("Preparando o atendimento…");
                 var janela = _serviceProvider.GetRequiredService<MainWindow>();
+                if (_abertura is { } abertura) await abertura.AguardarExibicaoMinimaAsync();
+                if (_cancelouInicializacao) { janela.Close(); return; }
+                MainWindow = janela;
                 janela.Show();
+                FecharAbertura();
                 janelaPrincipalExibida = true;
                 _startupConcluido = true;
                 var backupInicial = _serviceProvider.GetRequiredService<CriarBackupAutomatico>();
@@ -238,6 +267,7 @@ public partial class App : System.Windows.Application
         catch (Exception ex)
         {
             _logger.Error(ex, "Falha ao preparar o banco de dados");
+            FecharAbertura();
             JanelaAviso.Mostrar(
                 "Varthex Comanda",
                 "Não foi possível preparar o banco de dados do Varthex Comanda. Consulte os logs.",
@@ -248,6 +278,7 @@ public partial class App : System.Windows.Application
 
         if (bancoCorrompido)
         {
+            FecharAbertura();
             AbrirModoRestauracao();
         }
         MainWindow = Windows.OfType<MainWindow>().FirstOrDefault();
@@ -255,6 +286,25 @@ public partial class App : System.Windows.Application
         _timerLicenca = new DispatcherTimer(DispatcherPriority.Send) { Interval = TimeSpan.FromSeconds(15) };
         _timerLicenca.Tick += (_, _) => { if (!GarantirLicenca()) Shutdown(); };
         _timerLicenca.Start();
+    }
+
+    private async Task MostrarAberturaAsync()
+    {
+        if (_abertura is not null || _cancelouInicializacao) return;
+        var abertura = new JanelaAbertura(); _abertura = abertura;
+        abertura.Closed += (_, _) =>
+        {
+            if (!ReferenceEquals(_abertura, abertura)) return;
+            _abertura = null; _cancelouInicializacao = true; Shutdown();
+        };
+        abertura.Show();
+        await Dispatcher.Yield(DispatcherPriority.ApplicationIdle);
+    }
+
+    private void FecharAbertura()
+    {
+        var abertura = _abertura; _abertura = null;
+        abertura?.Close();
     }
 
     public void RenovarLicenca()
@@ -281,6 +331,7 @@ public partial class App : System.Windows.Application
             _ativando = true;
             try
             {
+                FecharAbertura();
                 var janela = new JanelaLicenca(_licenca!, ex is InvalidOperationException ? ex.Message : "Não foi possível ler ou salvar a licença. Verifique as permissões locais.");
                 if (MainWindow is MainWindow principal && principal.IsVisible) janela.Owner = principal;
                 return janela.ShowDialog() == true;
@@ -338,6 +389,7 @@ public partial class App : System.Windows.Application
 
     protected override void OnExit(ExitEventArgs e)
     {
+        FecharAbertura();
         _timerLicenca?.Stop();
         if (_startupConcluido)
         {

@@ -8,6 +8,7 @@
   <ItemGroup>
     <Resource Include="Assets\VarthexComanda.ico" />
     <Resource Include="Assets\LogoBranca.png" />
+    <Resource Include="Assets\AberturaFundo.png" />
     <Resource Include="Assets\LogoRodape.png" />
     <Resource Include="Assets\LogoAjudaClara.png" />
     <Resource Include="Assets\LogoAjudaEscura.png" />
