@@ -229,7 +229,7 @@ public partial class MainWindow
     private void MenuSessao_Click(object sender,RoutedEventArgs e)
     {
         if (!PodeSairDasConfiguracoes()) return;
-        MostrarInicio();
+        MostrarAreaPrincipal();
         var login = new JanelaLogin(_acesso, _acessoAtendimento, _restauracao, _colaboradores) { Owner=this };
         if (login.ShowDialog()!=true) return;
         if (login.Perfil=="gestor" && _acesso.Autenticado)

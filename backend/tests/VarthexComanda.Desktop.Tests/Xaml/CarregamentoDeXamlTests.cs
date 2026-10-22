@@ -345,7 +345,7 @@ public class CarregamentoDeXamlTests
                 var acesso=(AcessoGestor)tipo.GetField("_acesso",flags)!.GetValue(janela)!;
                 acesso.Cadastrar("senha-teste-123");
                 tipo.GetField("_bloqueado",flags)!.SetValue(janela,false);
-                ((FrameworkElement)janela.FindName("MenuInicial")).Visibility=Visibility.Collapsed;
+                Assert.Null(janela.FindName("MenuInicial"));
                 ((FrameworkElement)janela.FindName("CamadaBloqueio")).Visibility=Visibility.Collapsed;
                 var area=(FrameworkElement)janela.FindName("AreaSistema");area.Visibility=Visibility.Visible;area.IsEnabled=true;
                 tipo.GetMethod("AtualizarPerfil",flags)!.Invoke(janela,null);
@@ -720,15 +720,15 @@ public class CarregamentoDeXamlTests
                 var conteudo = (AreaTrabalhoInterna)janela.FindName("ConteudoPrincipal");
                 var raizVisual = (FrameworkElement)janela.Content;
                 MedirEOrganizar(raizVisual);
-                var inicioHost = (ContentControl)janela.FindName("MenuInicial");
-                Assert.Equal(Visibility.Collapsed, inicioHost.Visibility);
+                Assert.Null(janela.FindName("MenuInicial"));
+                Assert.Null(typeof(MainWindow).Assembly.GetType("VarthexComanda.Desktop.InicioView"));
                 Assert.Equal(Visibility.Collapsed, camada.Visibility);
                 Assert.True(area.IsEnabled);
-                SalvarPrevia(raizVisual, "inicio-vcomanda-1200");
+                SalvarPrevia(raizVisual, "principal-sem-selecao-1200");
                 raizVisual.Measure(new Size(800, 600));
                 raizVisual.Arrange(new Rect(0,0,800,600));
                 raizVisual.UpdateLayout();
-                SalvarPrevia(raizVisual, "inicio-vcomanda-800");
+                SalvarPrevia(raizVisual, "principal-sem-selecao-800");
                 Descendentes((FrameworkElement)janela.FindName("GruposRibbon")).OfType<Button>()
                     .Single(b=>System.Windows.Automation.AutomationProperties.GetName(b)=="Mesas / comandas")
                     .RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
@@ -792,8 +792,8 @@ public class CarregamentoDeXamlTests
                 Assert.Equal(Visibility.Visible, camada.Visibility);
                 Assert.Null(conteudo.JanelaAtiva);Assert.Empty(conteudo.Janelas);
                 Assert.Contains(atendimento.ViewModel.ComandasAbertas, c => c.Id == id);
-                Descendentes(bloqueio).OfType<Button>().Single(b => Equals(b.Content, "Voltar ao início")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-                Assert.Equal(Visibility.Collapsed,inicioHost.Visibility);
+                Descendentes(bloqueio).OfType<Button>().Single(b => Equals(b.Content, "Voltar ao menu")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                Assert.Null(janela.FindName("MenuInicial"));
                 Assert.True(area.IsEnabled);
                 typeof(MainWindow).GetMethod("EscolherArea",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic)!.Invoke(janela,new object[]{"cozinha"});
                 foreach (var digito in "0123")

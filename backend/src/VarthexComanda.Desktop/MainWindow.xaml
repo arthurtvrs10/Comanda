@@ -105,7 +105,6 @@
                     ToolTip="Opções de ajuda" AutomationProperties.Name="Abrir opções de ajuda" Click="AjudaFlutuante_Click"/>
         </Grid>
     </DockPanel>
-    <ContentControl x:Name="MenuInicial" Panel.ZIndex="5" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
     <ContentControl x:Name="CamadaBloqueio" Panel.ZIndex="10" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
     </Grid>
 </Window>

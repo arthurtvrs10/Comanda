@@ -45,7 +45,7 @@ public partial class MainWindow : Window
         CamadaBloqueio.Content = _bloqueioView;
         _bloqueioView.Desbloqueado += DesbloquearAtendimento;
         _bloqueioView.ConfiguracaoSolicitada += ConfigurarPin;
-        _bloqueioView.VoltarSolicitado += MostrarInicio;
+        _bloqueioView.VoltarSolicitado += MostrarAreaPrincipal;
         _cozinhaView = new CozinhaView(atendimentoView.ViewModel.ConsultarCozinha);
         RegistrarAtalho(IrParaAtendimentoCommand, BotaoAtendimento, IrParaAtendimento);
         RegistrarAtalho(IrParaProdutosCommand, BotaoProdutos, IrParaProdutos);
@@ -81,7 +81,7 @@ public partial class MainWindow : Window
         Closing += (_, e) => { if (_backupView.ViewModel.EmAndamento || (!_bloqueado && !PodeSairDasConfiguracoes())) e.Cancel=true; };
         Closed += (_,_) => _painelSenhas?.Dispose();
         _atendimentoView.ViewModel.AtendimentoConcluido += BloquearAtendimento;
-        MostrarInicio();
+        MostrarAreaPrincipal();
     }
 
     /// <summary>
@@ -99,7 +99,7 @@ public partial class MainWindow : Window
 
         _backupView.ViewModel.ModoRestauracao = true;
         ConteudoPrincipal.Limpar();
-        MostrarInicio();
+        MostrarAreaPrincipal();
     }
 
     // Atalhos Ctrl+1..5 seguem o estado do botao correspondente: no modo de restauracao as abas
@@ -238,8 +238,6 @@ public partial class MainWindow : Window
         _cozinhaAtiva = false;
         AreaSistema.IsEnabled = false;
         AreaSistema.Visibility = Visibility.Visible;
-        MenuInicial.Visibility = Visibility.Collapsed;
-        MenuInicial.IsEnabled = false;
         CamadaBloqueio.Visibility = Visibility.Visible;
         _bloqueioView.Reiniciar();
         AtualizarPerfil();
@@ -261,7 +259,6 @@ public partial class MainWindow : Window
             AreaSistema.IsEnabled = true;
             AreaSistema.Visibility = Visibility.Visible;
             CamadaBloqueio.Visibility = Visibility.Collapsed;
-            MenuInicial.Visibility = Visibility.Collapsed;
             _cozinhaAtiva = _areaPendente == "cozinha";
             if (_cozinhaAtiva) _cozinhaView.Atualizar();
             if(!_restauracao)MostrarConteudo(_cozinhaAtiva?_cozinhaView:_atendimentoView);
@@ -274,13 +271,12 @@ public partial class MainWindow : Window
         }
     }
 
-    private void MostrarInicio()
+    private void MostrarAreaPrincipal()
     {
         _areaPendente = "garcom";
         BloquearAtendimento();
         CamadaBloqueio.Visibility = Visibility.Collapsed;
         AreaSistema.IsEnabled = true;
-        MenuInicial.Visibility = Visibility.Collapsed;
         SelecionarCategoriaRibbon("Principal");
     }
 
@@ -289,7 +285,7 @@ public partial class MainWindow : Window
         if (!PodeSairDasConfiguracoes()) return;
         if (_atendimentoView.ViewModel.ComandaAtual is not null)
             _atendimentoView.ViewModel.FecharEdicaoCommand.Execute(null);
-        MostrarInicio();
+        MostrarAreaPrincipal();
     }
 
     private void EscolherArea(string area)
@@ -307,7 +303,6 @@ public partial class MainWindow : Window
         if (new JanelaAcessoGestor(_acesso) { Owner = this }.ShowDialog() != true) return;
         _bloqueado = false;
         _cozinhaAtiva = false;
-        MenuInicial.Visibility = Visibility.Collapsed;
         CamadaBloqueio.Visibility = Visibility.Collapsed;
         AreaSistema.Visibility = Visibility.Visible;
         AreaSistema.IsEnabled = true;
@@ -325,7 +320,7 @@ public partial class MainWindow : Window
         }
         catch
         {
-            MostrarInicio();
+            MostrarAreaPrincipal();
             JanelaAviso.Mostrar("Varthex Comanda", "Não foi possível abrir essa área. Tente novamente.", TipoAviso.Erro);
         }
     }

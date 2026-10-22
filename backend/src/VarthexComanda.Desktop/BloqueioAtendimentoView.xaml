@@ -39,7 +39,7 @@
                     </UniformGrid>
                     <Button x:Name="BotaoEntrar" Content="Desbloquear" Click="Entrar_Click" Height="54" Margin="4,12,4,0" Background="{DynamicResource Background326F4C}" Foreground="White" FontWeight="Bold" FontSize="18" />
                     <Button x:Name="BotaoConfigurar" Content="Configurar PIN · somente gestor" Click="Configurar_Click" Margin="4,8,4,0" Background="Transparent" BorderThickness="0" FontSize="14" />
-                    <Button Content="Voltar ao início" Click="Voltar_Click" Margin="4,2,4,0" Background="Transparent" BorderThickness="0" FontSize="14" />
+                    <Button Content="Voltar ao menu" Click="Voltar_Click" Margin="4,2,4,0" Background="Transparent" BorderThickness="0" FontSize="14" />
                 </StackPanel>
             </Border>
         </Viewbox>
