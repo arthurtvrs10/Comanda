@@ -13,3 +13,7 @@ Abra pelo atalho **Comanda Demonstração**. Instalação e dados ficam separado
 A 1.4.0 é uma **pré-release**, com instalador sem assinatura de código. Instalação em Windows limpo e OAuth com conta real permanecem pendentes. [Notas da release](https://github.com/arthurtvrs10/Comanda/releases/tag/v1.4.0).
 
 [Catálogo e origem das imagens](../../demo/README.md) · [Edição normal sem catálogo de teste](../windows/README.md)
+
+## Acesso nesta recompilação
+
+Instalações novas iniciam sem senha e com acesso livre. A proteção é opcional em Configurações do sistema → Segurança. Ao ativar, defina senha de acesso e senha de recuperação diferentes, confirme e salve. Com a proteção ativa, use o login `gestor` ou uma conta cadastrada. O login de bloqueio mantém o sistema desfocado ao fundo. A recuperação funciona offline com a senha de recuperação; não usa códigos nem e-mail. Preferências e dados existentes são preservados.

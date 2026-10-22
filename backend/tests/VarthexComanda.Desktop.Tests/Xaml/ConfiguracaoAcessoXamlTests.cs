@@ -19,7 +19,8 @@ public class ConfiguracaoAcessoXamlTests
             {
                 TemaInterface.Aplicar(escuro,false);
                 var pasta=Path.Combine(Path.GetTempPath(),"acesso-ui-"+Guid.NewGuid());
-                var janela=new JanelaAlterarAcesso(new AcessoGestor(Path.Combine(pasta,"gestor")),new AcessoAtendimento(Path.Combine(pasta,"pin")),false);
+                var gestor=new AcessoGestor(Path.Combine(pasta,"gestor"));gestor.Cadastrar("1234");
+                var janela=new JanelaAlterarAcesso(gestor,new AcessoAtendimento(Path.Combine(pasta,"pin")),false);
                 Assert.Equal(350,janela.Width);
                 var conteudo=(FrameworkElement)janela.Content;
                 conteudo.Measure(new Size(350,400));conteudo.Arrange(new Rect(0,0,350,conteudo.DesiredSize.Height));conteudo.UpdateLayout();
@@ -35,6 +36,7 @@ public class ConfiguracaoAcessoXamlTests
                     var encoder=new System.Windows.Media.Imaging.PngBitmapEncoder();encoder.Frames.Add(System.Windows.Media.Imaging.BitmapFrame.Create(bitmap));
                     using var arquivo=File.Create(Path.Combine(destino,$"alterar-senha-{(escuro?"escuro":"claro")}.png"));encoder.Save(arquivo);
                 }
+                janela.Close();Directory.Delete(pasta,true);
             }
             TemaInterface.Aplicar(false,false);
         });

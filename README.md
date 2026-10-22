@@ -4,7 +4,7 @@ A identidade **Comanda · por Varthex** aparece na abertura, área de trabalho, 
 
 Sistema Windows para organizar mesas, comandas e consumo em pequenos estabelecimentos de alimentação. Produtos, atendimento, fechamento e histórico funcionam localmente, sem depender da internet.
 
-**Release 1.4.0 atualizada em 22/10/2026 · versão em testes.** Edições normal e demonstração recompiladas com a nova identidade, os históricos e a abertura de 5 segundos. Ambas incluem o .NET e exigem ativação offline.
+**Release 1.4.0 atualizada em 22/10/2026 · versão em testes.** Edições normal e demonstração recompiladas com configurações redesenhadas, acesso opcional por senha e recuperação offline. Ambas incluem o .NET e exigem ativação offline.
 
 <img src="docs/design/principal-claro.png" alt="Área de trabalho Comanda com fundo cinza, logo centralizado e alternância de modo escuro" width="1000">
 
@@ -22,6 +22,12 @@ Instalação por usuário, sem administrador, em Windows x64. Feche o aplicativo
 A release é uma **pré-release**: instalação em Windows limpo e autorização/envio com uma conta Google real continuam pendentes. A [versão estável anterior 1.2.2](https://github.com/arthurtvrs10/Comanda/releases/tag/v1.2.2) permanece disponível.
 
 ## Novidades da 1.4.0
+
+- **Configurações redesenhadas:** navegação com ícones, toggles com estado visível, campos agrupados e aviso de alterações reais. A quantidade de comandas fica em Numeração de pedidos.
+- **Acesso opcional:** instalações novas abrem na área inicial, sem senha e sem abrir comandas automaticamente. Todos os usuários têm acesso às áreas nesta versão.
+- **Proteção por senha:** ao ligar o toggle em Segurança, crie e confirme a senha de acesso e uma senha de recuperação diferente (mínimo de 4 caracteres). Salve as alterações para aplicar. Login inicial: `gestor`.
+- **Bloqueio e recuperação:** com proteção ativa, o login aparece ao iniciar e bloquear. Campos centralizados, placeholders, toggle Mostrar senha e sistema desfocado ao fundo. Esqueci minha senha permite definir uma nova senha de acesso usando a senha de recuperação, sem internet.
+- **Impressos térmicos:** conta, cozinha, reimpressão, fichas e teste de impressora com papel de 58 ou 80 mm, conforme a impressora configurada.
 
 - **Área de trabalho com janelas internas:** abra, mova, redimensione, maximize e organize os módulos abaixo da Ribbon. A antiga tela de seleção de perfis foi removida.
 - **Abertura com a marca:** arte abstrata, logo central, versão e indicação de carregamento. Permanece por pelo menos 5 segundos antes de apresentar a tela principal.
@@ -41,7 +47,7 @@ A release é uma **pré-release**: instalação em Windows limpo e autorização
 | Fechamento | Conferência e confirmação manual da cobrança externa, com registro da forma informada |
 | Relatórios | Históricos de pedidos e vendas, filtros, colunas, detalhes, Excel, impressão e resumo diário |
 | Continuidade | Backup automático/manual local, checksum, restauração, recuperação de comandas e logs |
-| Acesso | PIN de atendimento, acesso de gestor, colaboradores e ativação offline vinculada ao computador |
+| Acesso | Senha opcional, login de gestor/colaboradores, senha de recuperação offline e licença vinculada ao computador |
 
 A cobrança é realizada fora do sistema; não há integração com maquininha, emissão fiscal, estoque completo ou atendimento em rede. A cozinha disponível é uma consulta local de comandas abertas, sem estados de preparo. Pedidos independentes, preparo e atendimento móvel continuam no [plano de evolução](docs/docs/21-evolucao-atendimento.md).
 
@@ -49,15 +55,25 @@ A cobrança é realizada fora do sistema; não há integração com maquininha, 
 
 1. Escolha a edição normal ou demonstração e execute o instalador.
 2. Ative o aplicativo com a licença fornecida pelo responsável.
-3. Após a abertura, desbloqueie o acesso adequado. Na edição normal, cadastre categorias e produtos; a demonstração já traz o catálogo fictício.
+3. A instalação nova abre sem senha. Na edição normal, cadastre categorias e produtos; a demonstração já traz o catálogo fictício. Se a proteção estiver ativada, entre com seu login e senha.
 4. Abra **Principal → Mesas / comandas**, selecione o número e lance os produtos.
 5. Confira o total, realize a cobrança externamente e confirme o fechamento no sistema.
 
 A edição normal usa `%LOCALAPPDATA%\VarthexComanda` e a demonstração usa `%LOCALAPPDATA%\VarthexComandaDemo`. Os atalhos e instalações são separados; a demonstração abre pelo atalho **Comanda Demonstração**. O catálogo fictício é carregado somente na primeira base vazia e não substitui alterações posteriores.
 
+Para ativar a senha: **Configurações → Configurações do sistema → Segurança → Ativar proteção por senha**. O toggle abre o cadastro; cancelar mantém a proteção desativada. Guarde a senha de recuperação separadamente. Quem já tem credenciais pode configurar ou alterar a recuperação em **Segurança → Senha de recuperação**, confirmando a senha de acesso atual. Não há senha mestra universal, recuperação por e-mail ou chave Resend nesta versão.
+
+A proteção é local e não substitui o controle de acesso do Windows. Atualizações preservam a preferência existente; desative o toggle e salve caso queira acesso livre. Enquanto houver alterações pendentes, salve antes de gerenciar as senhas.
+
 Em **Configurações → Backup e restauração**, escolha a pasta local e faça uma cópia. O Google Drive exige cadastrar/importar um cliente OAuth de aplicativo para computador; nenhuma credencial acompanha o instalador. O convite pode ser adiado após cinco segundos. O OneDrive usa a pasta sincronizada pelo aplicativo instalado no Windows. O backup local continua disponível sem conexão.
 
 [Operação e recuperação](docs/docs/12-operacao-implantacao.md) · [Licenciamento](docs/docs/20-licenciamento-offline.md) · [Configurar Google Drive](docs/docs/22-configuracao-google-drive.md)
+
+## Configurações e acesso
+
+<img src="docs/design/seguranca.png" alt="Configurações de segurança com toggle de proteção por senha" width="1000">
+
+<img src="docs/design/bloqueio.png" alt="Login e senha com toggle Mostrar senha e sistema desfocado ao fundo" width="1000">
 
 ## Telas da release
 

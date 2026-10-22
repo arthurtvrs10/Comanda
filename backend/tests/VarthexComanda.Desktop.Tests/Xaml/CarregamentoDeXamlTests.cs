@@ -227,9 +227,10 @@ public class CarregamentoDeXamlTests
             GarantirApp();
             var repo=new VarthexComanda.Application.Tests.Configuracao.FakeConfiguracaoRepository();
             var service=new VarthexComanda.Application.Configuracao.ConfiguracoesSistemaService(repo);
-            service.Salvar(new() { CorFundo="#F3F5F2" },"Loja de teste",20,DateTime.UtcNow);
+            service.Salvar(new() { CorFundo="#F3F5F2",SolicitarSenha=true },"Loja de teste",20,DateTime.UtcNow);
             var atual=new VarthexComanda.Application.Configuracao.ConfiguracaoEstabelecimento { NomeEstabelecimento="Loja de teste",QuantidadeMaximaComandas=20 };
-            var janela=new VarthexComanda.Desktop.Configuracao.JanelaConfiguracoesSistema(service,atual,()=>0,()=>Array.Empty<Produto>(),()=>"VARTHEX — diagnóstico de teste",_=>{},()=>{},()=>null);
+            var permitirAtivacao=true;var pedidosSenha=0;
+            var janela=new VarthexComanda.Desktop.Configuracao.JanelaConfiguracoesSistema(service,atual,()=>0,()=>Array.Empty<Produto>(),()=>"VARTHEX — diagnóstico de teste",_=>{},()=>{},()=>null,()=>{pedidosSenha++;return permitirAtivacao;});
             Assert.Equal(ResizeMode.CanResize,janela.ResizeMode);
             Assert.Equal(WindowStartupLocation.CenterOwner,janela.WindowStartupLocation);
             var raiz=(FrameworkElement)janela.Content;
@@ -248,6 +249,17 @@ public class CarregamentoDeXamlTests
                     }
                 }
             }
+            Descendentes(raiz).OfType<RadioButton>().Single(b=>Equals(b.Content,"Segurança")).IsChecked=true;
+            raiz.Measure(new Size(1180,700));raiz.Arrange(new Rect(0,0,1180,700));raiz.UpdateLayout();
+            var toggle=Descendentes(raiz).OfType<CheckBox>().Single();
+            toggle.IsChecked=false;Assert.True(janela.TemAlteracoes);
+            Assert.Contains(Descendentes(raiz).OfType<TextBlock>(),t=>t.Text.StartsWith("Desativado ·"));
+            Descendentes(raiz).OfType<Button>().Single(b=>Equals(b.Content,"Salvar alterações")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Assert.False(service.Carregar().SolicitarSenha);Assert.False(janela.TemAlteracoes);
+            permitirAtivacao=false;toggle.IsChecked=true;
+            Assert.False(toggle.IsChecked);Assert.False(janela.TemAlteracoes);Assert.Equal(1,pedidosSenha);
+            permitirAtivacao=true;toggle.IsChecked=true;Assert.Equal(2,pedidosSenha);
+            Assert.True(janela.TemAlteracoes);toggle.IsChecked=false;Assert.False(janela.TemAlteracoes);
             Descendentes(raiz).OfType<RadioButton>().Single(b=>Equals(b.Content,"Geral")).IsChecked=true;
             raiz.Measure(new Size(1180,700));raiz.Arrange(new Rect(0,0,1180,700));raiz.UpdateLayout();
             Descendentes(raiz).OfType<TextBox>().Single(t=>System.Windows.Automation.AutomationProperties.GetName(t)=="Cidade").Text="Curitiba";
@@ -688,11 +700,11 @@ public class CarregamentoDeXamlTests
             foreach (var nome in new[] { "BotaoProdutos", "BotaoBackup", "BotaoConfiguracoes", "BotaoLicenca" })
             {
                 var botao = Assert.IsType<Button>(janela.FindName(nome));
-                Assert.False(botao.IsEnabled);
-                Assert.Equal(Visibility.Collapsed, botao.Visibility);
+                Assert.True(botao.IsEnabled);
+                Assert.Equal(nome is "BotaoBackup" or "BotaoLicenca"?Visibility.Collapsed:Visibility.Visible, botao.Visibility);
             }
             foreach (var comando in new[] { MainWindow.IrParaProdutosCommand, MainWindow.IrParaBackupCommand, MainWindow.IrParaConfiguracoesCommand })
-                Assert.False(comando.CanExecute(null, janela));
+                Assert.True(comando.CanExecute(null, janela));
             SalvarPrevia(conteudo, "menu-garcom");
             Assert.False(janela.IsVisible);
         });
@@ -716,114 +728,47 @@ public class CarregamentoDeXamlTests
     }
 
     [Fact]
-    public void PinBloqueiaMenusEDesbloqueiaPorToqueESaidaBloqueiaNovamente()
+    public void LoginBloqueiaSistemaEAceitaContaIndividual()
     {
-        var raiz = Path.Combine(Path.GetTempPath(), "pin-ui-" + Guid.NewGuid());
-        var arquivo = Path.Combine(raiz, "atendimento.credencial");
+        var pasta=Path.Combine(Path.GetTempPath(),"login-fluxo-"+Guid.NewGuid());
         try
         {
-            new AcessoAtendimento(arquivo).DefinirPin("0123");
-            ThreadingHelper.EmSta(() =>
+            ThreadingHelper.EmSta(()=>
             {
                 GarantirApp();
-                var janela = CriarMainWindow(new VarthexComanda.Infrastructure.Storage.AppPaths(raiz));
-                var area = (DockPanel)janela.FindName("AreaSistema");
-                var camada = (ContentControl)janela.FindName("CamadaBloqueio");
-                var bloqueio = Assert.IsType<BloqueioAtendimentoView>(camada.Content);
-                var conteudo = (AreaTrabalhoInterna)janela.FindName("ConteudoPrincipal");
-                var raizVisual = (FrameworkElement)janela.Content;
-                MedirEOrganizar(raizVisual);
-                Assert.Null(janela.FindName("MenuInicial"));
-                Assert.Null(typeof(MainWindow).Assembly.GetType("VarthexComanda.Desktop.InicioView"));
-                Assert.Equal(Visibility.Collapsed, camada.Visibility);
-                Assert.True(area.IsEnabled);
-                SalvarPrevia(raizVisual, "principal-sem-selecao-1200");
-                raizVisual.Measure(new Size(800, 600));
-                raizVisual.Arrange(new Rect(0,0,800,600));
-                raizVisual.UpdateLayout();
-                SalvarPrevia(raizVisual, "principal-sem-selecao-800");
-                Descendentes((FrameworkElement)janela.FindName("GruposRibbon")).OfType<Button>()
-                    .Single(b=>System.Windows.Automation.AutomationProperties.GetName(b)=="Mesas / comandas")
-                    .RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-                MedirEOrganizar(raizVisual);
-                Assert.False(area.IsEnabled);
-                Assert.Null(conteudo.JanelaAtiva);Assert.Empty(conteudo.Janelas);
-                Assert.False(MainWindow.IrParaAtendimentoCommand.CanExecute(null, janela));
-                Assert.False(MainWindow.IrParaHistoricoCommand.CanExecute(null, janela));
-                SalvarPrevia(raizVisual, "bloqueio-pin-1200");
-                raizVisual.Measure(new Size(800, 600));
-                raizVisual.Arrange(new Rect(0,0,800,600));
-                raizVisual.UpdateLayout();
-                SalvarPrevia(raizVisual, "bloqueio-pin-800");
-                var botoes = Descendentes(bloqueio).OfType<Button>().ToArray();
-                foreach (var digito in "9999")
-                    botoes.Single(b => Equals(b.Content, digito.ToString())).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-                ((Button)bloqueio.FindName("BotaoEntrar")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-                Assert.False(area.IsEnabled);
-                foreach (var digito in "0123")
-                    botoes.Single(b => Equals(b.Content, digito.ToString())).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-                ((Button)bloqueio.FindName("BotaoEntrar")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-                Assert.True(area.IsEnabled);
-                Assert.Equal(Visibility.Collapsed, camada.Visibility);
-                Assert.False(MainWindow.IrParaProdutosCommand.CanExecute(null, janela));
-                var abaAtendimento = (Button)janela.FindName("BotaoAtendimento");
-                var abaHistorico = (Button)janela.FindName("BotaoHistorico");
-                Assert.Equal("ativa", abaAtendimento.Tag);
-                MainWindow.IrParaHistoricoCommand.Execute(null, janela);
-                Assert.Equal("ativa", abaHistorico.Tag);
-                Assert.Null(abaAtendimento.Tag);
-                abaAtendimento.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-                Assert.Equal("ativa", abaAtendimento.Tag);
-                Assert.Null(abaHistorico.Tag);
-                MedirEOrganizar(raizVisual);
-                SalvarPrevia(raizVisual, "abas-garcom-1200");
-                raizVisual.Measure(new Size(800, 600));
-                raizVisual.Arrange(new Rect(0,0,800,600));
-                raizVisual.UpdateLayout();
-                SalvarPrevia(raizVisual, "abas-garcom-800");
-                var acesso = (AcessoGestor)typeof(MainWindow).GetField("_acesso", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.GetValue(janela)!;
-                acesso.Cadastrar("teste1234");
-                Assert.True(acesso.Entrar("teste1234"));
-                typeof(MainWindow).GetMethod("AtualizarPerfil", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(janela, null);
-                MainWindow.IrParaProdutosCommand.Execute(null, janela);
-                Assert.Equal("ativa", ((Button)janela.FindName("BotaoProdutos")).Tag);
-                MedirEOrganizar(raizVisual);
-                SalvarPrevia(raizVisual, "abas-gestor-1200");
-                raizVisual.Measure(new Size(800, 600));
-                raizVisual.Arrange(new Rect(0,0,800,600));
-                raizVisual.UpdateLayout();
-                SalvarPrevia(raizVisual, "abas-gestor-800");
-                ((Button)janela.FindName("BotaoPerfil")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-                Assert.Null(conteudo.JanelaAtiva);Assert.Empty(conteudo.Janelas);
-                Assert.Null(abaAtendimento.Tag);
-                MainWindow.IrParaAtendimentoCommand.Execute(null, janela);
-                Assert.Equal(Visibility.Collapsed, ((Button)janela.FindName("BotaoProdutos")).Visibility);
-                var atendimento = Assert.IsType<AtendimentoView>(Assert.IsType<JanelaInterna>(conteudo.JanelaAtiva).Conteudo);
-                var id = atendimento.ViewModel.ComandaAtual!.Id;
-                atendimento.ViewModel.FecharEdicaoCommand.Execute(null);
-                Assert.False(area.IsEnabled);
-                Assert.Equal(Visibility.Visible, camada.Visibility);
-                Assert.Null(conteudo.JanelaAtiva);Assert.Empty(conteudo.Janelas);
-                Assert.Contains(atendimento.ViewModel.ComandasAbertas, c => c.Id == id);
-                Descendentes(bloqueio).OfType<Button>().Single(b => Equals(b.Content, "Voltar ao menu")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-                Assert.Null(janela.FindName("MenuInicial"));
-                Assert.True(area.IsEnabled);
-                typeof(MainWindow).GetMethod("EscolherArea",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic)!.Invoke(janela,new object[]{"cozinha"});
-                foreach (var digito in "0123")
-                    botoes.Single(b => Equals(b.Content, digito.ToString())).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-                ((Button)bloqueio.FindName("BotaoEntrar")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-                var cozinha = Assert.IsType<CozinhaView>(Assert.IsType<JanelaInterna>(conteudo.JanelaAtiva).Conteudo);
-                Assert.Equal("ativa", ((Button)janela.FindName("BotaoCozinha")).Tag);
-                Assert.Equal(Visibility.Collapsed, abaAtendimento.Visibility);
-                Assert.False(MainWindow.IrParaAtendimentoCommand.CanExecute(null, janela));
-                Assert.False(MainWindow.IrParaProdutosCommand.CanExecute(null, janela));
-                Assert.False(MainWindow.IrParaHistoricoCommand.CanExecute(null, janela));
-                Assert.Contains(atendimento.ViewModel.ComandasAbertas, c => c.Id == id);
-                MedirEOrganizar(raizVisual);
-                SalvarPrevia(raizVisual, "cozinha-consulta");
+                var paths=new VarthexComanda.Infrastructure.Storage.AppPaths(pasta);
+                new ServicoColaboradores(Path.Combine(pasta,"colaboradores.json")).Salvar(new(){Nome="Operador",Login="operador"},"1234");
+                var repo=new VarthexComanda.Application.Tests.Configuracao.FakeConfiguracaoRepository();
+                new VarthexComanda.Application.Configuracao.ConfiguracoesSistemaService(repo).Salvar(new(){SolicitarSenha=true},"Loja",20,DateTime.UtcNow);
+                var janela=CriarMainWindow(paths,configuracoes:repo);
+                try
+                {
+                    var area=(DockPanel)janela.FindName("AreaSistema");var camada=(ContentControl)janela.FindName("CamadaBloqueio");
+                    var bloqueio=(BloqueioAtendimentoView)camada.Content;MedirEOrganizar((FrameworkElement)janela.Content);
+                    Assert.False(area.IsEnabled);
+                    foreach(var escuro in new[]{false,true})
+                    {
+                        TemaInterface.Aplicar(escuro,false);
+                        var visual=(FrameworkElement)janela.Content;
+                        visual.Measure(new Size(1180,760));visual.Arrange(new Rect(0,0,1180,760));visual.UpdateLayout();
+                        SalvarPrevia(visual,$"bloqueio-sistema-{(escuro?"escuro":"claro")}");
+                    }
+                    TemaInterface.Aplicar(false,false);
+                    ((TextBox)bloqueio.FindName("Login")).Text="operador";
+                    ((PasswordBox)bloqueio.FindName("Senha")).Password="errada";
+                    ((Button)bloqueio.FindName("BotaoEntrar")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                    Assert.False(area.IsEnabled);
+                    ((PasswordBox)bloqueio.FindName("Senha")).Password="1234";
+                    ((Button)bloqueio.FindName("BotaoEntrar")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                    Assert.True(area.IsEnabled);Assert.Equal(Visibility.Collapsed,camada.Visibility);
+                    Assert.True(MainWindow.IrParaProdutosCommand.CanExecute(null,janela));
+                    Descendentes((FrameworkElement)janela.Content).OfType<Button>().Single(b=>Equals(b.Content,"Bloquear ou trocar usuário")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                    Assert.False(area.IsEnabled);Assert.Equal(Visibility.Visible,camada.Visibility);
+                }
+                finally{janela.Close();}
             });
         }
-        finally { if (File.Exists(arquivo)) File.Delete(arquivo); var gestor = Path.Combine(raiz, "gestor.credencial"); if (File.Exists(gestor)) File.Delete(gestor); if (Directory.Exists(raiz)) Directory.Delete(raiz); }
+        finally{if(Directory.Exists(pasta))Directory.Delete(pasta,true);}
     }
 
     private static IEnumerable<DependencyObject> Descendentes(DependencyObject raiz)

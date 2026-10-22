@@ -85,3 +85,7 @@ conforme [Licenciamento offline](20-licenciamento-offline.md). Planos vitalício
 - RF20 considera apenas vendas concluídas.
 - RF24 depende de backup validado pelo RF23.
 - RF27 depende da persistência transacional de RF07 a RF12.
+
+## Acesso opcional — decisão do responsável em 22/10/2026
+
+Extensão autorizada de RNF07/RNF18: instalações novas sem senha e todos com acesso às áreas. Configuração Segurança ativa senha de acesso e senha de recuperação local diferentes, mínimo de quatro caracteres, criadas no toggle e aplicadas ao salvar. Bloquear e iniciar solicitam login apenas com proteção ativa. Recuperação offline sem códigos, conta externa ou serviço online. A identificação individual do colaborador permanece nos registros. Nenhuma credencial é distribuída nos instaladores.

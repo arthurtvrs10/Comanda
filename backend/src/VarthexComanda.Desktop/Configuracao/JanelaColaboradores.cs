@@ -126,7 +126,7 @@ public sealed class JanelaEditarColaborador : Window
         var senha=new PasswordBox { MaxLength=128,Margin=new Thickness(0,0,0,8) };var confirmar=new PasswordBox { MaxLength=128,Margin=new Thickness(0,0,0,8) };
         if(!propriaConta)
         {
-            painel.Children.Add(new Label { Content=novo?"Senha (8 a 128 caracteres)":"Nova senha (deixe vazia para manter)",Target=senha,Padding=new Thickness(0,0,0,3) });painel.Children.Add(senha);
+            painel.Children.Add(new Label { Content=novo?"Senha (4 a 128 caracteres)":"Nova senha (deixe vazia para manter)",Target=senha,Padding=new Thickness(0,0,0,3) });painel.Children.Add(senha);
             painel.Children.Add(new Label { Content="Confirmar senha",Target=confirmar,Padding=new Thickness(0,0,0,3) });painel.Children.Add(confirmar);
             senha.PasswordChanged+=(_,_)=>alterou=true;confirmar.PasswordChanged+=(_,_)=>alterou=true;
         }

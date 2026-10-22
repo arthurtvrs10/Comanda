@@ -119,7 +119,7 @@ public sealed class ServicoColaboradores(string caminho, TimeProvider? relogio =
 
     private static void DefinirSenha(Conta conta, string senha)
     {
-        if (senha.Length is < 8 or > 128) throw new ArgumentException("Use uma senha com 8 a 128 caracteres.");
+        if (senha.Length is < 4 or > 128) throw new ArgumentException("Use uma senha com 4 a 128 caracteres.");
         var sal = RandomNumberGenerator.GetBytes(32);
         conta.Sal = Convert.ToBase64String(sal);
         conta.Hash = Convert.ToBase64String(Rfc2898DeriveBytes.Pbkdf2(senha, sal, 210_000, HashAlgorithmName.SHA256, 32));

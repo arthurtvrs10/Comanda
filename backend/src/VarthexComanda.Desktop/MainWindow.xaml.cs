@@ -42,11 +42,8 @@ public partial class MainWindow : Window
         _colaboradores = new ServicoColaboradores(System.IO.Path.Combine((paths ?? new VarthexComanda.Infrastructure.Storage.AppPaths()).Root, "colaboradores.json"));
         _acessoAtendimento = new AcessoAtendimento(System.IO.Path.Combine((paths ?? new VarthexComanda.Infrastructure.Storage.AppPaths()).Root, "atendimento.credencial"));
         _acessoAtendimento.GarantirPinInicial();
-        _bloqueioView = new BloqueioAtendimentoView(_acessoAtendimento);
+        _bloqueioView = new BloqueioAtendimentoView(_acessoAtendimento,_acesso,_colaboradores);
         CamadaBloqueio.Content = _bloqueioView;
-        _bloqueioView.Desbloqueado += DesbloquearAtendimento;
-        _bloqueioView.ConfiguracaoSolicitada += ConfigurarPin;
-        _bloqueioView.VoltarSolicitado += MostrarAreaPrincipal;
         _cozinhaView = new CozinhaView(atendimentoView.ViewModel.ConsultarCozinha);
         RegistrarAtalho(IrParaAtendimentoCommand, BotaoAtendimento, IrParaAtendimento);
         RegistrarAtalho(IrParaProdutosCommand, BotaoProdutos, IrParaProdutos);
@@ -65,6 +62,17 @@ public partial class MainWindow : Window
         };
         _backupView = backupView;
         _configuracaoView = configuracaoView;
+        _bloqueioView.Desbloqueado += () =>
+        {
+            _areaPendente="garcom";
+            _acesso.EntrarSemSenha(_colaboradores.SessaoAtual is not null);_acessoAtendimento.EntrarSemSenha();
+            if(_acesso.Autenticado)
+            {
+                _bloqueado=false;_cozinhaAtiva=false;CamadaBloqueio.Visibility=Visibility.Collapsed;AreaSistema.IsEnabled=true;AtualizarPerfil();
+                if(_restauracao)IrParaBackup();else MostrarConteudo(_atendimentoView);
+            }
+            else DesbloquearAtendimento();
+        };
         ConteudoPrincipal.JanelaAtivaAlterada += AtualizarAbaAtiva;
         _pathsSistema=paths ?? new VarthexComanda.Infrastructure.Storage.AppPaths();
         _repositorioSistema=configuracoes;
@@ -90,7 +98,7 @@ public partial class MainWindow : Window
         Closed += (_,_) => _painelSenhas?.Dispose();
         _atendimentoView.ViewModel.AtendimentoConcluido += BloquearAtendimento;
         MostrarAreaPrincipal();
-        BloquearAtendimento(false);
+        if(LerPreferencias().SolicitarSenha)BloquearAtendimento(false);
     }
 
     /// <summary>
@@ -230,7 +238,7 @@ public partial class MainWindow : Window
             _acesso.Sair();
             ConteudoPrincipal.Limpar();
         }
-        else if(PodeDispensarSenha)_acesso.EntrarSemSenha();
+        else if(PodeDispensarSenha)_acesso.EntrarSemSenha(_colaboradores.SessaoAtual is not null);
         else if (new JanelaAcessoGestor(_acesso) { Owner = this }.ShowDialog() == true && _restauracao)
             IrParaBackup();
         AtualizarPerfil();
@@ -238,32 +246,30 @@ public partial class MainWindow : Window
 
     private void Bloquear_Click(object sender, RoutedEventArgs e)
     {
+        if(PodeDispensarSenha)return;
         if (!PodeSairDasConfiguracoes()) return;
         if (_atendimentoView.ViewModel.ComandaAtual is not null)
             _atendimentoView.ViewModel.FecharEdicaoCommand.Execute(null);
         BloquearAtendimento(false);
     }
 
-    private bool _exigirAutenticacao=true;
-    private bool PodeDispensarSenha => !_exigirAutenticacao&&!_restauracao&&!LerPreferencias().SolicitarSenha;
+    private bool PodeDispensarSenha => !_restauracao&&!LerPreferencias().SolicitarSenha;
 
     private void BloquearAtendimento() => BloquearAtendimento(true);
     private void BloquearAtendimento(bool permitirAcessoSemSenha)
     {
-        if(!permitirAcessoSemSenha)_exigirAutenticacao=true;
         _painelSenhas?.FecharChamador();
         _bloqueado = true;
         _acesso.Sair();
         _acessoAtendimento.Bloquear();
         _colaboradores.Sair();
-        ConteudoPrincipal.Limpar();
         _cozinhaAtiva = false;
         AreaSistema.IsEnabled = false;
         AreaSistema.Visibility = Visibility.Visible;
         CamadaBloqueio.Visibility = Visibility.Visible;
         _bloqueioView.Reiniciar();
         AtualizarPerfil();
-        if(permitirAcessoSemSenha&&PodeDispensarSenha){_acessoAtendimento.EntrarSemSenha();DesbloquearAtendimento();}
+        if(permitirAcessoSemSenha&&PodeDispensarSenha){_acesso.EntrarSemSenha(_colaboradores.SessaoAtual is not null);_acessoAtendimento.EntrarSemSenha();DesbloquearAtendimento();}
         Dispatcher.BeginInvoke(new Action(() => { if (_bloqueado && CamadaBloqueio.Visibility == Visibility.Visible) _bloqueioView.Focus(); }));
     }
 
@@ -298,6 +304,7 @@ public partial class MainWindow : Window
     {
         _areaPendente = "garcom";
         BloquearAtendimento();
+        ConteudoPrincipal.Limpar();
         CamadaBloqueio.Visibility = Visibility.Collapsed;
         AreaSistema.IsEnabled = true;
         SelecionarCategoriaRibbon("Principal");
@@ -323,7 +330,7 @@ public partial class MainWindow : Window
         }
         if (_restauracao && area is not ("gestor" or "backup"))
         { JanelaAviso.Mostrar("Recuperação", "Somente a restauração de backup está disponível.", TipoAviso.Informacao); return; }
-        if(PodeDispensarSenha)_acesso.EntrarSemSenha();
+        if(PodeDispensarSenha)_acesso.EntrarSemSenha(_colaboradores.SessaoAtual is not null);
         else if (new JanelaAcessoGestor(_acesso) { Owner = this }.ShowDialog() != true) return;
         _bloqueado = false;
         _cozinhaAtiva = false;
@@ -374,7 +381,6 @@ public partial class MainWindow : Window
 
     private void AtualizarPerfil()
     {
-        if(_acesso.Autenticado||_acessoAtendimento.Autenticado)_exigirAutenticacao=false;
         SugerirConexaoDriveAposLogin();
         if (_acesso.Autenticado && !_acesso.AutenticadoPorColaborador) _colaboradores.Sair();
         foreach (var botao in new[] { BotaoProdutos, BotaoBackup, BotaoConfiguracoes, BotaoLicenca })
@@ -443,7 +449,11 @@ public partial class MainWindow : Window
     private void AcaoConfiguracao(string acao)
     {
         if(_bloqueado || !_acesso.Autenticado || _restauracao) return;
-        if(acao is "senha" or "pin")
+        if(acao=="recuperacao")
+        {
+            new JanelaRecuperacaoGestor(_acesso,false,_configuracoesModal??(Window)this).ShowDialog();
+        }
+        else if(acao is "senha" or "pin")
         {
             AbrirAlteracaoAcesso(acao=="pin");
         }

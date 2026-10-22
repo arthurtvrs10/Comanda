@@ -3,12 +3,12 @@ using System.Security.Cryptography;
 
 namespace VarthexComanda.Desktop;
 
-public sealed class AcessoGestor(string caminho)
+public sealed partial class AcessoGestor(string caminho)
 {
     public bool Configurado => File.Exists(caminho);
     public bool Autenticado { get; private set; }
     public bool AutenticadoPorColaborador { get; private set; }
-    internal void EntrarSemSenha() { Autenticado=true; AutenticadoPorColaborador=false; }
+    internal void EntrarSemSenha(bool sessaoIndividual=false) { Autenticado=true; AutenticadoPorColaborador=sessaoIndividual; }
     public void Sair() { Autenticado = false; AutenticadoPorColaborador = false; }
 
     public bool EntrarColaborador(ServicoColaboradores colaboradores)
@@ -20,7 +20,7 @@ public sealed class AcessoGestor(string caminho)
     public void Cadastrar(string senha)
     {
         if (Configurado) throw new InvalidOperationException("A senha do gestor já foi definida.");
-        if (senha.Length < 8) throw new ArgumentException("Use uma senha com pelo menos 8 caracteres.");
+        if (senha.Length < 4) throw new ArgumentException("Use uma senha com pelo menos 4 caracteres.");
         var sal = RandomNumberGenerator.GetBytes(32);
         var hash = Rfc2898DeriveBytes.Pbkdf2(senha, sal, 210_000, HashAlgorithmName.SHA256, 32);
         Directory.CreateDirectory(Path.GetDirectoryName(caminho)!);
@@ -35,7 +35,7 @@ public sealed class AcessoGestor(string caminho)
     {
         Sair();
         var dados = File.ReadAllBytes(caminho);
-        if (dados.Length != 64) throw new InvalidOperationException("O arquivo de acesso do gestor está inválido. Contate o suporte.");
+        if (dados.Length is not (64 or 96 or 128)) throw new InvalidOperationException("O arquivo de acesso do gestor está inválido. Contate o suporte.");
         var hash = Rfc2898DeriveBytes.Pbkdf2(senha, dados.AsSpan(0, 32), 210_000, HashAlgorithmName.SHA256, 32);
         return Autenticado = CryptographicOperations.FixedTimeEquals(hash, dados.AsSpan(32, 32));
     }
@@ -43,7 +43,7 @@ public sealed class AcessoGestor(string caminho)
     public bool ConferirSenha(string senha)
     {
         var dados = File.ReadAllBytes(caminho);
-        if (dados.Length != 64) throw new InvalidOperationException("Credencial do gestor inválida.");
+        if (dados.Length is not (64 or 96 or 128)) throw new InvalidOperationException("Credencial do gestor inválida.");
         var hash = Rfc2898DeriveBytes.Pbkdf2(senha, dados.AsSpan(0,32), 210_000, HashAlgorithmName.SHA256,32);
         return CryptographicOperations.FixedTimeEquals(hash,dados.AsSpan(32,32));
     }
@@ -51,11 +51,17 @@ public sealed class AcessoGestor(string caminho)
     public void AlterarSenha(string atual, string nova)
     {
         if (!Autenticado || AutenticadoPorColaborador || !ConferirSenha(atual)) throw new InvalidOperationException("Senha atual incorreta.");
-        if (nova.Length < 8) throw new ArgumentException("Use pelo menos 8 caracteres na nova senha.");
+        if (nova.Length < 4) throw new ArgumentException("Use pelo menos 4 caracteres na nova senha.");
         var sal = RandomNumberGenerator.GetBytes(32);
         var hash = Rfc2898DeriveBytes.Pbkdf2(nova,sal,210_000,HashAlgorithmName.SHA256,32);
         var temporario = caminho + "." + Guid.NewGuid().ToString("N") + ".tmp";
-        try { File.WriteAllBytes(temporario,[..sal,..hash]); File.Move(temporario,caminho,true); }
+        var anterior=File.ReadAllBytes(caminho);
+        if(anterior.Length==128)
+        {
+            var recuperacao=Rfc2898DeriveBytes.Pbkdf2(nova,anterior.AsSpan(64,32),210_000,HashAlgorithmName.SHA256,32);
+            if(CryptographicOperations.FixedTimeEquals(recuperacao,anterior.AsSpan(96,32)))throw new ArgumentException("A senha de acesso deve ser diferente da senha de recuperação.");
+        }
+        try { File.WriteAllBytes(temporario,[..sal,..hash,..(anterior.Length is 96 or 128?anterior[64..]:Array.Empty<byte>())]); File.Move(temporario,caminho,true); }
         finally { if(File.Exists(temporario))File.Delete(temporario); }
     }
 }

@@ -11,7 +11,7 @@ using VarthexComanda.Domain;
 
 namespace VarthexComanda.Desktop.Configuracao;
 
-public sealed class JanelaConfiguracoesSistema : Window
+public sealed partial class JanelaConfiguracoesSistema : Window
 {
     public static readonly string[] Secoes = ["Geral", "Segurança", "Ajustes de cupom", "Imagem de fundo", "Origem do Cliente", "Locais / cozinhas", "Código de Barras por Kg", "Sobre"];
     private readonly ConfiguracoesSistemaService _service;
@@ -22,12 +22,13 @@ public sealed class JanelaConfiguracoesSistema : Window
     private readonly Action _salvo;
     private readonly Func<VarthexComanda.Application.Licenciamento.DadosLicenca?> _assinatura;
     private PreferenciasSistema _prefs;
+    private readonly Func<bool>? _prepararProtecao;
     private string _nome;
     private string _quantidade;
     private string _snapshot;
-    private readonly StackPanel _form=new() { Margin=new Thickness(12) };
+    private readonly StackPanel _form=new() { Margin=new Thickness(28,24,28,28) };
     private readonly TextBlock _mensagem=new() { TextWrapping=TextWrapping.Wrap,Margin=new Thickness(12) };
-    private readonly TextBlock _titulo=new() { FontSize=14,FontWeight=FontWeights.SemiBold,Margin=new Thickness(0,0,0,10) };
+    private readonly TextBlock _titulo=new() { FontSize=25,FontWeight=FontWeights.SemiBold,Margin=new Thickness(0,0,0,8) };
     private string _secao="Geral";
     private Panel? _camposGeral;
     public bool TemAlteracoes => _snapshot != Estado();
@@ -36,22 +37,23 @@ public sealed class JanelaConfiguracoesSistema : Window
 
     public JanelaConfiguracoesSistema(ConfiguracoesSistemaService service, ConfiguracaoEstabelecimento atual,
         Func<int> maiorComanda, Func<IReadOnlyList<Produto>> produtos, Func<string> diagnostico, Action<string> acao, Action salvo,
-        Func<VarthexComanda.Application.Licenciamento.DadosLicenca?>? assinatura=null)
+        Func<VarthexComanda.Application.Licenciamento.DadosLicenca?>? assinatura=null, Func<bool>? prepararProtecao=null)
     {
-        _service=service;_prefs=service.Carregar();_nome=atual.NomeEstabelecimento;_quantidade=atual.QuantidadeMaximaComandas?.ToString()??"";_inicioComandas=atual.NumeroInicialComandas;
+        _prepararProtecao=prepararProtecao;_service=service;_prefs=service.Carregar();_nome=atual.NomeEstabelecimento;_quantidade=atual.QuantidadeMaximaComandas?.ToString()??"";_inicioComandas=atual.NumeroInicialComandas;
         _maiorComanda=maiorComanda;_produtos=produtos;_diagnostico=diagnostico;_acao=acao;_salvo=salvo;_snapshot=Estado();
         _assinatura=assinatura??(()=>new Licenciamento.ServicoLicenca().Verificar());
         Title="Configurações do sistema";Width=Math.Min(1180,SystemParameters.WorkArea.Width);Height=Math.Min(760,SystemParameters.WorkArea.Height);
         MinWidth=800;MinHeight=580;ResizeMode=ResizeMode.CanResize;ShowInTaskbar=false;WindowStartupLocation=WindowStartupLocation.CenterOwner;
         SetResourceReference(BackgroundProperty,"Canvas");SetResourceReference(ForegroundProperty,"Ink");FontSize=12;AplicarDensidade(this);
         var raiz=new Grid();raiz.RowDefinitions.Add(new(){Height=new GridLength(1,GridUnitType.Star)});raiz.RowDefinitions.Add(new(){Height=GridLength.Auto});
-        raiz.ColumnDefinitions.Add(new(){Width=new GridLength(180)});raiz.ColumnDefinitions.Add(new(){Width=new GridLength(1,GridUnitType.Star)});Content=raiz;
+        raiz.ColumnDefinitions.Add(new(){Width=new GridLength(222)});raiz.ColumnDefinitions.Add(new(){Width=new GridLength(1,GridUnitType.Star)});Content=raiz;
         raiz.SetResourceReference(Panel.BackgroundProperty,"Canvas");
-        var template=(ControlTemplate)System.Windows.Markup.XamlReader.Parse("<ControlTemplate xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation' TargetType='RadioButton'><Border x:Name='Fundo' xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml' Background='Transparent' Padding='{TemplateBinding Padding}'><ContentPresenter VerticalAlignment='Center'/></Border><ControlTemplate.Triggers><Trigger Property='IsChecked' Value='True'><Setter TargetName='Fundo' Property='Background' Value='{DynamicResource BackgroundE1E8E4}'/></Trigger><Trigger Property='IsMouseOver' Value='True'><Setter TargetName='Fundo' Property='BorderBrush' Value='{DynamicResource Line}'/><Setter TargetName='Fundo' Property='BorderThickness' Value='1'/></Trigger></ControlTemplate.Triggers></ControlTemplate>");
-        var navegacao=new StackPanel { Margin=new Thickness(5,10,5,0) };
+        var template=(ControlTemplate)System.Windows.Markup.XamlReader.Parse("<ControlTemplate xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation' TargetType='RadioButton'><Border x:Name='Fundo' xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml' Background='Transparent' CornerRadius='6' Padding='{TemplateBinding Padding}'><ContentPresenter VerticalAlignment='Center' ContentTemplate='{TemplateBinding ContentTemplate}'/></Border><ControlTemplate.Triggers><Trigger Property='IsChecked' Value='True'><Setter TargetName='Fundo' Property='Background' Value='{DynamicResource AjudaSoft}'/></Trigger><Trigger Property='IsMouseOver' Value='True'><Setter TargetName='Fundo' Property='BorderBrush' Value='{DynamicResource Line}'/><Setter TargetName='Fundo' Property='BorderThickness' Value='1'/></Trigger></ControlTemplate.Triggers></ControlTemplate>");
+        var navegacao=new StackPanel { Margin=new Thickness(12,20,12,12) };
+        navegacao.Children.Add(new TextBlock { Text="Configurações",FontSize=18,FontWeight=FontWeights.SemiBold,Margin=new Thickness(8,0,0,22) });
         foreach(var secao in Secoes)
         {
-            var b=new RadioButton { Content=secao,GroupName="SecoesSistema",MinHeight=40,Padding=new Thickness(8),FontSize=12,IsChecked=secao=="Geral" };
+            var b=new RadioButton { Content=secao,GroupName="SecoesSistema",MinHeight=46,Margin=new Thickness(0,0,0,4),Padding=new Thickness(10),FontSize=13,IsChecked=secao=="Geral" };
             var layout=new FrameworkElementFactory(typeof(StackPanel));layout.SetValue(StackPanel.OrientationProperty,Orientation.Horizontal);
             var icone=new FrameworkElementFactory(typeof(Image));icone.SetValue(FrameworkElement.WidthProperty,20.0);icone.SetValue(FrameworkElement.HeightProperty,20.0);icone.SetValue(FrameworkElement.MarginProperty,new Thickness(0,0,8,0));
             var tipo=secao switch { "Segurança"=>IconeVarthex.Senha,"Ajustes de cupom"=>IconeVarthex.Impressoras,"Imagem de fundo"=>IconeVarthex.Fotos,"Origem do Cliente"=>IconeVarthex.Colaboradores,"Locais / cozinhas"=>IconeVarthex.Cozinha,"Código de Barras por Kg"=>IconeVarthex.Numeracao,"Sobre"=>IconeVarthex.Ajuda,_=>IconeVarthex.Configuracoes };
@@ -61,15 +63,17 @@ public sealed class JanelaConfiguracoesSistema : Window
             b.Template=template;b.FocusVisualStyle=(Style)FindResource("FocoVisivel");
             b.Checked+=(_,_)=>Mostrar(secao);navegacao.Children.Add(b);
         }
-        var lateral=new Border { Child=navegacao,BorderThickness=new Thickness(0,0,1,0) };lateral.SetResourceReference(Border.BackgroundProperty,"Surface");lateral.SetResourceReference(Border.BorderBrushProperty,"Line");raiz.Children.Add(lateral);
-        var scroll=new ScrollViewer { Content=_form,VerticalScrollBarVisibility=ScrollBarVisibility.Auto };Grid.SetColumn(scroll,1);raiz.Children.Add(scroll);
-        var rodape=new DockPanel { Margin=new Thickness(12,0,12,8),LastChildFill=true };
+        var lateral=new Border { Child=new ScrollViewer { Content=navegacao,VerticalScrollBarVisibility=ScrollBarVisibility.Auto,HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled },BorderThickness=new Thickness(0,0,1,0) };lateral.SetResourceReference(Border.BackgroundProperty,"Surface");lateral.SetResourceReference(Border.BorderBrushProperty,"Line");raiz.Children.Add(lateral);
+        var scroll=new ScrollViewer { Content=_form,VerticalScrollBarVisibility=ScrollBarVisibility.Auto,HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled };scroll.SetResourceReference(BackgroundProperty,"Surface");Grid.SetColumn(scroll,1);raiz.Children.Add(scroll);
+        var rodape=new DockPanel { Margin=new Thickness(20,12,20,12),LastChildFill=true };
         var acoes=new StackPanel { Orientation=Orientation.Horizontal };
         var avancadas=new Button { Content="Opções avançadas",Margin=new Thickness(0,0,8,0) };avancadas.Click+=(_,_)=>Avancadas(avancadas);acoes.Children.Add(avancadas);
-        var salvar=new Button { Content="Salvar alterações",MinWidth=105,MinHeight=28,FontSize=12,Padding=new Thickness(12,5,12,5) };
+        var salvar=new Button { Content="Salvar alterações",MinWidth=105,MinHeight=36,FontSize=13,Padding=new Thickness(16,7,16,7) };
         salvar.SetResourceReference(StyleProperty,"BotaoPrimario");salvar.Click+=(_,_)=>Salvar();acoes.Children.Add(salvar);
-        DockPanel.SetDock(acoes,Dock.Right);rodape.Children.Add(acoes);rodape.Children.Add(_mensagem);Grid.SetRow(rodape,1);Grid.SetColumnSpan(rodape,2);raiz.Children.Add(rodape);
+        DockPanel.SetDock(acoes,Dock.Right);rodape.Children.Add(acoes);var situacao=new StackPanel { VerticalAlignment=VerticalAlignment.Center };situacao.Children.Add(_estado);_mensagem.Margin=new Thickness(0);situacao.Children.Add(_mensagem);rodape.Children.Add(situacao);Grid.SetRow(rodape,1);Grid.SetColumnSpan(rodape,2);raiz.Children.Add(rodape);
         Closing+=(_,e)=>{if(TemAlteracoes && !new Atendimento.JanelaConfirmador().Confirmar("Descartar alterações?","Há alterações não salvas. Deseja descartá-las e fechar?"))e.Cancel=true;};
+        AddHandler(TextBox.TextChangedEvent,new TextChangedEventHandler((_,_)=>AtualizarEstado()));
+        AddHandler(System.Windows.Controls.Primitives.ButtonBase.ClickEvent,new RoutedEventHandler((_,_)=>AtualizarEstado()));
         Mostrar("Geral");
     }
     private static void AplicarDensidade(Window janela)
@@ -89,30 +93,40 @@ public sealed class JanelaConfiguracoesSistema : Window
     {
         AplicarDensidade(janela);return janela.ShowDialog();
     }
-    private void Texto(string texto)=>_form.Children.Add(new TextBlock { Text=texto,TextWrapping=TextWrapping.Wrap,Margin=new Thickness(0,0,0,10) });
-    private void Subtitulo(string texto)=>_form.Children.Add(new TextBlock { Text=texto,FontSize=12,FontWeight=FontWeights.SemiBold,Margin=new Thickness(0,8,0,8) });
+    private void Texto(string texto)=>_form.Children.Add(Descricao(texto));
+    private void Subtitulo(string texto)
+    {
+        var linha=new Border { BorderThickness=new Thickness(0,1,0,0),Margin=new Thickness(0,20,0,12),Padding=new Thickness(0,16,0,0),Child=new TextBlock { Text=texto,FontSize=15,FontWeight=FontWeights.SemiBold } };
+        linha.SetResourceReference(Border.BorderBrushProperty,"Line");_form.Children.Add(linha);
+    }
     private TextBox Campo(string nome,string valor,Action<string>? alterar=null,bool multilinha=false)
     {
-        var input=new TextBox { Text=valor,MinHeight=28,MaxLength=multilinha?500:200,AcceptsReturn=multilinha,TextWrapping=multilinha?TextWrapping.Wrap:TextWrapping.NoWrap,IsReadOnly=alterar is null };
-        if(multilinha)input.Height=58;
+        var input=new TextBox { Text=valor,MinHeight=36,FontSize=13,MaxLength=multilinha?500:200,AcceptsReturn=multilinha,TextWrapping=multilinha?TextWrapping.Wrap:TextWrapping.NoWrap,IsReadOnly=alterar is null };
+        if(multilinha)input.Height=76;
         System.Windows.Automation.AutomationProperties.SetName(input,nome);
         var destino=_camposGeral;
         if(destino is null){_form.Children.Add(new Label { Content=nome,Target=input,Padding=new Thickness(0,0,0,3) });_form.Children.Add(input);}
         else {var bloco=new StackPanel { Margin=new Thickness(0,0,12,0) };bloco.Children.Add(new Label { Content=nome,Target=input,Padding=new Thickness(0,0,0,3) });bloco.Children.Add(input);destino.Children.Add(bloco);}
-        input.Margin=new Thickness(0,0,0,7);if(alterar!=null)input.TextChanged+=(_,_)=>alterar(input.Text);return input;
+        input.Margin=new Thickness(0,0,0,12);if(alterar!=null)input.TextChanged+=(_,_)=>alterar(input.Text);return input;
     }
-    private void Marcar(string texto,bool valor,Action<bool> alterar)
+    private CheckBox Marcar(string texto,bool valor,Action<bool> alterar,string? ajuda=null)
     {
-        var c=new CheckBox { Content=texto,IsChecked=valor,MinHeight=26,Margin=new Thickness(0,0,0,3) };c.Click+=(_,_)=>alterar(c.IsChecked==true);_form.Children.Add(c);
+        var c=CriarToggle(texto,valor);
+        var painel=new StackPanel();painel.Children.Add(c);
+        if(ajuda is not null)painel.Children.Add(Descricao(ajuda));
+        var linha=new Border { Child=painel,Padding=new Thickness(0,12,0,12),BorderThickness=new Thickness(0,0,0,1) };
+        linha.SetResourceReference(Border.BorderBrushProperty,"Line");_form.Children.Add(linha);
+        c.Checked+=(_,_)=>{alterar(true);AtualizarEstado();};c.Unchecked+=(_,_)=>{alterar(false);AtualizarEstado();};return c;
     }
     private Button Botao(string texto,Action acao)
     {
-        var b=new Button { Content=texto,HorizontalAlignment=HorizontalAlignment.Left,Margin=new Thickness(0,0,8,12) };b.Click+=(_,_)=>Executar(acao);_form.Children.Add(b);return b;
+        var b=new Button { Content=texto,HorizontalAlignment=HorizontalAlignment.Left,MinHeight=36,Margin=new Thickness(0,8,8,12) };b.Click+=(_,_)=>Executar(acao);_form.Children.Add(b);return b;
     }
     private void Executar(Action acao){try{acao();}catch(Exception ex){_mensagem.Text=ex is ArgumentException or InvalidOperationException?ex.Message:"Não foi possível concluir a operação. Verifique os dados e tente novamente.";}}
     private void Mostrar(string secao)
     {
         _secao=secao;_camposGeral=null;_form.Children.Clear();_titulo.Text=secao;_form.Children.Add(_titulo);
+        _form.Children.Add(Descricao(ResumoSecao(secao)));
         switch(secao)
         {
             case "Geral": Geral();break;
@@ -124,9 +138,21 @@ public sealed class JanelaConfiguracoesSistema : Window
             case "Código de Barras por Kg": Codigo();break;
             case "Sobre": Sobre();break;
         }
+        AtualizarEstado();
     }
     private void Geral()
     {
+        Subtitulo("Dados do estabelecimento");
+        _camposGeral=new System.Windows.Controls.Primitives.UniformGrid { Columns=2 };_form.Children.Add(_camposGeral);
+        Campo("Nome fantasia",_nome,v=>_nome=v);Campo("Razão social",_prefs.RazaoSocial,v=>_prefs.RazaoSocial=v);
+        Campo("CNPJ / CPF",_prefs.Documento,v=>_prefs.Documento=v);Campo("Inscrição estadual",_prefs.InscricaoEstadual,v=>_prefs.InscricaoEstadual=v);
+        Campo("Telefone principal",_prefs.Telefone,v=>_prefs.Telefone=v);
+        _camposGeral=null;Subtitulo("Endereço do estabelecimento");
+        _camposGeral=new System.Windows.Controls.Primitives.UniformGrid { Columns=2 };_form.Children.Add(_camposGeral);
+        Campo("Endereço",_prefs.Endereco,v=>_prefs.Endereco=v);
+        Campo("Número",_prefs.Numero,v=>_prefs.Numero=v);Campo("Complemento",_prefs.Complemento,v=>_prefs.Complemento=v);
+        Campo("Bairro",_prefs.Bairro,v=>_prefs.Bairro=v);Campo("CEP",_prefs.Cep,v=>_prefs.Cep=v);Campo("Cidade",_prefs.Cidade,v=>_prefs.Cidade=v);Campo("UF",_prefs.Uf,v=>_prefs.Uf=v);
+        _camposGeral=null;
         Subtitulo("Dados da assinatura");
         try
         {
@@ -137,30 +163,42 @@ public sealed class JanelaConfiguracoesSistema : Window
             Botao("Consultar ativação",()=>_acao("licenca"));
         }
         catch { Texto("Não foi possível consultar a assinatura. Abra a ativação para verificar.");Botao("Consultar ativação",()=>_acao("licenca")); }
-        Subtitulo("Dados do estabelecimento");Texto("Estes dados são usados no sistema e no comprovante não fiscal. Alterá-los não modifica a assinatura.");
-        _camposGeral=new System.Windows.Controls.Primitives.UniformGrid { Columns=2 };_form.Children.Add(_camposGeral);
-        Campo("Nome fantasia",_nome,v=>_nome=v);Campo("Razão social",_prefs.RazaoSocial,v=>_prefs.RazaoSocial=v);
-        Campo("CNPJ / CPF",_prefs.Documento,v=>_prefs.Documento=v);Campo("Inscrição estadual",_prefs.InscricaoEstadual,v=>_prefs.InscricaoEstadual=v);
-        Campo("Telefone principal",_prefs.Telefone,v=>_prefs.Telefone=v);Campo("Endereço",_prefs.Endereco,v=>_prefs.Endereco=v);
-        Campo("Número",_prefs.Numero,v=>_prefs.Numero=v);Campo("Complemento",_prefs.Complemento,v=>_prefs.Complemento=v);
-        Campo("Bairro",_prefs.Bairro,v=>_prefs.Bairro=v);Campo("CEP",_prefs.Cep,v=>_prefs.Cep=v);Campo("Cidade",_prefs.Cidade,v=>_prefs.Cidade=v);Campo("UF",_prefs.Uf,v=>_prefs.Uf=v);
         _camposGeral=null;
     }
     private void Seguranca()
     {
-        Subtitulo("Solicitação de senha");
-        Marcar("Pedir senha e PIN a cada acesso durante o uso",_prefs.SolicitarSenha,v=>_prefs.SolicitarSenha=v);
-        Texto("Ativado: solicita senha ou PIN ao acessar áreas protegidas e após concluir o atendimento.");
-        Texto("Desativado: após entrar, permite navegar e continuar os pedidos sem repetir a senha ou PIN.");
-        Texto("A senha ou PIN sempre será solicitada ao iniciar o sistema e ao clicar em Bloquear. Clique em Salvar alterações para aplicar.");
+        Subtitulo("Proteção por senha");
+        var estado=Descricao("");
+        void AtualizarResumo()=>estado.Text=_prefs.SolicitarSenha
+            ? "Ativado · exige login e senha ao iniciar ou bloquear o sistema."
+            : "Desativado · o sistema inicia sem senha e todos podem acessar todas as áreas.";
+        CheckBox? ativar=null;
+        ativar=Marcar("Ativar proteção por senha",_prefs.SolicitarSenha,v=>
+        {
+            if(v&&_prepararProtecao is not null)
+            {
+                var confirmou=false;
+                Executar(()=>confirmou=_prepararProtecao());
+                if(!confirmou){ativar!.IsChecked=false;return;}
+            }
+            _prefs.SolicitarSenha=v;AtualizarResumo();AtualizarEstado();
+        });
+        AtualizarResumo();estado.Margin=new Thickness(0,12,0,12);_form.Children.Add(estado);
+        _acoesSeguranca=new WrapPanel { Margin=new Thickness(0,12,0,0) };var acoes=_acoesSeguranca;_form.Children.Add(acoes);
+        foreach(var (nome,acao) in new[]{("Alterar senha do gestor","senha"),("Senha de recuperação","recuperacao")})
+        {
+            var b=new Button { Content=nome,MinHeight=36,Margin=new Thickness(0,0,10,8) };
+            b.Click+=(_,_)=>Executar(()=>{if(TemAlteracoes)throw new InvalidOperationException("Salve as alterações antes de alterar as senhas.");_acao(acao);});acoes.Children.Add(b);
+        }
     }
     private void Cupom()
     {
-        Texto("Configure o comprovante não fiscal de conferência. A impressão é manual, pelo diálogo de impressoras do Windows.");
-        Marcar("Agrupar itens de mesmo produto, preço e observação",_prefs.AgruparItensCupom,v=>_prefs.AgruparItensCupom=v);
+        Subtitulo("Conteúdo do comprovante");
+        Marcar("Agrupar itens iguais",_prefs.AgruparItensCupom,v=>_prefs.AgruparItensCupom=v,"Soma as quantidades quando produto, preço e observação forem iguais.");
         Marcar("Exibir observações dos itens",_prefs.ExibirObservacoesCupom,v=>_prefs.ExibirObservacoesCupom=v);
-        Marcar("Exibir documento do estabelecimento",_prefs.ExibirDocumentoCupom,v=>_prefs.ExibirDocumentoCupom=v);
-        Marcar("Exibir endereço do estabelecimento",_prefs.ExibirEnderecoCupom,v=>_prefs.ExibirEnderecoCupom=v);
+        Marcar("Exibir CNPJ / CPF",_prefs.ExibirDocumentoCupom,v=>_prefs.ExibirDocumentoCupom=v,"Impresso somente quando preenchido em Geral.");
+        Marcar("Exibir endereço do estabelecimento",_prefs.ExibirEnderecoCupom,v=>_prefs.ExibirEnderecoCupom=v,"Usa o endereço cadastrado em Geral, sem imprimir campos vazios.");
+        Subtitulo("Mensagens impressas");
         Campo("Mensagem do cabeçalho",_prefs.CabecalhoCupom,v=>_prefs.CabecalhoCupom=v,true);Campo("Mensagem do rodapé",_prefs.RodapeCupom,v=>_prefs.RodapeCupom=v,true);
         Botao("Visualizar exemplo do cupom",()=>ComprovanteConta.VisualizarExemplo(this,_prefs,_nome));
         Texto("Impressão automática, impressão fiscal, etiquetas e integração com entregador não estão habilitadas no Varthex.");
@@ -184,7 +222,7 @@ public sealed class JanelaConfiguracoesSistema : Window
         escolher.Checked+=(_,_)=>{var cor=hex.Text.Trim();if(cor.Length==7&&cor[0]=='#'&&cor[1..].All(char.IsAsciiHexDigit)){_prefs.CorFundo=cor;Atualizar();}};
         hex.TextChanged+=(_,_)=>{var cor=hex.Text.Trim();if(cor.Length==7&&cor[0]=='#'&&cor[1..].All(char.IsAsciiHexDigit)){_prefs.CorFundo=cor;escolher.IsChecked=true;Atualizar();}};
         Texto("Dica: prefira uma imagem com fundo transparente e até 800 pixels de largura. O fundo é aplicado à área de trabalho vazia.");
-        var visual=new WrapPanel();var quadro=new StackPanel { Margin=new Thickness(0,0,18,16) };quadro.Children.Add(new TextBlock { Text="Visualização",FontWeight=FontWeights.SemiBold,Margin=new Thickness(0,0,0,8) });quadro.Children.Add(previa);visual.Children.Add(quadro);
+        var visual=new WrapPanel();var quadro=new StackPanel { Margin=new Thickness(0,0,18,16) };quadro.Children.Add(new TextBlock { Text="Prévia do fundo",FontWeight=FontWeights.SemiBold,Margin=new Thickness(0,0,0,8) });quadro.Children.Add(previa);visual.Children.Add(quadro);
         var posicoes=new StackPanel();posicoes.Children.Add(new TextBlock { Text="Posição:",Margin=new Thickness(0,0,0,12) });
         foreach(var posicao in new[]{"Centralizar","Preencher","Zoom","Repetir"}){var radio=new RadioButton { Content=posicao,GroupName="PosicaoFundo",IsChecked=_prefs.PosicaoImagem==posicao,Margin=new Thickness(0,0,0,10) };radio.Checked+=(_,_)=>{_prefs.PosicaoImagem=posicao;Atualizar();};posicoes.Children.Add(radio);}visual.Children.Add(posicoes);_form.Children.Add(visual);Atualizar();
         var barra=new StackPanel { Orientation=Orientation.Horizontal };_form.Children.Add(barra);
@@ -205,7 +243,7 @@ public sealed class JanelaConfiguracoesSistema : Window
     private void Origens()
     {
         var barra=new StackPanel { Orientation=Orientation.Horizontal,HorizontalAlignment=HorizontalAlignment.Right,Margin=new Thickness(0,0,0,12) };_form.Children.Add(barra);
-        var lista=new ListView { ItemsSource=_prefs.OrigensCliente,MinHeight=260,SelectionMode=SelectionMode.Single };var vista=new GridView();var coluna=new GridViewColumn { Header="Origens",Width=650,DisplayMemberBinding=new System.Windows.Data.Binding(".") };vista.Columns.Add(coluna);lista.View=vista;lista.SizeChanged+=(_,_)=>coluna.Width=Math.Max(100,lista.ActualWidth-30);
+        var lista=new ListView { ItemsSource=_prefs.OrigensCliente,MinHeight=220,SelectionMode=SelectionMode.Single };var vista=new GridView();var coluna=new GridViewColumn { Header="Origens",Width=650,DisplayMemberBinding=new System.Windows.Data.Binding(".") };vista.Columns.Add(coluna);lista.View=vista;lista.SizeChanged+=(_,_)=>coluna.Width=Math.Max(100,lista.ActualWidth-30);
         var estilo=new Style(typeof(ListViewItem),System.Windows.Application.Current.TryFindResource(typeof(ListViewItem)) as Style);estilo.Setters.Add(new Setter(Control.PaddingProperty,new Thickness(6,4,6,4)));estilo.Setters.Add(new Setter(Control.HorizontalContentAlignmentProperty,HorizontalAlignment.Stretch));estilo.Setters.Add(new Setter(Control.BorderThicknessProperty,new Thickness(0,0,0,1)));estilo.Setters.Add(new Setter(Control.BorderBrushProperty,new DynamicResourceExtension("Line")));lista.ItemContainerStyle=estilo;
         void Editar(int indice)
         {
@@ -220,7 +258,7 @@ public sealed class JanelaConfiguracoesSistema : Window
     private void Cozinhas()
     {
         var barra=new StackPanel { Orientation=Orientation.Horizontal,HorizontalAlignment=HorizontalAlignment.Right,Margin=new Thickness(0,0,0,12) };_form.Children.Add(barra);
-        var lista=new ListView { ItemsSource=_prefs.Cozinhas,MinHeight=340,SelectionMode=SelectionMode.Single,HorizontalContentAlignment=HorizontalAlignment.Stretch };
+        var lista=new ListView { ItemsSource=_prefs.Cozinhas,MinHeight=250,SelectionMode=SelectionMode.Single,HorizontalContentAlignment=HorizontalAlignment.Stretch };
         var colunas=new GridView();colunas.Columns.Add(new GridViewColumn { Header="Nome do local / cozinha",Width=360,DisplayMemberBinding=new System.Windows.Data.Binding(nameof(LocalCozinha.Nome)) });colunas.Columns.Add(new GridViewColumn { Header="Impressora utilizada",Width=310,DisplayMemberBinding=new System.Windows.Data.Binding(nameof(LocalCozinha.SaidaDescricao)) });lista.View=colunas;
         void Acao(string texto,Action executar){var botao=new Button { Content=texto,Padding=new Thickness(12,5,12,5),Margin=new Thickness(8,0,0,0) };botao.Click+=(_,_)=>Executar(executar);barra.Children.Add(botao);}
         LocalCozinha Selecionado()=>lista.SelectedItem as LocalCozinha??throw new ArgumentException("Selecione um local / cozinha.");
@@ -253,7 +291,7 @@ public sealed class JanelaConfiguracoesSistema : Window
     {
         var janela=new Window { Title="Produtos · "+local.Nome,Owner=this,WindowStartupLocation=WindowStartupLocation.CenterOwner,Width=500,Height=560,MinWidth=420,MinHeight=400,ShowInTaskbar=false };
         var raiz=new DockPanel { Margin=new Thickness(16) };var salvar=new Button { Content="Aplicar vínculos" };DockPanel.SetDock(salvar,Dock.Bottom);raiz.Children.Add(salvar);
-        var painel=new StackPanel();var checks=new List<(int Id,CheckBox Check)>();foreach(var produto in _produtos()){var check=new CheckBox { Content=produto.Nome,IsChecked=local.Produtos.Contains(produto.Id),MinHeight=28 };painel.Children.Add(check);checks.Add((produto.Id,check));}
+        var painel=new StackPanel();var checks=new List<(int Id,CheckBox Check)>();foreach(var produto in _produtos()){var check=new CheckBox { Content=produto.Nome,IsChecked=local.Produtos.Contains(produto.Id),MinHeight=36 };painel.Children.Add(check);checks.Add((produto.Id,check));}
         raiz.Children.Add(new ScrollViewer { Content=painel,VerticalScrollBarVisibility=ScrollBarVisibility.Auto });janela.Content=raiz;
         salvar.Click+=(_,_)=>{local.Produtos=checks.Where(x=>x.Check.IsChecked==true).Select(x=>x.Id).ToList();janela.DialogResult=true;};MostrarJanelaCompacta(janela);
     }
@@ -268,7 +306,7 @@ public sealed class JanelaConfiguracoesSistema : Window
         {
             var t=new TextBlock { Text=texto,TextWrapping=TextWrapping.Wrap,Margin=new Thickness(0,0,0,10),FontSize=12,FontWeight=titulo?FontWeights.SemiBold:FontWeights.Normal };painel.Children.Add(t);return t;
         }
-        var ativar=new CheckBox { Content=new TextBlock { Text="Ativar código de barras de produto por quilo",TextWrapping=TextWrapping.Wrap,MaxWidth=310 },IsChecked=_prefs.CodigoPesoAtivo,Margin=new Thickness(0,0,0,14) };esquerda.Children.Add(ativar);
+        var ativar=CriarToggle("Ativar código de barras por quilo",_prefs.CodigoPesoAtivo);esquerda.Children.Add(ativar);
         var controles=new StackPanel();esquerda.Children.Add(controles);controles.IsEnabled=_prefs.CodigoPesoAtivo;
         ativar.Click+=(_,_)=>{_prefs.CodigoPesoAtivo=ativar.IsChecked==true;controles.IsEnabled=_prefs.CodigoPesoAtivo;};
         TextoLocal(controles,"Composição do Código de Barras — 13 caracteres:").TextAlignment=TextAlignment.Center;
@@ -310,7 +348,7 @@ public sealed class JanelaConfiguracoesSistema : Window
     private void Avancadas(Button alvo)
     {
         var menu=new ContextMenu { PlacementTarget=alvo };
-        foreach(var (nome,acao) in new[]{("Criar backup agora","criar-backup"),("Backups e restauração","backups"),("Consultar ativação","licenca"),("Alterar PIN da equipe","pin")})
+        foreach(var (nome,acao) in new[]{("Criar backup agora","criar-backup"),("Backups e restauração","backups"),("Consultar ativação","licenca")})
         {
             var b=new MenuItem { Header=nome,FontSize=12,Padding=new Thickness(10) };b.Click+=(_,_)=>Executar(()=>{if(TemAlteracoes)throw new InvalidOperationException("Salve as alterações antes de abrir esta opção.");_acao(acao);});menu.Items.Add(b);
         }
@@ -320,6 +358,6 @@ public sealed class JanelaConfiguracoesSistema : Window
     {
         int? quantidade=null;if(!string.IsNullOrWhiteSpace(_quantidade)){if(!int.TryParse(_quantidade,out var n))throw new ArgumentException("Informe uma quantidade válida de comandas.");quantidade=n;}
         if(quantidade is int limite&&_maiorComanda()>(long)_inicioComandas+limite-1)throw new ArgumentException("Há comandas abertas acima desse limite. Encerre ou transfira antes de reduzir.");
-        _service.Salvar(_prefs,_nome,quantidade,DateTime.UtcNow);_snapshot=Estado();_mensagem.Text="Configurações salvas.";_salvo();
+        _service.Salvar(_prefs,_nome,quantidade,DateTime.UtcNow);_snapshot=Estado();_mensagem.Text="Configurações salvas.";AtualizarEstado();_salvo();
     });
 }

@@ -47,7 +47,6 @@ public partial class ConfiguracaoView : UserControl
             case 1: Campo("Quantidade de comandas",nameof(ViewModel.QuantidadeComandasTexto),"Informe um número maior que zero. Em branco, mantém o comportamento automático do sistema. Comandas abertas são preservadas.",160);break;
             case 2:
                 Linha("Senha do gestor","Protege produtos, configurações, backups e licença.","Alterar senha","senha");
-                Linha("PIN do atendimento","Código compartilhado para entrar nos menus do garçom e da cozinha.","Alterar PIN","pin");
                 Linha("Bloqueio ao concluir lançamento","Ativo. Ao concluir, o atendimento volta ao menu principal e solicita o PIN.");break;
             case 3:
                 Campo("Pasta de backup externa",nameof(ViewModel.PastaBackupExterna),"Remover este destino não apaga os arquivos de backup existentes.",double.NaN,true);

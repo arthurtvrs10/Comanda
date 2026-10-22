@@ -33,6 +33,9 @@ public partial class MainWindow
                 AcaoConfiguracao,()=>
                 {
                     _configuracaoView.ViewModel.Carregar();AplicarFundoSistema();_cozinhaView.Atualizar();_atendimentoView.ViewModel.AtualizarComandasAbertas();
+                },prepararProtecao:()=>
+                {
+                    return new JanelaAcessoGestor(_acesso,ativarProtecao:true){Owner=_configuracoesModal??(Window)this}.ShowDialog()==true;
                 }) { Owner=this };
             _configuracoesModal.ShowDialog();
         }

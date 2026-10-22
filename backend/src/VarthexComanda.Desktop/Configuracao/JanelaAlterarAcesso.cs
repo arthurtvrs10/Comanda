@@ -8,7 +8,8 @@ public sealed class JanelaAlterarAcesso : Window
     public JanelaAlterarAcesso(AcessoGestor gestor, AcessoAtendimento atendimento, bool pin,
         Action<string,string>? alterarSenha = null, string? usuario = null)
     {
-        Title = pin ? "Alterar PIN da equipe" : "Alterar senha";
+        var primeiroCadastro=!pin&&alterarSenha is null&&!gestor.Configurado;
+        Title = primeiroCadastro?"Definir senha do gestor":pin ? "Alterar PIN da equipe" : "Alterar senha";
         Width = 350;
         SizeToContent = SizeToContent.Height;
         MaxHeight = SystemParameters.WorkArea.Height;
@@ -23,15 +24,18 @@ public sealed class JanelaAlterarAcesso : Window
         PasswordBox Campo(string titulo, int maximo)
         {
             var campo = new PasswordBox { MaxLength=maximo, Margin=new Thickness(0,0,0,9) };
-            painel.Children.Add(new Label { Content=titulo, Target=campo, Padding=new Thickness(0,0,0,3) });
+            if(titulo.StartsWith("Senha de recuperação"))painel.Children.Add(AjudaSenhaRecuperacao.CriarRotulo("Senha de recuperação",campo));
+            else painel.Children.Add(new Label { Content=titulo, Target=campo, Padding=new Thickness(0,0,0,3) });
             System.Windows.Automation.AutomationProperties.SetName(campo,titulo);
             painel.Children.Add(campo);
             return campo;
         }
-        var atual = Campo(pin ? "Senha atual do gestor" : "Senha atual",128);
+        var atual = primeiroCadastro?new PasswordBox():Campo(pin ? "Senha atual do gestor" : "Senha atual",128);
         var nova = Campo(pin ? "Novo PIN" : "Nova senha",pin?8:128);
-        painel.Children.Add(new TextBlock { Text=pin?"De 4 a 8 números.":"Use pelo menos 8 caracteres.", Margin=new Thickness(0,0,0,9) });
+        painel.Children.Add(new TextBlock { Text=pin?"De 4 a 8 números.":"Use pelo menos 4 caracteres.", Margin=new Thickness(0,0,0,9) });
         var confirmar = Campo(pin ? "Confirmar novo PIN" : "Confirmar nova senha",128);
+        var recuperacao=primeiroCadastro?Campo("Senha de recuperação (diferente da senha de acesso)",128):new PasswordBox();
+        var confirmarRecuperacao=primeiroCadastro?Campo("Confirmar senha de recuperação",128):new PasswordBox();
         var erro = new TextBlock { TextWrapping=TextWrapping.Wrap, Margin=new Thickness(0,0,0,6) };
         erro.SetResourceReference(TextBlock.ForegroundProperty,"TextB22222");
         painel.Children.Add(erro);
@@ -51,6 +55,11 @@ public sealed class JanelaAlterarAcesso : Window
                         if (!gestor.ConferirSenha(atual.Password)) throw new InvalidOperationException("Senha atual incorreta.");
                         atendimento.DefinirPin(nova.Password);
                     }
+                    else if(primeiroCadastro)
+                    {
+                        if(recuperacao.Password!=confirmarRecuperacao.Password)throw new InvalidOperationException("As senhas de recuperação não coincidem.");
+                        gestor.CadastrarComSenhaRecuperacao(nova.Password,recuperacao.Password);
+                    }
                     else gestor.AlterarSenha(atual.Password,nova.Password);
                 }
                 DialogResult=true;
@@ -58,7 +67,7 @@ public sealed class JanelaAlterarAcesso : Window
             catch (Exception ex) { erro.Text=ex is ArgumentException or InvalidOperationException?ex.Message:"Não foi possível salvar a credencial. Tente novamente."; }
         };
         PreviewKeyDown += (_,e) => { if(e.Key==System.Windows.Input.Key.Escape){Close();e.Handled=true;} };
-        Closed += (_,_) => { atual.Clear();nova.Clear();confirmar.Clear(); };
-        Loaded += (_,_) => atual.Focus();
+        Closed += (_,_) => { atual.Clear();nova.Clear();confirmar.Clear();recuperacao.Clear();confirmarRecuperacao.Clear(); };
+        Loaded += (_,_) => {if(primeiroCadastro)nova.Focus();else atual.Focus();};
     }
 }

@@ -13,3 +13,7 @@ Feche o aplicativo antes de atualizar. A instalação é por usuário, sem admin
 A 1.4.0 é uma **pré-release**. Instalação em Windows limpo e autorização/envio com conta Google real permanecem pendentes. [Notas e limites da release](https://github.com/arthurtvrs10/Comanda/releases/tag/v1.4.0).
 
 [Demonstração 1.4.0 com produtos de teste](../demo/README.md) · [Versão estável anterior 1.2.2](https://github.com/arthurtvrs10/Comanda/releases/tag/v1.2.2)
+
+## Acesso nesta recompilação
+
+Instalações novas iniciam sem senha e com acesso livre. A proteção é opcional em Configurações do sistema → Segurança. Ao ativar, defina senha de acesso e senha de recuperação diferentes, confirme e salve. Com a proteção ativa, use o login `gestor` ou uma conta cadastrada. O login de bloqueio mantém o sistema desfocado ao fundo. A recuperação funciona offline com a senha de recuperação; não usa códigos nem e-mail. Preferências e dados existentes são preservados.

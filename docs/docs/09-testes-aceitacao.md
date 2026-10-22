@@ -125,3 +125,5 @@ Uma tarefa está pronta quando:
 - possui mensagens compreensíveis;
 - passa na revisão de código;
 - atualiza documentação e rastreabilidade.
+
+Extensão CT17 — Segurança opcional (RNF07/RNF18, decisão de 22/10/2026): uma base nova abre sem senha e sem janelas internas. Ativar proteção solicita cadastro e confirmações, cancelar não ativa; salvar persiste. Com proteção ativa, bloquear impede operar o fundo e exige login válido. Login de colaborador preserva seu nome e libera as áreas nesta versão. Mostrar senha mantém o valor ao alternar; placeholders desaparecem ao digitar. A senha de recuperação deve diferir da senha de acesso, funcionar offline e ser armazenada com hash e salt. Entrada incorreta não altera a credencial; cinco tentativas falhas de recuperação impõem espera. Trocar a senha de acesso preserva a recuperação. Campos, texto e foco devem ser legíveis nos dois temas e na janela mínima.

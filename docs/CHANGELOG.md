@@ -1,5 +1,16 @@
 # Histórico de alterações
 
+## Aplicativo 1.4.0 — 2026-10-22 — configurações e acesso
+
+- Configurações redesenhadas nos dois temas com toggles, navegação por ícones, campos agrupados e confirmação de descarte somente quando há mudanças. Quantidade de comandas em Numeração de pedidos.
+- Instalações novas sem senha, com acesso livre às áreas e início na área de trabalho vazia. Preferências existentes são preservadas.
+- Toggle de proteção abre imediatamente o cadastro de senha e senha de recuperação por estabelecimento, diferentes e com mínimo de quatro caracteres. Cancelar retorna o toggle para desativado; salvar aplica a preferência.
+- Login e senha centralizados sobre o sistema desfocado, toggle Mostrar senha e placeholders. Bloqueio exige nova autenticação somente com proteção ativa. Contas individuais preservam a identificação do operador, sem restrição por perfil nesta entrega.
+- Recuperação offline por senha, armazenada com salt e PBKDF2. Removidos o fluxo de geração de códigos e a alteração de PIN da equipe nas configurações. Sem senha universal e sem recuperação por e-mail.
+- Limpeza de textos e ações desatualizados; RNF07/RNF18 e CT17 para interface/acesso, RNF09/RNF14/RNF17 e CT21 para empacotamento. Sem migração de banco nesta recompilação.
+- Inclui modelos térmicos em 58/80 mm já implementados. Validação: 783 testes em Release (4 Domain, 134 Application, 303 Infrastructure e 342 Desktop), além do validador documental. Impressão física e OAuth real continuam pendentes. [Evidências da revisão](../specs/2026-10-22-configuracoes-seguranca-release.md).
+
+
 ## Aplicativo 1.4.0 — 2026-10-22 — atualização da pré-release
 
 - Nova identidade Comanda · por Varthex aplicada em logos, ícone, títulos, ajuda e rodapé. Superfícies neutras, com fundo padrão cinza no claro e azul profundo no escuro; imagem e cor personalizadas preservadas.

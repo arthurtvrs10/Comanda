@@ -7,6 +7,17 @@ namespace VarthexComanda.Desktop.Tests.Xaml;
 
 public sealed class FluxoSenhaTests
 {
+    private static System.Windows.Controls.Button EncontrarBotao(DependencyObject pai)
+    {
+        if(pai is System.Windows.Controls.Button b&&Equals(b.Content,"Bloquear ou trocar usuário"))return b;
+        for(var i=0;i<System.Windows.Media.VisualTreeHelper.GetChildrenCount(pai);i++)
+        {
+            var encontrado=EncontrarBotao(System.Windows.Media.VisualTreeHelper.GetChild(pai,i));
+            if(encontrado is not null)return encontrado;
+        }
+        return null!;
+    }
+
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
@@ -22,26 +33,19 @@ public sealed class FluxoSenhaTests
             var janela=CarregamentoDeXamlTests.CriarMainWindow(new(pasta),configuracoes:repo);
             try
             {
-                var bloquear=typeof(MainWindow).GetMethod("BloquearAtendimento",BindingFlags.NonPublic|BindingFlags.Instance,null,Type.EmptyTypes,null)!;
                 var camada=(FrameworkElement)janela.FindName("CamadaBloqueio");
-                Assert.Equal(Visibility.Visible,camada.Visibility);
-                var acesso=(AcessoAtendimento)typeof(MainWindow).GetField("_acessoAtendimento",BindingFlags.NonPublic|BindingFlags.Instance)!.GetValue(janela)!;
-                acesso.DefinirPin("1234");Assert.True(acesso.Entrar("1234",out _));
-                typeof(MainWindow).GetMethod("DesbloquearAtendimento",BindingFlags.NonPublic|BindingFlags.Instance)!.Invoke(janela,null);
-                bloquear.Invoke(janela,null);
+                var area=(FrameworkElement)janela.FindName("AreaSistema");
+                Assert.Equal(solicitar?Visibility.Visible:Visibility.Collapsed,camada.Visibility);
+                Assert.Equal(!solicitar,area.IsEnabled);
+                if(!solicitar)Assert.Null(((AreaTrabalhoInterna)janela.FindName("ConteudoPrincipal")).JanelaAtiva);
+                var botao=EncontrarBotao((DependencyObject)janela.Content);
+                botao.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
                 Assert.Equal(solicitar?Visibility.Visible:Visibility.Collapsed,camada.Visibility);
                 if(!solicitar)
                 {
-                    typeof(MainWindow).GetMethod("MenuSessao_Click",BindingFlags.NonPublic|BindingFlags.Instance)!.Invoke(janela,new object[]{janela,new RoutedEventArgs()});
-                    Assert.Equal(Visibility.Collapsed,camada.Visibility);
-                    typeof(MainWindow).GetMethod("Bloquear_Click",BindingFlags.NonPublic|BindingFlags.Instance)!.Invoke(janela,new object[]{janela,new RoutedEventArgs()});
-                    Assert.Equal(Visibility.Visible,camada.Visibility);
-                    bloquear.Invoke(janela,null);Assert.Equal(Visibility.Visible,camada.Visibility);
-                    Assert.True(acesso.Entrar("1234",out _));
-                    typeof(MainWindow).GetMethod("DesbloquearAtendimento",BindingFlags.NonPublic|BindingFlags.Instance)!.Invoke(janela,null);
-                    new ConfiguracoesSistemaService(repo).Salvar(new(){SolicitarSenha=true},"Loja",20,DateTime.UtcNow);
-                    bloquear.Invoke(janela,null);
-                    Assert.Equal(Visibility.Visible,camada.Visibility);
+                    var gestor=(AcessoGestor)typeof(MainWindow).GetField("_acesso",BindingFlags.NonPublic|BindingFlags.Instance)!.GetValue(janela)!;
+                    Assert.True(gestor.Autenticado);
+                    Assert.False(gestor.Configurado);
                 }
             }
             finally

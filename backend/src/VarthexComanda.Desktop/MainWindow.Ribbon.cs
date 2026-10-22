@@ -117,7 +117,7 @@ public partial class MainWindow
         }
         if (PodeDispensarSenha)
         {
-            _acesso.EntrarSemSenha();_acessoAtendimento.EntrarSemSenha();_bloqueado=false;_cozinhaAtiva=false;
+            _acesso.EntrarSemSenha(_colaboradores.SessaoAtual is not null);_acessoAtendimento.EntrarSemSenha();_bloqueado=false;_cozinhaAtiva=false;
             AreaSistema.IsEnabled=true;CamadaBloqueio.Visibility=Visibility.Collapsed;AtualizarPerfil();
         }
         if (destino.Permitido()) return true;
@@ -237,30 +237,7 @@ public partial class MainWindow
 
     private void MenuSessao_Click(object sender,RoutedEventArgs e)
     {
-        if (!PodeSairDasConfiguracoes()) return;
-        MostrarAreaPrincipal();
-        if(PodeDispensarSenha)return;
-        var login = new JanelaLogin(_acesso, _acessoAtendimento, _restauracao, _colaboradores) { Owner=this };
-        if (login.ShowDialog()!=true) return;
-        if (login.Perfil=="gestor" && _acesso.Autenticado)
-        {
-            _bloqueado=false;
-            _cozinhaAtiva=false;
-            CamadaBloqueio.Visibility=Visibility.Collapsed;
-            AreaSistema.IsEnabled=true;
-            AtualizarPerfil();
-            if (_restauracao) IrParaBackup();
-        }
-        else
-        {
-            _areaPendente=login.Perfil;
-            DesbloquearAtendimento();
-            if (login.Perfil=="garcom")
-            {
-                ConteudoPrincipal.Limpar();
-                AtualizarAbaAtiva();
-            }
-        }
+        Bloquear_Click(sender,e);
     }
 
     private void BackupRodape_Click(object sender,RoutedEventArgs e)

@@ -55,6 +55,11 @@
     </Window.InputBindings>
     <Grid>
     <DockPanel x:Name="AreaSistema" Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}">
+        <DockPanel.Style>
+            <Style TargetType="DockPanel"><Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False"><Setter Property="Effect"><Setter.Value><BlurEffect Radius="5" RenderingBias="Performance"/></Setter.Value></Setter></Trigger>
+            </Style.Triggers></Style>
+        </DockPanel.Style>
         <Border DockPanel.Dock="Bottom" Background="{DynamicResource RibbonBar}" BorderBrush="{DynamicResource Line}" BorderThickness="0,1,0,0" Padding="8,2">
             <Border.Resources><SolidColorBrush x:Key="HoverOverlay" Color="#26FFFFFF"/></Border.Resources>
             <DockPanel LastChildFill="False">

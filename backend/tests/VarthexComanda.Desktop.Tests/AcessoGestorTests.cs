@@ -3,6 +3,21 @@ namespace VarthexComanda.Desktop.Tests;
 public class AcessoGestorTests
 {
     [Fact]
+    public void AceitaQuatroCaracteresNoCadastroENaTroca()
+    {
+        var caminho=Path.Combine(Path.GetTempPath(),Guid.NewGuid()+".credencial");
+        try
+        {
+            var acesso=new AcessoGestor(caminho);
+            Assert.Throws<ArgumentException>(()=>acesso.Cadastrar("abc"));
+            acesso.Cadastrar("abcd");Assert.True(acesso.Entrar("abcd"));
+            Assert.Throws<ArgumentException>(()=>acesso.AlterarSenha("abcd","abc"));
+            acesso.AlterarSenha("abcd","1234");Assert.True(acesso.Entrar("1234"));
+        }
+        finally{File.Delete(caminho);}
+    }
+
+    [Fact]
     public void TrocaDeSenhaExigeSenhaAtualEPreservaArquivoEmFalha()
     {
         var caminho=Path.Combine(Path.GetTempPath(),Guid.NewGuid()+".credencial");

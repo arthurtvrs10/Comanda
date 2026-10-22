@@ -53,6 +53,12 @@ public sealed class JanelaLogin : Window
         var entrar = new Button { Content = "Entrar", IsDefault = true, MinHeight = 46 };
         entrar.SetResourceReference(StyleProperty, "BotaoPrimario");
         painel.Children.Add(entrar);
+        var recuperar=new Button { Content="Esqueci minha senha de gestor",Margin=new Thickness(0,8,0,0) };
+        recuperar.Click+=(_,_)=>
+        {
+            if(!gestor.RecuperacaoConfigurada){erro.Text="O gestor ainda não configurou uma senha de recuperação. Colaboradores devem pedir a redefinição ao gestor.";return;}
+            if(new JanelaRecuperacaoGestor(gestor,true,this).ShowDialog()==true){senha.Clear();perfis.SelectedIndex=0;erro.Text="Senha redefinida. Entre com a nova senha.";}
+        };painel.Children.Add(recuperar);
         painel.Children.Add(new Button { Content="Cancelar", IsCancel=true, Margin=new Thickness(0,8,0,0) });
         perfis.SelectionChanged += (_,_) => {
             senha.Clear(); erro.Text="";
