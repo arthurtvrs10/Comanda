@@ -17,14 +17,14 @@ no computador da loja) está descrito em `docs/homologacao/`.
 | CT03 | Adicionar produto | Duas inclusões de R$ 18,00 resultam em quantidade 2 e subtotal R$ 36,00 | automatizado | 4 | Inclui teste com os valores literais (R$ 18,00) sobre SQLite real. |
 | CT04 | Preservar preço | Alterar produto para R$ 22,00 não muda item lançado por R$ 18,00 | automatizado | 2 | Ponta a ponta com SQLite real: item, total e histórico da venda mantêm R$ 18,00. |
 | CT05 | Corrigir quantidade | Reduzir 3 para 2 recalcula e persiste subtotal e total | automatizado | 3 | A persistência é conferida relendo por contexto novo. |
-| CT06 | Recusar quantidade inválida | Valor negativo ou fracionário não é gravado | automatizado | 5 | Negativo/zero: caso de uso e restrição CHECK do banco. Fracionário: apenas por construção (a quantidade é `int` em toda a cadeia e a tela só tem + e −); não há campo de digitação para testar. |
+| CT06 | Recusar quantidade inválida | Negativo/zero é recusado; UN recusa frações | automatizado | 5 | Caso de uso e CHECK do banco recusam negativo/zero. UN recusa fração em teste de gravação; KG e L aceitam até três casas decimais, com testes próprios de persistência e arredondamento. |
 | CT07 | Recusar comanda vazia | Nenhuma venda é criada | automatizado | 5 | Caso de uso, ViewModel e restrição do banco (venda de total zero é recusada). |
 | CT08 | Exibir total | Itens de R$ 18,00, R$ 18,00 e R$ 6,00 mostram total R$ 42,00 | automatizado | 3 | Total calculado e persistido com os valores literais; a exibição em tela é conferida no ViewModel (sem teste visual de pixel). |
 | CT09 | Falha na cobrança externa | Voltar mantém comanda aberta e não cria venda | automatizado | 5 | ViewModel de encerramento (em memória e sobre SQLite real). A maquininha de verdade é ensaio manual. |
 | CT10 | Encerrar após cobrança manual | Cria venda e fecha comanda sem dados de pagamento | automatizado | 4 | "Sem dados de pagamento" é conferido no esquema real do banco (nenhuma coluna de pagamento). |
 | CT11 | Rollback | Falha entre venda e fechamento desfaz tudo | automatizado | 2 | Injeção real de falha (interceptor de comandos do EF) no meio do `SaveChanges` do encerramento; nada é persistido. |
 | CT12 | Histórico | Itens, total e horário correspondem ao encerramento | automatizado | 4 | Horário conferido ao tick; itens e total relidos pelo repositório do histórico. |
-| CT13 | Operar offline | Cadastro, comanda, total, encerramento e histórico funcionam sem rede | estrutural | 1 | Só verificação estrutural: os quatro assemblies do produto não referenciam APIs de rede. Não substitui operar de fato sem rede (ensaio manual). |
+| CT13 | Operar offline | Cadastro, comanda, total, encerramento e histórico funcionam sem rede | estrutural | 1 | Verificação estrutural de Domain e Application, que não referenciam APIs de rede. Desktop/Infrastructure oferecem Google Drive opcional; os fluxos locais continuam cobertos por SQLite descartável. Não substitui o ensaio manual sem rede. |
 | CT14 | Criar backup | Cópia abre, passa na integridade e possui checksum | automatizado | 3 | Serviço real de backup sobre SQLite real. |
 | CT15 | Rejeitar backup corrompido | Base ativa permanece inalterada | automatizado | 7 | Backup real com bytes corrompidos: caso de uso recusa sem nenhuma escrita na base ativa (hash idêntico). |
 | CT16 | Atualizar aplicação | Migrações completam e totais anteriores permanecem | automatizado | 2 | Banco criado só até a `InitialCreate`, com dados por SQL, migrado até a última com backup preventivo; totais, vendas e comanda aberta preservados. |
@@ -72,8 +72,8 @@ no computador da loja) está descrito em `docs/homologacao/`.
 - `AdicionarItemTests.Executar_QuantidadeZeroOuNegativa_Falha` (Application.Tests)
 - `AlterarQuantidadeTests.Executar_QuantidadeZeroOuNegativa_Falha` (Application.Tests)
 - `CriteriosDeAtendimentoTests.CT06_BancoRecusaQuantidadeNaoPositiva` (Infrastructure.Tests)
-- `CriteriosDeAtendimentoTests.CT06_QuantidadeEInteiraEmToda_ACadeiaDeLancamento` (Infrastructure.Tests)
 - `CriteriosDeAtendimentoTests.CT06_QuantidadeNegativaOuZero_NaoEGravada` (Infrastructure.Tests)
+- `CriteriosDeAtendimentoTests.CT06_UnidadeRecusaFracaoSemAlterarComanda` (Infrastructure.Tests)
 
 ### CT07 — Recusar comanda vazia (automatizado)
 
@@ -118,7 +118,7 @@ no computador da loja) está descrito em `docs/homologacao/`.
 
 ### CT13 — Operar offline (estrutural)
 
-- `OperacaoOfflinePorConstrucaoTests.CT13_AssembliesDoProduto_NaoReferenciamApisDeRede` (Desktop.Tests)
+- `OperacaoOfflinePorConstrucaoTests.CT13_NucleoDePedidosECatalogo_NaoReferenciaApisDeRede` (Desktop.Tests)
 
 ### CT14 — Criar backup (automatizado)
 

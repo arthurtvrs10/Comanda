@@ -7,10 +7,10 @@ Regras do produto atual. Regras futuras RE01–RE10 estão no [plano de evoluç�
 | RN01 | Somente uma comanda aberta pode usar determinado número |
 | RN02 | O número pode ser reutilizado após fechamento ou cancelamento |
 | RN03 | Somente produto ativo pode ser incluído em nova comanda |
-| RN04 | O item copia nome e preço praticados no lançamento |
-| RN05 | Alterar o preço atual não modifica itens ou vendas anteriores |
-| RN06 | Quantidade é um inteiro maior que zero |
-| RN07 | Subtotal é preço unitário multiplicado pela quantidade |
+| RN04 | O item copia nome, preço por medida e unidade de venda praticados no lançamento |
+| RN05 | Alterar preço ou medida atuais não modifica itens ou vendas anteriores |
+| RN06 | Quantidade é positiva; UN exige inteiro, KG/L aceitam até três casas decimais |
+| RN07 | Subtotal em centavos é preço por medida multiplicado pela quantidade e arredondado para inteiro, com meio centavo afastado de zero |
 | RN08 | Total da comanda é a soma dos subtotais válidos |
 | RN09 | Comanda vazia não pode gerar venda |
 | RN10 | Comanda fechada é imutável no MVP |
@@ -39,7 +39,8 @@ RN24–RN27: prazos fixos de licença, bloqueio por licença inválida/vencida,
 preservação de dados e detecção de atraso do relógio estão definidos em
 [Licenciamento offline](20-licenciamento-offline.md).
 
-- `subtotal_centavos = preco_unitario_centavos * quantidade`;
+- `subtotal_centavos = Round(preco_unitario_centavos * quantidade, 0, AwayFromZero)`, com quantidade lógica decimal;
+- no SQLite, quantidade e contadores de impressão são inteiros em milésimos; UN exige múltiplo de 1000;
 - `comanda.total_centavos = soma(item_comanda.subtotal_centavos)`;
 - `venda.total_centavos = comanda.total_centavos` revalidado no encerramento;
 - uma comanda possui no máximo uma venda;
@@ -51,4 +52,19 @@ preservação de dados e detecção de atraso do relógio estão definidos em
 
 ## Arredondamento
 
-O MVP trabalha apenas com preço unitário em centavos e quantidade inteira. Não existe arredondamento por item. Ticket médio usa divisão do total em centavos pela quantidade de vendas e deve ser apresentado com duas casas decimais.
+Preço por medida continua em centavos inteiros. Cada subtotal é arredondado uma
+única vez para centavos com `MidpointRounding.AwayFromZero`; o total soma os
+subtotais já arredondados. Por exemplo, R$ 1,00 × 1,005 KG resulta em R$ 1,01.
+UN não aceita fração. Ticket médio usa divisão do total em centavos pela quantidade
+de vendas e deve ser apresentado com duas casas decimais.
+
+## Extensão de backup — 22/10/2026
+
+O backup local validado é criado antes do envio opcional ao Google Drive.
+Falha de autorização, rede, espaço ou envio gera aviso e preserva essa cópia.
+O lote remoto fica marcado como incompleto até a conclusão de todos os arquivos;
+desconectar revoga o acesso e remove o token local após sucesso, preservando os
+arquivos no Google. OneDrive continua sendo cópia em pasta sincronizada.
+Não há retenção remota automática nem restauração diretamente da nuvem no aplicativo.
+Regras de migração, quantidades e recuperação estão na
+[especificação da extensão](../../specs/2026-10-22-drive-oauth-medidas-venda.md).

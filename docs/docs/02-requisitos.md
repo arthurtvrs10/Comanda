@@ -8,14 +8,14 @@ RF01–RF29 e RNF01–RNF21 descrevem a base atual. Existência de requisito nã
 | --- | --- | --- | --- |
 | RF01 | Alta | Cadastrar categoria | Informar nome e situação ativa |
 | RF02 | Alta | Alterar e desativar categoria | Preservar produtos e histórico existentes |
-| RF03 | Alta | Cadastrar produto | Informar nome, categoria, preço e situação ativa |
-| RF04 | Alta | Alterar e desativar produto | Novos lançamentos usam o novo preço sem alterar o passado |
+| RF03 | Alta | Cadastrar produto | Informar nome, categoria, unidade de venda (UN, KG ou L), preço por medida e situação ativa |
+| RF04 | Alta | Alterar e desativar produto | Novos lançamentos usam preço e medida atuais sem alterar o passado |
 | RF05 | Alta | Localizar produtos | Filtrar por categoria e nome |
 | RF06 | Alta | Exibir números de comanda | Distinguir números livres e ocupados |
 | RF07 | Alta | Abrir comanda | Criar sessão com número livre, data e hora |
 | RF08 | Alta | Consultar comanda aberta | Mostrar itens, quantidades, subtotais e total |
 | RF09 | Alta | Adicionar item | Lançar produto ativo com um clique ou toque |
-| RF10 | Alta | Alterar quantidade | Aceitar somente quantidade inteira positiva |
+| RF10 | Alta | Alterar quantidade | Aceitar quantidade positiva: inteira para UN e com até três casas decimais para KG/L |
 | RF11 | Alta | Remover item | Exigir confirmação quando necessário |
 | RF12 | Alta | Calcular total | Recalcular subtotais e total após cada alteração |
 | RF13 | Alta | Cancelar comanda | Confirmar, marcar como cancelada e liberar o número |
@@ -26,8 +26,8 @@ RF01–RF29 e RNF01–RNF21 descrevem a base atual. Existência de requisito nã
 | RF18 | Alta | Consultar histórico | Filtrar por data e localizar pelo número da comanda |
 | RF19 | Alta | Exibir detalhes da venda | Mostrar itens, quantidades, preços, total e horário |
 | RF20 | Média | Exibir resumo diário | Informar quantidade de vendas, total e ticket médio |
-| RF21 | Alta | Criar backup automático | Gerar cópia datada conforme política |
-| RF22 | Alta | Criar backup manual | Permitir pasta local ou unidade externa |
+| RF21 | Alta | Criar backup automático | Gerar cópia local datada conforme política; com Google conectado, tentar envio opcional sem comprometer a cópia local |
+| RF22 | Alta | Criar backup manual | Permitir pasta local ou unidade externa, cópia para pasta OneDrive e envio direto opcional ao Google Drive autorizado pelo gestor |
 | RF23 | Alta | Validar backup | Verificar formato, versão, integridade e checksum |
 | RF24 | Alta | Restaurar backup | Validar, criar cópia preventiva, restaurar e reiniciar |
 | RF25 | Média | Configurar estabelecimento | Manter nome, números de comanda e pasta de backup |
@@ -38,7 +38,7 @@ RF01–RF29 e RNF01–RNF21 descrevem a base atual. Existência de requisito nã
 
 | Código | Categoria | Requisito | Verificação |
 | --- | --- | --- | --- |
-| RNF01 | Disponibilidade | Todas as funções do MVP operam sem internet | Teste com rede desconectada |
+| RNF01 | Disponibilidade | Operação local, backup e restauração locais funcionam sem internet; autorização e envio opcionais ao Google Drive exigem rede | Teste com rede desconectada e falha remota preservando backup local |
 | RNF02 | Desempenho | Ação comum responde em até 500 ms no equipamento-alvo | 95% das medições |
 | RNF03 | Inicialização | Aplicativo pronto em até 5 segundos em condição normal | Média de cinco execuções |
 | RNF04 | Integridade | Encerramento usa transação ACID | Teste de falha e rollback |
@@ -61,6 +61,14 @@ RF01–RF29 e RNF01–RNF21 descrevem a base atual. Existência de requisito nã
 | RNF21 | Controle de logs | Logs devem ter rotação e limite configurado para não preencher o disco | Teste de retenção e tamanho |
 
 ## Dependências
+
+Extensão em desenvolvimento de 22/10/2026: medidas e conexão OAuth do Google Drive
+detalhadas em [Drive e medidas](../../specs/2026-10-22-drive-oauth-medidas-venda.md).
+A conexão é configurada por gestor com permissão de backup; sem conta conectada,
+o convite aparece ao entrar nesse perfil e permite adiar após cinco segundos.
+Não há credenciais reais incluídas. A preparação no Google Cloud e os limites de
+publicação estão no [guia de configuração](22-configuracao-google-drive.md).
+Esta entrega não integra estoque nem altera cobrança externa.
 
 RF29: informar, corrigir e remover um nome opcional de até 80 caracteres na comanda
 aberta; exibir na grade, no encerramento e no histórico. O número continua sendo

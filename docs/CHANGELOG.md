@@ -1,5 +1,14 @@
 # Histórico de alterações
 
+## Em desenvolvimento — 2026-10-22 — Google Drive e medidas de venda
+
+- Convite ao entrar como gestor sem Google conectado, com adiar e fechamento liberados somente após cinco segundos. Modal WPF segue os neutros, Segoe UI, cantos retos e cabeçalho compartilhado.
+- Integração preparada para importar JSON OAuth de aplicativo para computador, autorizar no navegador com PKCE e guardar tokens com DPAPI por usuário Windows. Nenhuma credencial real ou conta conectada incluída.
+- Backup local primeiro; envio direto opcional ao Google Drive em lotes marcados como incompletos até todos os arquivos serem aceitos. Falha remota preserva a cópia local. OneDrive mantém pasta sincronizada; sem retenção ou restauração direta da nuvem.
+- Cadastro/edição com UN, KG e L, quantidade fracionada de até três casas para KG/L, snapshot da medida no item e arredondamento do subtotal para centavos. Migração para milésimos preserva IDs, totais e histórico; retorno exige backup anterior.
+- RF03/RF04/RF09/RF10/RF12/RF19/RF21–RF24, RN04–RN08/RN19, CT03–CT06/CT08/CT12–CT17. Requisitos, regras, aceitação e rastreabilidade atualizados.
+- Dez capturas atuais e revisão independente `ship` restrita à extensão visual e código amostrado. Testes locais e HTTP simulados registrados na [especificação](../specs/2026-10-22-drive-oauth-medidas-venda.md); OAuth, upload e restauração com conta Google real continuam pendentes. [Guia de configuração](docs/22-configuracao-google-drive.md). Sem alteração dos instaladores publicados.
+
 ## Documentação - 2026-10-05 - Análise de requisitos
 
 - README reorganizado com recursos atuais, dois downloads Windows, APK, fluxo e arquitetura planejada.

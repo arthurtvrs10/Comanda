@@ -180,3 +180,14 @@ Nenhuma licença de uso do código foi definida. A licença comercial de ativaç
 A compilação local inclui categorias contextuais, pesquisa de funcionalidades/produtos e modos claro/escuro persistidos. Selecionar uma categoria mantém a tela atual; clicar em um comando abre o módulo existente. Grupos recolhem em menu em janelas menores. Os instaladores publicados ainda não incluem esta revisão.
 
 [Mapeamento, uso e validação](specs/2026-10-20-ribbon-temas.md).
+
+## Google Drive e medidas em desenvolvimento
+
+A compilação local prepara conexão Google por OAuth no navegador e envio opcional
+de backup, mantendo a cópia local; ainda exige configurar um projeto Google Cloud
+e validar uma conta real. Ao entrar como gestor sem conexão, o convite permite
+configurar depois após cinco segundos. OneDrive continua por pasta sincronizada.
+Produtos aceitam UN, KG ou L, com até três casas decimais para KG/L e preservação
+da medida nos itens históricos. Os instaladores publicados ainda não incluem
+esta extensão. [Configurar Google Drive](docs/docs/22-configuracao-google-drive.md)
+· [Contratos, migração e evidências](specs/2026-10-22-drive-oauth-medidas-venda.md).

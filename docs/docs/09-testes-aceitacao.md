@@ -11,7 +11,7 @@ CT01–CT24 são critérios da base atual; resultados dependem de evidências na
 | CT03 | Adicionar produto | Duas inclusões de R$ 18,00 resultam em quantidade 2 e subtotal R$ 36,00 |
 | CT04 | Preservar preço | Alterar produto para R$ 22,00 não muda item lançado por R$ 18,00 |
 | CT05 | Corrigir quantidade | Reduzir 3 para 2 recalcula e persiste subtotal e total |
-| CT06 | Recusar quantidade inválida | Valor negativo ou fracionário não é gravado |
+| CT06 | Recusar quantidade inválida | Negativo/zero é recusado; UN recusa frações |
 | CT07 | Recusar comanda vazia | Nenhuma venda é criada |
 | CT08 | Exibir total | Itens de R$ 18,00, R$ 18,00 e R$ 6,00 mostram total R$ 42,00 |
 | CT09 | Falha na cobrança externa | Voltar mantém comanda aberta e não cria venda |
@@ -47,6 +47,11 @@ Ver [Licenciamento offline](20-licenciamento-offline.md).
 - categoria inativa;
 - desativação com histórico;
 - busca sem diferenciar maiúsculas.
+- cadastro e edição preservam UN, KG ou L e exibem preço por medida;
+- KG/L aceitam até três casas decimais, recusam a quarta casa e exibem medida no item e histórico;
+- alterar a medida do produto preserva o snapshot dos itens existentes;
+- R$ 1,00 × 1,005 KG gera subtotal de R$ 1,01; total soma subtotais arredondados;
+- migração converte quantidades e contadores legados para milésimos sem alterar IDs, totais ou histórico; retorno à versão anterior exige backup anterior.
 
 ### Concorrência e transação
 
@@ -65,6 +70,15 @@ Ver [Licenciamento offline](20-licenciamento-offline.md).
 - checksum inválido;
 - base antiga que exige migração;
 - interrupção antes da substituição.
+- convite ao entrar como gestor sem Google conectado, com adiar e fechamento bloqueados antes de cinco segundos;
+- ausência de credenciais, JSON incompatível, cancelamento e expiração da autorização sem falsa indicação de conexão;
+- PKCE, renovação de token protegido por usuário Windows, revogação e desconexão em testes simulados;
+- lote Google marcado como completo somente após envio de banco, checksum e fotos disponíveis;
+- falha remota mantém backup local com checksum e informa aviso; conexão e envio reais exigem credenciais e conta de teste;
+- restauração de lote Google baixado manualmente, mantendo arquivos companheiros na mesma pasta.
+
+Os contratos desta extensão, as evidências disponíveis e os ensaios ainda pendentes
+estão em [Drive e medidas](../../specs/2026-10-22-drive-oauth-medidas-venda.md).
 
 ### Windows e recuperação
 
