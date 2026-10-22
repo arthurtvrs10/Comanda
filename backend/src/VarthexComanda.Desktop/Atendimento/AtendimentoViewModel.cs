@@ -603,7 +603,7 @@ public partial class AtendimentoViewModel : ObservableObject
                     NomeCliente = comanda.NomeCliente,
                     NumeroMesa = comanda.NumeroMesa,
                     TotalFormatado = CentavosParaMoedaConverter.Formatar(comanda.TotalCentavos),
-                    AbertaEm = comanda.AbertaEm, Prioridade = comanda.Prioridade, TempoFormatado = ComandaSlotItem.FormatarTempo(comanda.AbertaEm, agora)
+                    AbertaEm = comanda.AbertaEm, Prioridade = comanda.Prioridade, Bloqueada = comanda.Bloqueada, TempoFormatado = ComandaSlotItem.FormatarTempo(comanda.AbertaEm, agora)
                 });
             }
             else
@@ -629,7 +629,7 @@ public partial class AtendimentoViewModel : ObservableObject
                 NomeCliente = comanda.NomeCliente,
                 NumeroMesa = comanda.NumeroMesa,
                 TotalFormatado = CentavosParaMoedaConverter.Formatar(comanda.TotalCentavos),
-                AbertaEm = comanda.AbertaEm, Prioridade = comanda.Prioridade, TempoFormatado = ComandaSlotItem.FormatarTempo(comanda.AbertaEm, agora)
+                AbertaEm = comanda.AbertaEm, Prioridade = comanda.Prioridade, Bloqueada = comanda.Bloqueada, TempoFormatado = ComandaSlotItem.FormatarTempo(comanda.AbertaEm, agora)
             });
         }
     }

@@ -7,6 +7,9 @@ public class ComandaSlotItem : ObservableObject
 {
     public required int Numero { get; init; }
     public required bool Aberta { get; init; }
+    public bool Bloqueada { get; init; }
+    public bool EmFechamento => Aberta && Bloqueada;
+    public string SituacaoTexto => EmFechamento ? "Em fechamento" : PrioridadeTexto;
     public int? ComandaId { get; init; }
     public string? NomeCliente { get; init; }
     public int? NumeroMesa { get; init; }

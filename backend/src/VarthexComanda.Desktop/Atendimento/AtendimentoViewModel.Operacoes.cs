@@ -12,7 +12,7 @@ public partial class AtendimentoViewModel
     public Func<bool>? PrepararSaidaPedido { get; set; }
     [ObservableProperty] private bool exibicaoCompleta = true;
     public bool PodeAlterarPedido => ComandaAtual is { Bloqueada: false };
-    public string SituacaoPedido => ComandaAtual?.Bloqueada == true ? "Bloqueado" : "Em aberto";
+    public string SituacaoPedido => ComandaAtual?.Bloqueada == true ? "Em fechamento" : "Em aberto";
     public string IdentificacaoPedido => $"Pedido #{ComandaAtual?.CodigoPedido ?? ComandaAtual?.Id}";
     public string NumeroPedidoDestacado => $"#{ComandaAtual?.CodigoPedido ?? ComandaAtual?.Id}";
     public string DescricaoPrioridadePedido => "Prioridade: " + NomePrioridade(ComandaAtual?.Prioridade ?? PrioridadeComanda.Normal) + ". Clique para alterar.";
@@ -33,7 +33,7 @@ public partial class AtendimentoViewModel
     private bool PermitirAlteracao()
     {
         if (ComandaAtual is not { Bloqueada: true }) return true;
-        Mensagem = "Pedido bloqueado. Desbloqueie para alterar os itens.";
+        Mensagem = "Comanda em fechamento. Desative o fechamento para alterar os itens.";
         return false;
     }
 
@@ -52,7 +52,7 @@ public partial class AtendimentoViewModel
     {
         var comanda = _comandas.DefinirBloqueio(ComandaAtual.Id, bloqueada);
         return new() { Comanda = comanda, Itens = _comandas.BuscarComItens(comanda.Id)!.Itens };
-    }, bloqueada ? "Pedido bloqueado para alterações. O pagamento continua disponível." : "Pedido desbloqueado.");
+    }, bloqueada ? "Comanda em fechamento. O pagamento continua disponível." : "Comanda reaberta para alterações.");
 
     public bool SalvarAtendimento(string? responsavel, string? observacao) => ComandaAtual is not null && ExecutarOperacaoPedido(() =>
     {

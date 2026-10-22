@@ -33,12 +33,12 @@
         </Style>
         <Style x:Key="NumeroPrioridade" TargetType="TextBlock">
             <Setter Property="Foreground" Value="{DynamicResource PrioridadeNumeroNormal}"/>
-            <Style.Triggers><DataTrigger Binding="{Binding ComandaAtual.Prioridade}" Value="Alta"><Setter Property="Foreground" Value="{DynamicResource PrioridadeNumeroMediana}"/></DataTrigger><DataTrigger Binding="{Binding ComandaAtual.Prioridade}" Value="Urgente"><Setter Property="Foreground" Value="{DynamicResource PrioridadeNumeroAlta}"/></DataTrigger></Style.Triggers>
+            <Style.Triggers><DataTrigger Binding="{Binding ComandaAtual.Prioridade}" Value="Alta"><Setter Property="Foreground" Value="{DynamicResource PrioridadeNumeroMediana}"/></DataTrigger><DataTrigger Binding="{Binding ComandaAtual.Prioridade}" Value="Urgente"><Setter Property="Foreground" Value="{DynamicResource PrioridadeNumeroAlta}"/></DataTrigger><DataTrigger Binding="{Binding ComandaAtual.Bloqueada}" Value="True"><Setter Property="Foreground" Value="{DynamicResource PrioridadeNumeroMediana}"/></DataTrigger></Style.Triggers>
         </Style>
         <Style x:Key="SituacaoPrioridade" TargetType="Button" BasedOn="{StaticResource BotaoPedido}">
             <Setter Property="Background" Value="{DynamicResource PrioridadeNormal}"/><Setter Property="Foreground" Value="White"/>
             <Setter Property="BorderThickness" Value="0"/><Setter Property="FontWeight" Value="SemiBold"/>
-            <Style.Triggers><DataTrigger Binding="{Binding ComandaAtual.Prioridade}" Value="Alta"><Setter Property="Background" Value="{DynamicResource PrioridadeMediana}"/><Setter Property="Foreground" Value="#302500"/></DataTrigger><DataTrigger Binding="{Binding ComandaAtual.Prioridade}" Value="Urgente"><Setter Property="Background" Value="{DynamicResource PrioridadeAlta}"/></DataTrigger></Style.Triggers>
+            <Style.Triggers><DataTrigger Binding="{Binding ComandaAtual.Prioridade}" Value="Alta"><Setter Property="Background" Value="{DynamicResource PrioridadeMediana}"/><Setter Property="Foreground" Value="#302500"/></DataTrigger><DataTrigger Binding="{Binding ComandaAtual.Prioridade}" Value="Urgente"><Setter Property="Background" Value="{DynamicResource PrioridadeAlta}"/></DataTrigger><DataTrigger Binding="{Binding ComandaAtual.Bloqueada}" Value="True"><Setter Property="Background" Value="{DynamicResource PrioridadeMediana}"/><Setter Property="Foreground" Value="#302500"/></DataTrigger></Style.Triggers>
         </Style>
         <Style x:Key="IconePedido" TargetType="Path">
             <Setter Property="Width" Value="20"/><Setter Property="Height" Value="20"/>
@@ -134,6 +134,12 @@
                                                 <Setter Property="BorderBrush" Value="{DynamicResource ColorBF701F}" />
                                                 <Setter Property="Foreground" Value="White" />
                                             </DataTrigger>
+                                            <DataTrigger Binding="{Binding EmFechamento}" Value="True">
+                                                <Setter Property="Background" Value="{DynamicResource PrioridadeMediana}" />
+                                                <Setter Property="BorderBrush" Value="{DynamicResource PrioridadeMediana}" />
+                                                <Setter Property="Foreground" Value="#302500" />
+                                                <Setter Property="AutomationProperties.ItemStatus" Value="Em fechamento" />
+                                            </DataTrigger>
                                             <DataTrigger Value="True">
                                                 <DataTrigger.Binding>
                                                     <MultiBinding Converter="{StaticResource NumeroPesquisado}">
@@ -156,7 +162,7 @@
                                     </Grid.RowDefinitions>
                                     <StackPanel Grid.Row="0"><DockPanel>
                                         <Ellipse DockPanel.Dock="Right" Width="10" Height="10" Margin="6,0,0,0" Fill="{Binding CorPrioridade}" ToolTip="{Binding PrioridadeTexto}" AutomationProperties.Name="{Binding PrioridadeTexto}" />
-                                        <TextBlock Text="{Binding PrioridadeTexto}" FontSize="11" FontWeight="Bold" />
+                                        <TextBlock Text="{Binding SituacaoTexto}" FontSize="11" FontWeight="Bold" />
                                     </DockPanel>
                                     <TextBlock Text="{Binding TempoFormatado}" FontSize="10" Margin="0,2,0,0" />
                                     </StackPanel>
@@ -228,7 +234,7 @@
                                 <ComboBox x:Name="ResponsavelPedido" Background="{DynamicResource AjudaSurface}" Foreground="{DynamicResource AjudaInk}" BorderBrush="{DynamicResource AjudaLine}" MinHeight="32" FontSize="13" SelectionChanged="ResponsavelPedido_SelectionChanged" AutomationProperties.Name="Responsável pelo pedido" IsEnabled="{Binding PodeAlterarPedido}"/>
                                 <TextBlock Text="Observação do pedido" Margin="0,10,0,4"/>
                                 <TextBox x:Name="ObservacaoPedido" Background="{DynamicResource AjudaSurface}" Foreground="{DynamicResource AjudaInk}" BorderBrush="{DynamicResource AjudaLine}" FontSize="13" Padding="6" Text="{Binding ComandaAtual.Observacao, Mode=OneWay}" AcceptsReturn="True" TextWrapping="Wrap" Height="60" MinHeight="32" MaxLength="1000" VerticalScrollBarVisibility="Auto" LostKeyboardFocus="ObservacaoPedido_LostKeyboardFocus" AutomationProperties.Name="Observação do pedido" IsEnabled="{Binding PodeAlterarPedido}"/>
-                                <CheckBox x:Name="BloqueioPedido" Style="{StaticResource AlternanciaCompacta}" Content="Bloquear pedido" FontSize="13" Margin="0,10,0,8" IsChecked="{Binding ComandaAtual.Bloqueada, Mode=OneWay}" Click="BloqueioPedido_Click" ToolTip="Impede adicionar, alterar e transferir itens. Permite pagar e imprimir."/>
+                                <CheckBox x:Name="BloqueioPedido" Style="{StaticResource AlternanciaCompacta}" Content="Em fechamento" FontSize="13" Margin="0,10,0,8" IsChecked="{Binding ComandaAtual.Bloqueada, Mode=OneWay}" Click="BloqueioPedido_Click" ToolTip="Inicia o fechamento e impede alterações nos itens. Permite pagar e imprimir. Desative para voltar a alterar."/>
                             </StackPanel>
                         </ScrollViewer>
                     </DockPanel>

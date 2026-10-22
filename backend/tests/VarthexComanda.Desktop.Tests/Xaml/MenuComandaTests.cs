@@ -21,7 +21,7 @@ public class MenuComandaTests
             vm.DiminuirQuantidadeCommand.Execute(vm.Itens.First());
             vm.RemoverCommand.Execute(vm.Itens.First());
             Assert.Equal(2, vm.Itens.Single().Quantidade);
-            Assert.Contains("bloqueado", vm.Mensagem);
+            Assert.Contains("em fechamento", vm.Mensagem);
             Assert.True(vm.VerTotalCommand.CanExecute(null));
         });
     }
@@ -40,7 +40,7 @@ public class MenuComandaTests
             Assert.Contains(mais.Items.OfType<MenuItem>(), i => i.Header.ToString()!.StartsWith("Imprimir fichas"));
             Assert.Contains(mais.Items.OfType<MenuItem>(), i => i.Header.Equals("Enviar para WhatsApp"));
             var imprimir = view.CriarMenuImprimir(botao);
-            Assert.Contains(imprimir.Items.OfType<MenuItem>(), i => i.Header.Equals("Imprimir conta e bloquear"));
+            Assert.Contains(imprimir.Items.OfType<MenuItem>(), i => i.Header.Equals("Imprimir conta e iniciar fechamento"));
             Assert.Contains(imprimir.Items.OfType<MenuItem>(), i => i.Header.ToString()!.StartsWith("Imprimir na cozinha (2"));
             Assert.Equal(0, vm.Itens.Single().QuantidadeCozinha);
             vm.Itens.Single().QuantidadeCozinha = 2;

@@ -21,7 +21,7 @@ public partial class MainWindow
             var texto = ComprovanteConta.MontarTexto(LerPreferencias(), _configuracaoView.ViewModel.NomeEstabelecimento, comanda.Numero, vm.Itens, comanda.CodigoPedido, false, numeracao?.UsarComoSenhaAtendimento == true ? comanda.Numero : null);
             var enviada = ComprovanteConta.Visualizar(owner, texto, impressora);
             if (enviada && saida == SaidaPedido.ContaBloquear && !vm.DefinirBloqueio(true))
-                throw new InvalidOperationException("A conta foi enviada, mas não foi possível bloquear o pedido. Bloqueie-o antes de continuar.");
+                throw new InvalidOperationException("A conta foi enviada, mas não foi possível iniciar o fechamento. Ative Em fechamento antes de continuar.");
             return enviada;
         }
         var cozinha = saida is SaidaPedido.CozinhaNovos or SaidaPedido.CozinhaTodos;

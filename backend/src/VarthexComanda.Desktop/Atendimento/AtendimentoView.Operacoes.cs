@@ -125,7 +125,7 @@ public partial class AtendimentoView
         var menu = MenuPedido(botao);
         var temItens = ViewModel.Itens.Count > 0;
         Acao(menu, "Imprimir conta", () => Imprimir(SaidaPedido.Conta), temItens);
-        Acao(menu, "Imprimir conta e bloquear", () => Imprimir(SaidaPedido.ContaBloquear), temItens);
+        Acao(menu, "Imprimir conta e iniciar fechamento", () => Imprimir(SaidaPedido.ContaBloquear), temItens);
         menu.Items.Add(new Separator());
         var novos = ViewModel.Itens.Sum(i => Math.Max(0, i.Quantidade - i.QuantidadeCozinha));
         Acao(menu, novos > 0 ? $"Imprimir na cozinha ({novos} novo(s))" : "Não há itens novos para imprimir na cozinha", () => Imprimir(SaidaPedido.CozinhaNovos), novos > 0);
@@ -167,7 +167,7 @@ public partial class AtendimentoView
         topo.Children.Add(new TextBlock { Text = "Comanda de destino", Margin = new Thickness(0,0,0,6) });
         var destino = new ComboBox { ItemsSource = destinos.Select(c => new { c.Id, Texto = $"Comanda {c.Numero:00} · {CentavosParaMoedaConverter.Formatar(c.TotalCentavos)}" }).ToArray(), DisplayMemberPath = "Texto", SelectedValuePath = "Id", MinHeight = 36 };
         System.Windows.Automation.AutomationProperties.SetName(destino, "Comanda de destino"); topo.Children.Add(destino);
-        var aviso = new TextBlock { Text = destinos.Length == 0 ? "Abra outra comanda e desbloqueie-a antes de transferir ou copiar os itens." : "Selecione os itens. A transferência mantém os preços e libera os itens da origem; a cópia mantém os dois pedidos.", TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0,12,0,12) }; topo.Children.Add(aviso);
+        var aviso = new TextBlock { Text = destinos.Length == 0 ? "Abra outra comanda fora de fechamento antes de transferir ou copiar os itens." : "Selecione os itens. A transferência mantém os preços e libera os itens da origem; a cópia mantém os dois pedidos.", TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0,12,0,12) }; topo.Children.Add(aviso);
         var rodape = new StackPanel(); DockPanel.SetDock(rodape, Dock.Bottom); raiz.Children.Add(rodape);
         var copiar = new CheckBox { Content = "Copiar itens e manter na origem", Margin = new Thickness(0,12,0,12) }; rodape.Children.Add(copiar);
         var erro = new TextBlock { TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0,0,0,8) }; rodape.Children.Add(erro);
