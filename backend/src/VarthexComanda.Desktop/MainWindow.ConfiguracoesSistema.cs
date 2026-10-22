@@ -60,6 +60,7 @@ public partial class MainWindow
         var owner=System.Windows.Application.Current.Windows.OfType<Window>().FirstOrDefault(w=>w.IsActive)??this;
         var numeracao=_repositorioSistema is null ? null : new NumeracaoComandasService(_repositorioSistema).Carregar();
         var impressora=_repositorioSistema is null ? null : new ConfiguracoesImpressaoService(_repositorioSistema).ObterCaixaConfigurado();
-        ComprovanteConta.Visualizar(owner,ComprovanteConta.MontarTexto(LerPreferencias(),_configuracaoView.ViewModel.NomeEstabelecimento,comanda.Numero,_atendimentoView.ViewModel.Itens,comanda.CodigoPedido,false,numeracao?.UsarComoSenhaAtendimento==true?comanda.Numero:null),impressora);
+        ComprovanteConta.Visualizar(owner,ComprovanteConta.MontarTexto(LerPreferencias(),_configuracaoView.ViewModel.NomeEstabelecimento,comanda.Numero,_atendimentoView.ViewModel.Itens,comanda.CodigoPedido,false,numeracao?.UsarComoSenhaAtendimento==true?comanda.Numero:null),impressora,
+            criarDocumento:mm=>CupomTermico.Conta(LerPreferencias(),_configuracaoView.ViewModel.NomeEstabelecimento,comanda,_atendimentoView.ViewModel.Itens,mm,numeracao?.UsarComoSenhaAtendimento==true?comanda.Numero:null));
     }
 }

@@ -94,6 +94,14 @@ public sealed class JanelaImpressoras : Window
             radio.Checked += (_, _) => { if (_mostrando) return; saida.Modo = modo; Mostrar(); }; modos.Children.Add(radio);
         }
         _form.Children.Add(modos);
+        if(saida.Modo is ModoImpressora.Instalada or ModoImpressora.Compartilhada)
+        {
+            _form.Children.Add(new TextBlock { Text="Largura do papel térmico",Margin=new Thickness(0,0,0,4) });
+            var papel=new ComboBox { ItemsSource=new[]{58,80},SelectedItem=saida.LarguraPapelMm,Width=110,HorizontalAlignment=HorizontalAlignment.Left,Margin=new Thickness(0,0,0,12) };
+            System.Windows.Automation.AutomationProperties.SetName(papel,"Largura do papel em milímetros");
+            papel.SelectionChanged+=(_,_)=>{if(!_mostrando&&papel.SelectedItem is int mm)saida.LarguraPapelMm=mm;};_form.Children.Add(papel);
+            Texto("Medidas em mm. A prévia permite comparar 58 e 80 mm antes de imprimir.");
+        }
         if (saida.Modo == ModoImpressora.Desativada)
         {
             _form.Children.Add(new TextBlock { Text = LocalAtual == Caixa ? "Impressão desabilitada." : "Somente monitor de preparo.", FontSize = 19, HorizontalAlignment = HorizontalAlignment.Center, Margin = new Thickness(10, 115, 10, 16), TextWrapping = TextWrapping.Wrap });
@@ -157,6 +165,16 @@ public static class ImpressaoWindows
     public static void Testar(PreferenciaImpressora impressora) => ImprimirTexto(impressora,
         $"COMANDA · POR VARTHEX\nTESTE DE IMPRESSÃO\n{DateTime.Now:dd/MM/yyyy HH:mm:ss}\n\nImpressora: {impressora.Caminho}\n\nSe você leu este cupom, a saída está funcionando.", "Teste de impressão Varthex");
     public static void ImprimirTexto(PreferenciaImpressora impressora, string texto, string titulo)
+        => ImprimirDocumento(impressora,CupomTermico.Texto(texto,impressora.LarguraPapelMm),titulo);
+
+    public static void AjustarPagina(FlowDocument documento,PrintDialog dialogo)
+    {
+        if(!double.IsFinite(dialogo.PrintableAreaWidth)||dialogo.PrintableAreaWidth<=16||!double.IsFinite(dialogo.PrintableAreaHeight)||dialogo.PrintableAreaHeight<=16)
+            throw new InvalidOperationException("A impressora não informou uma área de impressão válida.");
+        CupomTermico.AjustarLargura(documento,dialogo.PrintableAreaWidth);
+        documento.PageHeight=dialogo.PrintableAreaHeight;
+    }
+    public static void ImprimirDocumento(PreferenciaImpressora impressora, FlowDocument documento, string titulo)
     {
         ConfiguracoesImpressaoService.Validar(impressora, false);
         if (!impressora.Habilitada) throw new InvalidOperationException("A impressão do caixa está desabilitada.");
@@ -165,8 +183,7 @@ public static class ImpressaoWindows
         using PrintServer servidor = partes.Length == 2 ? new PrintServer(@"\\" + partes[0]) : new LocalPrintServer();
         using var fila = servidor.GetPrintQueue(partes.Length == 2 ? partes[1] : caminho);
         var dialogo = new PrintDialog { PrintQueue = fila, PrintTicket = fila.DefaultPrintTicket };
-        var documento = new FlowDocument(new Paragraph(new Run(texto))) { FontFamily = new FontFamily("Consolas"), FontSize = 11, PagePadding = new Thickness(12), Foreground = Brushes.Black, Background = Brushes.White };
-        documento.PageWidth = dialogo.PrintableAreaWidth; documento.PageHeight = dialogo.PrintableAreaHeight; documento.ColumnWidth = Math.Max(1, dialogo.PrintableAreaWidth - 24);
+        AjustarPagina(documento,dialogo);
         dialogo.PrintDocument(((IDocumentPaginatorSource)documento).DocumentPaginator, titulo);
     }
 }

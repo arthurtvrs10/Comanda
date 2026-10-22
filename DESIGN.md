@@ -1,5 +1,13 @@
 # Comanda, por Varthex — tela principal
 
+## Notinhas térmicas — 22/10/2026
+
+Modelos reais em `Configuracao/CupomTermico.cs`: conta do cliente, pedido da cozinha, reimpressão identificada, fichas de consumação e teste de impressora. Impressão em preto e branco; cabeçalho compacto com nome do estabelecimento, número do CNPJ sem rótulo e endereço compacto, apenas quando preenchidos e habilitados. Não imprimir razão social, telefone ou campos vazios. Logo preto Comanda por Varthex e assinatura Sistema de gestão no rodapé.
+
+Conta agrupa itens conforme a preferência, apresenta produto, quantidade/unidade, preço unitário, subtotal, observações opcionais e total destacado. Cozinha não mostra valores, destaca quantidades e observações e preserva o envio somente dos itens selecionados/novos; reimpressão tem aviso próprio e não avança os contadores. Fichas mantêm uma ficha por unidade ou uma por quantidade pesada. Não alterar registros de impressão antes da confirmação de envio à fila.
+
+Papel de 58 ou 80 mm por impressora, persistido nas configurações; instalações anteriores usam 80 mm. A prévia permite comparar os tamanhos sem alterar a preferência salva. A área útil informada pelo driver limita a largura do documento e das colunas. O driver continua responsável pela paginação física e corte; o aplicativo não envia comandos ESC/POS. Configurações → Ajustes de cupom → Visualizar exemplo do cupom permite selecionar os cinco modelos com dados de exemplo. Não enviar impressão automaticamente ao abrir a prévia.
+
 ## Identidade aplicada — 22/10/2026
 
 ### Histórico de vendas no padrão de pedidos

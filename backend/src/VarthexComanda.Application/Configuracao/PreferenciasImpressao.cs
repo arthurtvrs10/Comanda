@@ -8,6 +8,7 @@ public sealed class PreferenciaImpressora
 {
     public ModoImpressora Modo { get; set; }
     public string Caminho { get; set; } = "";
+    public int LarguraPapelMm { get; set; } = 80;
     public bool Habilitada => Modo != ModoImpressora.Desativada;
 }
 
@@ -34,7 +35,8 @@ public sealed class ConfiguracoesImpressaoService(IConfiguracaoRepository reposi
                 p.Cozinhas[local.Nome] = new()
                 {
                     Modo = !local.Imprimir ? ModoImpressora.Desativada : mesmaDoCaixa ? ModoImpressora.MesmaDoCaixa : local.Impressora.StartsWith(@"\\") ? ModoImpressora.Compartilhada : ModoImpressora.Instalada,
-                    Caminho = local.Imprimir ? local.Impressora : ""
+                    Caminho = local.Imprimir ? local.Impressora : "",
+                    LarguraPapelMm = anterior?.LarguraPapelMm ?? 80
                 };
         }
         return p;
@@ -61,6 +63,7 @@ public sealed class ConfiguracoesImpressaoService(IConfiguracaoRepository reposi
     }
     public static void Validar(PreferenciaImpressora p, bool cozinha)
     {
+        if(p.LarguraPapelMm is not (58 or 80))throw new ArgumentException("Selecione papel de 58 mm ou 80 mm.");
         if (!Enum.IsDefined(p.Modo) || (!cozinha && p.Modo == ModoImpressora.MesmaDoCaixa)) throw new ArgumentException("Selecione uma saída válida para a impressora.");
         if (p.Modo is ModoImpressora.Desativada or ModoImpressora.MesmaDoCaixa) return;
         if (string.IsNullOrWhiteSpace(p.Caminho) || p.Caminho.Length > 260 || p.Caminho.Any(char.IsControl)) throw new ArgumentException("Selecione uma impressora ou informe o compartilhamento do Windows.");

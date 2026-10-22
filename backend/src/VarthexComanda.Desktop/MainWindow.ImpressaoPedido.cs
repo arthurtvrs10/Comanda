@@ -19,7 +19,7 @@ public partial class MainWindow
         {
             var numeracao = _repositorioSistema is null ? null : new NumeracaoComandasService(_repositorioSistema).Carregar();
             var texto = ComprovanteConta.MontarTexto(LerPreferencias(), _configuracaoView.ViewModel.NomeEstabelecimento, comanda.Numero, vm.Itens, comanda.CodigoPedido, false, numeracao?.UsarComoSenhaAtendimento == true ? comanda.Numero : null);
-            var enviada = ComprovanteConta.Visualizar(owner, texto, impressora);
+            var enviada = ComprovanteConta.Visualizar(owner, texto, impressora, criarDocumento:mm=>CupomTermico.Conta(LerPreferencias(),_configuracaoView.ViewModel.NomeEstabelecimento,comanda,vm.Itens,mm,numeracao?.UsarComoSenhaAtendimento==true?comanda.Numero:null));
             if (enviada && saida == SaidaPedido.ContaBloquear && !vm.DefinirBloqueio(true))
                 throw new InvalidOperationException("A conta foi enviada, mas não foi possível iniciar o fechamento. Ative Em fechamento antes de continuar.");
             return enviada;
@@ -76,7 +76,9 @@ public partial class MainWindow
                     if (!string.IsNullOrWhiteSpace(item.Observacao)) linhas.Add(item.Observacao);
                 }
         }
-        var impressa = ComprovanteConta.Visualizar(owner, string.Join("\n", linhas), impressora, titulo);
+        var impressa = ComprovanteConta.Visualizar(owner, string.Join("\n", linhas), impressora, titulo,
+            mm=>cozinha?CupomTermico.Producao(LerPreferencias(),_configuracaoView.ViewModel.NomeEstabelecimento,comanda,vm.Itens,quantidades,reimprimir,mm)
+                :CupomTermico.Fichas(LerPreferencias(),_configuracaoView.ViewModel.NomeEstabelecimento,comanda,vm.Itens,quantidades,mm));
         if (impressa && !reimprimir)
         {
             try { vm.RegistrarImpressao(quantidades, cozinha); }

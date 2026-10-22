@@ -19,11 +19,12 @@ public class PreferenciasImpressaoTests
         var repo = new FakeConfiguracaoRepository(); var sistema = new ConfiguracoesSistemaService(repo);
         var dados = sistema.Carregar(); dados.Cidade = "Recife"; dados.Cozinhas[0].Produtos = [1, 2]; sistema.Salvar(dados, "Loja", 15, DateTime.UtcNow);
         var service = new ConfiguracoesImpressaoService(repo); var p = service.Carregar();
-        p.Caixa = new() { Modo = ModoImpressora.Instalada, Caminho = "Cupom USB" };
-        p.Cozinhas["Cozinha principal"] = new() { Modo = ModoImpressora.Compartilhada, Caminho = @"\\cozinha\termica" };
+        p.Caixa = new() { Modo = ModoImpressora.Instalada, Caminho = "Cupom USB", LarguraPapelMm=58 };
+        p.Cozinhas["Cozinha principal"] = new() { Modo = ModoImpressora.Compartilhada, Caminho = @"\\cozinha\termica", LarguraPapelMm=58 };
         service.Salvar(p, DateTime.UtcNow);
         var salvo = new ConfiguracoesImpressaoService(repo).Carregar();
         Assert.Equal("Cupom USB", service.ObterCaixaConfigurado()!.Caminho);
+        Assert.Equal(58,salvo.Caixa.LarguraPapelMm);Assert.Equal(58,salvo.Cozinhas["Cozinha principal"].LarguraPapelMm);
         Assert.Equal(@"\\cozinha\termica", salvo.Cozinhas["Cozinha principal"].Caminho);
         var local = sistema.Carregar().Cozinhas[0]; Assert.True(local.Imprimir); Assert.Equal(@"\\cozinha\termica", local.Impressora); Assert.Equal([1, 2], local.Produtos);
         Assert.Equal("Recife", sistema.Carregar().Cidade); Assert.Equal("15", repo.ObterValor("comandas.quantidade_maxima"));

@@ -22,10 +22,12 @@ public class JanelaImpressorasTests
             janela.RaiseEvent(new RoutedEventArgs(FrameworkElement.LoadedEvent));
             var raiz = (FrameworkElement)janela.Content;
             Descendentes(raiz).OfType<RadioButton>().Single(b => Equals(b.Content, "Impressoras instaladas")).IsChecked = true;
-            Descendentes(raiz).OfType<ComboBox>().Single().SelectedIndex = 0;
+            Descendentes(raiz).OfType<ComboBox>().Single(c=>System.Windows.Automation.AutomationProperties.GetName(c)=="Impressora").SelectedIndex = 0;
+            Descendentes(raiz).OfType<ComboBox>().Single(c=>System.Windows.Automation.AutomationProperties.GetName(c)=="Largura do papel em milímetros").SelectedItem = 58;
             Assert.True(janela.TemAlteracoes); Assert.Equal(0, testes);
             Descendentes(raiz).OfType<Button>().Single(b => Equals(b.Content, "Salvar")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Assert.False(janela.TemAlteracoes); Assert.Equal(0, testes); Assert.Equal("Cupom USB", service.ObterCaixaConfigurado()!.Caminho);
+            Assert.Equal(58,service.ObterCaixaConfigurado()!.LarguraPapelMm);
             Descendentes(raiz).OfType<Button>().Single(b => Equals(b.Content, "Testar impressora")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); Assert.Equal(1, testes);
             foreach (var escuro in new[] { false, true })
             {
