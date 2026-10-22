@@ -6,3 +6,7 @@ artifacts/
 # Configurações locais dos editores
 .idea/
 .vs/
+
+# Credenciais e autorização local do Google Drive
+**/google-oauth-client.json
+**/google-drive-token.bin*

@@ -29,8 +29,8 @@
        <Button Grid.Column="2" Content="Alterar pasta" Tag="local" Click="ConfigurarPasta_Click"/>
       </Grid>
       <TextBlock Text="{Binding ResumoPastas}" Style="{StaticResource Nota}" Margin="0,0,0,26"/>
-      <TextBlock Text="Backups nas pastas da nuvem" FontWeight="SemiBold" Margin="0,0,0,5"/>
-      <TextBlock Text="Selecione uma pasta já sincronizada pelo Google Drive ou OneDrive neste computador." Style="{StaticResource Nota}" Margin="0,0,0,12"/>
+      <TextBlock Text="Backups na nuvem" FontWeight="SemiBold" Margin="0,0,0,5"/>
+      <TextBlock Text="Conecte sua conta Google ou escolha uma pasta sincronizada pelo OneDrive." Style="{StaticResource Nota}" Margin="0,0,0,12"/>
       <Grid IsEnabled="{Binding PodeCriarBackup}">
        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="12"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
        <Border BorderBrush="{DynamicResource AjudaLine}" BorderThickness="1" Padding="14">
@@ -39,8 +39,8 @@
          <TextBlock Text="Google Drive" FontWeight="SemiBold" TextAlignment="Center" Margin="0,0,0,8"/>
          <TextBlock Text="{Binding PastaGoogleDrive}" ToolTip="{Binding PastaGoogleDrive}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" Style="{StaticResource Nota}" Margin="0,0,0,6"/>
          <TextBlock Text="{Binding StatusGoogleDrive}" Style="{StaticResource Nota}" MinHeight="34" Margin="0,0,0,12"/>
-         <Button Content="Configurar" Tag="drive" Click="ConfigurarPasta_Click" AutomationProperties.Name="Configurar Google Drive"/>
-         <Button Content="Desconectar pasta" Tag="drive" Click="DesconectarPasta_Click" Margin="0,6,0,0" MinHeight="28"><Button.Style><Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding GoogleDriveConfigurado}" Value="True"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></Button.Style></Button>
+         <Button Content="Conectar com o Google" Click="ConectarGoogle_Click" AutomationProperties.Name="Conectar Google Drive"/>
+         <Button Content="Desconectar conta" Click="DesconectarGoogle_Click" Margin="0,6,0,0" MinHeight="28"><Button.Style><Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding GoogleDriveConfigurado}" Value="True"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></Button.Style></Button>
         </StackPanel>
        </Border>
        <Border Grid.Column="2" BorderBrush="{DynamicResource AjudaLine}" BorderThickness="1" Padding="14">
@@ -54,7 +54,7 @@
         </StackPanel>
        </Border>
       </Grid>
-      <TextBlock Text="O Varthex grava em Varthex\Backups dentro da pasta escolhida. O envio à nuvem depende do aplicativo de sincronização; confira nele se o envio terminou." Style="{StaticResource Nota}" Margin="0,10,0,0"/>
+      <TextBlock Text="No Google Drive, as cópias ficam em Varthex Backups. No OneDrive, o Varthex grava em Varthex\Backups dentro da pasta escolhida; confira o envio no aplicativo de sincronização." Style="{StaticResource Nota}" Margin="0,10,0,0"/>
      </StackPanel>
      <Border Grid.Column="2" Background="{DynamicResource AjudaLine}"/>
      <StackPanel Grid.Column="4">

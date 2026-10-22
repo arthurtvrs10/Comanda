@@ -30,6 +30,23 @@ public partial class BackupView : UserControl
     }
 
     private async void CriarBackup_Click(object sender, RoutedEventArgs e) => await CriarBackupComProgressoAsync();
+    public void AbrirConexaoGoogle()
+    {
+        if (!ViewModel.PodeCriarBackup || ViewModel.GoogleDrive is not { } conexao) return;
+        new ConectarGoogleDriveView(conexao) { Owner=Window.GetWindow(this) }.ShowDialog();
+        ViewModel.AtualizarGoogleDrive();
+    }
+    private void ConectarGoogle_Click(object sender,RoutedEventArgs e) => AbrirConexaoGoogle();
+    private async void DesconectarGoogle_Click(object sender,RoutedEventArgs e)
+    {
+        if (!ViewModel.PodeCriarBackup || ViewModel.GoogleDrive is not { } conexao) return;
+        if (!new Atendimento.JanelaConfirmador().Confirmar("Desconectar Google Drive", "Os próximos backups continuarão salvos neste computador. As cópias já enviadas ao Google serão preservadas. Deseja desconectar?")) return;
+        ViewModel.EmAndamento=true;
+        using var limite=new CancellationTokenSource(TimeSpan.FromSeconds(30));
+        try { await conexao.DesconectarAsync(limite.Token);ViewModel.EmAndamento=false;ViewModel.ConfigurarPasta("drive",null);ViewModel.Mensagem="Conta Google desconectada."; }
+        catch { ViewModel.Mensagem="Não foi possível desconectar. Verifique a internet e tente novamente."; }
+        finally { ViewModel.EmAndamento=false;ViewModel.AtualizarGoogleDrive(); }
+    }
     private void ConfigurarPasta_Click(object sender, RoutedEventArgs e)
     {
         var destino = (string)((Button)sender).Tag;

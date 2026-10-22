@@ -530,7 +530,7 @@ public class CarregamentoDeXamlTests
             view.Dispatcher.BeginInvoke(new Action(() =>
             {
                 var dialogo = System.Windows.Application.Current.Windows.OfType<Window>()
-                    .Single(w => w.Title == "Novo produto");
+                    .Single(w => w.Title == "Novo produto" && ReferenceEquals(w.DataContext, viewModel));
                 var formulario = (FrameworkElement)dialogo.Content;
                 formulario.UpdateLayout();
                 SalvarPrevia(formulario, "produtos-modal");

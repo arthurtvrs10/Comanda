@@ -10,11 +10,9 @@ namespace VarthexComanda.Desktop.Tests.Homologacao;
 // CT13 — criterio de docs/docs/09-testes-aceitacao.md: cadastro, comanda, total, encerramento e
 // historico funcionam sem rede.
 //
-// ATENCAO, cobertura ESTRUTURAL (por construcao), nao um teste sem rede fisica: falha se qualquer
-// dos quatro assemblies do produto passar a referenciar uma API capaz de falar pela rede. Isso
-// prova que o codigo do produto nao TEM como depender de rede; a prova de operacao com a rede
-// desligada de verdade continua sendo ensaio (docs/homologacao). Bibliotecas de terceiros
-// (EF Core, Serilog, SQLite) nao sao analisadas: so os assemblies do proprio produto.
+// Cobertura estrutural do núcleo: Domain e Application não dependem de APIs de rede.
+// Desktop e Infrastructure agora oferecem backup opcional no Google Drive, autorizado pelo usuário.
+// O ensaio com a rede fisicamente desligada continua descrito em docs/homologacao.
 public class OperacaoOfflinePorConstrucaoTests
 {
     // Assemblies de framework que dao acesso a rede (HTTP, sockets, WebSocket, WebClient/WebRequest,
@@ -44,8 +42,6 @@ public class OperacaoOfflinePorConstrucaoTests
     {
         ["VarthexComanda.Domain"] = typeof(Comanda).Assembly,
         ["VarthexComanda.Application"] = typeof(AbrirComanda).Assembly,
-        ["VarthexComanda.Infrastructure"] = typeof(EfComandaRepository).Assembly,
-        ["VarthexComanda"] = typeof(AtendimentoViewModel).Assembly,
     };
 
     private static List<string> ReferenciasDeRede(Assembly assembly) =>
@@ -56,7 +52,7 @@ public class OperacaoOfflinePorConstrucaoTests
 
     [Fact]
     [Trait("Caso", "CT13")]
-    public void CT13_AssembliesDoProduto_NaoReferenciamApisDeRede()
+    public void CT13_NucleoDePedidosECatalogo_NaoReferenciaApisDeRede()
     {
         foreach (var (nome, assembly) in AssembliesDoProduto())
         {

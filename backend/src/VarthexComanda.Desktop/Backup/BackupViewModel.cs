@@ -28,6 +28,7 @@ public partial class BackupViewModel : ObservableObject
     private readonly AppPaths? _paths;
     private readonly PreferenciasBackup? _preferencias;
     private readonly IBackupFotosService? _fotos;
+    public IGoogleDriveConnection? GoogleDrive { get; }
     private PastasBackup _pastas = new();
 
     public event EventHandler? SolicitouReinicio;
@@ -39,7 +40,8 @@ public partial class BackupViewModel : ObservableObject
         IConfirmador confirmador,
         ILogger? logger = null,
         AppPaths? paths = null,
-        IBackupFotosService? fotos = null)
+        IBackupFotosService? fotos = null,
+        IGoogleDriveConnection? googleDrive = null)
     {
         _criarBackupManual = criarBackupManual;
         _restaurarBackup = restaurarBackup;
@@ -48,6 +50,7 @@ public partial class BackupViewModel : ObservableObject
         _logger = logger;
         _paths = paths;
         _fotos = fotos;
+        GoogleDrive = googleDrive;
         _preferencias = paths is null ? null : new PreferenciasBackup(paths);
         CarregarPastas();
 
@@ -77,11 +80,15 @@ public partial class BackupViewModel : ObservableObject
     public bool PodeInteragir => !EmAndamento;
     public bool PodeRestaurarFotos => !EmAndamento && _fotos is not null;
     public string PastaLocal => _pastas.Local ?? _paths?.BackupsDirectory ?? "Pasta padrão do Varthex";
-    public string PastaGoogleDrive => _pastas.GoogleDrive ?? "Nenhuma pasta configurada";
+    public string PastaGoogleDrive => GoogleDrive is null ? _pastas.GoogleDrive ?? "Nenhuma pasta configurada" : "Conexão direta com sua conta Google";
     public string PastaOneDrive => _pastas.OneDrive ?? "Nenhuma pasta configurada";
-    public bool GoogleDriveConfigurado => !string.IsNullOrWhiteSpace(_pastas.GoogleDrive);
+    public bool GoogleDriveConfigurado => GoogleDrive?.Conectada ?? !string.IsNullOrWhiteSpace(_pastas.GoogleDrive);
     public bool OneDriveConfigurado => !string.IsNullOrWhiteSpace(_pastas.OneDrive);
-    public string StatusGoogleDrive => StatusPasta(_pastas.GoogleDrive);
+    public string StatusGoogleDrive => GoogleDrive is null ? StatusPasta(_pastas.GoogleDrive) : GoogleDrive.Conectada ? "Conta conectada. Os próximos backups serão enviados ao Google Drive." : GoogleDrive.Configurada ? "Conecte sua conta para enviar os backups automaticamente." : "Conexão disponível após a configuração pelo responsável pelo sistema.";
+    public void AtualizarGoogleDrive()
+    {
+        foreach (var p in new[] { nameof(PastaGoogleDrive), nameof(StatusGoogleDrive), nameof(GoogleDriveConfigurado) }) OnPropertyChanged(p);
+    }
     public string StatusOneDrive => StatusPasta(_pastas.OneDrive);
     public string ResumoPastas => "Backups automáticos ao abrir o sistema (uma vez ao dia) e ao encerrar. As configurações são salvas neste computador.";
 

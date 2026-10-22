@@ -40,6 +40,7 @@ internal static class ThreadingHelper
         {
             try
             {
+                System.Windows.Input.Keyboard.ClearFocus();
                 acao();
             }
             catch (Exception ex)

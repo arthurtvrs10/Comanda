@@ -355,6 +355,7 @@ public partial class MainWindow : Window
 
     private void AtualizarPerfil()
     {
+        SugerirConexaoDriveAposLogin();
         if (_acesso.Autenticado && !_acesso.AutenticadoPorColaborador) _colaboradores.Sair();
         foreach (var botao in new[] { BotaoProdutos, BotaoBackup, BotaoConfiguracoes, BotaoLicenca })
         {
@@ -379,6 +380,21 @@ public partial class MainWindow : Window
         BotaoPerfil.Content = _acesso.Autenticado ? "Voltar ao garçom" : "Entrar como gestor";
         CommandManager.InvalidateRequerySuggested();
         AtualizarRibbon();
+    }
+
+    private bool _gestorAnterior;
+    private void SugerirConexaoDriveAposLogin()
+    {
+        var gestor = _acesso.Autenticado && !_bloqueado;
+        var entrou = gestor && !_gestorAnterior;
+        _gestorAnterior = gestor;
+        if (!entrou || _restauracao || _backupView.ViewModel.GoogleDrive is not { } drive || drive.Conectada) return;
+        Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() =>
+        {
+            if (!_acesso.Autenticado || _bloqueado || drive.Conectada) return;
+            new ConectarGoogleDriveView(drive) { Owner=this }.ShowDialog();
+            _backupView.ViewModel.AtualizarGoogleDrive();
+        }));
     }
 
     private void MostrarConteudo(UIElement view)

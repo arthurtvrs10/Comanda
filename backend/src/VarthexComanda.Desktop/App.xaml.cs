@@ -47,6 +47,7 @@ public partial class App : System.Windows.Application
     private ServicoLicenca? _licenca;
     private DispatcherTimer? _timerLicenca;
     private bool _ativando;
+    private Task _backupInicial = Task.CompletedTask;
 
     protected override void OnStartup(StartupEventArgs e)
     {
@@ -140,6 +141,8 @@ public partial class App : System.Windows.Application
         services.AddTransient<HistoricoViewModel>();
         services.AddTransient<HistoricoView>();
         services.AddTransient<IBackupRegistroRepository, EfBackupRegistroRepository>();
+        services.AddSingleton<IGoogleDriveConnection>(sp => new GoogleDriveConnection(sp.GetRequiredService<AppPaths>(), new System.Net.Http.HttpClient(new System.Net.Http.HttpClientHandler { AllowAutoRedirect=false }) { Timeout=TimeSpan.FromMinutes(3) }));
+        services.AddSingleton<IGoogleDriveBackup>(sp => new GoogleDriveBackup(sp.GetRequiredService<IGoogleDriveConnection>(), new System.Net.Http.HttpClient(new System.Net.Http.HttpClientHandler { AllowAutoRedirect=false }) { Timeout=TimeSpan.FromMinutes(10) }));
         services.AddTransient<IBackupService, EfBackupService>();
         services.AddTransient<IBackupFotosService, EfBackupService>();
         services.AddTransient<CriarBackupAutomatico>();
@@ -211,12 +214,12 @@ public partial class App : System.Windows.Application
 
                 RegistrarFotosSemProduto(paths);
 
-                _serviceProvider.GetRequiredService<CriarBackupAutomatico>().Executar();
-
                 var janela = _serviceProvider.GetRequiredService<MainWindow>();
                 janela.Show();
                 janelaPrincipalExibida = true;
                 _startupConcluido = true;
+                var backupInicial = _serviceProvider.GetRequiredService<CriarBackupAutomatico>();
+                _backupInicial = Task.Run(() => backupInicial.Executar());
             }
         }
         // só entra em modo de restauração se a corrupção apareceu antes de a MainWindow existir na tela;
@@ -332,6 +335,7 @@ public partial class App : System.Windows.Application
         _timerLicenca?.Stop();
         if (_startupConcluido)
         {
+            _backupInicial.GetAwaiter().GetResult();
             _serviceProvider?.GetRequiredService<CriarBackupAutomatico>().Executar(incondicional: true);
         }
         _logger?.Information("Encerrando Varthex Comanda");

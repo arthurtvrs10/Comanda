@@ -76,11 +76,11 @@ public class BackupLayoutTests
         });
     }
 
-    private static BackupViewModel Criar(AppPaths? paths = null)
+    internal static BackupViewModel Criar(AppPaths? paths = null, IGoogleDriveConnection? google = null)
     {
         var servico = new FakeBackupService();
         return new(new CriarBackupManual(servico), new RestaurarBackup(servico),
-            new ListarBackupsRecentes(new FakeBackupRegistroRepository()), new FakeConfirmadorDeBackup(), paths: paths, fotos: new FotosFake());
+            new ListarBackupsRecentes(new FakeBackupRegistroRepository()), new FakeConfirmadorDeBackup(), paths: paths, fotos: new FotosFake(), googleDrive: google);
     }
 
     private sealed class FotosFake : IBackupFotosService

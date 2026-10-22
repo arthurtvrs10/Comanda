@@ -30,8 +30,10 @@ public class EfBackupService : IBackupService, IBackupFotosService
     private const long LimiteTotalRestauracaoPadraoBytes = 2L * 1024 * 1024 * 1024;
 
     private readonly long _limiteTotalRestauracaoBytes;
+    private readonly IGoogleDriveBackup? _googleDrive;
+    private static readonly object TravaCriacao = new();
 
-    public EfBackupService(AppPaths paths, IBackupRegistroRepository registros, IClock relogio, int retencaoMaxima = 30, ILogger? logger = null, PastasMascaradas? pastasMascaradas = null, long limiteTotalRestauracaoFotosBytes = LimiteTotalRestauracaoPadraoBytes)
+    public EfBackupService(AppPaths paths, IBackupRegistroRepository registros, IClock relogio, int retencaoMaxima = 30, ILogger? logger = null, PastasMascaradas? pastasMascaradas = null, long limiteTotalRestauracaoFotosBytes = LimiteTotalRestauracaoPadraoBytes, IGoogleDriveBackup? googleDrive = null)
     {
         _paths = paths;
         _registros = registros;
@@ -40,11 +42,16 @@ public class EfBackupService : IBackupService, IBackupFotosService
         _logger = logger;
         _pastasMascaradas = pastasMascaradas;
         _limiteTotalRestauracaoBytes = limiteTotalRestauracaoFotosBytes;
+        _googleDrive = googleDrive;
     }
 
     public Resultado<BackupRegistro> CriarBackupGerenciado() => CriarBackupGerenciado(null);
 
     public Resultado<BackupRegistro> CriarBackupGerenciado(IProgress<EtapaBackup>? progresso)
+    {
+        lock (TravaCriacao) return CriarBackupGerenciadoInterno(progresso);
+    }
+    private Resultado<BackupRegistro> CriarBackupGerenciadoInterno(IProgress<EtapaBackup>? progresso)
     {
         progresso?.Report(new(_relogio.UtcNow, "Preparando backup local…"));
         var avisos = new List<string>();
@@ -70,7 +77,7 @@ public class EfBackupService : IBackupService, IBackupFotosService
         var resultado = CriarBackupInterno(local, aplicarRetencao: true, out var fotos, progresso);
         if (!resultado.Sucesso) return resultado;
         if (!string.IsNullOrEmpty(resultado.Valor!.Mensagem)) avisos.Add(resultado.Valor.Mensagem);
-        foreach (var (nome, raiz) in new[] { ("Google Drive", pastas.GoogleDrive), ("OneDrive", pastas.OneDrive) })
+        foreach (var (nome, raiz) in new[] { ("Google Drive", _googleDrive is not null ? null : pastas.GoogleDrive), ("OneDrive", pastas.OneDrive) })
         {
             if (string.IsNullOrWhiteSpace(raiz)) continue;
             _pastasMascaradas?.Adicionar(PastasMascaradas.TokenPastaBackupExterna, raiz);
@@ -84,6 +91,20 @@ public class EfBackupService : IBackupService, IBackupFotosService
             {
                 _logger?.Warning(ex, "Falha ao copiar backup para {Servico}", nome);
                 avisos.Add($"A cópia para {nome} falhou. Verifique se a pasta está disponível e tente novamente. O backup local foi preservado.");
+                progresso?.Report(new(_relogio.UtcNow, avisos[^1], true));
+            }
+        }
+        if (_googleDrive?.Conectado == true)
+        {
+            try
+            {
+                using var limiteEnvio = new CancellationTokenSource(progresso is null ? TimeSpan.FromSeconds(30) : TimeSpan.FromMinutes(10));
+                _googleDrive.EnviarAsync(Path.Combine(resultado.Valor.Destino, resultado.Valor.Arquivo), fotos.Arquivo, progresso, limiteEnvio.Token).GetAwaiter().GetResult();
+            }
+            catch
+            {
+                // Do not log HTTP payloads or credentials. The local copy remains usable.
+                avisos.Add("O envio ao Google Drive falhou. Confira a conexão e reconecte a conta se necessário. O backup local foi preservado.");
                 progresso?.Report(new(_relogio.UtcNow, avisos[^1], true));
             }
         }
