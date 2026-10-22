@@ -257,7 +257,7 @@
                                                 <Grid>
                                                     <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="86"/><ColumnDefinition Width="38"/></Grid.ColumnDefinitions>
                                                     <StackPanel VerticalAlignment="Center" Margin="0,0,8,0">
-                                                        <TextBlock TextWrapping="Wrap"><Run Text="{Binding Quantidade}" FontWeight="Bold"/><Run Text=" × "/><Run Text="{Binding NomeProduto}" FontWeight="SemiBold"/><Run Text="  [Cód. "/><Run Text="{Binding ProdutoId}"/><Run Text="]"/></TextBlock>
+                                                        <TextBlock TextWrapping="Wrap"><Run Text="{Binding QuantidadeFormatada, Mode=OneWay}" FontWeight="Bold"/><Run Text=" "/><Run Text="{Binding Medida, Mode=OneWay}"/><Run Text=" × "/><Run Text="{Binding NomeProduto}" FontWeight="SemiBold"/><Run Text="  [Cód. "/><Run Text="{Binding ProdutoId}"/><Run Text="]"/></TextBlock>
                                                         <StackPanel Visibility="{Binding DataContext.ExibicaoCompleta, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource BoolVisible}}">
                                                             <TextBlock Text="{Binding Converter={StaticResource DetalheItem}}" Foreground="{DynamicResource AjudaMuted}" FontSize="12" TextWrapping="Wrap" Margin="0,3,0,0"/>
                                                             <TextBlock Text="{Binding Observacao}" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource AjudaMuted}"/>

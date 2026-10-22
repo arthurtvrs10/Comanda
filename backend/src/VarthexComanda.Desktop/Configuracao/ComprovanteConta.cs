@@ -17,11 +17,11 @@ public static class ComprovanteConta
         if(p.ExibirDocumentoCupom&&!string.IsNullOrWhiteSpace(p.Documento))linhas.Add("Documento: "+p.Documento);
         if(p.ExibirEnderecoCupom)linhas.Add(string.Join(" · ",new[]{p.Endereco,p.Numero,p.Complemento,p.Bairro,p.Cidade,p.Uf,p.Cep}.Where(x=>!string.IsNullOrWhiteSpace(x))));
         linhas.Add(new string('-',38));
-        var grupos=p.AgruparItensCupom?lista.GroupBy(i=>new { i.ProdutoId,i.NomeProduto,i.PrecoUnitarioCentavos,i.Observacao }).Select(g=>(Nome:g.Key.NomeProduto,Quantidade:g.Sum(i=>i.Quantidade),Subtotal:g.Sum(i=>i.SubtotalCentavos),Observacao:g.Key.Observacao))
-            :lista.Select(i=>(Nome:i.NomeProduto,Quantidade:i.Quantidade,Subtotal:i.SubtotalCentavos,Observacao:i.Observacao));
+        var grupos=p.AgruparItensCupom?lista.GroupBy(i=>new { i.ProdutoId,i.NomeProduto,i.PrecoUnitarioCentavos,i.Observacao,i.UnidadeVenda }).Select(g=>(Nome:g.Key.NomeProduto,Quantidade:g.Sum(i=>i.Quantidade),Subtotal:g.Sum(i=>i.SubtotalCentavos),Observacao:g.Key.Observacao,Unidade:g.Key.UnidadeVenda))
+            :lista.Select(i=>(Nome:i.NomeProduto,Quantidade:i.Quantidade,Subtotal:i.SubtotalCentavos,Observacao:i.Observacao,Unidade:i.UnidadeVenda));
         foreach(var item in grupos)
         {
-            linhas.Add($"{item.Quantidade} × {item.Nome}  {Atendimento.CentavosParaMoedaConverter.Formatar(item.Subtotal)}");
+            linhas.Add($"{MedidasVenda.FormatarQuantidade(item.Quantidade,item.Unidade)} {item.Unidade.Simbolo()} × {item.Nome}  {Atendimento.CentavosParaMoedaConverter.Formatar(item.Subtotal)}");
             if(p.ExibirObservacoesCupom&&!string.IsNullOrWhiteSpace(item.Observacao))linhas.Add("  "+item.Observacao);
         }
         linhas.Add(new string('-',38));linhas.Add("TOTAL: "+Atendimento.CentavosParaMoedaConverter.Formatar(lista.Sum(i=>i.SubtotalCentavos)));

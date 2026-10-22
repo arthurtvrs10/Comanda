@@ -109,6 +109,14 @@ public partial class ProdutosViewModel : ObservableObject
 
     [ObservableProperty]
     private bool produtoAtivo = true;
+    [ObservableProperty] private UnidadeVenda unidadeProduto;
+    public IReadOnlyList<UnidadeVenda> UnidadesVenda { get; } = Enum.GetValues<UnidadeVenda>();
+    public bool VendaUnidade { get => UnidadeProduto == UnidadeVenda.Unidade; set { if(value) UnidadeProduto=UnidadeVenda.Unidade; } }
+    public bool VendaQuilo { get => UnidadeProduto == UnidadeVenda.Quilo; set { if(value) UnidadeProduto=UnidadeVenda.Quilo; } }
+    public bool VendaLitro { get => UnidadeProduto == UnidadeVenda.Litro; set { if(value) UnidadeProduto=UnidadeVenda.Litro; } }
+    public string RotuloPreco => "Preço de venda por " + UnidadeProduto.Simbolo() + " (R$)";
+    partial void OnUnidadeProdutoChanged(UnidadeVenda value)
+    { OnPropertyChanged(nameof(VendaUnidade));OnPropertyChanged(nameof(VendaQuilo));OnPropertyChanged(nameof(VendaLitro));OnPropertyChanged(nameof(RotuloPreco)); }
 
     [ObservableProperty]
     private string novaCategoriaNome = string.Empty;
@@ -129,6 +137,7 @@ public partial class ProdutosViewModel : ObservableObject
             PrecoProdutoReais = string.Empty;
             CustoProdutoReais=string.Empty;DescricaoProduto=string.Empty;CodigoPersonalizadoProduto=string.Empty;
             ProdutoAtivo = true;
+            UnidadeProduto = UnidadeVenda.Unidade;
             FotoArquivoAtual = null;
             FotoPendenteCaminho = null;
             Mensagem = string.Empty;
@@ -141,6 +150,7 @@ public partial class ProdutosViewModel : ObservableObject
         CustoProdutoReais=(value.CustoCentavos/100m).ToString("0.00",CulturaMoeda);
         DescricaoProduto=value.Descricao??string.Empty;CodigoPersonalizadoProduto=value.CodigoPersonalizado??string.Empty;
         ProdutoAtivo = value.Ativo;
+        UnidadeProduto = value.UnidadeVenda;
         FotoArquivoAtual = value?.FotoArquivo;
         FotoPendenteCaminho = null;
         Mensagem = string.Empty;
@@ -176,6 +186,7 @@ public partial class ProdutosViewModel : ObservableObject
         PrecoProdutoReais = string.Empty;
         CustoProdutoReais=string.Empty;DescricaoProduto=string.Empty;CodigoPersonalizadoProduto=string.Empty;
         ProdutoAtivo = true;
+        UnidadeProduto = UnidadeVenda.Unidade;
         FotoPendenteCaminho = null;
         Mensagem = string.Empty;
     }
@@ -198,7 +209,7 @@ public partial class ProdutosViewModel : ObservableObject
         long custoCentavos=0;
         if(!string.IsNullOrWhiteSpace(CustoProdutoReais)&&!TentarConverterPreco(CustoProdutoReais,out custoCentavos,true))
         {Mensagem="Informe um preço de custo válido, maior ou igual a zero.";return;}
-        var detalhes=new DetalhesProduto(custoCentavos,DescricaoProduto,CodigoPersonalizadoProduto);
+        var detalhes=new DetalhesProduto(custoCentavos,DescricaoProduto,CodigoPersonalizadoProduto,UnidadeProduto);
 
         try
         {

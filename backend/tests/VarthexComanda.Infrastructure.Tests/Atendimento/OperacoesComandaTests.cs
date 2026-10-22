@@ -36,7 +36,7 @@ public partial class EfComandaRepositoryTests
         var (produto, id) = PrepararComandaEProduto(repo);
         var a = repo.AdicionarItem(id, produto, 2, DateTime.UtcNow, "Sem gelo", "Ana").Itens.Single();
         repo.AdicionarItem(id, produto, 1, DateTime.UtcNow, "Com gelo", "Ana");
-        repo.RegistrarImpressao(id, new Dictionary<int,int> { [a.Id] = 2 }, true);
+        repo.RegistrarImpressao(id, new Dictionary<int,decimal> { [a.Id] = 2 }, true);
         var destino = repo.AbrirComanda(11, DateTime.UtcNow);
         repo.TransferirItens(id, destino.Id, [a.Id], true, DateTime.UtcNow);
         var copia = repo.BuscarComItens(destino.Id)!.Itens.Single();
@@ -73,8 +73,8 @@ public partial class EfComandaRepositoryTests
         var repo = new EfComandaRepository(_fabrica);
         var (produto, id) = PrepararComandaEProduto(repo);
         var item = repo.AdicionarItem(id, produto, 2, DateTime.UtcNow, null, "Ana").Itens.Single();
-        repo.RegistrarImpressao(id, new Dictionary<int,int> { [item.Id] = 2 }, true);
-        repo.RegistrarImpressao(id, new Dictionary<int,int> { [item.Id] = 1 }, false);
+        repo.RegistrarImpressao(id, new Dictionary<int,decimal> { [item.Id] = 2 }, true);
+        repo.RegistrarImpressao(id, new Dictionary<int,decimal> { [item.Id] = 1 }, false);
         repo.AdicionarItem(id, produto, 1, DateTime.UtcNow, null, "Ana");
         var salvo = new EfComandaRepository(_fabrica).BuscarComItens(id)!.Itens.Single();
         Assert.Equal(3, salvo.Quantidade);

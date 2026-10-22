@@ -104,7 +104,7 @@ public class FakeComandaRepository : IComandaRepository
         return comanda;
     }
 
-    public ComandaComItens AdicionarItem(int comandaId, Produto produto, int quantidade, DateTime agora, string? observacao = null)
+    public ComandaComItens AdicionarItem(int comandaId, Produto produto, decimal quantidade, DateTime agora, string? observacao = null)
     {
         var comanda = _comandas.FirstOrDefault(c => c.Id == comandaId)
             ?? throw new InvalidOperationException("Comanda não encontrada.");
@@ -114,12 +114,12 @@ public class FakeComandaRepository : IComandaRepository
         }
 
         var itens = _itens.Where(i => i.ComandaId == comandaId).ToList();
-        var itemExistente = itens.FirstOrDefault(i => i.ProdutoId == produto.Id && i.PrecoUnitarioCentavos == produto.PrecoCentavos && i.Observacao == observacao);
+        var itemExistente = itens.FirstOrDefault(i => i.ProdutoId == produto.Id && i.UnidadeVenda == produto.UnidadeVenda && i.PrecoUnitarioCentavos == produto.PrecoCentavos && i.Observacao == observacao);
 
         if (itemExistente is not null)
         {
             itemExistente.Quantidade += quantidade;
-            itemExistente.SubtotalCentavos = itemExistente.PrecoUnitarioCentavos * itemExistente.Quantidade;
+            itemExistente.SubtotalCentavos = VarthexComanda.Domain.MedidasVenda.CalcularSubtotal(itemExistente.PrecoUnitarioCentavos, itemExistente.Quantidade);
             itemExistente.AtualizadoEm = agora;
         }
         else
@@ -129,11 +129,12 @@ public class FakeComandaRepository : IComandaRepository
                 Id = _proximoItemId++,
                 ComandaId = comandaId,
                 ProdutoId = produto.Id,
+                UnidadeVenda = produto.UnidadeVenda,
                 NomeProduto = produto.Nome,
                 Observacao = observacao,
                 PrecoUnitarioCentavos = produto.PrecoCentavos,
                 Quantidade = quantidade,
-                SubtotalCentavos = produto.PrecoCentavos * quantidade,
+                SubtotalCentavos = VarthexComanda.Domain.MedidasVenda.CalcularSubtotal(produto.PrecoCentavos, quantidade),
                 CriadoEm = agora,
                 AtualizadoEm = agora
             };
@@ -145,7 +146,7 @@ public class FakeComandaRepository : IComandaRepository
         return new ComandaComItens { Comanda = comanda, Itens = itens };
     }
 
-    public ComandaComItens AlterarQuantidade(int itemId, int quantidade, DateTime agora)
+    public ComandaComItens AlterarQuantidade(int itemId, decimal quantidade, DateTime agora)
     {
         var item = _itens.FirstOrDefault(i => i.Id == itemId)
             ?? throw new InvalidOperationException("Item não encontrado.");
@@ -157,7 +158,7 @@ public class FakeComandaRepository : IComandaRepository
         }
 
         item.Quantidade = quantidade;
-        item.SubtotalCentavos = item.PrecoUnitarioCentavos * quantidade;
+        item.SubtotalCentavos = VarthexComanda.Domain.MedidasVenda.CalcularSubtotal(item.PrecoUnitarioCentavos, quantidade);
         item.AtualizadoEm = agora;
 
         var itens = _itens.Where(i => i.ComandaId == comanda.Id).ToList();

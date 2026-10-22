@@ -14,7 +14,7 @@ public class AlterarQuantidade
         _relogio = relogio;
     }
 
-    public Resultado<ComandaComItens> Executar(int itemId, int quantidade)
+    public Resultado<ComandaComItens> Executar(int itemId, decimal quantidade)
     {
         if (quantidade <= 0)
         {

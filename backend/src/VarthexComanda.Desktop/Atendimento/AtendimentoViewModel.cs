@@ -310,7 +310,7 @@ public partial class AtendimentoViewModel : ObservableObject
     [RelayCommand]
     private void AdicionarProdutoAoItem(Produto produto) => AdicionarProduto(produto, 1, ObservacaoNovoItem);
 
-    public bool AdicionarProduto(Produto produto, int quantidade, string? observacao)
+    public bool AdicionarProduto(Produto produto, decimal quantidade, string? observacao)
     {
         if (!PermitirAlteracao() || ComandaAtual is null) return false;
         try
@@ -337,7 +337,7 @@ public partial class AtendimentoViewModel : ObservableObject
         if (!PermitirAlteracao()) return;
         try
         {
-            AplicarResultado(_alterarQuantidade.Executar(item.Id, item.Quantidade + 1));
+            AplicarResultado(_alterarQuantidade.Executar(item.Id, item.Quantidade + (item.UnidadeVenda == UnidadeVenda.Unidade ? 1m : 0.100m)));
         }
         catch (Exception ex)
         {
@@ -352,7 +352,8 @@ public partial class AtendimentoViewModel : ObservableObject
         if (!PermitirAlteracao()) return;
         try
         {
-            if (item.Quantidade <= 1)
+            var passo = item.UnidadeVenda == UnidadeVenda.Unidade ? 1m : 0.100m;
+            if (item.Quantidade <= passo)
             {
                 if (!_confirmador.Confirmar("Remover item", MensagemRemocao(item)))
                 {
@@ -363,7 +364,7 @@ public partial class AtendimentoViewModel : ObservableObject
                 return;
             }
 
-            AplicarResultado(_alterarQuantidade.Executar(item.Id, item.Quantidade - 1));
+            AplicarResultado(_alterarQuantidade.Executar(item.Id, item.Quantidade - passo));
         }
         catch (Exception ex)
         {

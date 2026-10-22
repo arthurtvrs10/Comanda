@@ -46,13 +46,13 @@ internal sealed class ComandaRepositoryQueFalha : IComandaRepository
         return _interno.AbrirComanda(numero, agora);
     }
 
-    public ComandaComItens AdicionarItem(int comandaId, Produto produto, int quantidade, DateTime agora, string? observacao = null)
+    public ComandaComItens AdicionarItem(int comandaId, Produto produto, decimal quantidade, DateTime agora, string? observacao = null)
     {
         Verificar();
         return _interno.AdicionarItem(comandaId, produto, quantidade, agora, observacao);
     }
 
-    public ComandaComItens AlterarQuantidade(int itemId, int quantidade, DateTime agora)
+    public ComandaComItens AlterarQuantidade(int itemId, decimal quantidade, DateTime agora)
     {
         Verificar();
         return _interno.AlterarQuantidade(itemId, quantidade, agora);

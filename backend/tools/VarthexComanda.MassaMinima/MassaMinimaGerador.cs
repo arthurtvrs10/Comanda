@@ -20,7 +20,7 @@ using VarthexComanda.Infrastructure.Storage;
 namespace VarthexComanda.MassaMinima;
 
 /// <summary>Perfil de uma comanda deixada aberta na massa (para o operador saber o que esperar na tela).</summary>
-public sealed record PerfilDeComandaAberta(int Numero, int Linhas, int Unidades, long TotalCentavos, string Descricao);
+public sealed record PerfilDeComandaAberta(int Numero, int Linhas, decimal Unidades, long TotalCentavos, string Descricao);
 
 /// <summary>Contagens da massa gerada, lidas do proprio banco (nao de contadores internos).</summary>
 public sealed record ResumoMassa(

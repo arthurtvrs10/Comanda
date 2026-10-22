@@ -19,6 +19,8 @@ public class ProdutoConfiguration : IEntityTypeConfiguration<Produto>
         builder.Property(p => p.CategoriaId).HasColumnName("categoria_id").IsRequired();
         builder.Property(p => p.Nome).HasColumnName("nome").IsRequired();
         builder.Property(p => p.PrecoCentavos).HasColumnName("preco_centavos").IsRequired();
+        builder.Property(p => p.UnidadeVenda).HasColumnName("unidade_venda").HasConversion<int>().HasDefaultValue(UnidadeVenda.Unidade);
+        builder.Ignore(p => p.Medida);
         builder.Property(p => p.Ativo).HasColumnName("ativo").HasConversion<int>().IsRequired();
         builder.Property(p => p.CriadoEm).HasColumnName("criado_em").IsRequired();
         builder.Property(p => p.AtualizadoEm).HasColumnName("atualizado_em").IsRequired();

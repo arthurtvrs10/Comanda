@@ -47,7 +47,7 @@ public partial class EfComandaRepository
         using var contexto = _fabricaContexto.CreateDbContext();
         var comanda = Aberta(contexto, comandaId);
         var itens = contexto.ItensComanda.Where(i => i.ComandaId == comandaId).OrderBy(i => i.Id).ToList();
-        foreach (var item in itens) item.SubtotalCentavos = checked(item.PrecoUnitarioCentavos * item.Quantidade);
+        foreach (var item in itens) item.SubtotalCentavos = VarthexComanda.Domain.MedidasVenda.CalcularSubtotal(item.PrecoUnitarioCentavos, item.Quantidade);
         comanda.TotalCentavos = checked(itens.Sum(i => i.SubtotalCentavos));
         contexto.SaveChanges();
         return new() { Comanda = comanda, Itens = itens };
@@ -72,6 +72,7 @@ public partial class EfComandaRepository
                 contexto.ItensComanda.Add(new ItemComanda
                 {
                     Id = 0, ComandaId = destinoId, ProdutoId = item.ProdutoId, NomeProduto = item.NomeProduto,
+                    UnidadeVenda = item.UnidadeVenda,
                     PrecoUnitarioCentavos = item.PrecoUnitarioCentavos, Quantidade = item.Quantidade,
                     SubtotalCentavos = item.SubtotalCentavos, Observacao = item.Observacao,
                     LancadoPor = item.LancadoPor, CriadoEm = agora, AtualizadoEm = agora
@@ -87,7 +88,7 @@ public partial class EfComandaRepository
     }
 
     // Só é chamado depois de a saída aceitar a impressão; cancelar a prévia não consome os itens pendentes.
-    public void RegistrarImpressao(int comandaId, IReadOnlyDictionary<int, int> quantidades, bool cozinha)
+    public void RegistrarImpressao(int comandaId, IReadOnlyDictionary<int, decimal> quantidades, bool cozinha)
     {
         using var contexto = _fabricaContexto.CreateDbContext();
         Aberta(contexto, comandaId);

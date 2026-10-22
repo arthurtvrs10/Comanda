@@ -190,18 +190,20 @@ public partial class EfComandaRepositoryTests : IDisposable
     [Fact]
     public void MigracaoPreservaVendaAntigaSemInventarFormaDePagamento()
     {
-        var repo = new EfComandaRepository(_fabrica);
-        var (produto, id) = PrepararComandaEProduto(repo);
+        using var legado = new VarthexComanda.Infrastructure.Tests.Homologacao.BancoDeHomologacao(migrar:false);
         var agora = DateTime.UtcNow;
-        repo.AdicionarItem(id, produto, 1, agora);
-        repo.EncerrarComanda(id, agora);
-        using (var contexto = _fabrica.CreateDbContext())
+        const int id = 1;
+        using (var contexto = legado.Fabrica.CreateDbContext())
         {
-            var migrador = contexto.GetService<Microsoft.EntityFrameworkCore.Migrations.IMigrator>();
-            migrador.Migrate("20261012140331_AddQuantidadePessoasComanda");
+            contexto.GetService<Microsoft.EntityFrameworkCore.Migrations.IMigrator>().Migrate("20261012140331_AddQuantidadePessoasComanda");
+            contexto.Database.ExecuteSqlRaw("INSERT INTO categoria (id,nome,ativo,criado_em,atualizado_em) VALUES (1,'Geral',1,'2026-10-21','2026-10-21')");
+            contexto.Database.ExecuteSqlRaw("INSERT INTO produto (id,categoria_id,nome,preco_centavos,ativo,criado_em,atualizado_em) VALUES (1,1,'Produto',500,1,'2026-10-21','2026-10-21')");
+            contexto.Database.ExecuteSqlInterpolated($"INSERT INTO comanda (id,numero,status,aberta_em,fechada_em,total_centavos) VALUES (1,1,'FECHADA',{agora},{agora},500)");
+            contexto.Database.ExecuteSqlInterpolated($"INSERT INTO item_comanda (id,comanda_id,produto_id,nome_produto,preco_unitario_centavos,quantidade,subtotal_centavos,criado_em,atualizado_em) VALUES (1,1,1,'Produto',500,1,500,{agora},{agora})");
+            contexto.Database.ExecuteSqlInterpolated($"INSERT INTO venda (id,comanda_id,numero,total_centavos,finalizada_em,status) VALUES (1,1,1,500,{agora},'CONCLUIDA')");
             contexto.Database.Migrate();
         }
-        var venda = Assert.Single(new EfVendaRepository(_fabrica).ListarPorData(agora.AddMinutes(-1), agora.AddMinutes(1)));
+        var venda = Assert.Single(new EfVendaRepository(legado.Fabrica).ListarPorData(agora.AddMinutes(-1), agora.AddMinutes(1)));
         Assert.Null(venda.Venda.FormaPagamento);
         Assert.Equal("Não informado", venda.FormaPagamentoDescricao);
         Assert.Equal(id, venda.Venda.ComandaId);

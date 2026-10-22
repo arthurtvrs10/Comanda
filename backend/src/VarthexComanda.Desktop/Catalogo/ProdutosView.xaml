@@ -97,7 +97,7 @@
                     <DataGridTextColumn ElementStyle="{StaticResource TextoTabela}" Header="Nome" Binding="{Binding Nome}" Width="*" MinWidth="160"/>
                     <DataGridTextColumn ElementStyle="{StaticResource NumeroTabela}" Header="Preço custo" Binding="{Binding CustoCentavos,Converter={StaticResource Moeda}}" Width="115"/>
                     <DataGridTextColumn ElementStyle="{StaticResource NumeroTabela}" Header="Preço venda" Binding="{Binding PrecoCentavos,Converter={StaticResource Moeda}}" Width="115"/>
-                    <DataGridTemplateColumn Header="Medida" CanUserSort="False" Width="75"><DataGridTemplateColumn.CellTemplate><DataTemplate><TextBlock Text="UN" Style="{StaticResource TextoTabela}"/></DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Medida" CanUserSort="False" Width="75"><DataGridTemplateColumn.CellTemplate><DataTemplate><TextBlock Text="{Binding Medida}" Style="{StaticResource TextoTabela}"/></DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
                     <DataGridTemplateColumn Header="Status venda" SortMemberPath="Ativo" Width="105"><DataGridTemplateColumn.CellTemplate><DataTemplate><StackPanel Orientation="Horizontal" VerticalAlignment="Center"><Ellipse Width="10" Height="10" VerticalAlignment="Center" Margin="0,0,6,0"><Ellipse.Style><Style TargetType="Ellipse"><Setter Property="Fill" Value="#35B85B"/><Style.Triggers><DataTrigger Binding="{Binding Ativo}" Value="False"><Setter Property="Fill" Value="#9BA5A8"/></DataTrigger></Style.Triggers></Style></Ellipse.Style></Ellipse><TextBlock><TextBlock.Style><Style TargetType="TextBlock" BasedOn="{StaticResource TextoTabela}"><Setter Property="Text" Value="Ativo"/><Style.Triggers><DataTrigger Binding="{Binding Ativo}" Value="False"><Setter Property="Text" Value="Inativo"/></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock></StackPanel></DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
                     <DataGridTextColumn ElementStyle="{StaticResource NumeroTabela}" Header="Cód. personalizado" Binding="{Binding CodigoPersonalizado}" Width="155"/>
                 </DataGrid.Columns>
@@ -144,7 +144,7 @@
                             <Label Content="Nome" Target="{Binding ElementName=CampoNomeProduto}" Padding="0,0,0,4"/>
                             <TextBox x:Name="CampoNomeProduto" Text="{Binding NomeProduto, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,10" AutomationProperties.Name="Nome do produto"/>
                             <Grid Margin="0,0,0,10">
-                                <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="175"/></Grid.ColumnDefinitions>
+                                <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="280"/></Grid.ColumnDefinitions>
                                 <StackPanel Margin="0,0,12,0">
                                     <Label Content="Categoria" Target="{Binding ElementName=SeletorCategoriaProduto}" Padding="0,0,0,4"/>
                                     <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
@@ -155,11 +155,11 @@
                                         </Button>
                                     </Grid>
                                 </StackPanel>
-                                <StackPanel Grid.Column="1"><TextBlock Text="Vender este item como" Margin="0,0,0,4"/><Border BorderBrush="{DynamicResource Line}" BorderThickness="1" Padding="6,5"><TextBlock Text="Unidade (UN)"/></Border></StackPanel>
+                                <StackPanel Grid.Column="1"><TextBlock Text="Vender este item como" Margin="0,0,0,4"/><WrapPanel><RadioButton Content="Unidade (UN)" GroupName="MedidaVenda" IsChecked="{Binding VendaUnidade}" Margin="0,0,10,0"/><RadioButton Content="Quilo (KG)" GroupName="MedidaVenda" IsChecked="{Binding VendaQuilo}" Margin="0,0,10,0"/><RadioButton Content="Litro (L)" GroupName="MedidaVenda" IsChecked="{Binding VendaLitro}"/></WrapPanel></StackPanel>
                             </Grid>
                             <Grid Margin="0,0,0,10"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition/></Grid.ColumnDefinitions>
                                 <StackPanel Margin="0,0,6,0"><Label Content="Preço de custo (R$)" Target="{Binding ElementName=CampoCustoProduto}" Padding="0,0,0,4"/><TextBox x:Name="CampoCustoProduto" Text="{Binding CustoProdutoReais, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Preço de custo"/></StackPanel>
-                                <StackPanel Grid.Column="1" Margin="6,0,0,0"><Label Content="Preço de venda (R$)" Target="{Binding ElementName=CampoPrecoProduto}" Padding="0,0,0,4"/><TextBox x:Name="CampoPrecoProduto" Text="{Binding PrecoProdutoReais, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Preço de venda"/></StackPanel>
+                                <StackPanel Grid.Column="1" Margin="6,0,0,0"><Label Content="{Binding RotuloPreco}" Target="{Binding ElementName=CampoPrecoProduto}" Padding="0,0,0,4"/><TextBox x:Name="CampoPrecoProduto" Text="{Binding PrecoProdutoReais, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Preço de venda"/></StackPanel>
                             </Grid>
                             <Label Content="Descrição" Target="{Binding ElementName=CampoDescricaoProduto}" Padding="0,0,0,4"/>
                             <TextBox x:Name="CampoDescricaoProduto" Text="{Binding DescricaoProduto, UpdateSourceTrigger=PropertyChanged}" MaxLength="2000" AcceptsReturn="True" TextWrapping="Wrap" Height="76" VerticalContentAlignment="Top" VerticalScrollBarVisibility="Auto" Margin="0,0,0,10" AutomationProperties.Name="Descrição do produto"/>

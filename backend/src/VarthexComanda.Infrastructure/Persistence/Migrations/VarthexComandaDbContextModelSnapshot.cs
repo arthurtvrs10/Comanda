@@ -264,25 +264,31 @@ namespace VarthexComanda.Infrastructure.Persistence.Migrations
                         .HasColumnType("INTEGER")
                         .HasColumnName("produto_id");
 
-                    b.Property<int>("Quantidade")
+                    b.Property<long>("Quantidade")
                         .HasColumnType("INTEGER")
                         .HasColumnName("quantidade");
 
-                    b.Property<int>("QuantidadeCozinha")
+                    b.Property<long>("QuantidadeCozinha")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER")
-                        .HasDefaultValue(0)
+                        .HasDefaultValue(0L)
                         .HasColumnName("quantidade_cozinha");
 
-                    b.Property<int>("QuantidadeFicha")
+                    b.Property<long>("QuantidadeFicha")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER")
-                        .HasDefaultValue(0)
+                        .HasDefaultValue(0L)
                         .HasColumnName("quantidade_ficha");
 
                     b.Property<long>("SubtotalCentavos")
                         .HasColumnType("INTEGER")
                         .HasColumnName("subtotal_centavos");
+
+                    b.Property<int>("UnidadeVenda")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(0)
+                        .HasColumnName("unidade_venda");
 
                     b.HasKey("Id");
 
@@ -297,9 +303,11 @@ namespace VarthexComanda.Infrastructure.Persistence.Migrations
 
                             t.HasCheckConstraint("CK_item_comanda_quantidade_positiva", "quantidade > 0");
 
-                            t.HasCheckConstraint("CK_item_comanda_subtotal_igual_preco_vezes_quantidade", "subtotal_centavos = preco_unitario_centavos * quantidade");
+                            t.HasCheckConstraint("CK_item_comanda_subtotal_igual_preco_vezes_quantidade", "subtotal_centavos = CAST((preco_unitario_centavos * quantidade + 500) / 1000 AS INTEGER)");
 
                             t.HasCheckConstraint("CK_item_comanda_subtotal_positivo", "subtotal_centavos > 0");
+
+                            t.HasCheckConstraint("CK_item_comanda_unidade_valida", "unidade_venda IN (0,1,2) AND (unidade_venda <> 0 OR quantidade % 1000 = 0)");
                         });
                 });
 
@@ -355,6 +363,12 @@ namespace VarthexComanda.Infrastructure.Persistence.Migrations
                     b.Property<long>("PrecoCentavos")
                         .HasColumnType("INTEGER")
                         .HasColumnName("preco_centavos");
+
+                    b.Property<int>("UnidadeVenda")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(0)
+                        .HasColumnName("unidade_venda");
 
                     b.HasKey("Id");
 

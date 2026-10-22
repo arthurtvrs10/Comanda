@@ -197,11 +197,13 @@ public partial class EfComandaRepository : IComandaRepository
         return new ComandaComItens { Comanda = destino, Itens = itensDestino.OrderBy(i => i.Id).ToList() };
     }
 
-    public ComandaComItens AdicionarItem(int comandaId, Produto produto, int quantidade, DateTime agora, string? observacao = null)
+    public ComandaComItens AdicionarItem(int comandaId, Produto produto, decimal quantidade, DateTime agora, string? observacao = null)
         => AdicionarItem(comandaId, produto, quantidade, agora, observacao, null);
 
-    public ComandaComItens AdicionarItem(int comandaId, Produto produto, int quantidade, DateTime agora, string? observacao, string? operador)
+    public ComandaComItens AdicionarItem(int comandaId, Produto produto, decimal quantidade, DateTime agora, string? observacao, string? operador)
     {
+        if (MedidasVenda.ValidarQuantidade(quantidade,produto.UnidadeVenda) is string erro) throw new InvalidOperationException(erro);
+        if (MedidasVenda.CalcularSubtotal(produto.PrecoCentavos,quantidade) <= 0) throw new InvalidOperationException("A quantidade deve resultar em pelo menos R$ 0,01.");
         observacao = string.IsNullOrWhiteSpace(observacao) ? null : observacao.Trim();
         if (observacao?.Length > 300) throw new ArgumentException("A observação deve ter no máximo 300 caracteres.", nameof(observacao));
         using var contexto = _fabricaContexto.CreateDbContext();
@@ -214,12 +216,12 @@ public partial class EfComandaRepository : IComandaRepository
 
         ExigirDesbloqueada(comanda);
         var itens = contexto.ItensComanda.Where(i => i.ComandaId == comandaId).OrderBy(i => i.Id).ToList();
-        var itemExistente = itens.FirstOrDefault(i => i.ProdutoId == produto.Id && i.PrecoUnitarioCentavos == produto.PrecoCentavos && i.Observacao == observacao && i.LancadoPor == operador);
+        var itemExistente = itens.FirstOrDefault(i => i.ProdutoId == produto.Id && i.UnidadeVenda == produto.UnidadeVenda && i.PrecoUnitarioCentavos == produto.PrecoCentavos && i.Observacao == observacao && i.LancadoPor == operador);
 
         if (itemExistente is not null)
         {
             itemExistente.Quantidade += quantidade;
-            itemExistente.SubtotalCentavos = itemExistente.PrecoUnitarioCentavos * itemExistente.Quantidade;
+            itemExistente.SubtotalCentavos = VarthexComanda.Domain.MedidasVenda.CalcularSubtotal(itemExistente.PrecoUnitarioCentavos, itemExistente.Quantidade);
             itemExistente.AtualizadoEm = agora;
         }
         else
@@ -229,12 +231,13 @@ public partial class EfComandaRepository : IComandaRepository
                 Id = 0,
                 ComandaId = comandaId,
                 ProdutoId = produto.Id,
+                UnidadeVenda = produto.UnidadeVenda,
                 NomeProduto = produto.Nome,
                 Observacao = observacao,
                 LancadoPor = operador,
                 PrecoUnitarioCentavos = produto.PrecoCentavos,
                 Quantidade = quantidade,
-                SubtotalCentavos = produto.PrecoCentavos * quantidade,
+                SubtotalCentavos = VarthexComanda.Domain.MedidasVenda.CalcularSubtotal(produto.PrecoCentavos, quantidade),
                 CriadoEm = agora,
                 AtualizadoEm = agora
             };
@@ -248,11 +251,13 @@ public partial class EfComandaRepository : IComandaRepository
         return new ComandaComItens { Comanda = comanda, Itens = itens, ItemAlteradoId = itemExistente?.Id ?? itens.Last().Id };
     }
 
-    public ComandaComItens AlterarQuantidade(int itemId, int quantidade, DateTime agora)
+    public ComandaComItens AlterarQuantidade(int itemId, decimal quantidade, DateTime agora)
     {
         using var contexto = _fabricaContexto.CreateDbContext();
         var item = contexto.ItensComanda.SingleOrDefault(i => i.Id == itemId)
             ?? throw new InvalidOperationException("Item não encontrado.");
+        if (MedidasVenda.ValidarQuantidade(quantidade,item.UnidadeVenda) is string erro) throw new InvalidOperationException(erro);
+        if (MedidasVenda.CalcularSubtotal(item.PrecoUnitarioCentavos,quantidade) <= 0) throw new InvalidOperationException("A quantidade deve resultar em pelo menos R$ 0,01.");
         var comanda = contexto.Comandas.SingleOrDefault(c => c.Id == item.ComandaId)
             ?? throw new InvalidOperationException("Comanda não encontrada.");
         if (comanda.Status != StatusComanda.Aberta)
@@ -264,7 +269,7 @@ public partial class EfComandaRepository : IComandaRepository
         item.QuantidadeCozinha = Math.Min(item.QuantidadeCozinha, quantidade);
         item.QuantidadeFicha = Math.Min(item.QuantidadeFicha, quantidade);
         item.Quantidade = quantidade;
-        item.SubtotalCentavos = item.PrecoUnitarioCentavos * quantidade;
+        item.SubtotalCentavos = VarthexComanda.Domain.MedidasVenda.CalcularSubtotal(item.PrecoUnitarioCentavos, quantidade);
         item.AtualizadoEm = agora;
 
         var itens = contexto.ItensComanda.Where(i => i.ComandaId == comanda.Id).OrderBy(i => i.Id).ToList();

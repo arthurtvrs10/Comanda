@@ -59,8 +59,14 @@ public partial class MainWindow
             var qtd = quantidades[item.Id];
             if (cozinha)
             {
-                linhas.Add($"\n{qtd} × {item.NomeProduto}");
+                linhas.Add($"\n{MedidasVenda.FormatarQuantidade(qtd,item.UnidadeVenda)} {item.Medida} × {item.NomeProduto}");
                 if (!string.IsNullOrWhiteSpace(item.Observacao)) linhas.Add("Observação: " + item.Observacao);
+            }
+            else if (item.UnidadeVenda != UnidadeVenda.Unidade)
+            {
+                linhas.Add(new string('-',38));
+                linhas.Add($"{MedidasVenda.FormatarQuantidade(qtd,item.UnidadeVenda)} {item.Medida} × {item.NomeProduto}\nComanda {comanda.Numero:00} · {vm.IdentificacaoPedido}");
+                if (!string.IsNullOrWhiteSpace(item.Observacao)) linhas.Add(item.Observacao);
             }
             else
                 for (var n = 1; n <= qtd; n++)

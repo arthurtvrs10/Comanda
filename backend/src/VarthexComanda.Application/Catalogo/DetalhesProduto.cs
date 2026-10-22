@@ -2,10 +2,11 @@ using VarthexComanda.Domain;
 
 namespace VarthexComanda.Application.Catalogo;
 
-public sealed record DetalhesProduto(long CustoCentavos=0,string? Descricao=null,string? CodigoPersonalizado=null)
+public sealed record DetalhesProduto(long CustoCentavos=0,string? Descricao=null,string? CodigoPersonalizado=null,UnidadeVenda UnidadeVenda=UnidadeVenda.Unidade)
 {
     public string? Validar()
     {
+        if(!Enum.IsDefined(UnidadeVenda))return "Selecione uma unidade de venda válida.";
         if(CustoCentavos<0)return "O preço de custo não pode ser negativo.";
         if(Descricao?.Trim().Length>2000)return "Use até 2.000 caracteres na descrição.";
         var codigo=CodigoPersonalizado?.Trim();
@@ -16,6 +17,7 @@ public sealed record DetalhesProduto(long CustoCentavos=0,string? Descricao=null
     public void Aplicar(Produto produto)
     {
         produto.CustoCentavos=CustoCentavos;
+        produto.UnidadeVenda=UnidadeVenda;
         produto.Descricao=string.IsNullOrWhiteSpace(Descricao)?null:Descricao.Trim();
         produto.CodigoPersonalizado=string.IsNullOrWhiteSpace(CodigoPersonalizado)?null:CodigoPersonalizado.Trim();
     }

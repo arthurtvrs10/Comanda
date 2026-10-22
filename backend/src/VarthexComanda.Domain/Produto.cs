@@ -13,4 +13,6 @@ public class Produto
     public long CustoCentavos { get; set; }
     public string? Descricao { get; set; }
     public string? CodigoPersonalizado { get; set; }
+    public UnidadeVenda UnidadeVenda { get; set; }
+    public string Medida => UnidadeVenda.Simbolo();
 }

@@ -159,21 +159,16 @@ public sealed class CriteriosDeAtendimentoTests : IDisposable
         Assert.Empty(Reler(comanda.Id).Itens);
     }
 
-    // CT06 (fracionario) — por construcao: a quantidade e `int` em toda a cadeia de lancamento,
-    // entao um valor fracionario nem chega a ser representavel. Prova estrutural, nao de tela.
+    // UN remains integral even though the chain now supports exact decimal measures.
     [Fact]
     [Trait("Caso", "CT06")]
-    public void CT06_QuantidadeEInteiraEmToda_ACadeiaDeLancamento()
+    public void CT06_UnidadeRecusaFracaoSemAlterarComanda()
     {
-        static Type TipoDaQuantidade(Type tipo, string metodo) =>
-            tipo.GetMethods().Where(m => m.Name == metodo).SelectMany(m => m.GetParameters())
-                .Where(p => p.Name == "quantidade").Select(p => p.ParameterType).Distinct().Single();
-
-        Assert.Equal(typeof(int), TipoDaQuantidade(typeof(AdicionarItem), nameof(AdicionarItem.Executar)));
-        Assert.Equal(typeof(int), TipoDaQuantidade(typeof(AlterarQuantidade), nameof(AlterarQuantidade.Executar)));
-        Assert.Equal(typeof(int), TipoDaQuantidade(typeof(IComandaRepository), nameof(IComandaRepository.AdicionarItem)));
-        Assert.Equal(typeof(int), TipoDaQuantidade(typeof(IComandaRepository), nameof(IComandaRepository.AlterarQuantidade)));
-        Assert.Equal(typeof(int), typeof(ItemComanda).GetProperty(nameof(ItemComanda.Quantidade))!.PropertyType);
+        var produto = _banco.CriarProduto("Unidade indivis�vel", 500);
+        var comanda = _comandas.AbrirComanda(10, _relogio.UtcNow);
+        var resultado = new AdicionarItem(_comandas, new VarthexComanda.Infrastructure.Persistence.Catalogo.EfProdutoRepository(_banco.Fabrica), _relogio).Executar(comanda.Id, produto.Id, 0.5m);
+        Assert.False(resultado.Sucesso);
+        Assert.Empty(Reler(comanda.Id).Itens);
     }
 
     // CT07 — criterio: comanda vazia nao gera venda.

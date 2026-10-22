@@ -114,7 +114,7 @@ public partial class AtendimentoViewModel
     public bool RecalcularPedido() => ComandaAtual is not null && ExecutarOperacaoPedido(() => _comandas.Recalcular(ComandaAtual.Id), "Pedido recalculado. Os preços lançados foram preservados.");
     public bool TransferirItens(int destinoId, IReadOnlyCollection<int> ids, bool copiar) => ComandaAtual is not null && ExecutarOperacaoPedido(
         () => _comandas.TransferirItens(ComandaAtual.Id, destinoId, ids, copiar, _relogio.UtcNow), copiar ? "Itens copiados para o destino." : "Itens transferidos para o destino.");
-    public void RegistrarImpressao(IReadOnlyDictionary<int, int> quantidades, bool cozinha)
+    public void RegistrarImpressao(IReadOnlyDictionary<int, decimal> quantidades, bool cozinha)
     {
         if (ComandaAtual is null) return;
         _comandas.RegistrarImpressao(ComandaAtual.Id, quantidades, cozinha);

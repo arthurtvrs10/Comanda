@@ -103,7 +103,7 @@ public partial class AtendimentoView
         Acao(menu, "Trocar para…", () => new EditarDadosComandaView(ViewModel, "mover") { Owner = _janelaComanda ?? Window.GetWindow(this) }.ShowDialog(), pode);
         Acao(menu, "Visualizar conta resumida", () => Imprimir(SaidaPedido.Conta));
         Acao(menu, "Transferir / copiar itens para outro pedido", TransferirCopiarItens, pode && ViewModel.Itens.Count > 0);
-        var novos = ViewModel.Itens.Sum(i => Math.Max(0, i.Quantidade - i.QuantidadeFicha));
+        var novos = ViewModel.Itens.Sum(i => i.UnidadeVenda == VarthexComanda.Domain.UnidadeVenda.Unidade ? Math.Max(0, i.Quantidade - i.QuantidadeFicha) : i.Quantidade > i.QuantidadeFicha ? 1 : 0);
         Acao(menu, $"Imprimir fichas de consumação ({novos} nova(s))", () => Imprimir(SaidaPedido.Fichas), novos > 0);
         Acao(menu, "Enviar para WhatsApp", CompartilharPedido, ViewModel.Itens.Count > 0);
         Acao(menu, "Recalcular pedido", () => ViewModel.RecalcularPedido());
@@ -180,7 +180,7 @@ public partial class AtendimentoView
         var lista = new StackPanel(); var selecoes = new List<(CheckBox Caixa, int Id)>();
         foreach (var item in ViewModel.Itens)
         {
-            var caixa = new CheckBox { Content = $"{item.Quantidade} × {item.NomeProduto} · {CentavosParaMoedaConverter.Formatar(item.SubtotalCentavos)}", IsChecked = true, Margin = new Thickness(0,6,0,6) };
+            var caixa = new CheckBox { Content = $"{item.QuantidadeFormatada} {item.Medida} × {item.NomeProduto} · {CentavosParaMoedaConverter.Formatar(item.SubtotalCentavos)}", IsChecked = true, Margin = new Thickness(0,6,0,6) };
             lista.Children.Add(caixa); selecoes.Add((caixa, item.Id));
         }
         raiz.Children.Add(new ScrollViewer { Content = lista, VerticalScrollBarVisibility = ScrollBarVisibility.Auto }); janela.Content = raiz;
@@ -212,7 +212,7 @@ public partial class AtendimentoView
             var numero = new string(telefone.Text.Where(char.IsAsciiDigit).ToArray());
             if (numero.Length is 10 or 11) numero = "55" + numero;
             if (numero.Length is < 12 or > 13 || !numero.StartsWith("55")) { erro.Text = "Informe um número brasileiro com DDD."; return; }
-            var texto = $"{ViewModel.IdentificacaoPedido}\nComanda {ViewModel.ComandaAtual!.Numero:00}\n" + string.Join("\n", ViewModel.Itens.Select(i => $"{i.Quantidade} × {i.NomeProduto}: {CentavosParaMoedaConverter.Formatar(i.SubtotalCentavos)}")) + $"\nTotal: {ViewModel.TotalPedido}\nConferência da conta · Não fiscal";
+            var texto = $"{ViewModel.IdentificacaoPedido}\nComanda {ViewModel.ComandaAtual!.Numero:00}\n" + string.Join("\n", ViewModel.Itens.Select(i => $"{i.QuantidadeFormatada} {i.Medida} × {i.NomeProduto}: {CentavosParaMoedaConverter.Formatar(i.SubtotalCentavos)}")) + $"\nTotal: {ViewModel.TotalPedido}\nConferência da conta · Não fiscal";
             try { Process.Start(new ProcessStartInfo($"https://wa.me/{numero}?text={Uri.EscapeDataString(texto)}") { UseShellExecute = true }); janela.DialogResult = true; }
             catch { erro.Text = "Não foi possível abrir o WhatsApp. Confira o navegador e tente novamente."; }
         };

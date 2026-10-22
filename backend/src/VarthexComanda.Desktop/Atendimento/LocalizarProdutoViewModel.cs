@@ -12,7 +12,7 @@ public sealed record ProdutoLocalizado(Produto Produto, string Categoria)
     public string Nome => Produto.Nome;
     public string? Foto => Produto.FotoArquivo;
     public string Preco => CentavosParaMoedaConverter.Formatar(Produto.PrecoCentavos);
-    public string PrecoVenda => (Produto.PrecoCentavos / 100m).ToString("N2", System.Globalization.CultureInfo.GetCultureInfo("pt-BR"));
+    public string PrecoVenda => (Produto.PrecoCentavos / 100m).ToString("N2", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")) + (Produto.UnidadeVenda == UnidadeVenda.Unidade ? "" : " / " + Produto.Medida);
 }
 
 public partial class LocalizarProdutoViewModel : ObservableObject, IDisposable
@@ -52,7 +52,7 @@ public partial class LocalizarProdutoViewModel : ObservableObject, IDisposable
         catch { Mensagem = "Não foi possível atualizar. Tente novamente."; }
     }
     [RelayCommand] private void Adicionar(ProdutoLocalizado? item) => Lancar(item ?? Selecionado, 1, Pedido.ObservacaoNovoItem);
-    public bool Lancar(ProdutoLocalizado? item, int quantidade, string? observacao)
+    public bool Lancar(ProdutoLocalizado? item, decimal quantidade, string? observacao)
     {
         if (item is null) { Mensagem = "Selecione um produto."; return false; }
         Selecionado = item;

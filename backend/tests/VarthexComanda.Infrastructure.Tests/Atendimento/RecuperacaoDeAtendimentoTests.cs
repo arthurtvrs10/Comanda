@@ -60,7 +60,7 @@ public class RecuperacaoDeAtendimentoTests : IDisposable
             new Produto { Id = 0, CategoriaId = categoria.Id, Nome = nome, PrecoCentavos = preco, Ativo = true, CriadoEm = agora, AtualizadoEm = agora });
     }
 
-    private record ItemVisto(string Nome, int Quantidade, long Preco, long Subtotal);
+    private record ItemVisto(string Nome, decimal Quantidade, long Preco, long Subtotal);
 
     private record ComandaVista(long Total, List<ItemVisto> Itens);
 

@@ -16,7 +16,7 @@ public class AdicionarItem
         _relogio = relogio;
     }
 
-    public Resultado<ComandaComItens> Executar(int comandaId, int produtoId, int quantidade, string? observacao = null, string? operador = null)
+    public Resultado<ComandaComItens> Executar(int comandaId, int produtoId, decimal quantidade, string? observacao = null, string? operador = null)
     {
         observacao = string.IsNullOrWhiteSpace(observacao) ? null : observacao.Trim();
         if (observacao?.Length > 300)
@@ -31,6 +31,8 @@ public class AdicionarItem
         {
             return Resultado<ComandaComItens>.Falha("Produto indisponível.");
         }
+        if (VarthexComanda.Domain.MedidasVenda.ValidarQuantidade(quantidade,produto.UnidadeVenda) is string erro)
+            return Resultado<ComandaComItens>.Falha(erro);
 
         try
         {
