@@ -269,6 +269,7 @@ public partial class AtendimentoViewModel : ObservableObject
     [RelayCommand]
     private void FecharEdicao()
     {
+        if (SalvandoFechamento) return;
         if (ComandaAtual is not null && PrepararSaidaPedido?.Invoke() == false) return;
         LimparEdicao();
     }
@@ -289,6 +290,7 @@ public partial class AtendimentoViewModel : ObservableObject
     [RelayCommand(CanExecute = nameof(PodeVerTotal))]
     private void VerTotal()
     {
+        if (SalvandoFechamento) return;
         if (ComandaAtual is null)
         {
             return;
@@ -303,7 +305,7 @@ public partial class AtendimentoViewModel : ObservableObject
         }
     }
 
-    private bool PodeVerTotal() => ComandaAtual is not null && Itens.Count > 0;
+    private bool PodeVerTotal() => !SalvandoFechamento && ComandaAtual is not null && Itens.Count > 0;
 
     [RelayCommand]
     private void AdicionarProdutoAoItem(Produto produto) => AdicionarProduto(produto, 1, ObservacaoNovoItem);

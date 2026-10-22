@@ -11,7 +11,14 @@ public partial class AtendimentoViewModel
     public Func<IReadOnlyList<string>>? ObterResponsaveis { get; set; }
     public Func<bool>? PrepararSaidaPedido { get; set; }
     [ObservableProperty] private bool exibicaoCompleta = true;
-    public bool PodeAlterarPedido => ComandaAtual is { Bloqueada: false };
+    [ObservableProperty] private bool salvandoFechamento;
+    public bool PodeInteragirPedido => !SalvandoFechamento;
+    partial void OnSalvandoFechamentoChanged(bool value)
+    {
+        OnPropertyChanged(nameof(PodeInteragirPedido)); OnPropertyChanged(nameof(PodeAlterarPedido));
+        VerTotalCommand.NotifyCanExecuteChanged();
+    }
+    public bool PodeAlterarPedido => !SalvandoFechamento && ComandaAtual is { Bloqueada: false };
     public string SituacaoPedido => ComandaAtual?.Bloqueada == true ? "Em fechamento" : "Em aberto";
     public string IdentificacaoPedido => $"Pedido #{ComandaAtual?.CodigoPedido ?? ComandaAtual?.Id}";
     public string NumeroPedidoDestacado => $"#{ComandaAtual?.CodigoPedido ?? ComandaAtual?.Id}";
@@ -32,6 +39,7 @@ public partial class AtendimentoViewModel
 
     private bool PermitirAlteracao()
     {
+        if (SalvandoFechamento) return false;
         if (ComandaAtual is not { Bloqueada: true }) return true;
         Mensagem = "Comanda em fechamento. Desative o fechamento para alterar os itens.";
         return false;
@@ -48,11 +56,44 @@ public partial class AtendimentoViewModel
         }
     }
 
-    public bool DefinirBloqueio(bool bloqueada) => ComandaAtual is not null && ExecutarOperacaoPedido(() =>
+    public bool DefinirBloqueio(bool bloqueada)
     {
-        var comanda = _comandas.DefinirBloqueio(ComandaAtual.Id, bloqueada);
-        return new() { Comanda = comanda, Itens = _comandas.BuscarComItens(comanda.Id)!.Itens };
-    }, bloqueada ? "Comanda em fechamento. O pagamento continua disponível." : "Comanda reaberta para alterações.");
+        if (ComandaAtual is null || SalvandoFechamento) return false;
+        try { AplicarFechamento(_comandas.DefinirBloqueio(ComandaAtual.Id, bloqueada)); return true; }
+        catch (Exception ex) { FalhaFechamento(ex); return false; }
+    }
+
+    public async Task<bool> DefinirFechamentoAsync(bool fechamento)
+    {
+        if (ComandaAtual is not { } atual || SalvandoFechamento) return false;
+        SalvandoFechamento = true;
+        Mensagem = fechamento ? "Salvando fechamento…" : "Reabrindo comanda…";
+        try
+        {
+            var comanda = await Task.Run(() => _comandas.DefinirBloqueio(atual.Id, fechamento));
+            AplicarFechamento(comanda);
+            return true;
+        }
+        catch (Exception ex) { FalhaFechamento(ex); return false; }
+        finally { SalvandoFechamento = false; }
+    }
+
+    private void AplicarFechamento(Comanda comanda)
+    {
+        if (ComandaAtual?.Id == comanda.Id) ComandaAtual = comanda;
+        for (var i = 0; i < ComandasAbertas.Count; i++)
+            if (ComandasAbertas[i].Id == comanda.Id) { ComandasAbertas[i] = comanda; break; }
+        var slot = Slots.FirstOrDefault(s => s.ComandaId == comanda.Id);
+        if (slot is not null) slot.Bloqueada = comanda.Bloqueada;
+        AtualizarResumoPedido();
+        Mensagem = comanda.Bloqueada ? "Comanda em fechamento. O pagamento continua disponível." : "Comanda reaberta para alterações.";
+    }
+
+    private void FalhaFechamento(Exception ex)
+    {
+        _logger?.Error(ex, "Falha ao alterar fechamento da comanda");
+        Mensagem = "Não foi possível salvar o fechamento. Tente novamente.";
+    }
 
     public bool SalvarAtendimento(string? responsavel, string? observacao) => ComandaAtual is not null && ExecutarOperacaoPedido(() =>
     {

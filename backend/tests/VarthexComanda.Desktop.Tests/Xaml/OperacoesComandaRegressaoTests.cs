@@ -17,6 +17,73 @@ public class OperacoesComandaRegressaoTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
+    public async Task FechamentoLentoNaoBloqueiaRetornoNaoRecriaItensEReverteEmFalha(bool falhar)
+    {
+        using var banco=new BancoDeHomologacao();var produto=banco.CriarProduto("Refrigerante",500);
+        var real=new EfComandaRepository(banco.Fabrica);var comanda=real.AbrirComanda(1,DateTime.UtcNow);
+        real.AdicionarItem(comanda.Id,produto,2,DateTime.UtcNow);
+        var repo=System.Reflection.DispatchProxy.Create<IComandaRepository,RepositorioFechamentoControlado>();
+        var controle=(RepositorioFechamentoControlado)(object)repo;controle.Real=real;controle.Falhar=falhar;
+        using var iniciou=controle.Iniciou;using var liberar=controle.Liberar;
+        var vm=Criar(banco,repo);vm.SelecionarComandaCommand.Execute(comanda);
+        var item=vm.Itens.Single();var slot=vm.Slots.Single(s=>s.ComandaId==comanda.Id);
+        controle.Consultas=0;
+        var operacao=vm.DefinirFechamentoAsync(true);
+        try
+        {
+            Assert.True(iniciou.Wait(TimeSpan.FromSeconds(3)));
+            Assert.False(operacao.IsCompleted);Assert.True(vm.SalvandoFechamento);Assert.False(vm.PodeInteragirPedido);
+            Assert.False(vm.VerTotalCommand.CanExecute(null));Assert.False(await vm.DefinirFechamentoAsync(false));
+            vm.FecharEdicaoCommand.Execute(null);Assert.NotNull(vm.ComandaAtual);
+            Assert.False(vm.AdicionarProduto(produto,1,null));Assert.Equal(1,controle.Gravacoes);
+        }
+        finally { liberar.Set(); }
+        Assert.Equal(!falhar,await operacao);Assert.False(vm.SalvandoFechamento);Assert.True(vm.PodeInteragirPedido);
+        Assert.Same(item,vm.Itens.Single());Assert.Same(slot,vm.Slots.Single(s=>s.ComandaId==comanda.Id));
+        Assert.Equal(0,controle.Consultas);Assert.Equal(!falhar,real.BuscarComItens(comanda.Id)!.Comanda.Bloqueada);
+        Assert.Equal(falhar?"Em aberto":"Em fechamento",vm.SituacaoPedido);
+        Assert.True(vm.VerTotalCommand.CanExecute(null));
+        if(falhar)Assert.Contains("Tente novamente",vm.Mensagem);
+    }
+
+    public class RepositorioFechamentoControlado : System.Reflection.DispatchProxy
+    {
+        public IComandaRepository Real { get; set; } = null!;
+        public bool Falhar { get; set; }
+        public int Consultas,Gravacoes;
+        public ManualResetEventSlim Iniciou { get; }=new();
+        public ManualResetEventSlim Liberar { get; }=new();
+        protected override object? Invoke(System.Reflection.MethodInfo? metodo,object?[]? argumentos)
+        {
+            if(metodo!.Name is nameof(IComandaRepository.BuscarComItens) or nameof(IComandaRepository.ListarAbertas))Interlocked.Increment(ref Consultas);
+            if(metodo.Name==nameof(IComandaRepository.DefinirBloqueio))
+            {
+                Interlocked.Increment(ref Gravacoes);Iniciou.Set();
+                if(!Liberar.Wait(TimeSpan.FromSeconds(5)))throw new TimeoutException();
+                if(Falhar)throw new InvalidOperationException("Falha controlada de gravação.");
+            }
+            return metodo.Invoke(Real,argumentos);
+        }
+    }
+
+    [Fact]
+    public void FechamentoPersistidoAtualizaSituacaoEGradeEPermiteRetomarAlteracoes()
+    {
+        using var banco=new BancoDeHomologacao();var produto=banco.CriarProduto("Refrigerante",500);
+        var repo=new EfComandaRepository(banco.Fabrica);var comanda=repo.AbrirComanda(1,DateTime.UtcNow);
+        var vm=Criar(banco,repo);vm.SelecionarComandaCommand.Execute(comanda);
+        Assert.True(vm.DefinirBloqueio(true));Assert.Equal("Em fechamento",vm.SituacaoPedido);
+        Assert.True(repo.BuscarComItens(comanda.Id)!.Comanda.Bloqueada);
+        var slot=vm.Slots.Single(s=>s.ComandaId==comanda.Id);Assert.True(slot.EmFechamento);Assert.Equal("Em fechamento",slot.SituacaoTexto);
+        Assert.False(vm.AdicionarProduto(produto,1,null));Assert.Empty(repo.BuscarComItens(comanda.Id)!.Itens);
+        Assert.True(vm.DefinirBloqueio(false));Assert.Equal("Em aberto",vm.SituacaoPedido);
+        Assert.False(vm.Slots.Single(s=>s.ComandaId==comanda.Id).EmFechamento);
+        Assert.True(vm.AdicionarProduto(produto,1,null));Assert.Single(repo.BuscarComItens(comanda.Id)!.Itens);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
     public void LancamentoSelecionaAExataLinhaIncrementadaAposTransferirOuCopiar(bool copiar)
     {
         using var banco = new BancoDeHomologacao();

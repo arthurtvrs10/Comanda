@@ -16,18 +16,21 @@ public partial class AtendimentoView
 {
     public Func<SaidaPedido, bool>? ImprimirPedido { get; set; }
     private bool _atualizandoLateral;
+    private int? _comandaLateralId;
     private string TituloPedido() => ViewModel.ComandaAtual is not { } c ? "Comanda" :
         $"{(c.NumeroMesa is int mesa ? $"Mesa: {mesa}" : $"Comanda: {c.Numero:00}")} ({ViewModel.IdentificacaoPedido})";
 
     private void AtualizarDadosLaterais()
     {
         if (ViewModel.ComandaAtual is not { } c) return;
+        if (_comandaLateralId == c.Id && Equals(ResponsavelPedido.SelectedItem, c.Responsavel ?? "Não informado")) return;
         _atualizandoLateral = true;
         try
         {
             ResponsavelPedido.ItemsSource = (ViewModel.ObterResponsaveis?.Invoke() ?? [])
                 .Append(c.Responsavel ?? "Não informado").Distinct().ToArray();
             ResponsavelPedido.SelectedItem = c.Responsavel ?? "Não informado";
+            _comandaLateralId = c.Id;
         }
         finally { _atualizandoLateral = false; }
     }
@@ -41,14 +44,14 @@ public partial class AtendimentoView
     {
         SalvarObservacaoPendente();
     }
-    private bool SalvarObservacaoPendente() => ViewModel.ComandaAtual is not { } c
+    private bool SalvarObservacaoPendente() => !ViewModel.SalvandoFechamento && (ViewModel.ComandaAtual is not { } c
         || c.Observacao == ObservacaoPedido.Text || (string.IsNullOrEmpty(c.Observacao) && ObservacaoPedido.Text.Length == 0)
-        || ViewModel.SalvarAtendimento(c.Responsavel, ObservacaoPedido.Text);
-    private void BloqueioPedido_Click(object sender, RoutedEventArgs e)
+        || ViewModel.SalvarAtendimento(c.Responsavel, ObservacaoPedido.Text));
+    private async void BloqueioPedido_Click(object sender, RoutedEventArgs e)
     {
         if (!SalvarObservacaoPendente()) { BloqueioPedido.IsChecked=ViewModel.ComandaAtual?.Bloqueada; return; }
-        ViewModel.DefinirBloqueio(BloqueioPedido.IsChecked == true);
-        BloqueioPedido.IsChecked = ViewModel.ComandaAtual?.Bloqueada;
+        try { await ViewModel.DefinirFechamentoAsync(BloqueioPedido.IsChecked == true); }
+        finally { BloqueioPedido.IsChecked = ViewModel.ComandaAtual?.Bloqueada; }
     }
     private void ProdutosPedido_Click(object sender, RoutedEventArgs e)
     {

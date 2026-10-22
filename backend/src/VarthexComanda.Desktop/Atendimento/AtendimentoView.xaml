@@ -204,7 +204,7 @@
             </TextBlock>
         </Grid>
 
-        <Grid x:Name="PainelEdicao" TextElement.Foreground="{DynamicResource AjudaInk}" TextElement.FontSize="13" IsVisibleChanged="PainelEdicao_IsVisibleChanged" Visibility="{Binding ComandaAtual, Converter={StaticResource VisivelSeComandaAberta}}" Background="{DynamicResource AjudaCanvas}">
+        <Grid x:Name="PainelEdicao" IsEnabled="{Binding PodeInteragirPedido}" TextElement.Foreground="{DynamicResource AjudaInk}" TextElement.FontSize="13" IsVisibleChanged="PainelEdicao_IsVisibleChanged" Visibility="{Binding ComandaAtual, Converter={StaticResource VisivelSeComandaAberta}}" Background="{DynamicResource AjudaCanvas}">
             <Grid.RowDefinitions><RowDefinition Height="54"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
             <Grid Grid.Row="0" Margin="8,0,8,8">
                 <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="160"/><ColumnDefinition Width="120"/></Grid.ColumnDefinitions>

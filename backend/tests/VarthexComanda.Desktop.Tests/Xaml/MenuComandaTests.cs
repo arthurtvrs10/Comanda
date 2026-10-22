@@ -84,8 +84,24 @@ public class MenuComandaTests
                         Assert.Null(view.FindName("PainelMenu"));
                         if (largura == 800)
                         {
-                            vm.ComandaAtual = new VarthexComanda.Domain.Comanda { Id=vm.ComandaAtual.Id,Numero=vm.ComandaAtual.Numero,Status=vm.ComandaAtual.Status,AbertaEm=vm.ComandaAtual.AbertaEm,TotalCentavos=1000,Bloqueada=true };
+                            vm.SalvandoFechamento=true;vm.Mensagem="Salvando fechamento…";
+                            ((CheckBox)view.FindName("BloqueioPedido")).IsChecked=true;
+                            Renderizar(view,largura,altura,nome+"-salvando");
+                            Assert.False(((Grid)view.FindName("PainelEdicao")).IsEnabled);
+                            Assert.False(vm.PrepararSaidaPedido!());
+                            vm.SalvandoFechamento=false;vm.Mensagem="";
+                            vm.ComandaAtual = new VarthexComanda.Domain.Comanda { Id=vm.ComandaAtual.Id,Numero=vm.ComandaAtual.Numero,Status=vm.ComandaAtual.Status,AbertaEm=vm.ComandaAtual.AbertaEm,TotalCentavos=1000,Bloqueada=true,Prioridade=VarthexComanda.Domain.PrioridadeComanda.Urgente };
                             Renderizar(view, largura, altura, nome + "-bloqueado");
+                            Assert.Equal("Em fechamento", vm.SituacaoPedido);
+                            var situacao=(Button)view.FindName("BotaoPrioridadePedido");
+                            Assert.Equal(Color.FromRgb(242,203,89),((SolidColorBrush)situacao.Background).Color);
+                            Assert.Equal("Em fechamento",situacao.Content);
+                            vm.Slots.Clear();vm.Slots.Add(new ComandaSlotItem { Numero=vm.ComandaAtual.Numero,Aberta=true,Bloqueada=true,TotalFormatado="R$ 10,00",TempoFormatado="00:05:00" });
+                            var atual=vm.ComandaAtual;vm.ComandaAtual=null;
+                            Renderizar(view,largura,altura,$"grade-fechamento-{(escuro?"escuro":"claro")}");
+                            var cartao=AlinhamentoInterfaceTests.Filhos(view).OfType<Button>().Single(b=>b.DataContext is ComandaSlotItem);
+                            Assert.Equal(Color.FromRgb(242,203,89),((SolidColorBrush)cartao.Background).Color);
+                            vm.ComandaAtual=atual;
                             var botao = (Button)view.FindName("BotaoMaisOpcoes");
                             CapturarMenu(view.CriarMenuMaisOpcoes(botao), $"menu-opcoes-{(escuro ? "escuro" : "claro")}");
                             CapturarMenu(view.CriarMenuImprimir(botao), $"menu-imprimir-{(escuro ? "escuro" : "claro")}");

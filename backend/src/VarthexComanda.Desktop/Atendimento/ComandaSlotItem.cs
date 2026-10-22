@@ -3,11 +3,12 @@ using VarthexComanda.Domain;
 
 namespace VarthexComanda.Desktop.Atendimento;
 
-public class ComandaSlotItem : ObservableObject
+public partial class ComandaSlotItem : ObservableObject
 {
     public required int Numero { get; init; }
     public required bool Aberta { get; init; }
-    public bool Bloqueada { get; init; }
+    [ObservableProperty] private bool bloqueada;
+    partial void OnBloqueadaChanged(bool value) { OnPropertyChanged(nameof(EmFechamento)); OnPropertyChanged(nameof(SituacaoTexto)); }
     public bool EmFechamento => Aberta && Bloqueada;
     public string SituacaoTexto => EmFechamento ? "Em fechamento" : PrioridadeTexto;
     public int? ComandaId { get; init; }
