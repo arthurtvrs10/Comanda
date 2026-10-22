@@ -1,6 +1,6 @@
 # Testes e aceitação
 
-CT01–CT24 são critérios da base atual; resultados dependem de evidências na homologação. CTE01–CTE11 são cenários futuros ainda não executados, definidos no [plano de evolução](21-evolucao-atendimento.md).
+CT01–CT25 são critérios da base atual e das extensões documentadas em desenvolvimento; resultados dependem de evidências na homologação. CTE01–CTE11 são cenários futuros ainda não executados, definidos no [plano de evolução](21-evolucao-atendimento.md).
 
 ## Cenários essenciais
 
@@ -30,6 +30,10 @@ CT01–CT24 são critérios da base atual; resultados dependem de evidências na
 | CT22 | Controlar logs | Rotação remove arquivos além da retenção e respeita o limite de armazenamento configurado |
 
 ## Testes adicionais obrigatórios
+
+CT25 — Histórico de pedidos (RF30/UC11): consultar um período local, incluindo o segundo final de 23:59 e excluindo o minuto seguinte; alternar abertura/fechamento e status; exibir cancelados somente quando solicitado; localizar nomes com acentos e múltiplos códigos; rejeitar códigos inválidos; preservar quantidades, itens e vendas. Verificar colunas, agrupamento, preferência persistida, detalhes e bloqueio de acesso em sessão bloqueada/cozinha. O XLSX deve manter números como números e conteúdo iniciado com `=` como texto literal. A prévia deve conter as colunas e registros exibidos.
+
+Automação: `HistoricoPedidosTests` (8 cenários SQLite) e `HistoricoPedidosXamlTests` (4 cenários Desktop). A suíte global passou 762/762 em Debug. Uma recaptura passou 1/1 do mesmo teste de layout; não soma teste distinto. CT25 é registrado aqui e na rastreabilidade manual, fora do catálogo gerado CT01–CT22. Impressora física, leitor de tela completo e desempenho em base grande permanecem sem homologação específica. [Evidências](../../specs/2026-10-22-historico-pedidos.md).
 
 CT24: salvar/corrigir/remover nome opcional, validar limite, reabrir aplicativo e
 conferir persistência, exibir nome na grade/encerramento/histórico, impedir alteração

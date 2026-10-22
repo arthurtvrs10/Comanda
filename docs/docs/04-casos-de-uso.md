@@ -138,3 +138,16 @@ Arquivo incompatível ou corrompido é recusado sem alterar a base ativa.
 5. Permitir a continuidade normal do atendimento.
 
 O aplicativo não cria venda, não fecha comanda e não repete a última alteração. Se a base falhar na validação, a aplicação bloqueia gravações e orienta a recuperação segura.
+
+## UC11 Consultar histórico de pedidos — extensão em desenvolvimento de 22/10/2026
+
+**Ator:** gestor ou atendente autenticado. **Requisito:** RF30; RN04/RN05/RN10/RN20/RN22/RN23 preservadas.
+
+1. Abrir Principal → Histórico de pedidos. O Histórico de vendas em Financeiro permanece disponível.
+2. Abrir a pesquisa e escolher status, abertura ou fechamento, período com horário, cliente, colaborador e códigos separados por vírgula. Cancelados são opcionais.
+3. Pesquisar e conferir os registros e o total exibido. O total inclui os pedidos selecionados, inclusive abertos/cancelados quando presentes; não representa receita de vendas.
+4. Usar Mais colunas para mostrar/ocultar dados existentes e agrupar por criador, origem, tipo ou pagamento. Código é obrigatório; preferências ficam no computador, separadas entre edição normal e demonstração.
+5. Abrir os detalhes para consultar os itens e seus valores históricos. Somente uma comanda ainda aberta oferece continuidade no atendimento, com as permissões usuais.
+6. Exportar as colunas visíveis para XLSX ou conferir a prévia antes de escolher a impressora.
+
+Voltar ou fechar a pesquisa mantém os filtros anteriores. Erros não criam vendas ou alteram registros. O filtro usa Brasília e inclui todo o minuto final. Fiado, UTM, endereço e telefone não são inventados nem adicionados ao modelo. Esta extensão não altera os instaladores publicados da 1.4.0.

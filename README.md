@@ -103,6 +103,12 @@ Distribua somente os pacotes preparados. A pasta `artifacts` pode conter materia
 
 ## Documentação e validação
 
+**Em desenvolvimento após a 1.4.0:** Histórico de pedidos em Principal, com
+pesquisa por status/período, colunas e agrupamento configuráveis, detalhes,
+exportação Excel e prévia de impressão. O Histórico de vendas é preservado.
+Esta extensão ainda não está nos instaladores publicados acima.
+[Contrato e evidências](specs/2026-10-22-historico-pedidos.md).
+
 - [Índice completo](docs/README.md)
 - [Notas e evidências da 1.4.0](specs/2026-10-22-release-1.4.0.md)
 - [Histórico de alterações](docs/CHANGELOG.md)

@@ -1,6 +1,6 @@
 # Requisitos
 
-RF01–RF29 e RNF01–RNF21 descrevem a base atual. Existência de requisito não comprova homologação. Novos requisitos EV01–EV12, ainda planejados, estão no [plano de evolução](21-evolucao-atendimento.md).
+RF01–RF30 e RNF01–RNF21 descrevem a base atual e as extensões documentadas em desenvolvimento. Existência de requisito não comprova homologação. Novos requisitos EV01–EV12, ainda planejados, estão no [plano de evolução](21-evolucao-atendimento.md).
 
 ## Requisitos funcionais
 
@@ -33,6 +33,7 @@ RF01–RF29 e RNF01–RNF21 descrevem a base atual. Existência de requisito nã
 | RF25 | Média | Configurar estabelecimento | Manter nome, números de comanda e pasta de backup |
 | RF26 | Média | Registrar falhas técnicas | Gravar log local sem dados sensíveis |
 | RF27 | Alta | Recuperar atendimento interrompido | Ao iniciar, carregar comandas abertas e seus itens sem duplicar ou descartar lançamentos confirmados |
+| RF30 | Média | Consultar histórico de pedidos | Consultar comandas abertas, em fechamento, finalizadas e canceladas por período e filtros; escolher/agrupar colunas, abrir detalhes e exportar/imprimir os registros exibidos sem alterar o atendimento |
 
 ## Requisitos não funcionais
 

@@ -1,5 +1,14 @@
 # Histórico de alterações
 
+## Não lançado — 2026-10-22 — Histórico de pedidos
+
+- Novo destino Principal → Histórico de pedidos, preservando Histórico de vendas em Financeiro. Janela interna com tabela integral, ordenação, rolagem, totais e ajuste automático de colunas.
+- Pesquisa por status, abertura/fechamento, período com horários, seis atalhos de datas, cliente, colaborador, códigos e cancelados. Códigos usam a numeração do pedido quando existente; período segue Brasília e inclui o minuto final.
+- Mais colunas com árvore de campos existentes, agrupamento e preferência local. Detalhes somente de leitura; comandas abertas podem voltar ao atendimento com suas permissões.
+- Exportação XLSX das colunas visíveis e prévia de impressão. Textos semelhantes a fórmulas permanecem literais na planilha; valores são numéricos. Nenhuma consulta cria venda ou altera o banco.
+- RF30/UC11/CT25; 762 testes distintos aprovados em Debug, com SQLite real, interface nos dois temas e leitura da planilha por openpyxl. Revisão Impeccable `ship` restrita à tela e dois modais. Impressora física, leitor de tela completo e base grande não homologados. [Evidências e limites](../specs/2026-10-22-historico-pedidos.md).
+- Os instaladores da pré-release 1.4.0 publicada permanecem inalterados; esta extensão está na compilação de desenvolvimento.
+
 ## Aplicativo 1.4.0 — 2026-10-22 — pré-release normal e demonstração
 
 - Toggle Modo escuro no cabeçalho, reutilizando o controle compacto existente, com nome acessível, tooltip e persistência da preferência. Alteração por mouse, teclado ou automação usa os eventos Checked/Unchecked; inicializar o controle não regrava a preferência já aplicada.

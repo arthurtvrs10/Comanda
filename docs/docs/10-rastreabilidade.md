@@ -63,3 +63,17 @@ Os dois instaladores autocontidos relacionam-se a RNF09/RNF14/RNF17 e CT21.
 750 testes distintos passaram em Release; a compilação e os checksums não encerram
 CT21 em Windows limpo. Origem das capturas e limites em
 [Release 1.4.0](../../specs/2026-10-22-release-1.4.0.md).
+
+## Histórico de pedidos — extensão em desenvolvimento de 22/10/2026
+
+RF30 → UC11 → CT25 → `HistoricoPedidosTests` e `HistoricoPedidosXamlTests`.
+RN04/RN05/RN10/RN20/RN22/RN23 são preservadas: a consulta não altera registros,
+considera Brasília e abre detalhes com os itens históricos. RNF01/RNF07/RNF18
+cobrem consulta local, legibilidade e teclado. O histórico de vendas (RF18–RF20/UC07)
+continua independente. Não há migração nem novo estado de pedido.
+
+Evidência: 8 testes novos SQLite e 4 Desktop incluídos na regressão Debug de
+762 testes aprovados, além da leitura do XLSX por openpyxl. A matriz gerada
+CT01–CT22 permanece preservada; CT25 usa esta cadeia explícita e o critério no
+documento de aceitação. Instalação, impressão física e grandes bases não foram
+homologadas nesta extensão. [Contrato e capturas](../../specs/2026-10-22-historico-pedidos.md).
