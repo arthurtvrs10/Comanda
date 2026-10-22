@@ -1,152 +1,93 @@
 # Varthex Comanda
 
-Sistema para pequenos estabelecimentos de alimentação. Registra consumo em comandas, calcula o total e mantém histórico local. Funciona em um computador Windows, sem internet.
+Sistema Windows para organizar mesas, comandas e consumo em pequenos estabelecimentos de alimentação. Produtos, atendimento, fechamento e histórico funcionam localmente, sem depender da internet.
 
-**Situação:** produto atual disponível; evolução local descrita abaixo. Pedido independente, preparo e rede local permanecem em planejamento.
+**Nova release: 1.4.0 · 22/10/2026 · versão em testes.** Disponível nas edições normal e demonstração. Ambas incluem o .NET e exigem ativação offline.
 
-## Reconstrução funcional — evolução local de 19/10/2026
+<img src="docs/design/principal-claro.png" alt="Área de trabalho Varthex com fundo neutro, nome centralizado e toggle de modo escuro no cabeçalho" width="1000">
 
-O código em desenvolvimento amplia o fluxo existente de produtos → comanda → consumo → fechamento:
+## Baixar para Windows
 
-- Mesa opcional de 1 a 999, com indicação de balcão quando não informada. Para definir ou alterar, abra a comanda e use o botão de mesa abaixo do cabeçalho.
-- Comandas da mesma mesa continuam independentes e podem ser encerradas separadamente.
-- Observação de até 300 caracteres para o próximo produto adicionado. O campo é limpo após a gravação; instruções diferentes mantêm linhas separadas.
-- Mesa e instruções aparecem na consulta da cozinha; observações também aparecem no histórico.
-- Atualização do banco por nova migração, aproveitando o backup preventivo existente.
+| Edição 1.4.0 | Para quem | Download |
+| --- | --- | --- |
+| **Normal — sem demonstração** | Cadastrar os produtos reais do estabelecimento; catálogo vazio em uma instalação nova | [Baixar instalador Windows x64](https://github.com/arthurtvrs10/Varthex-Orders/releases/download/v1.4.0/VarthexComanda-1.4.0-Setup-win-x64.exe) · [SHA-256](downloads/windows/VarthexComanda-1.4.0-Setup-win-x64.exe.sha256) |
+| **Demonstração** | Conhecer o sistema com 12 produtos fictícios, fotos e preços de teste | [Baixar instalador Windows x64](https://github.com/arthurtvrs10/Varthex-Orders/releases/download/v1.4.0/VarthexComanda-Demo-1.4.0-Setup-win-x64.exe) · [SHA-256](downloads/demo/VarthexComanda-Demo-1.4.0-Setup-win-x64.exe.sha256) |
 
-Essas alterações ainda não fazem parte dos instaladores publicados abaixo. Não houve importação do banco ou do código do Consumer. Pedido numerado independente e estados de preparo continuam planejados.
+[Notas da release 1.4.0](https://github.com/arthurtvrs10/Varthex-Orders/releases/tag/v1.4.0) · [Instalação normal](downloads/windows/README.md) · [Instalação da demonstração](downloads/demo/README.md)
 
-[Escopo e validação desta entrega](specs/2026-10-19-reconstrucao-funcional.md).
+Instalação por usuário, sem administrador, em Windows x64. Feche o aplicativo antes de atualizar. Reinstalar ou atualizar preserva os dados e a licença existentes. Os instaladores não possuem assinatura de código.
 
-## Recursos atuais
+A release é uma **pré-release**: instalação em Windows limpo e autorização/envio com uma conta Google real continuam pendentes. A [versão estável anterior 1.2.2](https://github.com/arthurtvrs10/Varthex-Orders/releases/tag/v1.2.2) permanece disponível.
 
-| Área | Função |
+## Novidades da 1.4.0
+
+- **Área de trabalho com janelas internas:** abra, mova, redimensione, maximize e organize os módulos abaixo da Ribbon. A antiga tela de seleção de perfis foi removida.
+- **Modo escuro por toggle:** ative ou desative no cabeçalho; a preferência fica salva neste computador. Fundo padrão cinza neutro com VARTHEX ao centro, preservando imagens personalizadas.
+- **Mesas e comandas:** observações, responsável, prioridades por cor, transferência/cópia de itens e indicação amarela de **Em fechamento**. Numeração inicial configurável.
+- **Catálogo e lançamento:** produtos com fotos ou em lista, filtro por categoria, ordenação visível e personalização de quantidade e observações. Venda por **UN, KG ou L**, com até três casas decimais para KG/L.
+- **Backup com progresso:** janela própria, barra e mensagens da execução, restauração de dados e fotos, Google Drive por OAuth preparado e OneDrive por pasta sincronizada.
+- **Ajuda:** painel compacto ao lado do atalho, WhatsApp, RustDesk, sugestões e tutorial guiado. A central de ajuda está em preparação.
+
+## Recursos
+
+| Área | O que oferece |
 | --- | --- |
-| Produtos | Categorias, preços, fotos opcionais e desativação |
-| Atendimento | Comandas numeradas, nome opcional do cliente, itens, quantidades e total |
-| Encerramento | Confirmação do operador após cobrança realizada fora do sistema |
-| Histórico | Consulta de vendas e resumo diário |
-| Continuidade | Backup, restauração, recuperação de comandas e logs |
-| Licenciamento | Ativação offline vinculada ao computador |
+| Produtos | Categorias, preço de custo e venda, fotos, unidades de venda e ativação/desativação |
+| Atendimento | Mesas opcionais, comandas numeradas, cliente opcional, itens, quantidades, observações e total |
+| Fechamento | Conferência e confirmação manual da cobrança externa, com registro da forma informada |
+| Histórico | Consulta de vendas, itens e resumo diário |
+| Continuidade | Backup automático/manual local, checksum, restauração, recuperação de comandas e logs |
+| Acesso | PIN de atendimento, acesso de gestor, colaboradores e ativação offline vinculada ao computador |
 
-Não há pagamento integrado, emissão fiscal, cozinha conectada ou atendimento móvel nas versões abaixo. O APK Android é exclusivo para gerar licenças.
+A cobrança é realizada fora do sistema; não há integração com maquininha, emissão fiscal, estoque completo ou atendimento em rede. A cozinha disponível é uma consulta local de comandas abertas, sem estados de preparo. Pedidos independentes, preparo e atendimento móvel continuam no [plano de evolução](docs/docs/21-evolucao-atendimento.md).
 
-## Windows — versão normal 1.2.2
+## Instalar e começar
 
-[![Baixar para Windows](docs/design/download-windows.svg)](https://github.com/arthurtvrs10/Varthex-Orders/releases/download/v1.2.2/VarthexComanda-1.2.2-Setup-win-x64.exe)
+1. Escolha a edição normal ou demonstração e execute o instalador.
+2. Ative o aplicativo com a licença fornecida pelo responsável.
+3. Entre no perfil adequado. Na edição normal, cadastre categorias e produtos; a demonstração já traz o catálogo fictício.
+4. Abra **Principal → Mesas / comandas**, selecione o número e lance os produtos.
+5. Confira o total, realize a cobrança externamente e confirme o fechamento no sistema.
 
-O download principal é o **Varthex Comanda para Windows 64 bits**, versão normal,
-**sem produtos pré-cadastrados e sem modo de demonstração**. Em uma instalação nova,
-o catálogo começa vazio para você cadastrar os produtos reais do estabelecimento.
+A edição normal usa `%LOCALAPPDATA%\VarthexComanda` e a demonstração usa `%LOCALAPPDATA%\VarthexComandaDemo`. Os atalhos e instalações são separados; a demonstração abre pelo atalho **Comanda Demonstração**. O catálogo fictício é carregado somente na primeira base vazia e não substitui alterações posteriores.
 
-Instala para o usuário atual, sem administrador, e inclui o .NET. Funciona offline
-e requer ativação. Atualizar ou reinstalar preserva os produtos e a licença já existentes.
-Os dados ficam em `%LOCALAPPDATA%\VarthexComanda`.
+Em **Configurações → Backup e restauração**, escolha a pasta local e faça uma cópia. O Google Drive exige cadastrar/importar um cliente OAuth de aplicativo para computador; nenhuma credencial acompanha o instalador. O convite pode ser adiado após cinco segundos. O OneDrive usa a pasta sincronizada pelo aplicativo instalado no Windows. O backup local continua disponível sem conexão.
 
-[Instruções](downloads/windows/README.md) · [SHA-256](downloads/windows/VarthexComanda-1.2.2-Setup-win-x64.exe.sha256)
+[Operação e recuperação](docs/docs/12-operacao-implantacao.md) · [Licenciamento](docs/docs/20-licenciamento-offline.md) · [Configurar Google Drive](docs/docs/22-configuracao-google-drive.md)
 
-## Windows — versão demonstração 1.2.3
+## Telas da release
 
-[![Baixar para Windows](docs/design/download-windows.svg)](https://github.com/arthurtvrs10/Varthex-Orders/releases/download/v1.2.3-demo/VarthexComanda-Demo-1.2.3-Setup-win-x64.exe)
+Capturas da interface WPF da 1.4.0, geradas com dados fictícios de teste. Não contêm registros de clientes. O fundo da área de trabalho permanece neutro nos dois temas.
 
-Versão para conhecer o sistema, com **12 produtos de teste, fotos e preços fictícios**:
-pastéis, salgados, porção e bebidas. Instala separadamente da versão normal e requer ativação.
-Abra pelo atalho **Comanda Demonstração**. Os dados ficam em
-`%LOCALAPPDATA%\VarthexComandaDemo`; reinstalar preserva as alterações.
+**Modo escuro e toggle ativado**
 
-[Instruções](downloads/demo/README.md) · [SHA-256](downloads/demo/VarthexComanda-Demo-1.2.3-Setup-win-x64.exe.sha256)
+<img src="docs/design/principal-escuro.png" alt="Tema escuro da Ribbon com toggle ativado e fundo VARTHEX neutro" width="1000">
 
-## Android — gerador de chaves
+**Grade de comandas**
 
-[![Baixar para Android](docs/design/download-android.svg)](https://github.com/arthurtvrs10/Varthex-Orders/releases/download/android-v1.0.1/Varthex-Licencas-1.0.1.apk)
+<img src="docs/design/atendimento-grade.png" alt="Grade atual de comandas livres e ocupadas, com barra de rolagem" width="1000">
 
-O botão baixa o APK **Varthex Licenças 1.0.1**.
+**Consumo e fechamento**
 
-Aplicativo para **Android 8.0 ou superior**, exclusivo do responsável pelas licenças.
-Gera chaves offline de **1, 2, 3 meses ou vitalícias**, com opções para copiar e compartilhar.
+<img src="docs/design/atendimento-comanda.png" alt="Comanda com prioridade, responsável, observações, itens, subtotal e pagamento" width="1000">
 
-1. Baixe o APK no celular, abra o arquivo e permita a instalação quando solicitado pelo Android.
-2. Toque em **Colar chave privada** e cole o conteúdo completo do PEM, ou importe o arquivo `.pem` do emissor original.
-3. Informe o cliente, cole o código do computador e escolha o plano e a data inicial.
-4. Confirme a autorização e toque em **Gerar chave de ativação**. Envie somente a licença gerada ao cliente.
+**Produtos em janela interna**
 
-A chave privada não está incluída no APK e não deve ser compartilhada com clientes.
-A compatibilidade das licenças com o Windows foi validada; a instalação e a interface ainda precisam ser conferidas em um aparelho Android.
+<img src="docs/design/produtos.png" alt="Janela interna de produtos com busca, ordenação e ações de cadastro" width="1000">
 
-[Instruções completas](mobile/licencas/README.md) · [Verificar integridade (SHA-256)](downloads/android/Varthex-Licencas-1.0.1.apk.sha256)
+**Histórico de vendas**
 
+<img src="docs/design/historico.png" alt="Histórico com filtro de data, vendas e detalhes dos itens" width="1000">
 
-## Instalar e usar
+## Android — gerador de licenças
 
-1. Escolha a versão normal ou demonstração acima e execute o instalador.
-2. Ative com a licença fornecida pelo responsável.
-3. Cadastre produtos na versão normal; a demonstração traz produtos fictícios.
-4. Abra uma comanda, informe o nome opcional e registre o consumo.
-5. Confira o total, realize a cobrança fora do sistema e confirme o encerramento.
+O aplicativo Android é exclusivo do responsável pela emissão de licenças; não é um aplicativo de atendimento. A chave privada do emissor não acompanha os pacotes e não deve ser compartilhada com clientes.
 
-Atualizar ou reinstalar preserva os dados existentes. O instalador inclui .NET e instala por usuário. Não possui assinatura de código; pode haver aviso do Windows.
-
-Dados normais: `%LOCALAPPDATA%\VarthexComanda`. Demonstração: `%LOCALAPPDATA%\VarthexComandaDemo`. Mantenha backup externo e valide a restauração antes de depender dele.
-
-[Operação e recuperação](docs/docs/12-operacao-implantacao.md) · [Licenciamento](docs/docs/20-licenciamento-offline.md)
-
-## Evolução planejada
-
-| Ordem | Entrega |
-| --- | --- |
-| P1 | Pedido numerado dentro da comanda, observações e confirmação |
-| P2 | Preparo, pronto, chamada verbal e entrega no Windows |
-| P3 | Servidor local, atendimento móvel e tela da cozinha |
-| P4 | Adicionais, impressão, mesas, permissões e gestão conforme o piloto |
-| P5 | Pagamentos, fiscal, SmartPOS e integrações validadas |
-
-Uma comanda poderá conter vários pedidos. Entregar um pedido não encerrará a comanda automaticamente. Regras ainda abertas estão registradas antes da implementação.
-
-```mermaid
-flowchart LR
-    A[Comanda] --> B[Produtos e observações]
-    B --> C[Confirmar pedido numerado]
-    C --> D[Aguardando preparo]
-    D --> E[Em preparo]
-    E --> F[Pronto]
-    F --> G[Chamar e entregar]
-```
-
-[Requisitos, aceitação e decisões abertas](docs/docs/21-evolucao-atendimento.md) · [Roadmap](docs/docs/11-roadmap-riscos.md)
-
-## Arquitetura
-
-Atual: **C# e .NET 10 LTS, WPF/MVVM, SQLite e Entity Framework Core**. Camadas: Domain, Application, Infrastructure e Desktop.
-
-Planejada para P3:
-
-```mermaid
-flowchart TB
-    W[Windows] --> API[API local no computador principal]
-    M[Celular ou tablet] --> API
-    K[Cozinha] --> API
-    API --> A[Aplicação e regras de negócio]
-    A --> I[Infraestrutura]
-    I --> DB[(Banco local)]
-    I --> B[Backup e logs]
-```
-
-Os dispositivos precisarão alcançar o servidor local. Sem resposta, o pedido não será mostrado como confirmado. Navegador ou app Android ainda será decidido.
-
-[Arquitetura atual e futura](docs/docs/06-arquitetura.md)
-
-## Telas atuais
-
-Imagens de referência com dados fictícios. Não representam os recursos planejados de cozinha ou atendimento móvel.
-
-<img src="docs/design/atendimento-grade.png" alt="Grade de comandas" width="900">
-<img src="docs/design/atendimento-comanda.png" alt="Itens de uma comanda" width="900">
-<img src="docs/design/produtos.png" alt="Cadastro de produtos" width="900">
-<img src="docs/design/historico.png" alt="Histórico" width="900">
-
-[Identidade no Canva](https://www.canva.com/design/DAHWxyICQfE/IsxM-jV_WbNmWiN2n2sUjQ/edit)
+[Downloads e instruções do emissor](mobile/licencas/README.md) · [Arquivos Android](downloads/android/README.md)
 
 ## Desenvolvimento
+
+Stack atual: **C# e .NET 10 LTS, WPF/MVVM, SQLite e Entity Framework Core**, com camadas Domain, Application, Infrastructure e Desktop.
 
 No Windows, com SDK .NET 10:
 
@@ -156,38 +97,21 @@ dotnet test backend/VarthexComanda.slnx --configuration Release
 dotnet run --project backend/src/VarthexComanda.Desktop
 ```
 
-Instalador normal: `scripts/gerar-instalador.ps1`. Demonstração: `scripts/gerar-demo.ps1`. Exigem Inno Setup 6. ZIP alternativo: `scripts/publicar.ps1`. APK: `mobile/licencas/build.ps1`.
+Instalador normal: `scripts/gerar-instalador.ps1`. Demonstração: `scripts/gerar-demo.ps1`. Exigem Inno Setup 6. ZIP alternativo: `scripts/publicar.ps1`.
 
-Distribua somente os pacotes preparados. A pasta `artifacts` pode conter segredos do emissor.
+Distribua somente os pacotes preparados. A pasta `artifacts` pode conter material privado do emissor e não deve ser publicada inteira. JSON OAuth, tokens Google e chaves privadas ficam fora do Git e dos instaladores.
 
 ## Documentação e validação
 
 - [Índice completo](docs/README.md)
-- [Escopo atual](docs/docs/01-escopo-mvp.md)
-- [Requisitos atuais](docs/docs/02-requisitos.md)
-- [Plano de evolução](docs/docs/21-evolucao-atendimento.md)
-- [Homologação e evidências](docs/homologacao/README.md)
+- [Notas e evidências da 1.4.0](specs/2026-10-22-release-1.4.0.md)
 - [Histórico de alterações](docs/CHANGELOG.md)
+- [Drive, medidas e migração](specs/2026-10-22-drive-oauth-medidas-venda.md)
+- [Plano de evolução](docs/docs/21-evolucao-atendimento.md)
+- [Homologação](docs/homologacao/README.md)
 
-Testes automatizados não substituem validação no estabelecimento. Instalação em Windows limpo, equipamento do piloto e interface Android precisam de evidência específica. Esta revisão documental não executou testes do aplicativo.
+Testes automatizados e capturas locais não substituem homologação no estabelecimento, instalação em Windows limpo ou ensaio de autorização e backup com conta Google real.
 
 ## Licença do código
 
 Nenhuma licença de uso do código foi definida. A licença comercial de ativação do aplicativo é um assunto separado.
-
-## Navegação Ribbon em desenvolvimento
-
-A compilação local inclui categorias contextuais, pesquisa de funcionalidades/produtos e modos claro/escuro persistidos. Selecionar uma categoria mantém a tela atual; clicar em um comando abre o módulo existente. Grupos recolhem em menu em janelas menores. Os instaladores publicados ainda não incluem esta revisão.
-
-[Mapeamento, uso e validação](specs/2026-10-20-ribbon-temas.md).
-
-## Google Drive e medidas em desenvolvimento
-
-A compilação local prepara conexão Google por OAuth no navegador e envio opcional
-de backup, mantendo a cópia local; ainda exige configurar um projeto Google Cloud
-e validar uma conta real. Ao entrar como gestor sem conexão, o convite permite
-configurar depois após cinco segundos. OneDrive continua por pasta sincronizada.
-Produtos aceitam UN, KG ou L, com até três casas decimais para KG/L e preservação
-da medida nos itens históricos. Os instaladores publicados ainda não incluem
-esta extensão. [Configurar Google Drive](docs/docs/22-configuracao-google-drive.md)
-· [Contratos, migração e evidências](specs/2026-10-22-drive-oauth-medidas-venda.md).

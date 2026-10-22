@@ -1,11 +1,13 @@
-# Comanda Demonstração 1.2.3
+# Comanda Demonstração 1.4.0
 
-[Baixar instalador Windows x64](https://github.com/arthurtvrs10/Varthex-Orders/releases/download/v1.2.3-demo/VarthexComanda-Demo-1.2.3-Setup-win-x64.exe) · [SHA-256](VarthexComanda-Demo-1.2.3-Setup-win-x64.exe.sha256)
+[Baixar instalador Windows x64](https://github.com/arthurtvrs10/Varthex-Orders/releases/download/v1.4.0/VarthexComanda-Demo-1.4.0-Setup-win-x64.exe) · [SHA-256](VarthexComanda-Demo-1.4.0-Setup-win-x64.exe.sha256)
 
-Catálogo com 12 produtos de teste e imagens realistas geradas por IA com fundo branco. Inclui quatro sabores de pastel, coxinha, kibe, bolinha de queijo, batata frita, três refrigerantes e água.
+Inclui **12 produtos fictícios com fotos e preços de teste**: pastéis, coxinha, kibe, bolinha de queijo, batata frita, refrigerantes e água. As fotos foram geradas por IA e acompanham o pacote para uso offline.
 
-Abra pelo atalho **Comanda Demonstração**. Funciona offline, inclui .NET e mantém a exigência de licença; reutiliza a ativação do computador. Os dados ficam em `%LOCALAPPDATA%\VarthexComandaDemo`, separados da edição normal. Reinstalar não substitui produtos editados. Feche a outra edição antes de abrir.
+Traz os mesmos recursos da edição normal 1.4.0: Ribbon, janelas internas, toggle de modo escuro, fundo VARTHEX, comandas, UN/KG/L e backup com progresso. A conexão Google exige um cliente OAuth configurado separadamente.
 
-Instalador sem assinatura de código. Validado por 593 testes automatizados; homologação em Windows limpo permanece pendente.
+Abra pelo atalho **Comanda Demonstração**. Instalação e dados ficam separados da edição normal, em `%LOCALAPPDATA%\VarthexComandaDemo`. O catálogo é criado uma única vez em base vazia; atualizar ou reinstalar preserva os produtos editados. A edição inclui .NET e exige licença offline, usando a ativação do computador. Feche a outra edição antes de abrir.
 
-[Catálogo, imagens e instruções de geração](../../demo/README.md)
+A 1.4.0 é uma **pré-release**, com instalador sem assinatura de código. Instalação em Windows limpo e OAuth com conta real permanecem pendentes. [Notas da release](https://github.com/arthurtvrs10/Varthex-Orders/releases/tag/v1.4.0).
+
+[Catálogo e origem das imagens](../../demo/README.md) · [Edição normal sem catálogo de teste](../windows/README.md)

@@ -1,8 +1,8 @@
 # Configurar backup no Google Drive
 
-A integração direta está preparada na compilação em desenvolvimento de
-22/10/2026. Ainda não há projeto OAuth configurado nem conta Google real validada
-nesta entrega. Os instaladores publicados anteriormente não incluem este fluxo.
+A integração direta está preparada na pré-release 1.4.0 de 22/10/2026,
+nas edições normal e demonstração. Ainda não há projeto OAuth configurado
+nem conta Google real validada nesta entrega. Nenhuma credencial acompanha os pacotes.
 O cadastro, atendimento e backup local continuam funcionando sem internet.
 
 ## Preparar o projeto Google

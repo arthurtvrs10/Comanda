@@ -50,3 +50,16 @@ Todo requisito novo deve ter:
 - atualização no histórico de mudanças.
 
 Nenhum requisito pode ser considerado implementado sem evidência de teste.
+
+## Release 1.4.0 — 22/10/2026
+
+O toggle de aparência mantém RNF07/RNF18 e CT17: o teste
+`RibbonPreservaConteudoFiltrosPermissoesETemaEntreSessoes` aciona o padrão
+de alternância de acessibilidade e confere tema, persistência e estado dos módulos.
+`FundoSistemaTests` cobre a precedência da imagem personalizada; `VersaoDoAplicativoTests`
+confere a versão 1.4.0. Não há nova RF/RN de negócio nesta extensão.
+
+Os dois instaladores autocontidos relacionam-se a RNF09/RNF14/RNF17 e CT21.
+750 testes distintos passaram em Release; a compilação e os checksums não encerram
+CT21 em Windows limpo. Origem das capturas e limites em
+[Release 1.4.0](../../specs/2026-10-22-release-1.4.0.md).

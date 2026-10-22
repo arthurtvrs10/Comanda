@@ -1,5 +1,14 @@
 # Histórico de alterações
 
+## Aplicativo 1.4.0 — 2026-10-22 — pré-release normal e demonstração
+
+- Toggle Modo escuro no cabeçalho, reutilizando o controle compacto existente, com nome acessível, tooltip e persistência da preferência. Alteração por mouse, teclado ou automação usa os eventos Checked/Unchecked; inicializar o controle não regrava a preferência já aplicada.
+- Reúne as entregas locais de Ribbon, área de trabalho com janelas internas, fundo neutro VARTHEX, ajustes de comandas e catálogo, ajuda, progresso de backup, Google Drive preparado e produtos UN/KG/L. Remove a antiga seleção de perfis por cartões.
+- Dois instaladores Windows x64 autocontidos, com versões e SHA-256 próprios: normal sem catálogo fictício em base nova; demonstração com 12 produtos e fotos. Licença offline e separação de dados preservadas.
+- README e páginas de download atualizados para a 1.4.0, com seis capturas atuais da interface e identificação de dados fictícios. A 1.2.2 permanece como versão estável anterior.
+- Validação: 750 testes distintos aprovados em Release (4 Domain, 133 Application, 295 Infrastructure e 318 Desktop). Uma repetição focada de captura do histórico passou 1/1. Não soma um teste distinto.
+- RNF07/RNF18 e CT17 para tema/foco; RNF09/RNF14/RNF17 e CT21 para empacotamento. Sem nova regra de negócio. Windows limpo, equipamentos do piloto e OAuth/envio com conta Google real continuam pendentes; nenhuma credencial é distribuída. [Evidências e limites](../specs/2026-10-22-release-1.4.0.md).
+
 ## Em desenvolvimento — 2026-10-22 — Google Drive e medidas de venda
 
 - Convite ao entrar como gestor sem Google conectado, com adiar e fechamento liberados somente após cinco segundos. Modal WPF segue os neutros, Segoe UI, cantos retos e cabeçalho compartilhado.

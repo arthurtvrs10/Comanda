@@ -1,16 +1,13 @@
-# Downloads para Windows
+# Varthex Comanda 1.4.0 — edição normal
 
-- **Versão normal, sem produtos de teste:** [baixar Varthex Comanda 1.2.2](https://github.com/arthurtvrs10/Varthex-Orders/releases/download/v1.2.2/VarthexComanda-1.2.2-Setup-win-x64.exe).
-- **Versão demonstração, com produtos e fotos:** [baixar Comanda Demonstração 1.2.3](https://github.com/arthurtvrs10/Varthex-Orders/releases/download/v1.2.3-demo/VarthexComanda-Demo-1.2.3-Setup-win-x64.exe). [Instruções](../demo/README.md).
+[Baixar instalador Windows x64](https://github.com/arthurtvrs10/Varthex-Orders/releases/download/v1.4.0/VarthexComanda-1.4.0-Setup-win-x64.exe) · [SHA-256](VarthexComanda-1.4.0-Setup-win-x64.exe.sha256)
 
-## Edição normal 1.2.2 — sem produtos de teste
+**Sem demonstração:** em uma instalação nova, o catálogo começa vazio para você cadastrar os produtos reais. Atualizações preservam o catálogo e a licença existentes.
 
-[Baixar instalador para Windows x64](https://github.com/arthurtvrs10/Varthex-Orders/releases/download/v1.2.2/VarthexComanda-1.2.2-Setup-win-x64.exe) · [SHA-256](VarthexComanda-1.2.2-Setup-win-x64.exe.sha256)
+Inclui a área de trabalho com janelas internas, Ribbon, toggle de modo escuro, fundo neutro VARTHEX, comandas com prioridade e fechamento, produtos em UN/KG/L e backup com progresso. O Google Drive exige configurar um cliente OAuth; nenhuma credencial acompanha o instalador. OneDrive usa pasta sincronizada.
 
-Em uma instalação nova, o catálogo começa vazio, sem produtos de demonstração. Você cadastra os produtos reais do estabelecimento.
+Feche o aplicativo antes de atualizar. A instalação é por usuário, sem administrador, e inclui o runtime .NET. Os dados ficam em `%LOCALAPPDATA%\VarthexComanda`; o aplicativo exige ativação offline. O instalador não possui assinatura de código.
 
-Esta versão inclui o layout atual: controles quadrados, cores originais, sem cabeçalho de marca e com logo e crédito “Desenvolvido pela Varthex” somente no rodapé.
+A 1.4.0 é uma **pré-release**. Instalação em Windows limpo e autorização/envio com conta Google real permanecem pendentes. [Notas e limites da release](https://github.com/arthurtvrs10/Varthex-Orders/releases/tag/v1.4.0).
 
-Feche o aplicativo e execute o instalador para atualizar. O runtime .NET está incluído; a instalação é por usuário e mantém os dados e a licença existentes.
-
-O instalador não possui assinatura de código. Esta distribuição está disponível na release v1.2.2 do GitHub e versionada no repositório.
+[Demonstração 1.4.0 com produtos de teste](../demo/README.md) · [Versão estável anterior 1.2.2](https://github.com/arthurtvrs10/Varthex-Orders/releases/tag/v1.2.2)
