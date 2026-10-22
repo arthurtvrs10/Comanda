@@ -10,7 +10,7 @@ public partial class JanelaAbertura : Window
     private readonly CancellationTokenSource _fechamento = new();
     private long _inicio = Stopwatch.GetTimestamp();
 
-    public JanelaAbertura() : this(SystemParameters.WorkArea, TimeSpan.FromMilliseconds(900)) { }
+    public JanelaAbertura() : this(SystemParameters.WorkArea, TimeSpan.FromSeconds(5)) { }
 
     internal JanelaAbertura(Rect areaUtil, TimeSpan tempoMinimo)
     {

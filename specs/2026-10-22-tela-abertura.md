@@ -16,7 +16,7 @@ A janela e o logo têm nomes acessíveis; a etapa usa anúncio `Polite` e o prog
 
 - A abertura aparece após a verificação de instância única, antes da preparação do sistema. O processamento permite uma passagem do Dispatcher para apresentação da janela.
 - O texto inicial é Preparando o sistema…; Preparando os dados… acompanha a preparação dos serviços e dados; Preparando o atendimento… aparece antes de obter a janela principal. São etapas do fluxo real, sem simulação de percentual.
-- Um relógio monotônico reinicia em `ContentRendered`. Antes de mostrar a principal, aguarda-se apenas o restante do mínimo de 900 ms. Se o trabalho já consumiu esse tempo, não há espera adicional.
+- Um relógio monotônico reinicia em `ContentRendered`. Antes de mostrar a principal, aguarda-se apenas o restante do mínimo de 5 segundos, conforme ajuste solicitado pelo usuário. Se o trabalho já consumiu esse tempo, não há espera adicional.
 - A janela principal é exibida antes do fechamento normal da abertura. O fechamento programático limpa a referência antes de fechar, preservando a inicialização e a janela principal.
 - Licença, avisos de erro e recuperação fecham a abertura antes de apresentar sua interface. Se o fluxo de licença permitir continuar, uma nova instância da abertura pode ser apresentada para a preparação restante.
 - Fechar manualmente a abertura cancela a inicialização e solicita o encerramento do aplicativo. Fechar também interrompe a espera pendente e desativa a barra indeterminada.
