@@ -4,7 +4,7 @@ A identidade **Comanda · por Varthex** aparece na abertura, área de trabalho, 
 
 Sistema Windows para organizar mesas, comandas e consumo em pequenos estabelecimentos de alimentação. Produtos, atendimento, fechamento e histórico funcionam localmente, sem depender da internet.
 
-**Release 1.4.0 atualizada em 22/10/2026 · versão em testes.** Edições normal e demonstração recompiladas com configurações redesenhadas, acesso opcional por senha e recuperação offline. Ambas incluem o .NET e exigem ativação offline.
+**Release 1.4.0 atualizada em 23/10/2026 · versão em testes.** Edições normal e demonstração recompiladas com pagamentos parciais e mistos, divisão por itens, novos avisos de início e renovação. Ambas incluem o .NET e exigem ativação offline.
 
 <img src="docs/design/principal-claro.png" alt="Área de trabalho Comanda com fundo cinza, logo centralizado e alternância de modo escuro" width="1000">
 
@@ -13,7 +13,7 @@ Sistema Windows para organizar mesas, comandas e consumo em pequenos estabelecim
 | Edição 1.4.0 | Para quem | Download |
 | --- | --- | --- |
 | **Normal — sem demonstração** | Cadastrar os produtos reais do estabelecimento; catálogo vazio em uma instalação nova | [Baixar instalador Windows x64](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.0/VarthexComanda-1.4.0-Setup-win-x64.exe) · [SHA-256](downloads/windows/VarthexComanda-1.4.0-Setup-win-x64.exe.sha256) |
-| **Demonstração** | Conhecer o sistema com 12 produtos fictícios, fotos e preços de teste | [Baixar instalador Windows x64](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.0/VarthexComanda-Demo-1.4.0-Setup-win-x64.exe) · [SHA-256](downloads/demo/VarthexComanda-Demo-1.4.0-Setup-win-x64.exe.sha256) |
+| **Demonstração** | Conhecer o sistema com 12 produtos fictícios e fotos; sem comandas abertas em uma base nova | [Baixar instalador Windows x64](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.0/VarthexComanda-Demo-1.4.0-Setup-win-x64.exe) · [SHA-256](downloads/demo/VarthexComanda-Demo-1.4.0-Setup-win-x64.exe.sha256) |
 
 [Notas da release 1.4.0](https://github.com/arthurtvrs10/Comanda/releases/tag/v1.4.0) · [Instalação normal](downloads/windows/README.md) · [Instalação da demonstração](downloads/demo/README.md)
 
@@ -22,6 +22,12 @@ Instalação por usuário, sem administrador, em Windows x64. Feche o aplicativo
 A release é uma **pré-release**: instalação em Windows limpo e autorização/envio com uma conta Google real continuam pendentes. A [versão estável anterior 1.2.2](https://github.com/arthurtvrs10/Comanda/releases/tag/v1.2.2) permanece disponível.
 
 ## Novidades da 1.4.0
+
+- **Pagamento por etapas:** selecione dinheiro, Pix, débito ou crédito, informe o valor na janela de lançamento e confirme o recebimento. Registros parciais e mistos ficam salvos; resumo com valor pago, recebido, troco em dinheiro, saldo e progresso. Finalize ou finalize e imprima após quitar a conta.
+- **Conferir e rachar a conta:** toggle à esquerda revela os itens e a divisão igual por pessoas. A seleção de itens calcula o pagamento e identifica as linhas já pagas; cada seleção inclui toda a quantidade da linha.
+- **Drive após o login:** convite uma vez por abertura quando não conectado. Adiar mantém a conexão manual em Backup → Google Drive; bloquear/desbloquear não repete o convite.
+- **Renovação por WhatsApp:** aviso nos últimos sete dias da licença, com destaque vermelho e botão verde. A renovação é combinada com o suporte, e a nova chave é inserida na ativação.
+- **Demonstração pronta para começar:** catálogo de exemplo sem pedidos, comandas ou vendas pré-abertas. Os dados reais ficam separados.
 
 - **Configurações redesenhadas:** navegação com ícones, toggles com estado visível, campos agrupados e aviso de alterações reais. A quantidade de comandas fica em Numeração de pedidos.
 - **Acesso opcional:** instalações novas abrem na área inicial, sem senha e sem abrir comandas automaticamente. Todos os usuários têm acesso às áreas nesta versão.
@@ -44,7 +50,7 @@ A release é uma **pré-release**: instalação em Windows limpo e autorização
 | --- | --- |
 | Produtos | Categorias, preço de custo e venda, fotos, unidades de venda e ativação/desativação |
 | Atendimento | Mesas opcionais, comandas numeradas, cliente opcional, itens, quantidades, observações e total |
-| Fechamento | Conferência e confirmação manual da cobrança externa, com registro da forma informada |
+| Fechamento | Recebimentos manuais parciais/mistos, divisão por pessoas ou itens, saldo, troco em dinheiro e finalização com impressão |
 | Relatórios | Históricos de pedidos e vendas, filtros, colunas, detalhes, Excel, impressão e resumo diário |
 | Continuidade | Backup automático/manual local, checksum, restauração, recuperação de comandas e logs |
 | Acesso | Senha opcional, login de gestor/colaboradores, senha de recuperação offline e licença vinculada ao computador |
@@ -57,7 +63,7 @@ A cobrança é realizada fora do sistema; não há integração com maquininha, 
 2. Ative o aplicativo com a licença fornecida pelo responsável.
 3. A instalação nova abre sem senha. Na edição normal, cadastre categorias e produtos; a demonstração já traz o catálogo fictício. Se a proteção estiver ativada, entre com seu login e senha.
 4. Abra **Principal → Mesas / comandas**, selecione o número e lance os produtos.
-5. Confira o total, realize a cobrança externamente e confirme o fechamento no sistema.
+5. Confira o total e realize a cobrança externamente. Em Pagamento, selecione a forma, registre cada recebimento e finalize quando o saldo estiver quitado.
 
 A edição normal usa `%LOCALAPPDATA%\VarthexComanda` e a demonstração usa `%LOCALAPPDATA%\VarthexComandaDemo`. Os atalhos e instalações são separados; a demonstração abre pelo atalho **Comanda Demonstração**. O catálogo fictício é carregado somente na primeira base vazia e não substitui alterações posteriores.
 
@@ -65,9 +71,19 @@ Para ativar a senha: **Configurações → Configurações do sistema → Segura
 
 A proteção é local e não substitui o controle de acesso do Windows. Atualizações preservam a preferência existente; desative o toggle e salve caso queira acesso livre. Enquanto houver alterações pendentes, salve antes de gerenciar as senhas.
 
-Em **Configurações → Backup e restauração**, escolha a pasta local e faça uma cópia. O Google Drive exige cadastrar/importar um cliente OAuth de aplicativo para computador; nenhuma credencial acompanha o instalador. O convite pode ser adiado após cinco segundos. O OneDrive usa a pasta sincronizada pelo aplicativo instalado no Windows. O backup local continua disponível sem conexão.
+Em **Configurações → Backup e restauração**, escolha a pasta local e faça uma cópia. O Google Drive exige cadastrar/importar um cliente OAuth de aplicativo para computador; nenhuma credencial acompanha o instalador. O convite aparece uma vez por abertura, depois do login, e pode ser adiado após cinco segundos; para conectar mais tarde, abra Backup → Google Drive. O OneDrive usa a pasta sincronizada pelo aplicativo instalado no Windows. O backup local continua disponível sem conexão.
 
 [Operação e recuperação](docs/docs/12-operacao-implantacao.md) · [Licenciamento](docs/docs/20-licenciamento-offline.md) · [Configurar Google Drive](docs/docs/22-configuracao-google-drive.md)
+
+## Pagamento e renovação
+
+<img src="docs/design/pagamento.png" alt="Pagamento com formas à esquerda, resumo dos recebimentos e saldo restante" width="1000">
+
+<img src="docs/design/aviso-renovacao.png" alt="Aviso de vencimento em vermelho e botão verde de renovação pelo WhatsApp" width="540">
+
+Recebimentos são registros manuais da cobrança externa, sem integração bancária. Remover um lançamento não faz estorno. Enquanto houver recebimentos ativos, alterações dos itens e cancelamento da comanda ficam bloqueados. Não há fiado, taxas/descontos ou dados de maquininha nesta entrega.
+
+A atualização adiciona a migração de recebimentos à comanda e à venda. Mantenha o backup antes de atualizar; o sistema preserva uma cópia antes de migrar.
 
 ## Configurações e acesso
 

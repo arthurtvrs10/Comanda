@@ -1,12 +1,18 @@
 # Histórico de alterações
 
-## Em desenvolvimento — avisos de início — 2026-10-23
+## Pacotes 1.4.0 — 2026-10-23
+
+- Normal e demonstração recompiladas para pagamentos e avisos. Demo nova sem comandas ou vendas; scripts recusam dados/credenciais locais.
+- README, capturas WPF, notas de release e checksums atualizados. 792 testes Release aprovados. Pré-release mantida.
+- [Notas e integridade dos instaladores](../downloads/RELEASE-1.4.0.md).
+
+## Aplicativo 1.4.0 — 2026-10-23 — avisos de início
 
 - Convite do Drive uma vez por abertura, após login; conexão manual disponível em Backup ao adiar.
 - Aviso de vencimento a partir dos sete dias finais, com renovação pelo WhatsApp de suporte. Contato também disponível na ativação. Sem cobrança online ou novo servidor.
 - [Escopo e validação](../specs/2026-10-23-avisos-inicio-renovacao.md).
 
-## Em desenvolvimento — fluxo de pagamento — 2026-10-22
+## Aplicativo 1.4.0 — 2026-10-23 — fluxo de pagamento
 
 - Lançamento em janela separada ao escolher a forma; resumo com pagos, recebido, troco e progresso. Finalizar e imprimir disponível após quitação, com impressão posterior à gravação da venda.
 - Tela de pagamento reorganizada com conferência, formas, resumo e impressão da conta; adaptação às larguras de janela e aos dois temas.

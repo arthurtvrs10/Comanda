@@ -1,52 +1,36 @@
-# Comanda · por Varthex 1.4.0
+# Comanda · por Varthex 1.4.0 — pagamentos e avisos
 
-Pré-release para Windows x64, atualizada em 22/10/2026. A versão estável anterior continua sendo a 1.2.2.
+Pré-release Windows x64 atualizada em 23/10/2026. Esta recompilação substitui os instaladores anteriores da 1.4.0: baixe novamente e confira o SHA-256. A 1.2.2 permanece como versão estável anterior.
 
-**Esta atualização substitui os instaladores anteriores da 1.4.0.** Se você já baixou essa versão, baixe novamente e confira o novo SHA-256. O código da tag e os pacotes foram atualizados para a mesma revisão.
+## Pagamento conforme o fluxo de atendimento
 
-## Duas edições
+- Dinheiro, Pix, débito e crédito abrem uma janela de lançamento com valor, atalhos, observação e confirmação explícita do recebimento. Em dinheiro, recebido e troco ficam separados.
+- Pagamentos parciais e mistos persistem ao registrar e acompanham a venda. Resumo com lançamentos, saldo e progresso; remoção confirmada não executa estorno externo.
+- Toggle à esquerda revela a conferência e a divisão igual por pessoas. Selecionar itens calcula o valor da pessoa e impede cobrar novamente linhas pagas. Cada seleção inclui toda a quantidade da linha.
+- Finalizar pedido e Finalizar e imprimir ficam disponíveis após quitar o saldo. A venda é gravada antes da impressão; falha na impressão não duplica a venda.
+- Alterações de itens e cancelamento ficam bloqueados com recebimentos ativos. A cobrança continua externa: sem integração bancária, fiado, taxas/descontos ou dados de maquininha nesta etapa.
 
-- **Normal, sem demonstração:** `VarthexComanda-1.4.0-Setup-win-x64.exe`. Catálogo vazio em uma instalação nova, para cadastrar os produtos reais.
-- **Demonstração:** `VarthexComanda-Demo-1.4.0-Setup-win-x64.exe`. Inclui 12 produtos fictícios com fotos e preços de teste. Instalação, atalho e dados separados da edição normal.
+## Drive e renovação
 
-Ambas incluem o runtime .NET e exigem ativação offline. Os arquivos `.sha256` permitem conferir a integridade de cada instalador.
+- Convite do Drive uma vez por abertura, após login, quando a conta não estiver conectada. Ao adiar, conecte manualmente em Backup → Google Drive. Bloquear/desbloquear não repete o convite.
+- Aviso nos últimos sete dias da licença, com destaque vermelho e botão verde do WhatsApp. Contato também disponível na ativação. Renovação manual com o suporte e nova chave offline; sem checkout, site ou servidor novo.
+- Configurações com ícones/toggles, acesso sem senha por padrão, proteção opcional e recuperação offline por senha permanecem disponíveis.
 
-| Edição | SHA-256 desta recompilação |
-| --- | --- |
-| Normal | `71A1565E950B1CE93E87D0F77370A7EFC84D4C1B8832D2F24866B59E7FF425F8` |
-| Demonstração | `BDC8D0DDFEFE3D9AB6CBE42A807D32B7B24E0EDF5DB3DE690681EB6616911F99` |
+## Edições normal e demonstração
 
-## O que mudou nesta atualização
+**Normal:** catálogo vazio em uma base nova. **Demonstração:** 12 produtos fictícios com fotos, sem comandas, consumo ou vendas pré-abertas em uma base nova. A demonstração usa pasta e atalhos separados e preserva o uso posterior ao reabrir/atualizar. Nenhum banco de dados ou credencial local é incluído nos pacotes.
 
-- Identidade **Comanda · por Varthex**: marca vetorial na entrada, área de trabalho e rodapé, variações na ajuda, novo ícone e títulos atualizados.
-- Tela de abertura com arte abstrata, logo central, versão e indicação de carregamento. Exibida por pelo menos **5 segundos** antes da tela principal; o relógio monotônico garante o prazo completo.
-- Superfícies neutras nos dois temas. Fundo padrão cinza no claro e azul profundo no escuro, com marca centralizada. Imagens e cores personalizadas são preservadas.
-- **Relatórios → Vendas** reúne Histórico de pedidos e Histórico de vendas. Consulta por situação/período, colunas e agrupamento no histórico de pedidos, detalhes, exportação Excel e prévia de impressão.
-- Histórico de vendas em tabela integral com filtros de data/comanda, colunas, ordenação, detalhes por botão/duplo clique/Enter, Excel e impressão. Os indicadores do dia são identificados separadamente do total exibido.
-- README com oito capturas atuais da interface WPF, usando dados fictícios.
+Ambas incluem o .NET e exigem ativação offline. A licença e os dados existentes são preservados ao atualizar.
 
-## Recursos mantidos
+| Arquivo | Bytes | SHA-256 |
+| --- | ---: | --- |
+| VarthexComanda-1.4.0-Setup-win-x64.exe | 56405446 | `4FBF2E189F717A89FD9B1F5BCAD8A65BBCAA8A9A67A161DB5F5B1E3E5DDFC5D6` |
+| VarthexComanda-Demo-1.4.0-Setup-win-x64.exe | 74616122 | `E5FE2488CD04CF00F83F669FDE3224895EA112A539E70794257308C7DFF335F4` |
 
-- Ribbon e área de trabalho com janelas internas que podem ser abertas juntas, movidas, redimensionadas e maximizadas abaixo dos menus.
-- Entrada direta na área de trabalho, removendo a antiga tela de cartões de perfis. PIN e permissões continuam protegendo os módulos.
-- Toggle **Modo escuro** no cabeçalho, com preferência persistida neste computador.
-- Mesas e comandas com responsável, observações, prioridade por cor, transferência/cópia de itens e situação **Em fechamento** em amarelo. Numeração inicial configurável.
-- Produtos com fotos por padrão ou visualização em lista, categorias, ordenação indicada nos cabeçalhos e personalização de itens.
-- Venda por **UN, KG ou L**. KG/L aceitam até três casas decimais; preço e medida históricos são preservados.
-- Backup com janela de progresso, barra e mensagens; restauração de dados e fotos; OneDrive por pasta sincronizada.
-- Integração Google Drive preparada por OAuth no navegador, sem credenciais incluídas, com cópia local criada antes do envio opcional. Convite ao gestor pode ser adiado após cinco segundos.
-- Ajuda compacta ao lado do atalho, com WhatsApp, RustDesk, sugestões e tutorial guiado.
+## Atualização e validação
 
-## Atualização e dados
+Feche o aplicativo e mantenha um backup antes de atualizar. Esta compilação adiciona a migração AddRecebimentosComandaVenda; a inicialização preserva uma cópia antes de migrar o banco.
 
-Feche o aplicativo antes de executar o instalador. Atualizar ou reinstalar preserva os dados e a licença. Mantenha um backup antes da atualização: a versão inclui migração das quantidades para representar UN/KG/L; retornar a uma versão antiga exige restaurar o backup anterior. Esta recompilação não acrescenta migração de banco.
+**792 testes aprovados em Release:** 4 Domain, 134 Application, 303 Infrastructure e 351 Desktop. SQLite real nos testes, incluindo persistência, divisão por itens, prevenção de duplicidade e demonstração com catálogo sem comandas/vendas. Validação documental aprovada; capturas WPF com dados fictícios no README.
 
-Dados normais: `%LOCALAPPDATA%\VarthexComanda`. Demonstração: `%LOCALAPPDATA%\VarthexComandaDemo`. Abra a demonstração pelo atalho **Comanda Demonstração**. A carga fictícia ocorre uma única vez em base vazia.
-
-## Validação e limites
-
-**770 testes distintos aprovados em Release:** 4 Domain, 133 Application, 303 Infrastructure e 330 Desktop. Após um achado de arredondamento na espera da abertura, a suíte Desktop completa passou com a correção. Os testes de captura são repetições e não aumentam esse total. A validação documental passou; a fase SQL foi ignorada por ausência da ferramenta sqlite3, e os testes Infrastructure usam SQLite real.
-
-Esta versão continua em testes. Instalação em Windows limpo, impressão física e homologação no equipamento do estabelecimento permanecem pendentes. O instalador não possui assinatura de código.
-
-O Google Drive exige cadastrar e importar um cliente OAuth do tipo aplicativo para computador. Não há conta real autorizada/validada nesta entrega; autorização, envio e recuperação com conta real continuam pendentes. A central de ajuda está em preparação. Não há atendimento em rede, emissão fiscal ou integração com maquininha; a cobrança continua externa.
+Instaladores sem assinatura de código. Windows limpo, impressão física, vários monitores/DPI, leitor de tela completo e OAuth/envio com conta Google real permanecem pendentes. Não há emissão fiscal nem atendimento em rede. O backup local continua independente da internet.
