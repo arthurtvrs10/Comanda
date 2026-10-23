@@ -131,3 +131,7 @@ Extensão CT17 — Segurança opcional (RNF07/RNF18, decisão de 22/10/2026): um
 ## Recebimentos manuais — 22/10/2026
 
 Extensão CT09/CT10/CT12: receber R$ 20 Pix em conta de R$ 50, sair/reabrir e conferir saldo R$ 30; registrar R$ 30 em dinheiro com R$ 50 recebidos, mostrar R$ 20 de troco e encerrar uma venda de R$ 50 com ambas as formas. Rejeitar excedente, troco fora de dinheiro e fechamento incompleto. Remoção mantém auditoria e não estorna externamente. Não permitir alteração de itens nem cancelamento com recebimento ativo. Ver [escopo e evidências](../../specs/2026-10-22-fluxo-pagamentos.md).
+
+## CT26 — Servidor local e atendimento móvel — 23/10/2026
+
+RF31/UC12/RN29. Conferir quatro categorias (Principal, COZINHA (KDS), Configurações, Ajuda), cinco comandos em Principal e preservação de permissões, busca e janelas abertas. Servidor inicia somente por ação explícita, informa endereço/QR, recusa chave ausente/antiga e origem externa. Abrir comanda e adicionar item por HTTP real em SQLite descartável; oito reenvios simultâneos com a mesma identificação devem persistir uma vez. Alterar corpo com mesma identificação deve falhar. Validar UN/KG, nome do atendente, observação, snapshot, bloqueio e cancelamento. Licença inválida recusa operações; restauração não substitui a base com servidor ativo. Parar/reiniciar revoga a chave. Ensaio físico de Wi-Fi, navegador móvel, firewall e queda/reinício permanece pendente.

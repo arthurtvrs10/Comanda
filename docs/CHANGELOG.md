@@ -1,5 +1,12 @@
 # Histórico de alterações
 
+## Não lançado — 2026-10-23 — Principal e servidor local
+
+- Principal reúne mesas/comandas, produtos, históricos e painel de senhas; COZINHA (KDS) recebe a consulta local. Removidas categorias antigas; preservadas permissões, busca e janelas.
+- Servidor ASP.NET Core opt-in no desktop, com porta/endereço/QR para abrir comandas e adicionar produtos pelo celular na rede privada. Casos de uso e SQLite centrais preservados; sem pagamento ou fechamento remotos.
+- Chave por sessão, confirmação de reenvios, bloqueio de restauração durante acesso remoto, licença serializada e rascunhos locais preservados. RF31/UC12/CT26/RN29; [contrato e limites](../specs/2026-10-23-principal-servidor-local.md).
+- HTTP/SQLite reais e capturas WPF controladas. Navegador integrado indisponível; ensaio visual no celular, Wi-Fi/firewall e carga longa pendentes. Nenhuma atualização de instalador ou release nesta etapa.
+
 ## Pacotes 1.4.0 — 2026-10-23
 
 - Normal e demonstração recompiladas para pagamentos e avisos. Demo nova sem comandas ou vendas; scripts recusam dados/credenciais locais.

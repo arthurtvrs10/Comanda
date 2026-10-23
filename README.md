@@ -21,6 +21,14 @@ Instalação por usuário, sem administrador, em Windows x64. Feche o aplicativo
 
 A release é uma **pré-release**: instalação em Windows limpo e autorização/envio com uma conta Google real continuam pendentes. A [versão estável anterior 1.2.2](https://github.com/arthurtvrs10/Comanda/releases/tag/v1.2.2) permanece disponível.
 
+## Em desenvolvimento — Principal e atendimento pelo celular
+
+Principal reúne Mesas / comandas, Produtos, os dois históricos e Painel de senhas. COZINHA (KDS) é uma categoria própria; Configurações e Ajuda permanecem. As antigas categorias Produtos, Marketing, Financeiro, Relatórios e Apps foram removidas da navegação.
+
+O primeiro servidor local permite ao garçom abrir comandas e lançar produtos pelo navegador na mesma rede. No desktop: **Configurações → Servidor / acesso pelo celular → Iniciar servidor**. Selecione o IP da rede e leia o QR Code no celular. Informe seu nome antes de lançar itens; quantidade e observação seguem as regras de UN/KG/L. Cobrança e fechamento ficam no computador. Pare o servidor antes de restaurar backups.
+
+Esta etapa ainda não integra os instaladores publicados. Ensaio de Wi-Fi/firewall e revisão visual em navegador/celular físico permanecem pendentes. [Contrato e limites](specs/2026-10-23-principal-servidor-local.md) · [Decisão arquitetural](docs/docs/adr/0006-servidor-local-atendimento-movel.md).
+
 ## Novidades da 1.4.0
 
 - **Pagamento por etapas:** selecione dinheiro, Pix, débito ou crédito, informe o valor na janela de lançamento e confirme o recebimento. Registros parciais e mistos ficam salvos; resumo com valor pago, recebido, troco em dinheiro, saldo e progresso. Finalize ou finalize e imprima após quitar a conta.
@@ -42,7 +50,7 @@ A release é uma **pré-release**: instalação em Windows limpo e autorização
 - **Catálogo e lançamento:** produtos com fotos ou em lista, filtro por categoria, ordenação visível e personalização de quantidade e observações. Venda por **UN, KG ou L**, com até três casas decimais para KG/L.
 - **Backup com progresso:** janela própria, barra e mensagens da execução, restauração de dados e fotos, Google Drive por OAuth preparado e OneDrive por pasta sincronizada.
 - **Ajuda:** painel compacto ao lado do atalho, WhatsApp, RustDesk, sugestões e tutorial guiado. A central de ajuda está em preparação.
-- **Relatórios:** Histórico de pedidos e Histórico de vendas reunidos no grupo Vendas. Pesquisa, colunas, ordenação, exportação Excel e prévia de impressão; detalhes preservam os registros originais.
+- **Relatórios:** Histórico de pedidos e Histórico de vendas reunidos no grupo Vendas da versão publicada; no desenvolvimento, ambos estão em Principal. Pesquisa, colunas, ordenação, exportação Excel e prévia de impressão; detalhes preservam os registros originais.
 
 ## Recursos
 
@@ -55,7 +63,7 @@ A release é uma **pré-release**: instalação em Windows limpo e autorização
 | Continuidade | Backup automático/manual local, checksum, restauração, recuperação de comandas e logs |
 | Acesso | Senha opcional, login de gestor/colaboradores, senha de recuperação offline e licença vinculada ao computador |
 
-A cobrança é realizada fora do sistema; não há integração com maquininha, emissão fiscal, estoque completo ou atendimento em rede. A cozinha disponível é uma consulta local de comandas abertas, sem estados de preparo. Pedidos independentes, preparo e atendimento móvel continuam no [plano de evolução](docs/docs/21-evolucao-atendimento.md).
+A cobrança é realizada fora do sistema; não há integração com maquininha, emissão fiscal, estoque completo ou atendimento em rede nos instaladores publicados. A cozinha disponível é uma consulta local de comandas abertas, sem estados de preparo. Pedidos independentes, preparo e atendimento móvel continuam no [plano de evolução](docs/docs/21-evolucao-atendimento.md).
 
 ## Instalar e começar
 

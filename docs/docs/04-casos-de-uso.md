@@ -143,7 +143,7 @@ O aplicativo não cria venda, não fecha comanda e não repete a última altera�
 
 **Ator:** gestor ou atendente autenticado. **Requisito:** RF30; RN04/RN05/RN10/RN20/RN22/RN23 preservadas.
 
-1. Abrir Principal → Histórico de pedidos. O Histórico de vendas em Financeiro permanece disponível.
+1. Abrir Principal → Histórico de pedidos. O Histórico de vendas também está em Principal.
 2. Abrir a pesquisa e escolher status, abertura ou fechamento, período com horário, cliente, colaborador e códigos separados por vírgula. Cancelados são opcionais.
 3. Pesquisar e conferir os registros e o total exibido. O total inclui os pedidos selecionados, inclusive abertos/cancelados quando presentes; não representa receita de vendas.
 4. Usar Mais colunas para mostrar/ocultar dados existentes e agrupar por criador, origem, tipo ou pagamento. Código é obrigatório; preferências ficam no computador, separadas entre edição normal e demonstração.
@@ -151,3 +151,16 @@ O aplicativo não cria venda, não fecha comanda e não repete a última altera�
 6. Exportar as colunas visíveis para XLSX ou conferir a prévia antes de escolher a impressora.
 
 Voltar ou fechar a pesquisa mantém os filtros anteriores. Erros não criam vendas ou alteram registros. O filtro usa Brasília e inclui todo o minuto final. Fiado, UTM, endereço e telefone não são inventados nem adicionados ao modelo. Esta extensão não altera os instaladores publicados da 1.4.0.
+
+## UC12 — Lançar produtos pelo celular — 23/10/2026
+
+RF31/RN29/CT26. Pré-condições: desktop aberto, licença válida e rede local confiável.
+1. No computador, abrir Configurações → Servidor / acesso pelo celular e iniciar.
+2. Selecionar o endereço da rede e ler QR Code no celular conectado ao mesmo Wi-Fi.
+3. Informar atendente, selecionar comanda aberta ou abrir um número permitido.
+4. Pesquisar produto/categoria, informar quantidade e observação e confirmar.
+5. Conferir a confirmação e os itens persistidos; o computador atualiza seus dados sem apagar rascunhos.
+6. Se houver perda de resposta, confirmar a operação pendente com a mesma identificação.
+7. Parar o servidor no computador para revogar acesso; cobrança e fechamento permanecem no Windows.
+
+HTTP para rede confiável, sem mudança automática de firewall. Portas ocupadas, falta de licença, quantidade inválida, produto indisponível e comanda em fechamento não indicam sucesso. KDS continua como consulta local nesta entrega.

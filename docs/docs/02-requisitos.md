@@ -1,6 +1,6 @@
 # Requisitos
 
-RF01–RF30 e RNF01–RNF21 descrevem a base atual e as extensões documentadas em desenvolvimento. Existência de requisito não comprova homologação. Novos requisitos EV01–EV12, ainda planejados, estão no [plano de evolução](21-evolucao-atendimento.md).
+RF01–RF31 e RNF01–RNF21 descrevem a base atual e as extensões documentadas em desenvolvimento. Existência de requisito não comprova homologação. Novos requisitos EV01–EV12, ainda planejados, estão no [plano de evolução](21-evolucao-atendimento.md).
 
 ## Requisitos funcionais
 
@@ -93,3 +93,7 @@ Extensão autorizada de RNF07/RNF18: instalações novas sem senha e todos com a
 ## Recebimentos manuais — 22/10/2026
 
 Extensão autorizada de RF12/RF19: recebimentos manuais parciais e mistos persistidos na comanda e copiados à venda, saldo, troco em dinheiro e rateio calculado por pessoas. Não processar cobrança/estorno, armazenar dados de cartão ou incluir fiado/taxas/descontos nesta etapa. Ver [escopo e evidências](../../specs/2026-10-22-fluxo-pagamentos.md).
+
+## RF31 — Atendimento móvel na rede local — 23/10/2026
+
+Iniciar/parar o servidor pelo desktop, selecionar porta e endereço e conectar celular por QR Code. Abrir e consultar comandas, pesquisar produtos ativos, informar atendente e lançar quantidade/observação nos mesmos casos de uso do Windows. UN/KG/L, snapshots, situação da comanda e licença são preservados. Escritas remotas serializadas e repetição identificada sem duplicar durante a sessão. Sem pagamento, fechamento ou administração remotos; sem operação offline do celular. Escopo aprovado pelo responsável; [ADR 0006](adr/0006-servidor-local-atendimento-movel.md).

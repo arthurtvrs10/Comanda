@@ -68,3 +68,7 @@ arquivos no Google. OneDrive continua sendo cópia em pasta sincronizada.
 Não há retenção remota automática nem restauração diretamente da nuvem no aplicativo.
 Regras de migração, quantidades e recuperação estão na
 [especificação da extensão](../../specs/2026-10-22-drive-oauth-medidas-venda.md).
+
+## RN29 — Atendimento móvel inicial — 23/10/2026
+
+O desktop é a autoridade e único processo que abre o banco. Acesso remoto exige servidor iniciado e chave da sessão atual. Cada escrita tem identificação única; reenviar o mesmo corpo não duplica o commit na sessão ativa. Alterar o corpo com a mesma identificação é conflito. Sem servidor ou resposta conclusiva, não indicar sucesso nem repetir com nova identificação. Depois de reiniciar, conferir a comanda antes de reenviar. A restauração exige parar o servidor. Quantidades, itens históricos e guardas de recebimento/fechamento usam as regras existentes.

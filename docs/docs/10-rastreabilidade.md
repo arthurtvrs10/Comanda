@@ -77,3 +77,7 @@ Evidência: 8 testes novos SQLite e 4 Desktop incluídos na regressão Debug de
 CT01–CT22 permanece preservada; CT25 usa esta cadeia explícita e o critério no
 documento de aceitação. Instalação, impressão física e grandes bases não foram
 homologadas nesta extensão. [Contrato e capturas](../../specs/2026-10-22-historico-pedidos.md).
+
+## Atendimento móvel inicial — 23/10/2026
+
+RF31 → UC12 → CT26 → ServidorLocalTests (HTTP e SQLite reais), ServidorJanelaTests, BackupViewModelTests e ServicoLicencaTests. RN29, RN01/RN03–RN08/RN10/RN19/RN21/RN23 preservadas. RNF01/RNF07/RNF18: desktop offline, temas, acesso e campos locais. [ADR 0006](adr/0006-servidor-local-atendimento-movel.md). [Contrato e limites](../../specs/2026-10-23-principal-servidor-local.md).

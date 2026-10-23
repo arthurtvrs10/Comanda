@@ -152,3 +152,7 @@ Responsável pelas regras operacionais: proprietário e operador do piloto. Resp
 ## Banco de ideias
 Sem compromisso de implementação: adicionais, combos, mesas, ficha, delivery, QR Code, autoatendimento, balança, impressão, caixa, relatórios, estoque, ficha técnica, perdas, reposição, financeiro, fiado, fidelidade, avaliação, multiunidade, varejo e eventos.
 Call (cliente solicita atendimento) e Ready (cliente é chamado para retirada) são necessidades diferentes. Landing page deve anunciar somente capacidades disponíveis e compatibilidade comprovada.
+
+## Implementação inicial autorizada em 23/10/2026
+
+O responsável solicitou iniciar o servidor no modelo de acesso local do Food Flow POS e priorizou o garçom pelo celular. A [ADR 0006](adr/0006-servidor-local-atendimento-movel.md) antecipa apenas abrir/consultar comandas e adicionar itens pelo navegador na mesma rede. Não conclui P1/P2/P3, não cria pedido independente, preparo, entrega nem KDS remoto. A categoria COZINHA (KDS) contém a consulta local existente. RF31/UC12/CT26 e RN29 delimitam esta entrega.
