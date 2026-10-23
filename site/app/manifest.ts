@@ -1,0 +1,2 @@
+import type {MetadataRoute} from 'next';
+export default function manifest():MetadataRoute.Manifest{return {name:'Comanda por Varthex',short_name:'Comanda',lang:'pt-BR',description:'Conheça o sistema Comanda para Windows.',start_url:'/',display:'browser',background_color:'#FFFFFF',theme_color:'#17252C',icons:[{src:'/icon.png',sizes:'192x192',type:'image/png'},{src:'/icon-512.png',sizes:'512x512',type:'image/png'}]};}

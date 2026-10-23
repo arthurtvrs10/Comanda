@@ -1,0 +1,13 @@
+import type {Metadata} from 'next';
+import Link from 'next/link';
+import {LegalPage} from '@/components/legal-page';
+import {site,siteOrigin} from '@/lib/site';
+export const metadata:Metadata={title:'Termos de uso',description:'Minuta dos termos de uso do site de apresentação da Comanda.',robots:{index:false,follow:true},alternates:siteOrigin()?{canonical:'/termos'}:undefined};
+export default function Terms(){return <LegalPage title="Termos de uso" intro="Informações sobre este site e sobre como conhecer a Comanda, por Varthex.">
+  <section><h2>Sobre este site</h2><p>Este site apresenta a Comanda, um sistema Windows para organizar mesas, comandas e consumo em pequenos estabelecimentos de alimentação. A marca exibida é Comanda, por Varthex. A identificação completa do responsável por este site permanece pendente de confirmação.</p></section>
+  <section><h2>Informações sobre o produto</h2><p>A operação de atendimento é local. Serviços externos, como downloads, WhatsApp e recursos de nuvem, dependem de conexão. Recebimentos são registros manuais de cobranças realizadas fora do sistema; o site não processa pagamentos.</p><p>A versão 1.4.0 está em testes e exige ativação offline, inclusive na edição de demonstração. Requisitos e limitações devem ser consultados nas <a href={site.release}>notas da versão</a>.</p></section>
+  <section><h2>Demonstração, licença e contratação</h2><p>O contato pelo site permite solicitar informações. Ele não conclui uma compra, não ativa uma licença e não cria uma assinatura. Valores, condições comerciais, suporte, atualizações e regras da licença do aplicativo devem ser informados separadamente pelo responsável, antes de qualquer contratação.</p></section>
+  <section><h2>Links e serviços externos</h2><p>Os links de atendimento levam ao WhatsApp. A documentação e os arquivos de versão ficam no GitHub. Ao acessar esses serviços, você passa a utilizar ambientes sujeitos às condições e políticas próprias de seus operadores.</p></section>
+  <section><h2>Marca e materiais</h2><p>As imagens do sistema apresentam dados fictícios de demonstração. A fotografia de apresentação foi gerada por IA e não representa um depoimento de cliente. A disponibilidade de materiais neste site não concede licença de reprodução da marca nem do código do aplicativo.</p></section>
+  <section><h2>Privacidade e contato</h2><p>Consulte a <Link href="/privacidade">minuta de privacidade</Link> para entender o funcionamento desta implementação. Dúvidas podem ser encaminhadas ao WhatsApp da equipe. A redação final, identificação do responsável e data de vigência dependem de confirmação.</p></section>
+</LegalPage>;}
