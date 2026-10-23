@@ -31,6 +31,14 @@ public sealed class JanelaLicenca : Window
         var copiar = new Button { Content = "Copiar código do computador", Margin = new Thickness(0, 8, 0, 16) };
         copiar.Click += (_, _) => { try { Clipboard.SetText(servico.Computador); } catch { aviso.Text = "Selecione o código e copie com Ctrl+C."; } };
         painel.Children.Add(copiar);
+        var contato=new Button { Content="Solicitar ativação ou renovação pelo WhatsApp",MinHeight=38,Margin=new Thickness(0,0,0,12) };
+        contato.Click+=(_,_)=>
+        {
+            try { Ajuda.CanaisAjuda.Abrir(Ajuda.CanaisAjuda.Whatsapp("Olá! Preciso ativar ou renovar o Comanda. Código do computador: "+servico.Computador)); }
+            catch { aviso.Text="Entre em contato pelo WhatsApp "+Ajuda.CanaisAjuda.Telefone+" e envie o código do computador."; }
+        };
+        painel.Children.Add(contato);
+
         painel.Children.Add(new TextBlock { Text = "Código de ativação recebido", FontSize = 16 });
         var entrada = new TextBox { AcceptsReturn = true, TextWrapping = TextWrapping.Wrap, Height = 110, VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
         painel.Children.Add(entrada);

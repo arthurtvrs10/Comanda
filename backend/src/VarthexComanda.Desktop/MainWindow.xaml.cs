@@ -97,6 +97,7 @@ public partial class MainWindow : Window
         Closing += (_, e) => { if (_backupView.ViewModel.EmAndamento || (!_bloqueado && !PodeSairDasConfiguracoes())) e.Cancel=true; };
         Closed += (_,_) => _painelSenhas?.Dispose();
         _atendimentoView.ViewModel.AtendimentoConcluido += BloquearAtendimento;
+        Loaded += (_,_)=>SugerirConexaoDriveAposLogin();
         MostrarAreaPrincipal();
         if(LerPreferencias().SolicitarSenha)BloquearAtendimento(false);
     }
@@ -408,17 +409,23 @@ public partial class MainWindow : Window
         AtualizarRibbon();
     }
 
-    private bool _gestorAnterior;
+    private readonly AvisosInicioSessao _avisosInicio = new();
     private void SugerirConexaoDriveAposLogin()
     {
-        var gestor = _acesso.Autenticado && !_bloqueado;
-        var entrou = gestor && !_gestorAnterior;
-        _gestorAnterior = gestor;
-        if (!entrou || _restauracao || _backupView.ViewModel.GoogleDrive is not { } drive || drive.Conectada) return;
-        Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() =>
+        if(!_avisosInicio.TentarAgendar(IsLoaded&&IsVisible,_acesso.Autenticado,_bloqueado,_restauracao))return;
+        Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle,new Action(()=>
         {
-            if (!_acesso.Autenticado || _bloqueado || drive.Conectada) return;
-            new ConectarGoogleDriveView(drive) { Owner=this }.ShowDialog();
+            if(!_acesso.Autenticado||_bloqueado||!IsVisible||_restauracao){_avisosInicio.Reagendar();return;}
+            try
+            {
+                var dados=new Licenciamento.ServicoLicenca().Verificar();
+                if(Licenciamento.JanelaAvisoVencimento.DeveAvisar(dados,DateTimeOffset.UtcNow))
+                    new Licenciamento.JanelaAvisoVencimento(dados){Owner=this}.ShowDialog();
+            }
+            catch { /* A ativação e a validade continuam sob responsabilidade do fluxo de licença. */ }
+            if(!_acesso.Autenticado||_bloqueado||!IsVisible||_restauracao)return;
+            if(_backupView.ViewModel.GoogleDrive is not { } drive||drive.Conectada)return;
+            new ConectarGoogleDriveView(drive){Owner=this}.ShowDialog();
             _backupView.ViewModel.AtualizarGoogleDrive();
         }));
     }

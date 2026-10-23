@@ -1,5 +1,11 @@
 # Histórico de alterações
 
+## Em desenvolvimento — avisos de início — 2026-10-23
+
+- Convite do Drive uma vez por abertura, após login; conexão manual disponível em Backup ao adiar.
+- Aviso de vencimento a partir dos sete dias finais, com renovação pelo WhatsApp de suporte. Contato também disponível na ativação. Sem cobrança online ou novo servidor.
+- [Escopo e validação](../specs/2026-10-23-avisos-inicio-renovacao.md).
+
 ## Em desenvolvimento — fluxo de pagamento — 2026-10-22
 
 - Lançamento em janela separada ao escolher a forma; resumo com pagos, recebido, troco e progresso. Finalizar e imprimir disponível após quitação, com impressão posterior à gravação da venda.

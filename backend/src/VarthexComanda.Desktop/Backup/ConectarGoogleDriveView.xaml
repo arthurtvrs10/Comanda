@@ -10,6 +10,7 @@
     <TextBlock Text="Guarde uma cópia dos seus dados na sua conta Google." TextWrapping="Wrap" Foreground="{DynamicResource AjudaMuted}" Margin="0,0,0,12"/>
     <TextBlock Text="Backups automáticos dos dados e das fotos.&#10;Uma cópia local é mantida neste computador.&#10;O Varthex acessa somente os arquivos autorizados para o aplicativo." TextWrapping="Wrap" LineHeight="20" Margin="0,0,0,14"/>
     <TextBlock Text="Ao continuar, o navegador abrirá para você autorizar o envio dos backups ao Google Drive." TextWrapping="Wrap" Foreground="{DynamicResource AjudaMuted}" Margin="0,0,0,16"/>
+    <TextBlock Text="Prefere fazer depois? Acesse Backup → Google Drive para conectar sua conta quando quiser." TextWrapping="Wrap" Foreground="{DynamicResource AjudaMuted}" Margin="0,0,0,16"/>
     <Button x:Name="Conectar" Content="Conectar com o Google" Click="Conectar_Click" MinHeight="44" Background="{DynamicResource ActionPrimary}" Foreground="{DynamicResource ActionPrimaryInk}"/>
     <TextBlock x:Name="Mensagem" TextWrapping="Wrap" Margin="0,12,0,0" Foreground="{DynamicResource AjudaInk}" AutomationProperties.LiveSetting="Polite"/>
     <Button x:Name="Importar" Content="Configurar credenciais do Google…" Click="Importar_Click" Margin="0,10,0,0" MinHeight="30"/>
