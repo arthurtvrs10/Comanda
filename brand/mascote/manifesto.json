@@ -1,0 +1,18 @@
+{
+  "nome_descritivo": "Mascote Comanda",
+  "data": "2026-10-23",
+  "conceito_escolhido": "05 — comanda laranja antropomórfica",
+  "evidencia_escolha": "Gostei muito do 5",
+  "variacao_atual": "avental escuro com logo oficial Comanda",
+  "evidencia_solicitacao_variacao": "Coloque a logo do sistema na roupinha dele",
+  "referencia_visual": "referencias/mascote-comanda-master.png",
+  "aprovacao_visual_variacao_atual": "autorizada para substituir o icone flutuante de ajuda",
+  "evidencia_integracao_local": "Troque o icone pelo nosso mascote",
+  "escopo_integracao_autorizada": "botao flutuante de ajuda do aplicativo desktop; PNG com avental e logo",
+  "aprovacao_integracao_producao": "pendente",
+  "png_mestre": "referencia principal de aparencia",
+  "svg_embutido": "container raster; nao e vetor editavel",
+  "svg_vetorial": "estudo simplificado; nao substitui o mestre",
+  "glb": "estudo esquematico; sem rig, sem animacoes, nao e modelo original do render",
+  "tamanhos_png": [32, 48, 64, 96, 128, 256, 512, 1024]
+}

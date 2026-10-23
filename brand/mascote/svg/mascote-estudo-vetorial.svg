@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 800" role="img" aria-labelledby="title desc">
+<title id="title">Mascote Comanda — estudo vetorial simplificado</title>
+<desc id="desc">Aproximação editável para referência de anatomia, não substitui o PNG mestre. Comanda laranja com avental escuro, rosto, luvas e tênis.</desc>
+<g stroke-linecap="round" stroke-linejoin="round">
+<g fill="#17252C"><path d="M250 636v75h45v-75M356 636v75h45v-75"/><path d="M245 700q-60 0-63 50h122v-37zM366 700q60 0 63 50H347v-37z"/></g>
+<g fill="#FFF9F1"><path d="M182 744h122v15H182zM347 744h82v15h-82z"/></g>
+<path fill="#FF5934" d="M174 80l24-18 24 18 24-18 24 18 24-18 24 18 24-18 24 18 24-18 24 18 24-18 24 18v564l-24 18-24-18-24 18-24-18-24 18-24-18-24 18-24-18-24 18-24-18-24 18-24-18z"/>
+<g fill="#17252C"><ellipse cx="253" cy="227" rx="35" ry="51"/><ellipse cx="383" cy="227" rx="35" ry="51"/></g>
+<g fill="#FFF9F1"><ellipse cx="243" cy="207" rx="12" ry="17"/><ellipse cx="373" cy="207" rx="12" ry="17"/><ellipse cx="224" cy="304" rx="22" ry="12"/><ellipse cx="413" cy="304" rx="22" ry="12"/></g>
+<path d="M222 150q31-23 61 0M353 150q31-23 61 0" fill="none" stroke="#17252C" stroke-width="16"/>
+<path d="M279 308q40 22 79 0-4 64-40 64t-39-64" fill="#17252C"/>
+<path d="M206 390h226l20 239H186z" fill="#17252C"/>
+<path d="M211 342v58M429 342v58" stroke="#17252C" stroke-width="14"/>
+<g fill="none" stroke="#17252C" stroke-width="31"><path d="M173 454q-69 9-73-36M464 451q70 8 57 70"/></g>
+<g fill="#FFF9F1"><path d="M72 418q-9-22 10-31v-51q2-26 19-18t12 55q49-2 48 30t-27 42z"/><ellipse cx="523" cy="533" rx="30" ry="37"/></g>
+</g>
+<!-- Logo oficial externa ao estudo: consultar referencias/logo-comanda-negativa.svg. -->
+<image href="../referencias/logo-comanda-negativa.svg" x="220" y="442" width="200" height="50"/>
+</svg>

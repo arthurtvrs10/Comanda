@@ -1,0 +1,9 @@
+{
+  "origem": "../../comanda-varthex/04-paleta/paleta.json",
+  "cores_base": {
+    "laranja": "#FF5934",
+    "azul-profundo": "#17252C",
+    "marfim": "#FFF9F1"
+  },
+  "nota": "Iluminação do render produz variações; HEX define a base, não todos os pixels."
+}
