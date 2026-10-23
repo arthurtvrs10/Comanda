@@ -1,18 +1,51 @@
 <!doctype html>
-<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light dark"><title>Comanda · Atendimento pelo celular</title><link rel="stylesheet" href="/app.css"><script src="/app.js" defer></script></head>
-<body><header><img src="/logo.svg" width="160" height="34" alt="Comanda, por Varthex"><span id="conexao" role="status">Conectando…</span></header>
-<main>
- <div id="aviso" role="status" aria-live="polite" hidden></div>
- <section id="parear" hidden><h1>Conecte ao computador</h1><p>No Comanda, abra Configurações → Servidor / acesso pelo celular. Inicie o servidor e leia o QR Code usando a mesma rede Wi-Fi.</p><p>O computador precisa permanecer com o Comanda aberto.</p></section>
- <section id="atendimento" hidden>
-  <div class="operador"><label for="operador">Atendente</label><input id="operador" maxlength="80" autocomplete="name" placeholder="Seu nome"></div>
-  <div id="pendencia" hidden><p>Um lançamento aguarda confirmação. Reenvie a mesma operação para conferir o resultado sem duplicar.</p><button id="reenviar">Confirmar lançamento pendente</button></div>
-  <section id="lista"><div class="titulo"><h1>Comandas</h1><button id="atualizar" class="secundario">Atualizar</button></div><form id="abrir"><label for="numero">Abrir comanda</label><div class="linha"><input id="numero" type="number" min="1" step="1" inputmode="numeric" required placeholder="Número"><button>Abrir</button></div></form><div id="comandas" class="grade"></div><p id="vazio"></p></section>
-  <section id="pedido" hidden><button id="voltar" class="secundario">Voltar às comandas</button><div class="titulo"><h1 id="tituloPedido"></h1><strong id="total"></strong></div><p id="situacao"></p>
-   <details id="consumo"><summary>Ver itens da comanda</summary><ul id="itens"></ul></details>
-   <h2>Adicionar produto</h2><label for="busca">Pesquisar produto</label><input id="busca" type="search" placeholder="Nome ou código"><label for="categoria">Categoria</label><select id="categoria"><option value="">Todas</option></select><div id="produtos"></div>
-  </section>
- </section>
-</main>
-<dialog id="personalizar"><form id="lancar"><h2 id="nomeProduto"></h2><p id="precoProduto"></p><label for="quantidade">Quantidade</label><input id="quantidade" type="number" inputmode="decimal" required min="0.001" step="0.001"><label for="observacao">Observação do item</label><textarea id="observacao" rows="3" maxlength="300" placeholder="Ex.: sem cebola"></textarea><p id="avisoItem" role="status"></p><div class="linha"><button id="cancelar" type="button" class="secundario">Voltar</button><button id="adicionar">Adicionar item</button></div></form></dialog>
-<footer>Atendimento na rede local · Cobrança e fechamento no computador</footer></body></html>
+<html lang="pt-BR">
+<head>
+ <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+ <meta name="color-scheme" content="light dark"><title>Comanda · Atendimento pelo celular</title>
+ <link rel="stylesheet" href="/app.css"><script src="/app.js" defer></script>
+</head>
+<body>
+ <header class="barra"><img src="/logo.svg" width="160" height="34" alt="Comanda, por Varthex"><span id="conexao" role="status">Conectando…</span></header>
+ <main>
+  <div id="aviso" role="status" aria-live="polite" hidden></div>
+  <section id="parear" hidden><h1>Conecte ao computador</h1><p>No Comanda, abra Configurações → Servidor / acesso pelo celular. Inicie o servidor e leia o QR Code usando a mesma rede Wi-Fi.</p><p>O computador precisa permanecer com o Comanda aberto.</p></section>
+  <div id="atendimento" hidden>
+   <div class="operador"><label for="operador">Atendente</label><input id="operador" maxlength="80" autocomplete="name" placeholder="Seu nome"></div>
+   <div id="pendencia" hidden><p>Um lançamento aguarda confirmação. Reenvie a mesma operação para conferir o resultado sem duplicar.</p><button id="reenviar">Confirmar lançamento pendente</button></div>
+   <section id="lista" aria-labelledby="tituloLista">
+    <div class="titulo"><h1 id="tituloLista" tabindex="-1">Comandas</h1><button id="atualizar" class="secundario">Atualizar</button></div>
+    <form id="abrir"><label for="numero">Abrir comanda</label><div class="linha"><input id="numero" type="number" min="1" step="1" inputmode="numeric" required placeholder="Número"><button>Abrir</button></div></form>
+    <div id="comandas" class="comandas"></div><p id="vazio" class="vazio"></p>
+   </section>
+   <section id="pedido" aria-labelledby="tituloPedido" hidden>
+    <button id="voltar" class="voltar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 6-6 6 6 6"/></svg>Comandas</button>
+    <div class="cabecalho-pedido"><div><h1 id="tituloPedido" tabindex="-1"></h1><p id="contextoPedido" class="muted"></p></div><span id="situacao" class="situacao"></span></div>
+    <div class="titulo titulo-itens"><h2 id="tituloItens">Itens da comanda</h2><button id="abrirProdutos"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Produtos</button></div>
+    <div class="painel-itens"><ul id="itens" aria-labelledby="tituloItens"></ul><div id="semItens" class="vazio" hidden><h3>Esta comanda ainda está vazia</h3><p>Toque em <strong>+ Produtos</strong> para lançar o primeiro item.</p></div></div>
+    <div class="resumo-pedido"><div><span>Total da comanda</span><strong id="total"></strong></div><p id="quantidadeItens" class="muted"></p></div>
+    <p id="avisoFechamento" class="nota" hidden>Em fechamento. Novos itens estão indisponíveis; continue no computador.</p>
+   </section>
+   <section id="catalogo" aria-labelledby="tituloCatalogo" hidden>
+    <button id="voltarPedido" class="voltar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 6-6 6 6 6"/></svg><span id="voltarPedidoTexto">Voltar à comanda</span></button>
+    <div class="titulo"><h1 id="tituloCatalogo" tabindex="-1">Localizar produto</h1><button id="atualizarCatalogo" class="secundario">Atualizar</button></div>
+    <p class="muted instrucao">Escolha um produto para ajustar a quantidade e adicionar à comanda.</p>
+    <div class="busca-produto"><label for="busca">Pesquisar produto</label><div class="campo-busca"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6.5"/><path d="m15 15 5 5"/></svg><input id="busca" type="search" placeholder="Nome ou código" autocomplete="off"></div></div>
+    <div class="localizador"><nav id="categorias" aria-label="Categorias de produtos"></nav><div class="resultado-produtos"><p id="encontrados" class="muted" role="status"></p><div id="produtos" class="produtos"></div><p id="semProdutos" class="vazio" hidden>Nenhum produto encontrado. Altere a busca ou a categoria.</p></div></div>
+   </section>
+  </div>
+ </main>
+ <dialog id="personalizar" aria-labelledby="nomeProduto">
+  <form id="lancar">
+   <div class="titulo-modal"><h2>Personalizar item</h2><button id="cancelarTopo" type="button" class="icone secundario" aria-label="Fechar personalização"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
+   <h3 id="nomeProduto"></h3><p id="precoProduto" class="muted"></p>
+   <label for="quantidade">Quantidade <span id="medidaProduto"></span></label>
+   <div class="quantidade"><button id="diminuir" type="button" class="secundario" aria-label="Diminuir quantidade"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/></svg></button><input id="quantidade" type="number" inputmode="decimal" required min="0.001" step="0.001"><button id="aumentar" type="button" class="secundario" aria-label="Aumentar quantidade"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button></div>
+   <label for="observacao">Observações</label><textarea id="observacao" rows="3" maxlength="300" placeholder="Ex.: sem cebola"></textarea>
+   <div class="total-item"><span>Total do item</span><strong id="totalItem"></strong></div>
+   <p id="avisoItem" role="status"></p><div class="acoes-modal"><button id="cancelar" type="button" class="secundario">Cancelar</button><button id="adicionar">Adicionar item</button></div>
+  </form>
+ </dialog>
+ <footer>Atendimento na rede local · Cobrança e fechamento no computador</footer>
+</body>
+</html>
