@@ -1,6 +1,6 @@
 # Catálogo de demonstração
 
-12 produtos fictícios, com preços apenas para teste. As imagens foram geradas pela ferramenta integrada `image_gen`, em 01/10/2026, com autorização do responsável. Não representam marcas comerciais nem produtos de um estabelecimento real.
+12 produtos fictícios, com preços apenas para teste. Em base nova, a demonstração começa sem comandas abertas, itens de consumo ou vendas. As imagens foram geradas pela ferramenta integrada `image_gen`, em 01/10/2026, com autorização do responsável. Não representam marcas comerciais nem produtos de um estabelecimento real.
 
 Os arquivos finais estão em `fotos/`. Não dependem de acesso à internet.
 

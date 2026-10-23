@@ -10,3 +10,8 @@ artifacts/
 # Credenciais e autorização local do Google Drive
 **/google-oauth-client.json
 **/google-drive-token.bin*
+
+# Prévia, estado local de design e resultados de teste
+outputs/
+.impeccable/
+**/TestResults/

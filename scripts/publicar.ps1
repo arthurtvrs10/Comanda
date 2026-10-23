@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
     Publica o Varthex Comanda (win-x64, autocontido) e monta o pacote .zip.
 
@@ -65,6 +65,12 @@ if ($LASTEXITCODE -ne 0) { throw "dotnet publish falhou (codigo $LASTEXITCODE)."
 if (-not (Test-Path -LiteralPath (Join-Path $pastaPublicacao 'VarthexComanda.exe'))) {
     throw 'VarthexComanda.exe nao foi gerado.'
 }
+
+# Publicar somente arquivos do aplicativo; dados e credenciais nunca acompanham o instalador.
+$indevidos = Get-ChildItem -LiteralPath $pastaPublicacao -File -Recurse | Where-Object {
+    $_.Extension -in '.db','.sqlite','.sqlite3','.credencial' -or $_.Name -match 'google-oauth-client|google-drive-token|estado\.dat|colaboradores\.json|edicao-demonstracao\.txt'
+}
+if ($indevidos) { throw 'Publicação contém dados locais ou marcador de edição. Pacote não gerado.' }
 
 # Monta o zip.
 Add-Type -AssemblyName System.IO.Compression
