@@ -22,11 +22,11 @@ public partial class MainWindow
         _destinosRibbon = new()
         {
             new("Principal", "Pedido", "Mesas / comandas", IconeVarthex.Mesas, () => !_bloqueado && !_cozinhaAtiva && !_restauracao, IrParaAtendimento),
-            new("Relatórios", "Vendas", "Histórico de pedidos", IconeVarthex.Historico, () => !_bloqueado && !_cozinhaAtiva && !_restauracao && _historicoPedidosView is not null, IrParaHistoricoPedidos),
-            new("Apps", "Operação", "Cozinha", IconeVarthex.Cozinha, () => !_bloqueado && !_restauracao, () => { _cozinhaView.Atualizar(); MostrarConteudo(_cozinhaView); }),
-            new("Apps", "Atendimento", "Painel de senhas", IconeVarthex.Painel, PodeChamarSenha, AbrirPainelSenhas),
-            new("Produtos", "Catálogo", "Produtos", IconeVarthex.Produtos, PodeGerir, IrParaProdutos),
-            new("Relatórios", "Vendas", "Histórico de vendas", IconeVarthex.Historico, () => !_bloqueado && !_cozinhaAtiva && !_restauracao, IrParaHistorico),
+            new("Principal", "Catálogo", "Produtos", IconeVarthex.Produtos, PodeGerir, IrParaProdutos),
+            new("Principal", "Vendas", "Histórico de pedidos", IconeVarthex.Historico, () => !_bloqueado && !_cozinhaAtiva && !_restauracao && _historicoPedidosView is not null, IrParaHistoricoPedidos),
+            new("Principal", "Vendas", "Histórico de vendas", IconeVarthex.Historico, () => !_bloqueado && !_cozinhaAtiva && !_restauracao, IrParaHistorico),
+            new("Principal", "Atendimento", "Painel de senhas", IconeVarthex.Painel, PodeChamarSenha, AbrirPainelSenhas),
+            new("Cozinha (KDS)", "Cozinha", "Cozinha", IconeVarthex.Cozinha, () => !_bloqueado && !_restauracao, () => { _cozinhaView.Atualizar(); MostrarConteudo(_cozinhaView); }),
             new("Configurações", "Configurações", "Configurações do sistema", IconeVarthex.Configuracoes, PodeGerir, IrParaConfiguracoes),
             new("Configurações", "Configurações", "Numeração de pedidos", IconeVarthex.Numeracao, PodeGerir, AbrirNumeracaoPedidos),
             new("Configurações", "Configurações", "Impressoras", IconeVarthex.Impressoras, PodeGerir, AbrirImpressoras),
@@ -40,7 +40,7 @@ public partial class MainWindow
             new("Ajuda", "Verificações", "Diagnóstico de serviços", IconeVarthex.Diagnostico, PodeGerir, AbrirDiagnostico, false)
 
         };
-        foreach (var nome in new[] { "Principal", "Produtos", "Marketing", "Financeiro", "Relatórios", "Apps", "Configurações", "Ajuda" })
+        foreach (var nome in new[] { "Principal", "Cozinha (KDS)", "Configurações", "Ajuda" })
         {
             var botao = new Button { Content = nome, Tag = nome, Padding = new Thickness(16,7,16,7), MinHeight = 36, FontSize = 12, Style = (Style)FindResource("AbaNavegacao"), Foreground=Brushes.White };
             botao.ContentTemplate = (DataTemplate)FindResource("RotuloCategoriaRibbon");
@@ -98,7 +98,7 @@ public partial class MainWindow
             borda.SetResourceReference(Border.BorderBrushProperty,"Line");
             GruposRibbon.Children.Add(borda);
         }
-        if(GruposRibbon.Children.Count==0) GruposRibbon.Children.Add(new TextBlock { Text=_categoriaRibbon is "Marketing" or "Apps" ? "Nenhum módulo disponível nesta categoria nesta versão." : "Nenhum comando disponível para o perfil atual.", Margin=new Thickness(12,20,12,20), TextWrapping=TextWrapping.Wrap });
+        if(GruposRibbon.Children.Count==0) GruposRibbon.Children.Add(new TextBlock { Text="Nenhum comando disponível para o perfil atual.", Margin=new Thickness(12,20,12,20), TextWrapping=TextWrapping.Wrap });
         AtualizarRibbonCompacta();
         AtualizarPesquisa();
     }
@@ -126,7 +126,7 @@ public partial class MainWindow
             EscolherArea("garcom");
             return false;
         }
-        if (destino.Categoria is "Produtos" or "Configurações")
+        if (destino.Nome == "Produtos" || destino.Categoria == "Configurações")
         {
             if (new JanelaAcessoGestor(_acesso) { Owner=this }.ShowDialog()!=true) return false;
             _bloqueado=false;

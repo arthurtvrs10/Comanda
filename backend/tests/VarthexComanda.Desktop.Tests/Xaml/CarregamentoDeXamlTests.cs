@@ -199,7 +199,7 @@ public class CarregamentoDeXamlTests
                     }
                     CapturarBotao("ajuda-botao-x");
                     var categorias=(WrapPanel)janela.FindName("CategoriasRibbon");
-                    var produtos=categorias.Children.OfType<Button>().Single(b=>Equals(b.Content,"Produtos"));
+                    var produtos=categorias.Children.OfType<Button>().Single(b=>Equals(b.Content,"Principal"));
                     Assert.True(produtos.IsEnabled);produtos.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
                     Assert.Equal("ativa",produtos.Tag);
                     abrir.Invoke(janela,null);
@@ -372,18 +372,18 @@ public class CarregamentoDeXamlTests
                 atendimento.ViewModel.ObservacaoNovoItem="Sem cebola";
                 atendimento.ViewModel.TextoBuscaCatalogo="Refrigerante";
                 var categorias=(WrapPanel)janela.FindName("CategoriasRibbon");
-                Assert.Equal(new[]{"Principal","Produtos","Marketing","Financeiro","Relatórios","Apps","Configurações","Ajuda"},categorias.Children.OfType<Button>().Select(b=>(string)b.Content));
+                Assert.Equal(new[]{"Principal","Cozinha (KDS)","Configurações","Ajuda"},categorias.Children.OfType<Button>().Select(b=>(string)b.Content));
                 void Categoria(string nome)=>categorias.Children.OfType<Button>().Single(b=>Equals(b.Content,nome)).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
                 void Comando(string nome)=>Descendentes((FrameworkElement)janela.FindName("GruposRibbon")).OfType<Button>().Single(b=>System.Windows.Automation.AutomationProperties.GetName(b)==nome).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-                Categoria("Produtos");Assert.Same(janelaAtendimento,conteudo.JanelaAtiva);
+                Categoria("Principal");Assert.Same(janelaAtendimento,conteudo.JanelaAtiva);
                 Comando("Produtos");var janelaProdutos=Assert.IsType<JanelaInterna>(conteudo.JanelaAtiva);var produtos=Assert.IsType<ProdutosView>(janelaProdutos.Conteudo);
                 Assert.Equal(2,conteudo.Janelas.Count);Assert.Contains(janelaAtendimento,conteudo.Janelas);
                 ((ProdutosViewModel)produtos.DataContext).TextoBusca="Refrigerante";
                 Descendentes(janelaProdutos).OfType<Button>().Single(b=>System.Windows.Automation.AutomationProperties.GetName(b)=="Fechar Produtos").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
                 Assert.Same(janelaAtendimento,conteudo.JanelaAtiva);Comando("Produtos");Assert.Same(janelaProdutos,conteudo.JanelaAtiva);
                 Assert.Equal("Refrigerante",((ProdutosViewModel)produtos.DataContext).TextoBusca);
-                Categoria("Marketing");Assert.Same(janelaProdutos,conteudo.JanelaAtiva);
-                Assert.Empty(Descendentes((FrameworkElement)janela.FindName("GruposRibbon")).OfType<Button>());
+                Categoria("Cozinha (KDS)");Assert.Same(janelaProdutos,conteudo.JanelaAtiva);
+                Assert.Contains(Descendentes((FrameworkElement)janela.FindName("GruposRibbon")).OfType<Button>(), b=>System.Windows.Automation.AutomationProperties.GetName(b)=="Cozinha");
                 Categoria("Principal");Comando("Mesas / comandas");
                 Assert.Equal("Sem cebola",atendimento.ViewModel.ObservacaoNovoItem);
                 Assert.Same(janelaAtendimento,conteudo.JanelaAtiva);
@@ -394,10 +394,10 @@ public class CarregamentoDeXamlTests
                 Categoria("Configurações");
                 Assert.Equal(new[]{"Configurações do sistema","Numeração de pedidos","Impressoras","Colaboradores","Alterar senha","Backup e restauração","Minha assinatura"},Descendentes((FrameworkElement)janela.FindName("GruposRibbon")).OfType<Button>().Select(b=>System.Windows.Automation.AutomationProperties.GetName(b)));
                 var config=(ConfiguracaoView)tipo.GetField("_configuracaoView",flags)!.GetValue(janela)!;config.ViewModel.NomeEstabelecimento="Nome em edição";
-                Categoria("Produtos");Comando("Produtos");Assert.Equal("Refrigerante",((ProdutosViewModel)produtos.DataContext).TextoBusca);
+                Categoria("Principal");Comando("Produtos");Assert.Equal("Refrigerante",((ProdutosViewModel)produtos.DataContext).TextoBusca);
                 Categoria("Configurações");Assert.Equal("Nome em edição",config.ViewModel.NomeEstabelecimento);
                 config.ViewModel.DescartarCommand.Execute(null);
-                Categoria("Produtos");Comando("Produtos");
+                Categoria("Principal");Comando("Produtos");
                 var pesquisa=(TextBox)janela.FindName("PesquisaGlobal");pesquisa.Text="backup";
                 var resultados=(ListBox)janela.FindName("ResultadosPesquisa");Assert.NotEmpty(resultados.Items.Cast<object>());
                 pesquisa.Clear();
@@ -451,12 +451,12 @@ public class CarregamentoDeXamlTests
                     Assert.Equal(conteudo.RenderSize,AreaTrabalhoInternaTests.Moldura(janelaAtendimento).RenderSize);
                     SalvarPrevia(raiz,$"area-trabalho-maximizada-{(escuro?"escuro":"claro")}");
                     janelaAtendimento.AlternarMaximizar();
-                    Categoria("Produtos");Comando("Produtos");
+                    Categoria("Principal");Comando("Produtos");
                     TemaInterface.Inicializar(pasta);Assert.Equal(escuro,TemaInterface.Escuro);
                 }
                 acesso.Sair();tipo.GetMethod("AtualizarPerfil",flags)!.Invoke(janela,null);
                 pesquisa.Text="backup";Assert.NotEmpty(resultados.Items.Cast<object>());
-                Categoria("Produtos");Assert.Single(Descendentes((FrameworkElement)janela.FindName("GruposRibbon")).OfType<Button>());
+                Categoria("Principal");Assert.Equal(5,Descendentes((FrameworkElement)janela.FindName("GruposRibbon")).OfType<Button>().Count());
                 Assert.False(MainWindow.IrParaProdutosCommand.CanExecute(null,janela));
                 TemaInterface.Aplicar(false);
             });

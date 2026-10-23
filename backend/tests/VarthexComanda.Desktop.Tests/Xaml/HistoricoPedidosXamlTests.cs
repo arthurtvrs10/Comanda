@@ -118,10 +118,7 @@ public class HistoricoPedidosXamlTests
             try
             {
                 var flags = BindingFlags.Instance | BindingFlags.NonPublic;
-                Assert.DoesNotContain(AlinhamentoInterfaceTests.Filhos((FrameworkElement)janela.FindName("GruposRibbon")).OfType<Button>(), b => System.Windows.Automation.AutomationProperties.GetName(b) == "Histórico de pedidos");
-                ((WrapPanel)janela.FindName("CategoriasRibbon")).Children.OfType<Button>().Single(b=>Equals(b.Content,"Financeiro")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-                Assert.DoesNotContain(AlinhamentoInterfaceTests.Filhos((FrameworkElement)janela.FindName("GruposRibbon")).OfType<Button>(), b => System.Windows.Automation.AutomationProperties.GetName(b) == "Histórico de pedidos");
-                ((WrapPanel)janela.FindName("CategoriasRibbon")).Children.OfType<Button>().Single(b=>Equals(b.Content,"Relatórios")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                Assert.Contains(AlinhamentoInterfaceTests.Filhos((FrameworkElement)janela.FindName("GruposRibbon")).OfType<Button>(), b => System.Windows.Automation.AutomationProperties.GetName(b) == "Histórico de pedidos");
                 Button Botao() => AlinhamentoInterfaceTests.Filhos((FrameworkElement)janela.FindName("GruposRibbon")).OfType<Button>().Single(b => System.Windows.Automation.AutomationProperties.GetName(b) == "Histórico de pedidos");
                 var area = (AreaTrabalhoInterna)janela.FindName("ConteudoPrincipal");
                 typeof(MainWindow).GetField("_bloqueado",flags)!.SetValue(janela,true);
