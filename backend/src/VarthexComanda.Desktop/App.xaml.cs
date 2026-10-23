@@ -151,6 +151,7 @@ public partial class App : System.Windows.Application
         services.AddTransient<IComandaRepository, EfComandaRepository>();
         services.AddTransient<AbrirComanda>();
         services.AddTransient<AdicionarItem>();
+        services.AddSingleton(new VarthexComanda.Servidor.FotosProdutos(paths.FotosDirectory));
         services.AddSingleton<VarthexComanda.Servidor.AtendimentoRemoto>();
         services.AddSingleton<VarthexComanda.Servidor.ServidorLocal>(sp => new(sp.GetRequiredService<VarthexComanda.Servidor.AtendimentoRemoto>(),
             () => { try { _licenca!.Verificar(); return true; } catch { return false; } }));

@@ -5,7 +5,7 @@ using VarthexComanda.Domain;
 
 namespace VarthexComanda.Servidor;
 
-public sealed record ProdutoRemoto(int Id, string Nome, int CategoriaId, long PrecoCentavos, string Medida);
+public sealed record ProdutoRemoto(int Id, string Nome, int CategoriaId, long PrecoCentavos, string Medida, bool TemFoto);
 public sealed record CategoriaRemota(int Id, string Nome);
 public sealed record ItemRemoto(int Id, string Nome, string Quantidade, string Medida, string? Observacao, long SubtotalCentavos);
 public sealed record ComandaRemota(int Id, int Numero, int? Mesa, string? Cliente, bool EmFechamento, long TotalCentavos, IReadOnlyList<ItemRemoto> Itens);
@@ -15,7 +15,7 @@ public sealed record RespostaRemota(int Status, object Dados);
 
 /// <summary>Reutiliza os casos de uso existentes. Não expõe entidades, pagamentos ou administração.</summary>
 public sealed class AtendimentoRemoto(IComandaRepository comandas, IProdutoRepository produtos,
-    ICategoriaRepository categorias, AbrirComanda abrir, AdicionarItem adicionar, ObterConfiguracao configuracao)
+    ICategoriaRepository categorias, AbrirComanda abrir, AdicionarItem adicionar, ObterConfiguracao configuracao, FotosProdutos? fotos = null)
 {
     public object Catalogo()
     {
@@ -23,7 +23,13 @@ public sealed class AtendimentoRemoto(IComandaRepository comandas, IProdutoRepos
         var ids = ativas.Select(c => c.Id).ToHashSet();
         return new { Categorias = ativas.Select(c => new CategoriaRemota(c.Id,c.Nome)).ToArray(),
             Produtos = produtos.Pesquisar(null,null).Where(p => p.Ativo && ids.Contains(p.CategoriaId))
-                .Select(p => new ProdutoRemoto(p.Id,p.Nome,p.CategoriaId,p.PrecoCentavos,p.Medida)).ToArray() };
+                .Select(p => new ProdutoRemoto(p.Id,p.Nome,p.CategoriaId,p.PrecoCentavos,p.Medida,fotos is not null && FotosProdutos.NomePermitido(p.FotoArquivo))).ToArray() };
+    }
+    public FotoRemota? Foto(int id)
+    {
+        var produto = produtos.BuscarPorId(id);
+        return produto?.Ativo == true && categorias.BuscarPorId(produto.CategoriaId)?.Ativo == true
+            ? fotos?.Ler(produto.FotoArquivo) : null;
     }
     public object Comandas()
     {

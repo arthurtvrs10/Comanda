@@ -85,6 +85,55 @@ public class ServidorLocalTests
         await e.Servidor.PararAsync();await Assert.ThrowsAsync<InvalidOperationException>(()=>e.Servidor.IniciarAsync(0,true));
         e.Permitido=true;e.Servidor.InicioPermitido=()=>false;await Assert.ThrowsAsync<InvalidOperationException>(()=>e.Servidor.IniciarAsync(0,true));
     }
+    [Fact]
+    public async Task FotoDoCatalogoExigeSessaoSemExporNomeOuCaminhoLocal()
+    {
+        await using var e=await Ensaio.Criar();
+        var bytes=Convert.FromBase64String("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jX1sAAAAASUVORK5CYII=");
+        var produtos=new EfProdutoRepository(e.Banco.Fabrica);var p=produtos.BuscarPorId(e.ProdutoId)!;
+        p.FotoArquivo="produto-privado.png";produtos.Salvar(p);
+        await File.WriteAllBytesAsync(Path.Combine(e.Banco.Paths.FotosDirectory,p.FotoArquivo),bytes);
+        using var anonimo=new HttpClient{BaseAddress=e.Cliente.BaseAddress};
+        Assert.Equal(HttpStatusCode.Unauthorized,(await anonimo.GetAsync($"/api/produtos/{p.Id}/foto")).StatusCode);
+        Assert.Equal(HttpStatusCode.Unauthorized,(await anonimo.GetAsync($"/api/produtos/{p.Id}/foto?chave={e.Chave}")).StatusCode);
+        var catalogo=await e.Cliente.GetStringAsync("/api/catalogo");
+        Assert.True(JsonDocument.Parse(catalogo).RootElement.GetProperty("produtos")[0].GetProperty("temFoto").GetBoolean());
+        Assert.DoesNotContain(p.FotoArquivo,catalogo);Assert.DoesNotContain(e.Banco.Raiz,catalogo);
+        using var resposta=await e.Cliente.GetAsync($"/api/produtos/{p.Id}/foto");
+        Assert.Equal(HttpStatusCode.OK,resposta.StatusCode);Assert.Equal("image/png",resposta.Content.Headers.ContentType!.MediaType);
+        Assert.Equal(bytes,await resposta.Content.ReadAsByteArrayAsync());
+        Assert.True(resposta.Headers.CacheControl!.NoStore);Assert.Contains("blob:",resposta.Headers.GetValues("Content-Security-Policy").Single());
+        File.Delete(Path.Combine(e.Banco.Paths.FotosDirectory,p.FotoArquivo));
+        Assert.Equal(HttpStatusCode.NotFound,(await e.Cliente.GetAsync($"/api/produtos/{p.Id}/foto")).StatusCode);
+    }
+    [Theory]
+    [InlineData("../fora.png")]
+    [InlineData("..\\fora.png")]
+    [InlineData("C:\\fora.png")]
+    [InlineData("imagem.svg")]
+    [InlineData("imagem.png:segredo")]
+    public async Task FotoNaoPublicaCaminhosArbitrariosOuFormatosAtivos(string nome)
+    {
+        await using var e=await Ensaio.Criar();var produtos=new EfProdutoRepository(e.Banco.Fabrica);var p=produtos.BuscarPorId(e.ProdutoId)!;
+        p.FotoArquivo=nome;produtos.Salvar(p);
+        Assert.False(FotosProdutos.NomePermitido(nome));
+        Assert.Equal(HttpStatusCode.NotFound,(await e.Cliente.GetAsync($"/api/produtos/{p.Id}/foto")).StatusCode);
+    }
+    [Fact]
+    public async Task FotoRecusaArquivoInvalidoGrandeEProdutoOuCategoriaInativos()
+    {
+        await using var e=await Ensaio.Criar();var produtos=new EfProdutoRepository(e.Banco.Fabrica);var p=produtos.BuscarPorId(e.ProdutoId)!;
+        p.FotoArquivo="foto.jpg";produtos.Salvar(p);var caminho=Path.Combine(e.Banco.Paths.FotosDirectory,p.FotoArquivo);
+        await File.WriteAllTextAsync(caminho,"<svg onload='executar()'/>");
+        Assert.Equal(HttpStatusCode.NotFound,(await e.Cliente.GetAsync($"/api/produtos/{p.Id}/foto")).StatusCode);
+        using(var arquivo=File.Open(caminho,FileMode.Create)){arquivo.SetLength(10L*1024*1024+1);}
+        Assert.Equal(HttpStatusCode.NotFound,(await e.Cliente.GetAsync($"/api/produtos/{p.Id}/foto")).StatusCode);
+        await File.WriteAllBytesAsync(caminho,[0xFF,0xD8,0xFF,0]);
+        p.Ativo=false;produtos.Salvar(p);
+        Assert.Equal(HttpStatusCode.NotFound,(await e.Cliente.GetAsync($"/api/produtos/{p.Id}/foto")).StatusCode);
+        p.Ativo=true;produtos.Salvar(p);var categorias=new EfCategoriaRepository(e.Banco.Fabrica);var categoria=categorias.BuscarPorId(p.CategoriaId)!;categoria.Ativo=false;categorias.Salvar(categoria);
+        Assert.Equal(HttpStatusCode.NotFound,(await e.Cliente.GetAsync($"/api/produtos/{p.Id}/foto")).StatusCode);
+    }
     private sealed class Ensaio : IAsyncDisposable
     {
         public BancoDeHomologacao Banco { get; }=new();
@@ -98,7 +147,7 @@ public class ServidorLocalTests
         {
             ProdutoId=Banco.CriarProduto("Hambúrguer",750).Id;Repositorio=new(Banco.Fabrica);
             var produtos=new EfProdutoRepository(Banco.Fabrica);var config=new ObterConfiguracao(new EfConfiguracaoRepository(Banco.Fabrica));var clock=new RelogioFixo();
-            var atendimento=new AtendimentoRemoto(Repositorio,produtos,new EfCategoriaRepository(Banco.Fabrica),new AbrirComanda(Repositorio,clock,config),new AdicionarItem(Repositorio,produtos,clock),config);
+            var atendimento=new AtendimentoRemoto(Repositorio,produtos,new EfCategoriaRepository(Banco.Fabrica),new AbrirComanda(Repositorio,clock,config),new AdicionarItem(Repositorio,produtos,clock),config,new FotosProdutos(Banco.Paths.FotosDirectory));
             Servidor=new(atendimento,()=>Permitido);
         }
         public static async Task<Ensaio> Criar(){var e=new Ensaio();await e.Servidor.IniciarAsync(0,true);e.Conectar();return e;}

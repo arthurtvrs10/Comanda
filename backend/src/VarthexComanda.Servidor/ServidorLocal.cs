@@ -51,7 +51,7 @@ public sealed class ServidorLocal(AtendimentoRemoto atendimento, Func<bool>? pod
                 contexto.Response.Headers.CacheControl="no-store";
                 contexto.Response.Headers["X-Content-Type-Options"]="nosniff";
                 contexto.Response.Headers["Referrer-Policy"]="no-referrer";
-                contexto.Response.Headers["Content-Security-Policy"]="default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self' data:; base-uri 'none'; frame-ancestors 'none'; form-action 'self'";
+                contexto.Response.Headers["Content-Security-Policy"]="default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self' blob:; base-uri 'none'; frame-ancestors 'none'; form-action 'self'";
                 if (!EnderecoLocal(contexto.Connection.RemoteIpAddress)) { contexto.Response.StatusCode=403; return; }
                 if (contexto.Request.Path.StartsWithSegments("/api"))
                 {
@@ -73,6 +73,8 @@ public sealed class ServidorLocal(AtendimentoRemoto atendimento, Func<bool>? pod
             app.MapGet("/app.js",() => Arquivo("app.js","text/javascript; charset=utf-8"));
             app.MapGet("/logo.svg",() => Arquivo("logo.svg","image/svg+xml"));
             app.MapGet("/api/catalogo",() => Results.Json(atendimento.Catalogo()));
+            app.MapGet("/api/produtos/{id:int}/foto",(int id) => atendimento.Foto(id) is { } foto
+                ? Results.Bytes(foto.Conteudo,foto.Tipo) : Results.NotFound());
             app.MapGet("/api/comandas",() => Results.Json(atendimento.Comandas()));
             app.MapGet("/api/comandas/{id:int}",(int id) => Resultado(atendimento.Consultar(id)));
             app.MapPost("/api/comandas",(Func<HttpContext,Task<IResult>>)(c => Escrever(c,null)));
