@@ -32,19 +32,19 @@ public class JanelaInternaTests
                 Assert.True(moldura.ActualWidth<=area.ActualWidth);Assert.True(moldura.ActualHeight<=area.ActualHeight);
                 var mover=AlinhamentoInterfaceTests.Filhos(interna).OfType<Thumb>().Single(t=>System.Windows.Automation.AutomationProperties.GetName(t)=="Mover janela de Produtos");
                 mover.RaiseEvent(new DragDeltaEventArgs(90,-40){RoutedEvent=Thumb.DragDeltaEvent});Organizar(tamanho.Width,tamanho.Height);ConferirLimites();
-                var posicao=moldura.Margin;
+                var posicao=moldura.TranslatePoint(new Point(),area);
                 interna.AlternarMaximizar();Organizar(tamanho.Width,tamanho.Height);Assert.True(interna.Maximizada);ConferirLimites();
                 Assert.Equal(area.ActualWidth,moldura.ActualWidth);
                 Assert.Equal(area.ActualHeight,moldura.ActualHeight);
-                Assert.Equal(0,moldura.Margin.Left);Assert.Equal(0,moldura.Margin.Top);
-                Assert.Equal(area.ActualWidth,moldura.Margin.Left+moldura.ActualWidth);
-                Assert.Equal(area.ActualHeight,moldura.Margin.Top+moldura.ActualHeight);
+                Assert.Equal(new Point(),moldura.TranslatePoint(new Point(),area));
+                Assert.Equal(area.ActualWidth,moldura.ActualWidth);
+                Assert.Equal(area.ActualHeight,moldura.ActualHeight);
                 var pasta=Environment.GetEnvironmentVariable("VARTHEX_PREVIAS_TESTE");
                 if(!string.IsNullOrWhiteSpace(pasta))
                 {
                     Directory.CreateDirectory(pasta);var bitmap=new RenderTargetBitmap((int)tamanho.Width,(int)tamanho.Height,96,96,PixelFormats.Pbgra32);bitmap.Render(area);var encoder=new PngBitmapEncoder();encoder.Frames.Add(BitmapFrame.Create(bitmap));using var arquivo=File.Create(Path.Combine(pasta,$"produtos-maximizado-{(escuro?"escuro":"claro")}-{tamanho.Width}.png"));encoder.Save(arquivo);
                 }
-                interna.AlternarMaximizar();Organizar(tamanho.Width,tamanho.Height);Assert.False(interna.Maximizada);Assert.Equal(posicao,moldura.Margin);
+                interna.AlternarMaximizar();Organizar(tamanho.Width,tamanho.Height);Assert.False(interna.Maximizada);Assert.Equal(posicao,moldura.TranslatePoint(new Point(),area));
             }
             var fechar=AlinhamentoInterfaceTests.Filhos(interna).OfType<Button>().Single(b=>System.Windows.Automation.AutomationProperties.GetName(b)=="Fechar Produtos");
             fechar.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));Assert.True(fechou);Assert.Empty(area.Children.Cast<UIElement>());

@@ -14,6 +14,7 @@ public sealed class JanelaInterna : Grid
     private readonly Button _maximizar;
     private readonly Grid _barra;
     private readonly ViewportInterno _viewport;
+    private readonly TranslateTransform _posicao=new();
     private bool _posicionada;
     private double _x,_y;
     private double _larguraNormal=1180,_alturaNormal=600,_deslocamentoInicial;
@@ -26,7 +27,7 @@ public sealed class JanelaInterna : Grid
     {
         Conteudo=conteudo;ClipToBounds=true;
         System.Windows.Automation.AutomationProperties.SetName(this,"Janela interna de "+titulo);
-        _moldura=new Border { Name="MolduraInterna",HorizontalAlignment=HorizontalAlignment.Left,VerticalAlignment=VerticalAlignment.Top,BorderThickness=new Thickness(1) };
+        _moldura=new Border { Name="MolduraInterna",HorizontalAlignment=HorizontalAlignment.Left,VerticalAlignment=VerticalAlignment.Top,BorderThickness=new Thickness(1),RenderTransform=_posicao };
         _moldura.SetResourceReference(Border.BackgroundProperty,"Canvas");_moldura.SetResourceReference(Border.BorderBrushProperty,"Line");Children.Add(_moldura);
         var superficie=new Grid();_moldura.Child=superficie;
         var layout=new DockPanel();superficie.Children.Add(layout);
@@ -34,7 +35,7 @@ public sealed class JanelaInterna : Grid
         barra.Resources["HoverOverlay"]=new SolidColorBrush(Color.FromArgb(38,255,255,255));
         var arrastar=new Thumb { Cursor=Cursors.SizeAll,Margin=new Thickness(0,0,84,0),Template=(ControlTemplate)System.Windows.Markup.XamlReader.Parse("<ControlTemplate xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation' TargetType='Thumb'><Border Background='Transparent'/></ControlTemplate>") };
         System.Windows.Automation.AutomationProperties.SetName(arrastar,"Mover janela de "+titulo);
-        arrastar.DragDelta+=(_,e)=>{if(Maximizada)return;_x+=e.HorizontalChange;_y+=e.VerticalChange;_posicionada=true;AjustarLimites();};
+        arrastar.DragDelta+=(_,e)=>Mover(e.HorizontalChange,e.VerticalChange);
         arrastar.MouseDoubleClick+=(_,e)=>{AlternarMaximizar();e.Handled=true;};barra.Children.Add(arrastar);
         barra.Children.Add(new TextBlock { Text=titulo,Foreground=Brushes.White,FontSize=12,FontWeight=FontWeights.SemiBold,VerticalAlignment=VerticalAlignment.Center,Margin=new Thickness(10,0,90,0),IsHitTestVisible=false,TextTrimming=TextTrimming.CharacterEllipsis });
         var acoes=new StackPanel { Orientation=Orientation.Horizontal,HorizontalAlignment=HorizontalAlignment.Right };barra.Children.Add(acoes);
@@ -77,9 +78,19 @@ public sealed class JanelaInterna : Grid
         _barra.SetResourceReference(Panel.BackgroundProperty,ativa?"RibbonHover":"RibbonBar");
         System.Windows.Automation.AutomationProperties.SetItemStatus(this,ativa?"Janela ativa":"Janela em segundo plano");
     }
+    private void Mover(double dx,double dy)
+    {
+        if(Maximizada||ActualWidth<=0||ActualHeight<=0||!double.IsFinite(dx)||!double.IsFinite(dy))return;
+        _x=Math.Clamp(_x+dx,0,Math.Max(0,ActualWidth-_moldura.Width));
+        _y=Math.Clamp(_y+dy,0,Math.Max(0,ActualHeight-_moldura.Height));
+        _posicionada=true;
+        // Thumb calcula o próximo delta na posição visual atual. Margin aguardava
+        // outro layout e também voltava a medir a área inteira a cada movimento.
+        _posicao.X=_x;_posicao.Y=_y;
+    }
     private void Redimensionar(double dx,double dy,int horizontal,int vertical)
     {
-        if(Maximizada||ActualWidth<=0||ActualHeight<=0)return;
+        if(Maximizada||ActualWidth<=0||ActualHeight<=0||!double.IsFinite(dx)||!double.IsFinite(dy))return;
         var largura=_moldura.Width;var altura=_moldura.Height;
         var minimaLargura=Math.Min(640,ActualWidth);var minimaAltura=Math.Min(360,ActualHeight);
         if(horizontal<0)
@@ -115,7 +126,7 @@ public sealed class JanelaInterna : Grid
         {
             _moldura.Width=ActualWidth;
             _moldura.Height=ActualHeight;
-            _moldura.Margin=new Thickness(0);
+            _posicao.X=0;_posicao.Y=0;
             foreach(var alca in _redimensionadores)alca.Visibility=Visibility.Collapsed;
             return;
         }
@@ -125,7 +136,7 @@ public sealed class JanelaInterna : Grid
         if(!_posicionada){_x=(ActualWidth-largura)/2+_deslocamentoInicial;_y=(ActualHeight-altura)/2+_deslocamentoInicial;_posicionada=true;}
         _x=Math.Clamp(_x,0,Math.Max(0,ActualWidth-largura));_y=Math.Clamp(_y,0,Math.Max(0,ActualHeight-altura));
         _moldura.Width=largura;_moldura.Height=altura;
-        _moldura.Margin=new Thickness(_x,_y,0,0);
+        _posicao.X=_x;_posicao.Y=_y;
     }
 
     // Mede a tela em um espaço finito: mantém listas virtualizadas e oferece

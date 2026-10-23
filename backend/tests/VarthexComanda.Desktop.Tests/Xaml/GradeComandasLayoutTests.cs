@@ -122,7 +122,7 @@ public class GradeComandasLayoutTests
                 var grade=(ScrollViewer)view.FindName("RolagemComandas");
                 Assert.Equal(0,externa.ScrollableWidth);Assert.Equal(0,externa.ScrollableHeight);
                 Assert.True(grade.ScrollableHeight>0);Assert.True(grade.ActualHeight>0);
-                Assert.True(grade.TranslatePoint(new Point(grade.ActualWidth,grade.ActualHeight),interna).Y<=AreaTrabalhoInternaTests.Moldura(interna).Margin.Top+AreaTrabalhoInternaTests.Moldura(interna).ActualHeight);
+                Assert.True(grade.TranslatePoint(new Point(grade.ActualWidth,grade.ActualHeight),interna).Y<=AreaTrabalhoInternaTests.Posicao(interna).Y+AreaTrabalhoInternaTests.Moldura(interna).ActualHeight);
                 SalvarPrevia(raiz,"grade-comandas-janela-pequena");
                 // Ao editar, o formulário volta a ter rolagem externa para preservar seus campos.
                 view.ViewModel.AbrirOuSelecionarSlotCommand.Execute(view.ViewModel.Slots.First());Atualizar(raiz);

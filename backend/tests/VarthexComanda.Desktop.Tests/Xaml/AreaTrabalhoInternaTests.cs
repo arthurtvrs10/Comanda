@@ -34,15 +34,15 @@ public class AreaTrabalhoInternaTests
             Mover(mesas,-300,-160);Layout();
             Redimensionar(produtos,"inferior direita",-420,-120);Layout();
             Mover(produtos,580,0);Layout();
-            Assert.True(Moldura(mesas).Margin.Left+Moldura(mesas).ActualWidth<Moldura(produtos).Margin.Left);
-            var tamanho=new Size(molduraMesas.ActualWidth,molduraMesas.ActualHeight);var posicao=molduraMesas.Margin;
+            Assert.True(Posicao(mesas).X+Moldura(mesas).ActualWidth<Posicao(produtos).X);
+            var tamanho=new Size(molduraMesas.ActualWidth,molduraMesas.ActualHeight);var posicao=Posicao(mesas);
             area.Abrir(mesas);Assert.Equal(2,area.Janelas.Count);
             mesas.AlternarMaximizar();Layout();
-            Assert.Equal(area.RenderSize,molduraMesas.RenderSize);Assert.Equal(new Thickness(0),molduraMesas.Margin);
-            mesas.AlternarMaximizar();Layout();Assert.Equal(tamanho,molduraMesas.RenderSize);Assert.Equal(posicao,molduraMesas.Margin);
+            Assert.Equal(area.RenderSize,molduraMesas.RenderSize);Assert.Equal(new Point(),Posicao(mesas));
+            mesas.AlternarMaximizar();Layout();Assert.Equal(tamanho,molduraMesas.RenderSize);Assert.Equal(posicao,Posicao(mesas));
             Botao(mesas,"Fechar Mesas / comandas").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Assert.Single(area.Janelas);Assert.Same(produtos,area.JanelaAtiva);
-            area.Abrir(mesas);Layout();Assert.Equal("Em edição",campo.Text);Assert.Equal(posicao,molduraMesas.Margin);
+            area.Abrir(mesas);Layout();Assert.Equal("Em edição",campo.Text);Assert.Equal(posicao,Posicao(mesas));
             area.Limpar();Assert.Empty(area.Janelas);Assert.Null(area.JanelaAtiva);
             // Reabrir depois da limpeza não duplica os manipuladores de fechamento.
             area.Abrir(produtos);Botao(produtos,"Fechar Produtos").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));Assert.Empty(area.Janelas);
@@ -63,8 +63,8 @@ public class AreaTrabalhoInternaTests
                 Redimensionar(janela,nome,nome.Contains("esquerda")?100:-100,nome.Contains("superior")?100:-100);Layout(1920,1000);
                 Assert.NotEqual(antes,moldura.RenderSize);
                 Mover(janela,10000,10000);Layout(800,440);
-                Assert.InRange(moldura.Margin.Left,0,800-moldura.ActualWidth);
-                Assert.InRange(moldura.Margin.Top,0,440-moldura.ActualHeight);
+                Assert.InRange(Posicao(janela).X,0,800-moldura.ActualWidth);
+                Assert.InRange(Posicao(janela).Y,0,440-moldura.ActualHeight);
                 janela.AlternarMaximizar();Layout(800,440);Assert.Equal(new Size(800,440),moldura.RenderSize);
                 Assert.All(Filhos(janela).OfType<Thumb>().Where(t=>Nome(t).StartsWith("Redimensionar")),t=>Assert.Equal(Visibility.Collapsed,t.Visibility));
                 janela.AlternarMaximizar();Layout(800,440);
@@ -74,6 +74,7 @@ public class AreaTrabalhoInternaTests
     }
 
     internal static Border Moldura(JanelaInterna janela)=>Filhos(janela).OfType<Border>().Single(b=>b.Name=="MolduraInterna");
+    internal static Point Posicao(JanelaInterna janela)=>Moldura(janela).TranslatePoint(new Point(),janela);
     internal static void Mover(JanelaInterna janela,double dx,double dy)=>Filhos(janela).OfType<Thumb>().Single(t=>Nome(t).StartsWith("Mover janela")).RaiseEvent(new DragDeltaEventArgs(dx,dy){RoutedEvent=Thumb.DragDeltaEvent});
     internal static void Redimensionar(JanelaInterna janela,string lado,double dx,double dy)=>Filhos(janela).OfType<Thumb>().Single(t=>Nome(t)=="Redimensionar "+lado).RaiseEvent(new DragDeltaEventArgs(dx,dy){RoutedEvent=Thumb.DragDeltaEvent});
     private static Button Botao(JanelaInterna janela,string nome)=>Filhos(janela).OfType<Button>().Single(b=>Nome(b)==nome);
