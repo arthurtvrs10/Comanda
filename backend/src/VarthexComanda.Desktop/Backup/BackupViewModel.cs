@@ -77,6 +77,7 @@ public partial class BackupViewModel : ObservableObject
     [NotifyPropertyChangedFor(nameof(PodeRestaurarFotos))]
     private bool emAndamento;
 
+    public Func<bool>? RestauracaoPermitida { get; set; }
     public bool PodeInteragir => !EmAndamento;
     public bool PodeRestaurarFotos => !EmAndamento && _fotos is not null;
     public string PastaLocal => _pastas.Local ?? _paths?.BackupsDirectory ?? "Pasta padrão do Varthex";
@@ -298,6 +299,7 @@ public partial class BackupViewModel : ObservableObject
 
     public async Task RestaurarFotosAsync(string arquivo)
     {
+        if (RestauracaoPermitida?.Invoke() == false) { Mensagem="Pare o servidor local antes de restaurar um backup.";return; }
         if (EmAndamento || _fotos is null) return;
         if (!_confirmador.Confirmar("Restaurar fotos", "As fotos com o mesmo nome serão substituídas. Os dados dos pedidos e produtos serão preservados. Uma cópia das fotos atuais será guardada antes. Deseja continuar?")) return;
         EmAndamento = true;
@@ -332,6 +334,7 @@ public partial class BackupViewModel : ObservableObject
 
     private void RestaurarCaminho(string caminho, DateTime? criadoEm)
     {
+        if (RestauracaoPermitida?.Invoke() == false) { Mensagem="Pare o servidor local antes de restaurar um backup.";return; }
         if (EmAndamento) return;
         var mensagemConfirmacao = criadoEm is not null
             ? $"Isso vai substituir todos os dados atuais pelo backup de {criadoEm:dd/MM/yyyy HH:mm}. Uma cópia de segurança da base atual será criada antes."

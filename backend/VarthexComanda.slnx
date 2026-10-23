@@ -4,6 +4,7 @@
     <Project Path="src/VarthexComanda.Desktop/VarthexComanda.Desktop.csproj" />
     <Project Path="src/VarthexComanda.Domain/VarthexComanda.Domain.csproj" />
     <Project Path="src/VarthexComanda.Infrastructure/VarthexComanda.Infrastructure.csproj" />
+    <Project Path="src/VarthexComanda.Servidor/VarthexComanda.Servidor.csproj" />
   </Folder>
   <Folder Name="/tools/">
     <Project Path="tools/VarthexComanda.Licencas/VarthexComanda.Licencas.csproj" />
@@ -14,5 +15,6 @@
     <Project Path="tests/VarthexComanda.Desktop.Tests/VarthexComanda.Desktop.Tests.csproj" />
     <Project Path="tests/VarthexComanda.Domain.Tests/VarthexComanda.Domain.Tests.csproj" />
     <Project Path="tests/VarthexComanda.Infrastructure.Tests/VarthexComanda.Infrastructure.Tests.csproj" />
+    <Project Path="tests/VarthexComanda.Servidor.Tests/VarthexComanda.Servidor.Tests.csproj" />
   </Folder>
 </Solution>

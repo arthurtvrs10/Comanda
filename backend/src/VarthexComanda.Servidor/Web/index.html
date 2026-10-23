@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light dark"><title>Comanda · Atendimento pelo celular</title><link rel="stylesheet" href="/app.css"><script src="/app.js" defer></script></head>
+<body><header><img src="/logo.svg" width="160" height="34" alt="Comanda, por Varthex"><span id="conexao" role="status">Conectando…</span></header>
+<main>
+ <div id="aviso" role="status" aria-live="polite" hidden></div>
+ <section id="parear" hidden><h1>Conecte ao computador</h1><p>No Comanda, abra Configurações → Servidor / acesso pelo celular. Inicie o servidor e leia o QR Code usando a mesma rede Wi-Fi.</p><p>O computador precisa permanecer com o Comanda aberto.</p></section>
+ <section id="atendimento" hidden>
+  <div class="operador"><label for="operador">Atendente</label><input id="operador" maxlength="80" autocomplete="name" placeholder="Seu nome"></div>
+  <div id="pendencia" hidden><p>Um lançamento aguarda confirmação. Reenvie a mesma operação para conferir o resultado sem duplicar.</p><button id="reenviar">Confirmar lançamento pendente</button></div>
+  <section id="lista"><div class="titulo"><h1>Comandas</h1><button id="atualizar" class="secundario">Atualizar</button></div><form id="abrir"><label for="numero">Abrir comanda</label><div class="linha"><input id="numero" type="number" min="1" step="1" inputmode="numeric" required placeholder="Número"><button>Abrir</button></div></form><div id="comandas" class="grade"></div><p id="vazio"></p></section>
+  <section id="pedido" hidden><button id="voltar" class="secundario">Voltar às comandas</button><div class="titulo"><h1 id="tituloPedido"></h1><strong id="total"></strong></div><p id="situacao"></p>
+   <details id="consumo"><summary>Ver itens da comanda</summary><ul id="itens"></ul></details>
+   <h2>Adicionar produto</h2><label for="busca">Pesquisar produto</label><input id="busca" type="search" placeholder="Nome ou código"><label for="categoria">Categoria</label><select id="categoria"><option value="">Todas</option></select><div id="produtos"></div>
+  </section>
+ </section>
+</main>
+<dialog id="personalizar"><form id="lancar"><h2 id="nomeProduto"></h2><p id="precoProduto"></p><label for="quantidade">Quantidade</label><input id="quantidade" type="number" inputmode="decimal" required min="0.001" step="0.001"><label for="observacao">Observação do item</label><textarea id="observacao" rows="3" maxlength="300" placeholder="Ex.: sem cebola"></textarea><p id="avisoItem" role="status"></p><div class="linha"><button id="cancelar" type="button" class="secundario">Voltar</button><button id="adicionar">Adicionar item</button></div></form></dialog>
+<footer>Atendimento na rede local · Cobrança e fechamento no computador</footer></body></html>

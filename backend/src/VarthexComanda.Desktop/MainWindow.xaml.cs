@@ -34,7 +34,7 @@ public partial class MainWindow : Window
     private readonly ConfiguracaoView _configuracaoView;
 
 
-    public MainWindow(AtendimentoView atendimentoView, ProdutosView produtosView, HistoricoView historicoView, BackupView backupView, ConfiguracaoView configuracaoView, VarthexComanda.Infrastructure.Storage.AppPaths? paths = null, VarthexComanda.Application.Configuracao.IConfiguracaoRepository? configuracoes = null, HistoricoPedidosView? historicoPedidosView = null)
+    public MainWindow(AtendimentoView atendimentoView, ProdutosView produtosView, HistoricoView historicoView, BackupView backupView, ConfiguracaoView configuracaoView, VarthexComanda.Infrastructure.Storage.AppPaths? paths = null, VarthexComanda.Application.Configuracao.IConfiguracaoRepository? configuracoes = null, HistoricoPedidosView? historicoPedidosView = null, VarthexComanda.Servidor.ServidorLocal? servidorLocal = null)
     {
         InitializeComponent();
         Title = $"Comanda · Versão {VersaoDoAplicativo.Atual}";
@@ -100,6 +100,7 @@ public partial class MainWindow : Window
         Loaded += (_,_)=>SugerirConexaoDriveAposLogin();
         Loaded += (_,_)=>InicializarDicaMascote();
         Closed += (_,_)=>OcultarDicaMascote();
+        InicializarServidor(servidorLocal);
         MostrarAreaPrincipal();
         if(LerPreferencias().SolicitarSenha)BloquearAtendimento(false);
     }

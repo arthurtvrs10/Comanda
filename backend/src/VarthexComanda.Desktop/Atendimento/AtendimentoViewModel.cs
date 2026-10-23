@@ -574,6 +574,17 @@ public partial class AtendimentoViewModel : ObservableObject
         VerTotalCommand.NotifyCanExecuteChanged();
     }
 
+    public void AtualizarLancamentoRemoto(int comandaId)
+    {
+        AtualizarComandasAbertas();
+        if (ComandaAtual?.Id != comandaId || SalvandoFechamento) return;
+        var estado = _comandas.BuscarComItens(comandaId);
+        if (estado is null) return;
+        ComandaAtual = estado.Comanda;
+        SubstituirItens(estado.Itens, ItemSelecionadoId);
+        VerTotalCommand.NotifyCanExecuteChanged();
+    }
+
     public void AtualizarComandasAbertas()
     {
         ComandasAbertas.Clear();

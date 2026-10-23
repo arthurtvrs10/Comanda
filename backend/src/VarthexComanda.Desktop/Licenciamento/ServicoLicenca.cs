@@ -9,6 +9,7 @@ namespace VarthexComanda.Desktop.Licenciamento;
 
 public sealed class ServicoLicenca
 {
+    private static readonly object TravaArquivos = new();
     private sealed record Estado(string Chave, DateTimeOffset UltimoUso);
     private readonly string _arquivo;
     private readonly string _publica;
@@ -48,6 +49,12 @@ public sealed class ServicoLicenca
     }
 
     public DadosLicenca Verificar(string? novaChave = null)
+    {
+        // Timer da interface e consultas do servidor podem verificar o mesmo arquivo simultaneamente.
+        lock (TravaArquivos) return VerificarArquivo(novaChave);
+    }
+
+    private DadosLicenca VerificarArquivo(string? novaChave)
     {
         var estado = Ler();
         var chave = novaChave?.Trim() ?? estado?.Chave ?? throw new InvalidOperationException("Informe sua chave para ativar o aplicativo.");

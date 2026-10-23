@@ -8,6 +8,13 @@ namespace VarthexComanda.Desktop.Tests.Backup;
 
 public class BackupViewModelTests
 {
+    [Fact]
+    public void RestauracaoComServidorAtivoNaoConfirmaNemSubstituiBase()
+    {
+        var (vm,servico,_)=CriarViewModel();vm.RestauracaoPermitida=()=>false;
+        vm.RestaurarArquivoExterno("backup-teste.db");
+        Assert.Equal(0,servico.ChamadasRestaurarPara);Assert.Contains("Pare o servidor",vm.Mensagem);
+    }
     private static (BackupViewModel viewModel, FakeBackupService backupService, FakeConfirmadorDeBackup confirmador) CriarViewModel(bool confirmar = true)
     {
         var backupService = new FakeBackupService();

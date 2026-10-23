@@ -392,7 +392,7 @@ public class CarregamentoDeXamlTests
                 Comando("Mesas / comandas");Assert.Same(janelaAtendimento,conteudo.JanelaAtiva);
                 Assert.Equal("Sem cebola",atendimento.ViewModel.ObservacaoNovoItem);
                 Categoria("Configurações");
-                Assert.Equal(new[]{"Configurações do sistema","Numeração de pedidos","Impressoras","Colaboradores","Alterar senha","Backup e restauração","Minha assinatura"},Descendentes((FrameworkElement)janela.FindName("GruposRibbon")).OfType<Button>().Select(b=>System.Windows.Automation.AutomationProperties.GetName(b)));
+                Assert.Equal(new[]{"Configurações do sistema","Numeração de pedidos","Impressoras","Colaboradores","Alterar senha","Backup e restauração","Servidor / acesso pelo celular","Minha assinatura"},Descendentes((FrameworkElement)janela.FindName("GruposRibbon")).OfType<Button>().Select(b=>System.Windows.Automation.AutomationProperties.GetName(b)));
                 var config=(ConfiguracaoView)tipo.GetField("_configuracaoView",flags)!.GetValue(janela)!;config.ViewModel.NomeEstabelecimento="Nome em edição";
                 Categoria("Principal");Comando("Produtos");Assert.Equal("Refrigerante",((ProdutosViewModel)produtos.DataContext).TextoBusca);
                 Categoria("Configurações");Assert.Equal("Nome em edição",config.ViewModel.NomeEstabelecimento);

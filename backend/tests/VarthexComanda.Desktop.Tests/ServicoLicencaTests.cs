@@ -25,6 +25,15 @@ public class ServicoLicencaTests : IDisposable
     }
 
     [Fact]
+    public void VerificacoesDaInterfaceEDoServidorNaoDisputamArquivoTemporario()
+    {
+        Servico.Verificar(Chave());
+        var verificadores=Enumerable.Range(0,12).Select(_=>Servico).ToArray();
+        Parallel.ForEach(verificadores,servico=>Assert.Equal("Teste",servico.Verificar().Cliente));
+        Assert.Equal("Teste",Servico.Verificar().Cliente);
+    }
+
+    [Fact]
     public void RenovacaoInvalidaPreservaLicencaAtual()
     {
         Servico.Verificar(Chave());

@@ -3,6 +3,7 @@
   <ItemGroup>
     <ProjectReference Include="..\VarthexComanda.Application\VarthexComanda.Application.csproj" />
     <ProjectReference Include="..\VarthexComanda.Infrastructure\VarthexComanda.Infrastructure.csproj" />
+    <ProjectReference Include="..\VarthexComanda.Servidor\VarthexComanda.Servidor.csproj" />
   </ItemGroup>
 
   <ItemGroup>
