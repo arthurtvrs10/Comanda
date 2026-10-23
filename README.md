@@ -29,6 +29,8 @@ O primeiro servidor local permite ao garçom abrir comandas e lançar produtos p
 
 No celular, abrir uma comanda mostra seus itens, observações e total. **+ Produtos** abre uma tela separada com busca, categorias e cartões com as mesmas fotos cadastradas no desktop. Toque no cartão para ajustar quantidade/observações e confirmar; o sistema retorna à comanda atualizada. Produtos sem imagem mostram um substituto neutro. [Fluxo e validação](specs/2026-10-23-web-comanda-catalogo-fotos.md).
 
+**Cozinha (KDS) no desktop:** cartões por comanda/mesa, observações, estados Pendente → Em preparo → Pronto → Entregue, ações por item e pelo conjunto exibido, filtros de local/situação e aviso sonoro opcional. Atualiza a cada três segundos; atenção após 10 minutos e atraso após 20. Entrega e cobrança são independentes. [Fluxo, migração e validação](specs/2026-10-23-cozinha-kds-desktop.md).
+
 Esta etapa ainda não integra os instaladores publicados. Ensaio de Wi-Fi/firewall e revisão visual em navegador/celular físico permanecem pendentes. [Contrato e limites](specs/2026-10-23-principal-servidor-local.md) · [Decisão arquitetural](docs/docs/adr/0006-servidor-local-atendimento-movel.md).
 
 ## Novidades da 1.4.0
@@ -65,7 +67,7 @@ Esta etapa ainda não integra os instaladores publicados. Ensaio de Wi-Fi/firewa
 | Continuidade | Backup automático/manual local, checksum, restauração, recuperação de comandas e logs |
 | Acesso | Senha opcional, login de gestor/colaboradores, senha de recuperação offline e licença vinculada ao computador |
 
-A cobrança é realizada fora do sistema; não há integração com maquininha, emissão fiscal, estoque completo ou atendimento em rede nos instaladores publicados. A cozinha disponível é uma consulta local de comandas abertas, sem estados de preparo. Pedidos independentes, preparo e atendimento móvel continuam no [plano de evolução](docs/docs/21-evolucao-atendimento.md).
+A cobrança é realizada fora do sistema; não há integração com maquininha, emissão fiscal, estoque completo ou atendimento em rede nos instaladores publicados. Nesses instaladores, a cozinha é uma consulta local de comandas abertas; o KDS com preparo descrito acima está em desenvolvimento. Pedidos independentes e evolução do atendimento continuam no [plano](docs/docs/21-evolucao-atendimento.md).
 
 ## Instalar e começar
 

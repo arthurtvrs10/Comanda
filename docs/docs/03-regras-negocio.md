@@ -72,3 +72,7 @@ Regras de migração, quantidades e recuperação estão na
 ## RN29 — Atendimento móvel inicial — 23/10/2026
 
 O desktop é a autoridade e único processo que abre o banco. Acesso remoto exige servidor iniciado e chave da sessão atual. Cada escrita tem identificação única; reenviar o mesmo corpo não duplica o commit na sessão ativa. Alterar o corpo com a mesma identificação é conflito. Sem servidor ou resposta conclusiva, não indicar sucesso nem repetir com nova identificação. Depois de reiniciar, conferir a comanda antes de reenviar. A restauração exige parar o servidor. Quantidades, itens históricos e guardas de recebimento/fechamento usam as regras existentes.
+
+## RN30 — Preparo separado do consumo — 23/10/2026
+
+Preparo avança Pendente → Em preparo → Pronto → Entregue; Marcar pronto permite Pendente → Pronto. Entregar exige pronto e não encerra a comanda. Encerramento financeiro não elimina entrega pendente; cancelamento retira a comanda da fila. Lote só altera os IDs/quantidades/estados conferidos, em transação, sem incluir novos lançamentos. Não agregar novo consumo a item que já iniciou preparo; criar pendente separado. Quantidade de item iniciado não é editável; mover preserva estado, copiar reinicia em pendente. Sem mudar preço/nome históricos, observação ou total ao avançar preparo. Na migração, itens antigos de comandas encerradas/canceladas são entregues; abertas começam pendentes para conferência.

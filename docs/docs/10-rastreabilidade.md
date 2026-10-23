@@ -83,3 +83,7 @@ homologadas nesta extensão. [Contrato e capturas](../../specs/2026-10-22-histor
 RF31 → UC12 → CT26 → ServidorLocalTests (HTTP e SQLite reais), ServidorJanelaTests, BackupViewModelTests e ServicoLicencaTests. RN29, RN01/RN03–RN08/RN10/RN19/RN21/RN23 preservadas. RNF01/RNF07/RNF18: desktop offline, temas, acesso e campos locais. [ADR 0006](adr/0006-servidor-local-atendimento-movel.md). [Contrato e limites](../../specs/2026-10-23-principal-servidor-local.md).
 
 Extensão do mesmo RF31/UC12/CT26: ServidorLocalTests valida entrega autenticada de fotos; backend/tests/VarthexComanda.Servidor.Tests/Web/atendimento.test.cjs executa o JavaScript real com DOM mínimo para navegação, personalização e pendências. Não comprova renderização, responsividade ou comportamento de um navegador real. [Contrato do catálogo web](../../specs/2026-10-23-web-comanda-catalogo-fotos.md).
+
+## KDS desktop — 23/10/2026
+
+RF32 → UC13 → CT27 → CozinhaKdsTests (SQLite/migração/transação), CozinhaViewModelTests (filtros/ações/som/falhas) e CozinhaKdsXamlTests (capturas WPF reais). RN30, RN04–RN06/RN19/RN21, RNF01/RNF07/RNF18. [ADR 0007](adr/0007-kds-nativo-estados-preparo.md) e [spec](../../specs/2026-10-23-cozinha-kds-desktop.md). Não equivale a P1/P2/P3 completos ou a KDS web.

@@ -156,3 +156,7 @@ Call (cliente solicita atendimento) e Ready (cliente é chamado para retirada) s
 ## Implementação inicial autorizada em 23/10/2026
 
 O responsável solicitou iniciar o servidor no modelo de acesso local do Food Flow POS e priorizou o garçom pelo celular. A [ADR 0006](adr/0006-servidor-local-atendimento-movel.md) antecipa apenas abrir/consultar comandas e adicionar itens pelo navegador na mesma rede. Não conclui P1/P2/P3, não cria pedido independente, preparo, entrega nem KDS remoto. A categoria COZINHA (KDS) contém a consulta local existente. RF31/UC12/CT26 e RN29 delimitam esta entrega.
+
+### Extensão KDS autorizada na mesma data
+
+Solicitação posterior do responsável amplia a cozinha desktop com estados por item e entrega, conforme [ADR 0007](adr/0007-kds-nativo-estados-preparo.md). Resolve para esta extensão a separação de preparo/cobrança: entrega não fecha comanda e pagamento não remove demanda de preparo. Os cartões agrupam consumo por comanda; não implementam o pedido independente de P1, KDS no navegador ou todo o escopo de P2/P3. Cancelamento e remoção seguem as operações existentes e retiram a demanda da fila ativa. RF32/UC13/CT27/RN30 e [contrato](../../specs/2026-10-23-cozinha-kds-desktop.md) delimitam o que foi implementado, sem reescrever o inventário histórico de 05/10.

@@ -164,3 +164,7 @@ RF31/RN29/CT26. Pré-condições: desktop aberto, licença válida e rede local 
 7. Parar o servidor no computador para revogar acesso; cobrança e fechamento permanecem no Windows.
 
 HTTP para rede confiável, sem mudança automática de firewall. Portas ocupadas, falta de licença, quantidade inválida, produto indisponível e comanda em fechamento não indicam sucesso. KDS continua como consulta local nesta entrega.
+
+## UC13 — Preparar e entregar pelo KDS desktop — 23/10/2026
+
+RF32/RN30/CT27. Abrir Cozinha (KDS) → Cozinha, selecionar local/situação e conferir comanda/mesa, observações e quantidades. Clicar no item para iniciar preparo, marcar pronto e entregar; Marcar pronto do cartão avança os itens exibidos e Entregue fica disponível quando todos os exibidos estão prontos. Itens entregues saem da fila. Cobrança e encerramento não são executados por essas ações. Novos lançamentos aparecem na atualização automática de três segundos e podem emitir som, exceto na carga inicial. Conflito ou falha mantém a fila e pede nova atualização; nenhum lote é parcialmente confirmado. Comanda encerrada com entrega pendente é identificada na fila. [Contrato](../../specs/2026-10-23-cozinha-kds-desktop.md).

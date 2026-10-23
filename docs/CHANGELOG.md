@@ -1,5 +1,11 @@
 # Histórico de alterações
 
+## Não lançado — 2026-10-23 — KDS nativo com preparo
+
+- Cozinha desktop com cartões de comanda/mesa, estados Pendente/Em preparo/Pronto/Entregue, ações individuais e por conjunto exibido, filtros, espera e som opcional. Identidade Comanda e temas preservados; atualização local a cada três segundos.
+- Estado persistido por item em migração nova; lotes transacionais conferem estado e quantidade. Novos consumos não se misturam a itens já em preparo. Entrega e cobrança permanecem independentes.
+- RF32/UC13/CT27/RN30. Testes de migração/concorrência/filtros e capturas WPF controladas; sem KDS web ou alteração dos instaladores publicados. [Contrato](../specs/2026-10-23-cozinha-kds-desktop.md).
+
 ## Não lançado — 2026-10-23 — Comanda e catálogo web com fotos
 
 - Abrir comanda no celular apresenta itens, observações e total; + Produtos abre o localizador separado. Cartão inteiro abre quantidade/observações e a confirmação retorna aos itens.
