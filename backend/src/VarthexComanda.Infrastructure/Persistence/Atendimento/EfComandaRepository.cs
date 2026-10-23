@@ -216,7 +216,7 @@ public partial class EfComandaRepository : IComandaRepository
 
         ExigirDesbloqueada(comanda);
         var itens = contexto.ItensComanda.Where(i => i.ComandaId == comandaId).OrderBy(i => i.Id).ToList();
-        var itemExistente = itens.FirstOrDefault(i => i.ProdutoId == produto.Id && i.UnidadeVenda == produto.UnidadeVenda && i.PrecoUnitarioCentavos == produto.PrecoCentavos && i.Observacao == observacao && i.LancadoPor == operador);
+        var itemExistente = itens.FirstOrDefault(i => i.StatusPreparo == StatusPreparo.Pendente && i.ProdutoId == produto.Id && i.UnidadeVenda == produto.UnidadeVenda && i.PrecoUnitarioCentavos == produto.PrecoCentavos && i.Observacao == observacao && i.LancadoPor == operador);
 
         if (itemExistente is not null)
         {
@@ -266,6 +266,8 @@ public partial class EfComandaRepository : IComandaRepository
         }
 
         ExigirDesbloqueada(comanda);
+        if (item.StatusPreparo != StatusPreparo.Pendente && item.Quantidade != quantidade)
+            throw new InvalidOperationException("Este item já entrou em preparo. Para consumo adicional, adicione um novo item à comanda.");
         item.QuantidadeCozinha = Math.Min(item.QuantidadeCozinha, quantidade);
         item.QuantidadeFicha = Math.Min(item.QuantidadeFicha, quantidade);
         item.Quantidade = quantidade;

@@ -15,6 +15,7 @@ public class ItemComandaConfiguration : IEntityTypeConfiguration<ItemComanda>
             t.HasCheckConstraint("CK_item_comanda_subtotal_positivo", "subtotal_centavos > 0");
             t.HasCheckConstraint("CK_item_comanda_subtotal_igual_preco_vezes_quantidade", "subtotal_centavos = CAST((preco_unitario_centavos * quantidade + 500) / 1000 AS INTEGER)");
             t.HasCheckConstraint("CK_item_comanda_unidade_valida", "unidade_venda IN (0,1,2) AND (unidade_venda <> 0 OR quantidade % 1000 = 0)");
+            t.HasCheckConstraint("CK_item_comanda_preparo_valido", "status_preparo IN (0,1,2,3)");
         });
 
         builder.HasKey(i => i.Id);
@@ -31,6 +32,7 @@ public class ItemComandaConfiguration : IEntityTypeConfiguration<ItemComanda>
         builder.Property(i => i.LancadoPor).HasColumnName("lancado_por").HasMaxLength(120);
         builder.Property(i => i.QuantidadeCozinha).HasColumnName("quantidade_cozinha").HasConversion(v => checked((long)(v * 1000m)), v => v / 1000m).HasDefaultValue(0m);
         builder.Property(i => i.QuantidadeFicha).HasColumnName("quantidade_ficha").HasConversion(v => checked((long)(v * 1000m)), v => v / 1000m).HasDefaultValue(0m);
+        builder.Property(i => i.StatusPreparo).HasColumnName("status_preparo").HasConversion<int>().HasDefaultValue(StatusPreparo.Pendente);
         builder.Property(i => i.CriadoEm).HasColumnName("criado_em").IsRequired();
         builder.Property(i => i.AtualizadoEm).HasColumnName("atualizado_em").IsRequired();
 

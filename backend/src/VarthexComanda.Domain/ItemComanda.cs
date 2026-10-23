@@ -16,6 +16,7 @@ public class ItemComanda
     public string? LancadoPor { get; set; }
     public decimal QuantidadeCozinha { get; set; }
     public decimal QuantidadeFicha { get; set; }
+    public StatusPreparo StatusPreparo { get; set; }
     public required DateTime CriadoEm { get; set; }
     public required DateTime AtualizadoEm { get; set; }
 }

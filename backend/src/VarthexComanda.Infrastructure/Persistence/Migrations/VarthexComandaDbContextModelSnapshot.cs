@@ -287,6 +287,12 @@ namespace VarthexComanda.Infrastructure.Persistence.Migrations
                         .HasDefaultValue(0L)
                         .HasColumnName("quantidade_ficha");
 
+                    b.Property<int>("StatusPreparo")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(0)
+                        .HasColumnName("status_preparo");
+
                     b.Property<long>("SubtotalCentavos")
                         .HasColumnType("INTEGER")
                         .HasColumnName("subtotal_centavos");
@@ -307,6 +313,8 @@ namespace VarthexComanda.Infrastructure.Persistence.Migrations
                     b.ToTable("item_comanda", null, t =>
                         {
                             t.HasCheckConstraint("CK_item_comanda_preco_unitario_positivo", "preco_unitario_centavos > 0");
+
+                            t.HasCheckConstraint("CK_item_comanda_preparo_valido", "status_preparo IN (0,1,2,3)");
 
                             t.HasCheckConstraint("CK_item_comanda_quantidade_positiva", "quantidade > 0");
 
