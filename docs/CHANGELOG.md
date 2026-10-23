@@ -1,5 +1,11 @@
 # Histórico de alterações
 
+## Não lançado — 2026-10-23 — Movimento das janelas internas
+
+- Movimento compartilhado de Mesas/comandas e demais janelas usa deslocamento visual imediato, sem recalcular o workspace a cada evento de arraste.
+- Limites, cliques, restauração, redimensionamento e rascunhos preservados. 364 testes desktop aprovados; fixture isolada da inicialização operacional.
+- RNF02/RNF18 e preservação de CT17. [Diagnóstico e evidências](../specs/2026-10-23-movimento-workspace.md). Sem nova migração ou publicação externa.
+
 ## Não lançado — 2026-10-23 — KDS nativo com preparo
 
 - Cozinha desktop com cartões de comanda/mesa, estados Pendente/Em preparo/Pronto/Entregue, ações individuais e por conjunto exibido, filtros, espera e som opcional. Identidade Comanda e temas preservados; atualização local a cada três segundos.
