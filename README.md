@@ -27,6 +27,8 @@ Principal reúne Mesas / comandas, Produtos, os dois históricos e Painel de sen
 
 O primeiro servidor local permite ao garçom abrir comandas e lançar produtos pelo navegador na mesma rede. No desktop: **Configurações → Servidor / acesso pelo celular → Iniciar servidor**. Selecione o IP da rede e leia o QR Code no celular. Informe seu nome antes de lançar itens; quantidade e observação seguem as regras de UN/KG/L. Cobrança e fechamento ficam no computador. Pare o servidor antes de restaurar backups.
 
+No celular, abrir uma comanda mostra seus itens, observações e total. **+ Produtos** abre uma tela separada com busca, categorias e cartões com as mesmas fotos cadastradas no desktop. Toque no cartão para ajustar quantidade/observações e confirmar; o sistema retorna à comanda atualizada. Produtos sem imagem mostram um substituto neutro. [Fluxo e validação](specs/2026-10-23-web-comanda-catalogo-fotos.md).
+
 Esta etapa ainda não integra os instaladores publicados. Ensaio de Wi-Fi/firewall e revisão visual em navegador/celular físico permanecem pendentes. [Contrato e limites](specs/2026-10-23-principal-servidor-local.md) · [Decisão arquitetural](docs/docs/adr/0006-servidor-local-atendimento-movel.md).
 
 ## Novidades da 1.4.0

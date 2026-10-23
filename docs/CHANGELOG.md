@@ -1,5 +1,11 @@
 # Histórico de alterações
 
+## Não lançado — 2026-10-23 — Comanda e catálogo web com fotos
+
+- Abrir comanda no celular apresenta itens, observações e total; + Produtos abre o localizador separado. Cartão inteiro abre quantidade/observações e a confirmação retorna aos itens.
+- Fotos do catálogo existente por rota autenticada, sem publicar pastas ou nomes de arquivos. Busca, categorias, substituto para foto ausente, estado amarelo de fechamento e reenvio sem duplicar preservados.
+- RF31/UC12/CT26/RN29. Testes HTTP/SQLite e JavaScript com DOM mínimo aprovados; navegador desabilitado no ambiente, sem atestado visual móvel. [Contrato e evidências](../specs/2026-10-23-web-comanda-catalogo-fotos.md). Sem novo instalador ou publicação externa.
+
 ## Não lançado — 2026-10-23 — Principal e servidor local
 
 - Principal reúne mesas/comandas, produtos, históricos e painel de senhas; COZINHA (KDS) recebe a consulta local. Removidas categorias antigas; preservadas permissões, busca e janelas.

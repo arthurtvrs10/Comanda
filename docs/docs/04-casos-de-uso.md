@@ -158,7 +158,7 @@ RF31/RN29/CT26. Pré-condições: desktop aberto, licença válida e rede local 
 1. No computador, abrir Configurações → Servidor / acesso pelo celular e iniciar.
 2. Selecionar o endereço da rede e ler QR Code no celular conectado ao mesmo Wi-Fi.
 3. Informar atendente, selecionar comanda aberta ou abrir um número permitido.
-4. Pesquisar produto/categoria, informar quantidade e observação e confirmar.
+4. Conferir os itens e total da comanda; tocar em + Produtos para abrir o catálogo com fotos. Pesquisar produto/categoria, tocar no cartão inteiro, informar quantidade e observação e confirmar.
 5. Conferir a confirmação e os itens persistidos; o computador atualiza seus dados sem apagar rascunhos.
 6. Se houver perda de resposta, confirmar a operação pendente com a mesma identificação.
 7. Parar o servidor no computador para revogar acesso; cobrança e fechamento permanecem no Windows.

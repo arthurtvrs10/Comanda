@@ -97,3 +97,5 @@ Extensão autorizada de RF12/RF19: recebimentos manuais parciais e mistos persis
 ## RF31 — Atendimento móvel na rede local — 23/10/2026
 
 Iniciar/parar o servidor pelo desktop, selecionar porta e endereço e conectar celular por QR Code. Abrir e consultar comandas, pesquisar produtos ativos, informar atendente e lançar quantidade/observação nos mesmos casos de uso do Windows. UN/KG/L, snapshots, situação da comanda e licença são preservados. Escritas remotas serializadas e repetição identificada sem duplicar durante a sessão. Sem pagamento, fechamento ou administração remotos; sem operação offline do celular. Escopo aprovado pelo responsável; [ADR 0006](adr/0006-servidor-local-atendimento-movel.md).
+
+Refinamento solicitado: abrir comanda apresenta os itens e o total imediatamente; + Produtos abre catálogo separado com fotos cadastradas, categorias e busca. O cartão completo abre personalização de quantidade/observações; confirmação retorna aos itens atualizados. Fotos exigem a mesma chave de sessão e não expõem caminhos locais. [Contrato](../../specs/2026-10-23-web-comanda-catalogo-fotos.md).
