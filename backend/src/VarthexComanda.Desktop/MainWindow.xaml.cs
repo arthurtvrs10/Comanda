@@ -34,7 +34,7 @@ public partial class MainWindow : Window
     private readonly ConfiguracaoView _configuracaoView;
 
 
-    public MainWindow(AtendimentoView atendimentoView, ProdutosView produtosView, HistoricoView historicoView, BackupView backupView, ConfiguracaoView configuracaoView, VarthexComanda.Infrastructure.Storage.AppPaths? paths = null, VarthexComanda.Application.Configuracao.IConfiguracaoRepository? configuracoes = null, HistoricoPedidosView? historicoPedidosView = null, VarthexComanda.Servidor.ServidorLocal? servidorLocal = null)
+    public MainWindow(AtendimentoView atendimentoView, ProdutosView produtosView, HistoricoView historicoView, BackupView backupView, ConfiguracaoView configuracaoView, VarthexComanda.Infrastructure.Storage.AppPaths? paths = null, VarthexComanda.Application.Configuracao.IConfiguracaoRepository? configuracoes = null, HistoricoPedidosView? historicoPedidosView = null, VarthexComanda.Servidor.ServidorLocal? servidorLocal = null, VarthexComanda.Application.Atendimento.ConsultarFilaCozinha? filaCozinha = null, VarthexComanda.Application.Atendimento.AtualizarPreparo? atualizarPreparo = null)
     {
         InitializeComponent();
         Title = $"Comanda · Versão {VersaoDoAplicativo.Atual}";
@@ -44,7 +44,8 @@ public partial class MainWindow : Window
         _acessoAtendimento.GarantirPinInicial();
         _bloqueioView = new BloqueioAtendimentoView(_acessoAtendimento,_acesso,_colaboradores);
         CamadaBloqueio.Content = _bloqueioView;
-        _cozinhaView = new CozinhaView(atendimentoView.ViewModel.ConsultarCozinha);
+        _cozinhaView = new CozinhaView(filaCozinha is null ? atendimentoView.ViewModel.ConsultarCozinha : filaCozinha.Executar,
+            atualizarPreparo is null ? null : atualizarPreparo.Executar);
         RegistrarAtalho(IrParaAtendimentoCommand, BotaoAtendimento, IrParaAtendimento);
         RegistrarAtalho(IrParaProdutosCommand, BotaoProdutos, IrParaProdutos);
         RegistrarAtalho(IrParaHistoricoCommand, BotaoHistorico, IrParaHistorico);

@@ -151,6 +151,9 @@ public partial class App : System.Windows.Application
         services.AddTransient<IComandaRepository, EfComandaRepository>();
         services.AddTransient<AbrirComanda>();
         services.AddTransient<AdicionarItem>();
+        services.AddTransient<ICozinhaRepository, EfCozinhaRepository>();
+        services.AddTransient<ConsultarFilaCozinha>();
+        services.AddTransient<AtualizarPreparo>();
         services.AddSingleton(new VarthexComanda.Servidor.FotosProdutos(paths.FotosDirectory));
         services.AddSingleton<VarthexComanda.Servidor.AtendimentoRemoto>();
         services.AddSingleton<VarthexComanda.Servidor.ServidorLocal>(sp => new(sp.GetRequiredService<VarthexComanda.Servidor.AtendimentoRemoto>(),
