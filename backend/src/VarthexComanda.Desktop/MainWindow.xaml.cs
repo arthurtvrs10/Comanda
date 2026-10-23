@@ -98,6 +98,8 @@ public partial class MainWindow : Window
         Closed += (_,_) => _painelSenhas?.Dispose();
         _atendimentoView.ViewModel.AtendimentoConcluido += BloquearAtendimento;
         Loaded += (_,_)=>SugerirConexaoDriveAposLogin();
+        Loaded += (_,_)=>InicializarDicaMascote();
+        Closed += (_,_)=>OcultarDicaMascote();
         MostrarAreaPrincipal();
         if(LerPreferencias().SolicitarSenha)BloquearAtendimento(false);
     }
