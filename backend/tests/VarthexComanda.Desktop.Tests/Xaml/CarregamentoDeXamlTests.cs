@@ -26,10 +26,9 @@ namespace VarthexComanda.Desktop.Tests.Xaml;
 /// constroem cada view com ViewModels reais sobre dobles em memoria e fazem Measure/Arrange.
 /// (RNF18: o foco visivel vem de App.xaml, carregado aqui como o app o carrega.)
 ///
-/// Carga do App.xaml: em processo de teste nao ha instancia de App. <c>new App()</c> mais
-/// <c>InitializeComponent()</c> (gerado pelo compilador de XAML, publico) carrega o BAML real de
-/// App.xaml na propria instancia e a torna <c>Application.Current</c> - sem Run(), portanto sem
-/// OnStartup (nem banco, nem single instance, nem log). Exatamente um App por processo.
+/// Carga do App.xaml: o construtor interno bloqueia OnStartup; WPF pode agendá-lo mesmo
+/// antes de Run(). InitializeComponent carrega o BAML real sem iniciar banco, licença,
+/// single instance ou log. Exatamente um App por processo.
 /// </summary>
 public class CarregamentoDeXamlTests
 {
@@ -47,7 +46,7 @@ public class CarregamentoDeXamlTests
                 return;
             }
 
-            _app = WpfApp.Current as App ?? new App();
+            _app = WpfApp.Current as App ?? new App(iniciarSistema:false);
             _app.InitializeComponent();
             _app.ShutdownMode = ShutdownMode.OnExplicitShutdown;
         }

@@ -29,8 +29,11 @@ namespace VarthexComanda.Desktop;
 
 public partial class App : System.Windows.Application
 {
-    public App()
+    private readonly bool _iniciarSistema;
+    public App() : this(true) { }
+    internal App(bool iniciarSistema)
     {
+        _iniciarSistema=iniciarSistema;
         EventManager.RegisterClassHandler(typeof(Window), FrameworkElement.LoadedEvent, new RoutedEventHandler((sender, e) =>
         {
             if (sender is Window janela && ReferenceEquals(e.OriginalSource, janela))
@@ -53,6 +56,8 @@ public partial class App : System.Windows.Application
 
     protected override async void OnStartup(StartupEventArgs e)
     {
+        // A fixture WPF carrega os recursos reais sem iniciar uma sessão operacional.
+        if(!_iniciarSistema)return;
         base.OnStartup(e);
         ShutdownMode = ShutdownMode.OnExplicitShutdown;
         TemaInterface.Inicializar(System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "VarthexComanda"));
