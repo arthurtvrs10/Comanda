@@ -1,5 +1,13 @@
 # Histórico de alterações
 
+## Em desenvolvimento — fluxo de pagamento — 2026-10-22
+
+- Lançamento em janela separada ao escolher a forma; resumo com pagos, recebido, troco e progresso. Finalizar e imprimir disponível após quitação, com impressão posterior à gravação da venda.
+- Tela de pagamento reorganizada com conferência, formas, resumo e impressão da conta; adaptação às larguras de janela e aos dois temas.
+- Recebimentos manuais parciais e mistos persistem na comanda e acompanham a venda. Saldo restante, dinheiro recebido e troco separados; cálculo de divisão por pessoas preserva os centavos.
+- Fechamento incompleto é bloqueado, remoção de registro preserva auditoria e não executa estorno. Alterações de itens/cancelamento são bloqueadas quando há recebimentos ativos.
+- Migração aditiva AddRecebimentosComandaVenda. Fiado, taxas/descontos, NSU/bandeiras e integração de cobrança não implementados. [Escopo e validação](../specs/2026-10-22-fluxo-pagamentos.md).
+
 ## Aplicativo 1.4.0 — 2026-10-22 — configurações e acesso
 
 - Configurações redesenhadas nos dois temas com toggles, navegação por ícones, campos agrupados e confirmação de descarte somente quando há mudanças. Quantidade de comandas em Numeração de pedidos.

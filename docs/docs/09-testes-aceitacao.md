@@ -127,3 +127,7 @@ Uma tarefa está pronta quando:
 - atualiza documentação e rastreabilidade.
 
 Extensão CT17 — Segurança opcional (RNF07/RNF18, decisão de 22/10/2026): uma base nova abre sem senha e sem janelas internas. Ativar proteção solicita cadastro e confirmações, cancelar não ativa; salvar persiste. Com proteção ativa, bloquear impede operar o fundo e exige login válido. Login de colaborador preserva seu nome e libera as áreas nesta versão. Mostrar senha mantém o valor ao alternar; placeholders desaparecem ao digitar. A senha de recuperação deve diferir da senha de acesso, funcionar offline e ser armazenada com hash e salt. Entrada incorreta não altera a credencial; cinco tentativas falhas de recuperação impõem espera. Trocar a senha de acesso preserva a recuperação. Campos, texto e foco devem ser legíveis nos dois temas e na janela mínima.
+
+## Recebimentos manuais — 22/10/2026
+
+Extensão CT09/CT10/CT12: receber R$ 20 Pix em conta de R$ 50, sair/reabrir e conferir saldo R$ 30; registrar R$ 30 em dinheiro com R$ 50 recebidos, mostrar R$ 20 de troco e encerrar uma venda de R$ 50 com ambas as formas. Rejeitar excedente, troco fora de dinheiro e fechamento incompleto. Remoção mantém auditoria e não estorna externamente. Não permitir alteração de itens nem cancelamento com recebimento ativo. Ver [escopo e evidências](../../specs/2026-10-22-fluxo-pagamentos.md).

@@ -89,3 +89,7 @@ conforme [Licenciamento offline](20-licenciamento-offline.md). Planos vitalício
 ## Acesso opcional — decisão do responsável em 22/10/2026
 
 Extensão autorizada de RNF07/RNF18: instalações novas sem senha e todos com acesso às áreas. Configuração Segurança ativa senha de acesso e senha de recuperação local diferentes, mínimo de quatro caracteres, criadas no toggle e aplicadas ao salvar. Bloquear e iniciar solicitam login apenas com proteção ativa. Recuperação offline sem códigos, conta externa ou serviço online. A identificação individual do colaborador permanece nos registros. Nenhuma credencial é distribuída nos instaladores.
+
+## Recebimentos manuais — 22/10/2026
+
+Extensão autorizada de RF12/RF19: recebimentos manuais parciais e mistos persistidos na comanda e copiados à venda, saldo, troco em dinheiro e rateio calculado por pessoas. Não processar cobrança/estorno, armazenar dados de cartão ou incluir fiado/taxas/descontos nesta etapa. Ver [escopo e evidências](../../specs/2026-10-22-fluxo-pagamentos.md).

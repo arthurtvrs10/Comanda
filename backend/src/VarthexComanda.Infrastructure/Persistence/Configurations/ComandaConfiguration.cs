@@ -20,6 +20,7 @@ public class ComandaConfiguration : IEntityTypeConfiguration<Comanda>
             t.HasCheckConstraint("CK_comanda_status_valido", "status IN ('ABERTA', 'FECHADA', 'CANCELADA')");
         });
 
+        builder.Property(v=>v.PagamentosJson).HasColumnName("pagamentos_json").HasDefaultValue("[]").IsRequired();
         builder.HasKey(c => c.Id);
         builder.Property(c => c.Id).HasColumnName("id");
         builder.Property(c => c.Numero).HasColumnName("numero").IsRequired();

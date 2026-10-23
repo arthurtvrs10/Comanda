@@ -314,6 +314,7 @@ public partial class EfComandaRepository : IComandaRepository
             throw new ComandaNaoAbertaException();
         }
 
+        if(PagamentosConta.Total(comanda.PagamentosJson)>0)throw new InvalidOperationException("Remova os registros de recebimento antes de cancelar a comanda.");
         comanda.Status = StatusComanda.Cancelada;
         comanda.FechadaEm = agora;
         contexto.SaveChanges();
@@ -330,12 +331,16 @@ public partial class EfComandaRepository : IComandaRepository
             throw new ComandaNaoAbertaException();
         }
 
+        var pagamentos=PagamentosConta.Ler(comanda.PagamentosJson).Where(p=>!p.Cancelado).ToArray();
+        if(pagamentos.Length>0&&pagamentos.Sum(p=>p.ValorCentavos)!=comanda.TotalCentavos)throw new InvalidOperationException("Conclua o recebimento do total antes de encerrar.");
+        if(pagamentos.Length>0)formaPagamento=pagamentos.Select(p=>p.Forma).Distinct().Count()==1?pagamentos[0].Forma:null;
         var proximoNumero = (contexto.Vendas.Max(v => (int?)v.Numero) ?? 0) + 1;
         var venda = new Venda
         {
             Id = 0,
             ComandaId = comanda.Id,
             FormaPagamento = formaPagamento,
+            PagamentosJson=comanda.PagamentosJson,
             Numero = proximoNumero,
             TotalCentavos = comanda.TotalCentavos,
             FinalizadaEm = agora,

@@ -164,7 +164,7 @@ public sealed class CriteriosDeAtendimentoTests : IDisposable
     [Trait("Caso", "CT06")]
     public void CT06_UnidadeRecusaFracaoSemAlterarComanda()
     {
-        var produto = _banco.CriarProduto("Unidade indivis�vel", 500);
+        var produto = _banco.CriarProduto("Unidade indivisível", 500);
         var comanda = _comandas.AbrirComanda(10, _relogio.UtcNow);
         var resultado = new AdicionarItem(_comandas, new VarthexComanda.Infrastructure.Persistence.Catalogo.EfProdutoRepository(_banco.Fabrica), _relogio).Executar(comanda.Id, produto.Id, 0.5m);
         Assert.False(resultado.Sucesso);
@@ -225,10 +225,10 @@ public sealed class CriteriosDeAtendimentoTests : IDisposable
         Assert.Equal(4200, new EncerrarComanda(_comandas, _relogio).Executar(comanda.Id).Valor!.TotalCentavos);
     }
 
-    // CT10: registrar a forma de pagamento sem armazenar dados de cartão ou autorização.
+    // CT10: registrar a forma de pagamento sem armazenar dados de cartÃ£o ou autorizaÃ§Ã£o.
     [Fact]
     [Trait("Caso", "CT10")]
-    public void CT10_Encerrar_CriaVendaFechaComandaESalvaSomenteFormaDePagamento()
+    public void CT10_Encerrar_CriaVendaFechaComandaESalvaRecebimentosSemDadosDeCartao()
     {
         var produto = _banco.CriarProduto("Refrigerante", 500);
         var comanda = _comandas.AbrirComanda(10, _relogio.UtcNow);
@@ -243,13 +243,13 @@ public sealed class CriteriosDeAtendimentoTests : IDisposable
         Assert.NotNull(depois.FechadaEm);
 
         Assert.Equal(
-            new[] { "comanda_id", "finalizada_em", "forma_pagamento", "id", "numero", "status", "total_centavos" },
+            new[] { "comanda_id", "finalizada_em", "forma_pagamento", "id", "numero", "pagamentos_json", "status", "total_centavos" },
             Colunas("venda").OrderBy(c => c, StringComparer.Ordinal).ToArray());
 
         var termosDePagamento = new[] { "pag", "cartao", "card", "cpf", "cnpj", "bandeira", "nsu", "troco", "forma", "pix", "autoriza" };
         foreach (var tabela in new[] { "venda", "comanda", "item_comanda", "produto", "categoria", "configuracao" })
         {
-            foreach (var coluna in Colunas(tabela).Where(c => tabela != "venda" || c != "forma_pagamento"))
+            foreach (var coluna in Colunas(tabela).Where(c => !(tabela == "venda" && c == "forma_pagamento") && !((tabela == "venda" || tabela == "comanda") && c == "pagamentos_json")))
             {
                 Assert.DoesNotContain(termosDePagamento, t => coluna.Contains(t, StringComparison.OrdinalIgnoreCase));
             }

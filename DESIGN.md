@@ -245,3 +245,13 @@ Opções booleanas usam toggles com texto Ativado/Desativado e foco de teclado. 
 ## Consolidação de acesso e segurança — 22/10/2026
 
 Esta decisão substitui os registros anteriores de PIN compartilhado e códigos de recuperação: base nova inicia na área de trabalho vazia sem senha; proteção opcional por toggle, cadastro imediato de senha e recuperação distintas e salvamento explícito. Todos os usuários acessam as áreas nesta entrega. Login sobre o sistema visível e desabilitado, blur de 5 DIP apenas na área de fundo; painel Surface, texto Ink e botão neutro compartilhado. Campos e placeholders centralizados; toggle Mostrar senha. Recuperação offline por senha com hash/salt; sem código ou Resend. Ajuda ❓ solicitada pelo usuário explica a recuperação por tooltip e foco de teclado. Segurança mantém apenas o toggle, resumo de estado e ações úteis após salvar. Diálogos usam densidade compartilhada, rolagem e limite pela área útil da tela.
+
+
+## Pagamento — reorganização do fluxo atual
+
+Conferência de itens à esquerda (toggle Conferir itens e observações), seleção de Dinheiro/Pix/Débito/Crédito ao centro e resumo à direita. Na largura média os itens ficam acima das duas colunas de forma/resumo; na mínima, os blocos empilham com rolagem. Rodapé fixo com Imprimir conta, Voltar e Confirmar pagamento. Impressão usa a preferência real e o modelo térmico existente. A confirmação exige forma válida e recebimento marcado; trocar forma limpa o recebimento. Cobrança externa, uma forma por fechamento. Não apresentar taxas, descontos, fiado ou pagamentos mistos sem implementação e persistência correspondentes. Itens e totais não são alterados ao conferir ou imprimir.
+
+
+### Recebimentos parciais — necessidade operacional
+
+Extensão aprovada: valor por recebimento, Pix/dinheiro/débito/crédito combinados, total recebido, saldo e troco somente em dinheiro. Cada registro persiste imediatamente; remoção é lógica e não estorna externamente. Encerramento exige total coberto e copia registros à venda. Divisão por pessoas é calculadora de conferência com rateio dos centavos, sem atribuição por item. Sem fiado, taxas ou descontos nesta etapa. Campos monetários usam duas casas e persistem em centavos inteiros.

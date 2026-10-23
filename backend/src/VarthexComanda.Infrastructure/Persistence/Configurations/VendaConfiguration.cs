@@ -14,6 +14,7 @@ public class VendaConfiguration : IEntityTypeConfiguration<Venda>
             t.HasCheckConstraint("CK_venda_status_concluida", "status = 'CONCLUIDA'");
         });
         builder.Property(v => v.FormaPagamento).HasColumnName("forma_pagamento").HasConversion<string>().HasMaxLength(20);
+        builder.Property(v=>v.PagamentosJson).HasColumnName("pagamentos_json").HasDefaultValue("[]").IsRequired();
         builder.HasKey(v => v.Id);
         builder.Property(v => v.Id).HasColumnName("id");
         builder.Property(v => v.ComandaId).HasColumnName("comanda_id").IsRequired();

@@ -99,7 +99,7 @@ no computador da loja) está descrito em `docs/homologacao/`.
 
 ### CT10 — Encerrar após cobrança manual (automatizado)
 
-- `CriteriosDeAtendimentoTests.CT10_Encerrar_CriaVendaFechaComandaESalvaSomenteFormaDePagamento` (Infrastructure.Tests)
+- `CriteriosDeAtendimentoTests.CT10_Encerrar_CriaVendaFechaComandaESalvaRecebimentosSemDadosDeCartao` (Infrastructure.Tests)
 - `EfComandaRepositoryTests.EncerrarComanda_ComandaAberta_GravaVendaEFechaComanda` (Infrastructure.Tests)
 - `EncerramentoViewModelTests.ConfirmarEncerrar_CobrancaAprovada_FechaComandaEDisparaConcluidoTrue` (Desktop.Tests)
 - `EncerrarComandaTests.Executar_ComandaComItens_RetornaVendaEFechaComanda` (Application.Tests)

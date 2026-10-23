@@ -70,6 +70,8 @@ internal sealed class ComandaRepositoryQueFalha : IComandaRepository
         return _interno.CancelarComanda(comandaId, agora);
     }
 
+    public Comanda RegistrarPagamento(int comandaId,PagamentoRegistrado pagamento) { Verificar();return _interno.RegistrarPagamento(comandaId,pagamento); }
+    public Comanda RemoverRegistroPagamento(int comandaId,Guid id) { Verificar();return _interno.RemoverRegistroPagamento(comandaId,id); }
     public Venda EncerrarComanda(int comandaId, DateTime agora, FormaPagamento? formaPagamento = null)
     {
         Verificar();

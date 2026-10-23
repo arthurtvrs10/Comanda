@@ -147,6 +147,13 @@ namespace VarthexComanda.Infrastructure.Persistence.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnName("origem_cliente");
 
+                    b.Property<string>("PagamentosJson")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT")
+                        .HasDefaultValue("[]")
+                        .HasColumnName("pagamentos_json");
+
                     b.Property<int>("Prioridade")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER")
@@ -413,6 +420,13 @@ namespace VarthexComanda.Infrastructure.Persistence.Migrations
                     b.Property<int>("Numero")
                         .HasColumnType("INTEGER")
                         .HasColumnName("numero");
+
+                    b.Property<string>("PagamentosJson")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT")
+                        .HasDefaultValue("[]")
+                        .HasColumnName("pagamentos_json");
 
                     b.Property<string>("Status")
                         .IsRequired()

@@ -79,6 +79,17 @@ public static class CupomTermico
             if(p.ExibirObservacoesCupom&&!string.IsNullOrWhiteSpace(item.Obs))Linha(d,"Obs.: "+item.Obs,tamanho:9);
         }
         Regua(d);Linha(d,"TOTAL: "+CentavosParaMoedaConverter.Formatar(lista.Sum(i=>i.SubtotalCentavos)),true,17);
+        var pagamentos=PagamentosConta.Ler(comanda.PagamentosJson).Where(x=>!x.Cancelado).ToArray();
+        if(pagamentos.Length>0)
+        {
+            Regua(d);Linha(d,"RECEBIMENTOS INFORMADOS",true,10);
+            foreach(var pagamento in pagamentos)
+            {
+                Linha(d,$"{PagamentosConta.Nome(pagamento.Forma)}: {CentavosParaMoedaConverter.Formatar(pagamento.ValorCentavos)}");
+                if(pagamento.TrocoCentavos>0)Linha(d,$"Recebido: {CentavosParaMoedaConverter.Formatar(pagamento.RecebidoCentavos)} · Troco: {CentavosParaMoedaConverter.Formatar(pagamento.TrocoCentavos)}",tamanho:9);
+            }
+            Linha(d,$"Falta pagar: {CentavosParaMoedaConverter.Formatar(Math.Max(0,comanda.TotalCentavos-pagamentos.Sum(x=>x.ValorCentavos)))}",true);
+        }
         Linha(d,$"{lista.Length} lançamento(s)",tamanho:9);Linha(d,"NÃO É DOCUMENTO FISCAL",tamanho:9,centro:true);
         if(!string.IsNullOrWhiteSpace(p.RodapeCupom))Linha(d,p.RodapeCupom,centro:true);
         if(senha is int s){Regua(d);Linha(d,$"SENHA DE ATENDIMENTO: {s}",true,16,true);}

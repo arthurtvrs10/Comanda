@@ -8,6 +8,7 @@ public partial class EfComandaRepository
 {
     private static void ExigirDesbloqueada(Comanda comanda)
     {
+        if(PagamentosConta.Total(comanda.PagamentosJson)>0)throw new InvalidOperationException("Há recebimentos registrados. Remova os registros antes de alterar os itens da conta.");
         if (comanda.Bloqueada) throw new InvalidOperationException("Pedido bloqueado. Desbloqueie para alterar os itens.");
     }
 

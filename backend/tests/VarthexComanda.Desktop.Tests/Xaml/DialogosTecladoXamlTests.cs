@@ -15,7 +15,7 @@ namespace VarthexComanda.Desktop.Tests.Xaml;
 [Trait("Requisito", "RNF18")]
 public class DialogosTecladoXamlTests
 {
-    private static EncerramentoView CriarEncerramento(out EncerramentoViewModel viewModel, out FakeComandaRepository comandas)
+    private static EncerramentoView CriarEncerramento(out EncerramentoViewModel viewModel, out FakeComandaRepository comandas,Action<EncerramentoViewModel>? editar=null)
     {
         var relogio = new FakeClock();
         comandas = new FakeComandaRepository();
@@ -24,7 +24,7 @@ public class DialogosTecladoXamlTests
         comandas.AdicionarItem(comanda.Id, produto, 2, relogio.UtcNow);
         viewModel = new EncerramentoViewModel(new EncerrarComanda(comandas, relogio), comandas);
         viewModel.Carregar(comanda.Id);
-        return new EncerramentoView(viewModel);
+        return new EncerramentoView(viewModel,editarRecebimento:editar);
     }
 
     [Fact]
@@ -33,7 +33,8 @@ public class DialogosTecladoXamlTests
         ThreadingHelper.EmSta(() =>
         {
             CarregamentoDeXamlTests.GarantirApp();
-            var janela = CriarEncerramento(out var vm, out var repo);
+            var editores=0;
+            var janela = CriarEncerramento(out var vm, out var repo,_=>editores++);
             using var source = new System.Windows.Interop.HwndSource(new System.Windows.Interop.HwndSourceParameters("Teste pagamento") { Width = 1, Height = 1, WindowStyle = 0 });
             void Teclar(System.Windows.Input.Key key)
             {
@@ -49,7 +50,8 @@ public class DialogosTecladoXamlTests
             Assert.True(((RadioButton)janela.FindName("FormaPix")).IsChecked);
             Assert.False(vm.ConfirmarEncerrarCommand.CanExecute(null));
             Teclar(System.Windows.Input.Key.Space);
-            Assert.True(vm.ConfirmarEncerrarCommand.CanExecute(null));
+            Assert.False(vm.ConfirmarEncerrarCommand.CanExecute(null));
+            Assert.Equal(2,editores);
             Teclar(System.Windows.Input.Key.NumPad4);
             Assert.Equal(FormaPagamento.Credito, vm.FormaSelecionada);
             Assert.True(((RadioButton)janela.FindName("FormaCredito")).IsChecked);
@@ -88,11 +90,12 @@ public class DialogosTecladoXamlTests
             viewModel.SelecionarFormaCommand.Execute(FormaPagamento.Pix);
             Assert.Equal(FormaPagamento.Pix, viewModel.FormaSelecionada);
             Assert.False(confirmar.IsEnabled);
-            var recebido = (CheckBox)janela.FindName("CaixaPagamentoRecebido");
-            recebido.IsChecked = true;
+            viewModel.PagamentoRecebido=true;
+            Assert.False(confirmar.IsEnabled);
+            viewModel.RegistrarPagamentoCommand.Execute(null);
             Assert.True(confirmar.IsEnabled);
 
-            viewModel.FormaSelecionada = null;
+            viewModel.RemoverRegistro(Assert.Single(viewModel.Pagamentos));
             Assert.False(confirmar.IsEnabled);
         });
     }

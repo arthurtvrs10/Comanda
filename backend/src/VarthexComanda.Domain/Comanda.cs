@@ -2,6 +2,7 @@ namespace VarthexComanda.Domain;
 
 public class Comanda
 {
+    public string PagamentosJson { get; set; } = "[]";
     public required int Id { get; set; }
     public required int Numero { get; set; }
     public long? CodigoPedido { get; set; }

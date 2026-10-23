@@ -26,5 +26,7 @@ public interface IComandaRepository
     ComandaComItens AlterarQuantidade(int itemId, decimal quantidade, DateTime agora);
     ComandaComItens RemoverItem(int itemId, DateTime agora);
     Comanda CancelarComanda(int comandaId, DateTime agora);
+    Comanda RegistrarPagamento(int comandaId,PagamentoRegistrado pagamento) => throw new NotSupportedException();
+    Comanda RemoverRegistroPagamento(int comandaId,Guid id) => throw new NotSupportedException();
     Venda EncerrarComanda(int comandaId, DateTime agora, FormaPagamento? formaPagamento = null);
 }

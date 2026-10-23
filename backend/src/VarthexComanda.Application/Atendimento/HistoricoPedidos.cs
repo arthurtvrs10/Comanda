@@ -61,11 +61,7 @@ public sealed class PedidoHistoricoResumo
     public string Observacao => Comanda.Observacao ?? "";
     public long TotalCentavos => Comanda.TotalCentavos;
     public decimal Total => TotalCentavos / 100m;
-    public string Pagamento => Venda?.FormaPagamento switch
-    {
-        FormaPagamento.Dinheiro => "Dinheiro", FormaPagamento.Pix => "Pix", FormaPagamento.Debito => "Débito",
-        FormaPagamento.Credito => "Crédito", _ => "Não informado"
-    };
+    public string Pagamento => Venda is null?"Não informado":PagamentosConta.Descrever(Venda.PagamentosJson,Venda.FormaPagamento);
 }
 
 public interface IHistoricoPedidosRepository

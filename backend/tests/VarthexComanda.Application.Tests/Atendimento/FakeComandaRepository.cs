@@ -200,6 +200,18 @@ public class FakeComandaRepository : IComandaRepository
     private readonly List<Venda> _vendas = new();
     private int _proximoVendaId = 1;
 
+    public Comanda RegistrarPagamento(int comandaId,PagamentoRegistrado pagamento)
+    {
+        var c=_comandas.Single(c=>c.Id==comandaId);
+        if(c.Status!=StatusComanda.Aberta)throw new ComandaNaoAbertaException();
+        c.PagamentosJson=PagamentosConta.Adicionar(c.PagamentosJson,pagamento,c.TotalCentavos);return c;
+    }
+    public Comanda RemoverRegistroPagamento(int comandaId,Guid id)
+    {
+        var c=_comandas.Single(c=>c.Id==comandaId);
+        if(c.Status!=StatusComanda.Aberta)throw new ComandaNaoAbertaException();
+        c.PagamentosJson=PagamentosConta.Remover(c.PagamentosJson,id);return c;
+    }
     public Venda EncerrarComanda(int comandaId, DateTime agora, FormaPagamento? formaPagamento = null)
     {
         var comanda = _comandas.FirstOrDefault(c => c.Id == comandaId)
@@ -209,12 +221,16 @@ public class FakeComandaRepository : IComandaRepository
             throw new ComandaNaoAbertaException();
         }
 
+        var pagamentos=PagamentosConta.Ler(comanda.PagamentosJson).Where(p=>!p.Cancelado).ToArray();
+        if(pagamentos.Length>0&&pagamentos.Sum(p=>p.ValorCentavos)!=comanda.TotalCentavos)throw new InvalidOperationException("Conclua o recebimento do total antes de encerrar.");
+        if(pagamentos.Length>0)formaPagamento=pagamentos.Select(p=>p.Forma).Distinct().Count()==1?pagamentos[0].Forma:null;
         var proximoNumero = (_vendas.Count == 0 ? 0 : _vendas.Max(v => v.Numero)) + 1;
         var venda = new Venda
         {
             Id = _proximoVendaId++,
             ComandaId = comanda.Id,
             FormaPagamento = formaPagamento,
+            PagamentosJson=comanda.PagamentosJson,
             Numero = proximoNumero,
             TotalCentavos = comanda.TotalCentavos,
             FinalizadaEm = agora,

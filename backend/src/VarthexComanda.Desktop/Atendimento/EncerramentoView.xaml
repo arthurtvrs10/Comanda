@@ -1,71 +1,74 @@
 <Window x:Class="VarthexComanda.Desktop.Atendimento.EncerramentoView"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:domain="clr-namespace:VarthexComanda.Domain;assembly=VarthexComanda.Domain"
-        xmlns:local="clr-namespace:VarthexComanda.Desktop.Atendimento"
-        mc:Ignorable="d"
-        Title="Pagamento" Background="{DynamicResource BackgroundF3F5F2}" Icon="pack://application:,,,/VarthexComanda;component/Assets/VarthexComanda.ico" Width="600" MaxHeight="580" SizeToContent="Height"
-        PreviewKeyDown="Pagamento_PreviewKeyDown" WindowStartupLocation="CenterOwner" ResizeMode="NoResize"
-        FocusManager.FocusedElement="{Binding ElementName=FormaDinheiro}">
-    <Window.Resources>
-        <local:CentavosParaMoedaConverter x:Key="Moeda" />
-        <Style x:Key="Forma" TargetType="RadioButton">
-            <Setter Property="Height" Value="56" />
-            <Setter Property="Margin" Value="4" />
-            <Setter Property="FontSize" Value="17" />
-            <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="FocusVisualStyle" Value="{StaticResource FocoVisivel}" />
-            <Setter Property="Template"><Setter.Value>
-                <ControlTemplate TargetType="RadioButton">
-                    <Border x:Name="Surface" Background="{DynamicResource BackgroundFFFFFF}" BorderBrush="{DynamicResource Color87988E}" BorderThickness="1" Padding="12">
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                            <RadioButton IsHitTestVisible="False" Focusable="False" IsChecked="{TemplateBinding IsChecked}" VerticalAlignment="Center" Margin="0,0,10,0" />
-                            <ContentPresenter />
-                        </StackPanel>
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsChecked" Value="True"><Setter TargetName="Surface" Property="Background" Value="{DynamicResource BackgroundE1E8E4}" /><Setter TargetName="Surface" Property="BorderBrush" Value="{DynamicResource Color245640}" /><Setter TargetName="Surface" Property="BorderThickness" Value="2" /></Trigger>
-                        <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="BorderBrush" Value="{DynamicResource Color1F5FBF}" /></Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value></Setter>
-        </Style>
-    </Window.Resources>
-    <ScrollViewer VerticalScrollBarVisibility="Auto" Background="{DynamicResource BackgroundF3F5F2}">
-    <StackPanel Margin="16">
-        <TextBlock Text="{Binding NumeroComanda, StringFormat='Comanda {0}'}" FontWeight="Bold" FontSize="22" Margin="0,0,0,4" />
-        <TextBlock Text="{Binding NomeCliente}" FontSize="16" TextWrapping="Wrap" Margin="0,0,0,8" />
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:domain="clr-namespace:VarthexComanda.Domain;assembly=VarthexComanda.Domain" xmlns:local="clr-namespace:VarthexComanda.Desktop.Atendimento"
+ Title="Pagamento" Background="{DynamicResource Canvas}" Foreground="{DynamicResource Ink}" Width="1120" Height="700" MinWidth="580" MinHeight="530" WindowStartupLocation="CenterOwner" ResizeMode="CanResize" PreviewKeyDown="Pagamento_PreviewKeyDown" SizeChanged="AoRedimensionar" FocusManager.FocusedElement="{Binding ElementName=FormaDinheiro}">
+ <Window.Resources>
+  <local:CentavosParaMoedaConverter x:Key="Moeda"/><BooleanToVisibilityConverter x:Key="Visivel"/>
+  <Style x:Key="Forma" TargetType="RadioButton">
+   <Setter Property="MinHeight" Value="60"/><Setter Property="Margin" Value="0,0,0,10"/><Setter Property="FontSize" Value="14"/><Setter Property="Foreground" Value="{DynamicResource Ink}"/><Setter Property="FocusVisualStyle" Value="{StaticResource FocoVisivel}"/>
+   <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="RadioButton">
+    <Border x:Name="Fundo" Background="{DynamicResource Surface}" BorderBrush="{DynamicResource Line}" BorderThickness="1" CornerRadius="5" Padding="14,12">
+     <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="32"/><ColumnDefinition Width="*"/><ColumnDefinition Width="24"/></Grid.ColumnDefinitions><Path Data="{Binding Tag,RelativeSource={RelativeSource TemplatedParent}}" Width="22" Height="22" Stretch="Uniform" Stroke="{DynamicResource Ink}" StrokeThickness="1.5" VerticalAlignment="Center"/><ContentPresenter Grid.Column="1" VerticalAlignment="Center"/><Ellipse x:Name="Marcador" Grid.Column="2" Width="14" Height="14" Stroke="{DynamicResource AjudaMuted}" StrokeThickness="1.5"/></Grid>
+    </Border>
+    <ControlTemplate.Triggers><DataTrigger Binding="{Binding ContaQuitada}" Value="True"><Setter Property="IsEnabled" Value="False"/></DataTrigger><Trigger Property="IsChecked" Value="True"><Setter TargetName="Fundo" Property="Background" Value="{DynamicResource AjudaSoft}"/><Setter TargetName="Fundo" Property="BorderBrush" Value="{DynamicResource Ink}"/><Setter TargetName="Marcador" Property="Fill" Value="{DynamicResource ToggleActive}"/></Trigger><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Fundo" Property="BorderBrush" Value="{DynamicResource Ink}"/></Trigger><Trigger Property="IsEnabled" Value="False"><Setter Property="Opacity" Value="0.5"/></Trigger></ControlTemplate.Triggers>
+   </ControlTemplate></Setter.Value></Setter>
+  </Style>
+ </Window.Resources>
+ <Grid Background="{DynamicResource Canvas}">
+  <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+  <Border Background="{DynamicResource Surface}" BorderBrush="{DynamicResource Line}" BorderThickness="0,0,0,1" Padding="22,16">
+   <StackPanel><StackPanel><TextBlock Text="{Binding NumeroComanda,StringFormat='Pagamento · Comanda {0:00}'}" FontSize="22" FontWeight="SemiBold"/><TextBlock Text="{Binding NomeCliente}" Foreground="{DynamicResource AjudaMuted}" FontSize="13" Margin="0,5,0,0"/></StackPanel><CheckBox x:Name="ConferirItens" Content="Conferir e rachar a conta" IsChecked="False" Style="{StaticResource AlternanciaCompacta}" Checked="Conferir_Click" Unchecked="Conferir_Click" HorizontalAlignment="Left" Margin="0,14,0,0"/></StackPanel>
+  </Border>
+  <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+   <Grid x:Name="Colunas" Margin="20">
+    <Grid.ColumnDefinitions><ColumnDefinition x:Name="ColunaItens" Width="*"/><ColumnDefinition x:Name="ColunaFormas" Width="210"/><ColumnDefinition x:Name="ColunaResumo" Width="*"/></Grid.ColumnDefinitions>
+    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+    <Border x:Name="PainelItens" Visibility="Collapsed" Grid.Column="0" Background="{DynamicResource Surface}" BorderBrush="{DynamicResource Line}" BorderThickness="1" Padding="16" Margin="0,0,16,0">
+     <Grid MinHeight="470"><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions><StackPanel><TextBlock Text="Conferência da conta" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,10"/><CheckBox Content="Mostrar observações" IsChecked="{Binding ExibirObservacoes}" Style="{StaticResource AlternanciaCompacta}" Margin="0,0,0,12"/>
+      <CheckBox x:Name="SelecionarItens" Content="Selecionar itens para dividir" IsChecked="{Binding SelecionarParaDividir}" Style="{StaticResource AlternanciaCompacta}" Margin="0,0,0,12"/>
+      <TextBlock Text="Selecione os itens desta pessoa. Cada seleção inclui toda a quantidade da linha." TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource AjudaMuted}" Margin="0,0,0,8" Visibility="{Binding SelecionarParaDividir,Converter={StaticResource Visivel}}"/>
+      <TextBlock Text="{Binding ResumoSelecao}" FontWeight="SemiBold" Margin="0,0,0,8" Visibility="{Binding SelecionarParaDividir,Converter={StaticResource Visivel}}"/>
+      </StackPanel><ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" MaxHeight="340"><ItemsControl ItemsSource="{Binding ItensParaDividir}"><ItemsControl.ItemTemplate><DataTemplate>
+       <Border BorderBrush="{DynamicResource Line}" BorderThickness="0,0,0,1" Padding="0,12"><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><StackPanel Margin="0,0,12,0"><CheckBox IsChecked="{Binding Selecionado}" IsEnabled="{Binding PodeSelecionar}" Content="Selecionar" AutomationProperties.Name="{Binding Item.NomeProduto,StringFormat='Selecionar {0}'}" Visibility="{Binding DataContext.SelecionarParaDividir,RelativeSource={RelativeSource AncestorType=Window},Converter={StaticResource Visivel}}" Margin="0,0,0,6"/><TextBlock Text="{Binding Situacao}" Foreground="{DynamicResource AjudaMuted}"/><TextBlock Text="{Binding Item.NomeProduto}" TextWrapping="Wrap" FontWeight="SemiBold"/><StackPanel Orientation="Horizontal" Margin="0,5,0,0"><TextBlock Text="{Binding Item.QuantidadeFormatada}" Foreground="{DynamicResource AjudaMuted}"/><TextBlock Text="{Binding Item.Medida}" Foreground="{DynamicResource AjudaMuted}" Margin="4,0,0,0"/></StackPanel><TextBlock Text="{Binding Item.Observacao}" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource AjudaMuted}" Margin="0,5,0,0" Visibility="{Binding DataContext.ExibirObservacoes,RelativeSource={RelativeSource AncestorType=Window},Converter={StaticResource Visivel}}"/></StackPanel><TextBlock Grid.Column="1" Text="{Binding Item.SubtotalCentavos,Converter={StaticResource Moeda}}"/></Grid></Border>
+      </DataTemplate></ItemsControl.ItemTemplate></ItemsControl></ScrollViewer><StackPanel Grid.Row="2">
+      <TextBlock Text="Dividir o total por pessoas" FontWeight="SemiBold" Margin="0,20,0,8"/>
+      <TextBox Text="{Binding QuantidadePessoasTexto,UpdateSourceTrigger=PropertyChanged}" MaxLength="3" Width="80" HorizontalAlignment="Left" MinHeight="34" AutomationProperties.Name="Quantidade de pessoas para dividir"/>
+      <TextBlock Text="{Binding DivisaoDescricao}" Foreground="{DynamicResource AjudaMuted}" TextWrapping="Wrap" FontSize="12" Margin="0,8,0,0"/>
 
-        <TextBlock Text="{Binding Identificador}" Foreground="{DynamicResource Text596D61}" />
-        <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
-            <TextBlock Text="Total a pagar: " FontWeight="Bold" FontSize="24" />
-            <TextBlock Text="{Binding TotalCentavos, Converter={StaticResource Moeda}}" FontWeight="Bold" FontSize="24" />
-        </StackPanel>
-        <TextBlock Text="Escolha a forma de pagamento" FontSize="17" FontWeight="SemiBold" Margin="0,12,0,8" />
-        <UniformGrid Columns="2">
-            <RadioButton x:Name="FormaDinheiro" GroupName="Pagamento" Content="1 · Dinheiro" Checked="Forma_Checked" Style="{StaticResource Forma}" Command="{Binding SelecionarFormaCommand}" CommandParameter="{x:Static domain:FormaPagamento.Dinheiro}" />
-            <RadioButton x:Name="FormaPix" GroupName="Pagamento" Content="2 · Pix" Checked="Forma_Checked" Style="{StaticResource Forma}" Command="{Binding SelecionarFormaCommand}" CommandParameter="{x:Static domain:FormaPagamento.Pix}" />
-            <RadioButton x:Name="FormaDebito" GroupName="Pagamento" Content="3 · Débito" Checked="Forma_Checked" Style="{StaticResource Forma}" Command="{Binding SelecionarFormaCommand}" CommandParameter="{x:Static domain:FormaPagamento.Debito}" />
-            <RadioButton x:Name="FormaCredito" GroupName="Pagamento" Content="4 · Crédito" Checked="Forma_Checked" Style="{StaticResource Forma}" Command="{Binding SelecionarFormaCommand}" CommandParameter="{x:Static domain:FormaPagamento.Credito}" />
-        </UniformGrid>
-        <TextBlock Text="{Binding FormaSelecionadaDescricao, StringFormat='Forma: {0}'}" FontWeight="SemiBold" Margin="0,8,0,4" />
-        <TextBlock Text="Confirme somente depois de receber o pagamento." Foreground="{DynamicResource Text596D61}" TextWrapping="Wrap" Margin="0,0,0,8" />
-
-        <CheckBox x:Name="CaixaPagamentoRecebido" IsChecked="{Binding PagamentoRecebido}" Content="Pagamento recebido / aprovado (Espaço)" MinHeight="46" Margin="0,0,0,8">
-            <CheckBox.Style><Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
-                <Style.Triggers><DataTrigger Binding="{Binding FormaSelecionada}" Value="{x:Null}"><Setter Property="IsEnabled" Value="False" /></DataTrigger></Style.Triggers>
-            </Style></CheckBox.Style>
-        </CheckBox>
-        <TextBlock Text="Tab: navegar · 1–4: forma · Espaço: recebido · Enter: confirmar · Esc: voltar" FontSize="12" Foreground="{DynamicResource Text596D61}" TextWrapping="Wrap" Margin="0,0,0,12" />
-        <TextBlock Text="{Binding Mensagem}" Foreground="{DynamicResource TextB71C1C}" TextWrapping="Wrap" Margin="0,0,0,12" />
-
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button x:Name="BotaoVoltar" Content="Voltar" IsCancel="True" Command="{Binding VoltarCommand}" Height="56" FontSize="16" Padding="18,0" Margin="0,0,8,0" />
-            <Button x:Name="BotaoConfirmarEncerrar" Content="Confirmar pagamento" IsDefault="True" Command="{Binding ConfirmarEncerrarCommand}" Height="56" FontSize="16" Padding="18,0"
-                    Style="{StaticResource BotaoPrimario}" FontWeight="Bold" />
-        </StackPanel>
+     </StackPanel></Grid>
+    </Border>
+    <StackPanel x:Name="PainelFormas" Grid.Column="1" Margin="0,0,16,0"><TextBlock Text="Adicionar pagamento" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,16"/>
+     <RadioButton x:Name="FormaDinheiro" Tag="M 1,4 L 25,4 25,20 1,20 Z M 4,8 L 7,8 M 19,16 L 22,16 M 16,12 A 3,4 0 1 1 10,12 A 3,4 0 1 1 16,12" AutomationProperties.Name="Dinheiro" Content="1 · Dinheiro" GroupName="Pagamento" Checked="Forma_Checked" Click="Forma_Click" Style="{StaticResource Forma}" Command="{Binding SelecionarFormaCommand}" CommandParameter="{x:Static domain:FormaPagamento.Dinheiro}"/>
+     <RadioButton x:Name="FormaPix" Tag="M 13,1 L 24,12 13,23 2,12 Z M 6,8 L 10,8 16,16 20,16 M 6,16 L 10,16 16,8 20,8" AutomationProperties.Name="Pix" Content="2 · Pix" GroupName="Pagamento" Checked="Forma_Checked" Click="Forma_Click" Style="{StaticResource Forma}" Command="{Binding SelecionarFormaCommand}" CommandParameter="{x:Static domain:FormaPagamento.Pix}"/>
+     <RadioButton x:Name="FormaDebito" Tag="M 1,3 L 25,3 25,21 1,21 Z M 1,8 L 25,8 M 5,16 L 11,16" AutomationProperties.Name="Débito" Content="3 · Débito" GroupName="Pagamento" Checked="Forma_Checked" Click="Forma_Click" Style="{StaticResource Forma}" Command="{Binding SelecionarFormaCommand}" CommandParameter="{x:Static domain:FormaPagamento.Debito}"/>
+     <RadioButton x:Name="FormaCredito" Tag="M 1,3 L 25,3 25,21 1,21 Z M 1,8 L 25,8 M 5,14 L 10,14 10,17 5,17 Z M 16,17 L 21,17" AutomationProperties.Name="Crédito" Content="4 · Crédito" GroupName="Pagamento" Checked="Forma_Checked" Click="Forma_Click" Style="{StaticResource Forma}" Command="{Binding SelecionarFormaCommand}" CommandParameter="{x:Static domain:FormaPagamento.Credito}"/>
+     <TextBlock Text="A cobrança é realizada fora do Comanda." TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource AjudaMuted}" Margin="0,8,0,0"/>
     </StackPanel>
-    </ScrollViewer>
+    <Border x:Name="PainelResumo" Grid.Column="2" Background="{DynamicResource Surface}" BorderBrush="{DynamicResource Line}" BorderThickness="1" MinHeight="470">
+     <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+      <StackPanel>
+       <Border Background="{DynamicResource AjudaSoft}" Padding="16,12"><TextBlock Text="A pagar / Resumo dos totais" FontSize="16" FontWeight="SemiBold"/></Border>
+       <DockPanel Margin="16,14"><TextBlock Text="{Binding TotalCentavos,Converter={StaticResource Moeda}}" DockPanel.Dock="Right" FontWeight="SemiBold"/><TextBlock Text="Total dos itens"/></DockPanel>
+       <Border BorderBrush="{DynamicResource Line}" BorderThickness="0,1,0,1" Padding="16,14"><DockPanel><TextBlock Text="{Binding TotalCentavos,Converter={StaticResource Moeda}}" DockPanel.Dock="Right" FontWeight="SemiBold"/><TextBlock Text="Total a pagar" FontWeight="SemiBold"/></DockPanel></Border>
+       <Border Background="{DynamicResource AjudaSoft}" Padding="16,10"><TextBlock Text="{Binding Pagamentos.Count,StringFormat='Pagamentos lançados ({0})'}" FontWeight="SemiBold"/></Border>
+      </StackPanel>
+      <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" MaxHeight="340">
+       <ItemsControl ItemsSource="{Binding Pagamentos}"><ItemsControl.ItemTemplate><DataTemplate>
+        <Border BorderBrush="{DynamicResource Line}" BorderThickness="0,0,0,1" Padding="16,12"><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+         <StackPanel Margin="0,0,12,0"><TextBlock Text="{Binding FormaDescricao}" FontWeight="SemiBold"/><TextBlock Text="{Binding Observacao}" TextWrapping="Wrap" Foreground="{DynamicResource AjudaMuted}" Margin="0,4,0,0"/></StackPanel>
+         <StackPanel Grid.Column="1" HorizontalAlignment="Right"><TextBlock Text="{Binding ValorCentavos,Converter={StaticResource Moeda},StringFormat='Pago: {0}'}" FontWeight="SemiBold"/><TextBlock Text="{Binding RecebidoCentavos,Converter={StaticResource Moeda},StringFormat='Recebido: {0}'}" FontSize="12" Margin="0,5,0,0"/><TextBlock Text="{Binding TrocoCentavos,Converter={StaticResource Moeda},StringFormat='Troco: {0}'}" FontSize="12"/></StackPanel>
+         <Button Grid.Column="2" Click="RemoverPagamento_Click" ToolTip="Remover registro de pagamento" AutomationProperties.Name="Remover registro de pagamento" Margin="12,0,0,0" Padding="8" VerticalAlignment="Top"><Path Data="M3,6 L21,6 M8,6 L8,2 16,2 16,6 M5,6 L6,23 18,23 19,6 M10,10 L10,19 M14,10 L14,19" Width="16" Height="18" Stretch="Uniform" Stroke="{DynamicResource TextA12822}" StrokeThickness="1.5"/></Button>
+        </Grid></Border>
+       </DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+      </ScrollViewer>
+      <Border Grid.Row="2" Background="{DynamicResource AjudaSoft}" Padding="16"><StackPanel>
+       <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition/></Grid.ColumnDefinitions><StackPanel><TextBlock Text="Total pago"/><TextBlock Text="{Binding TotalPagoCentavos,Converter={StaticResource Moeda}}" FontSize="22" FontWeight="SemiBold" Margin="0,5,0,0"/></StackPanel><StackPanel Grid.Column="1" HorizontalAlignment="Right"><TextBlock Text="{Binding RotuloSaldo}"/><TextBlock Text="{Binding FaltaPagarCentavos,Converter={StaticResource Moeda}}" FontSize="22" FontWeight="SemiBold" Margin="0,5,0,0"/></StackPanel></Grid>
+       <ProgressBar Foreground="{DynamicResource ToggleActive}" Background="{DynamicResource Line}" Value="{Binding ProgressoPagamento,Mode=OneWay}" Maximum="100" Height="5" Margin="0,12,0,0" AutomationProperties.Name="Percentual pago da conta"/>
+      </StackPanel></Border>
+     </Grid>
+    </Border>
+   </Grid>
+  </ScrollViewer>
+  <Border Grid.Row="2" Background="{DynamicResource Surface}" BorderBrush="{DynamicResource Line}" BorderThickness="0,1,0,0" Padding="20,12"><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><StackPanel Grid.ColumnSpan="2" Margin="0,0,0,8"><TextBlock Text="{Binding Mensagem}" Foreground="{DynamicResource TextA12822}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite"/><TextBlock Text="1–4: forma · Espaço: adicionar · Enter: finalizar · Esc: voltar" FontSize="11" Foreground="{DynamicResource AjudaMuted}" TextWrapping="Wrap" Margin="0,4,0,0"/></StackPanel><WrapPanel Grid.Row="1" Grid.ColumnSpan="2" HorizontalAlignment="Right"><Button x:Name="BotaoImprimir"  Click="Imprimir_Click" MinHeight="38" Padding="12,5" Margin="0,0,10,0"><Button.Content><StackPanel Orientation="Horizontal"><Path Data="M 5,8 L 5,1 19,1 19,8 M 5,18 L 1,18 1,8 23,8 23,18 19,18 M 5,14 L 19,14 19,23 5,23 Z" Width="16" Height="16" Stretch="Uniform" Stroke="{Binding Foreground,RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.5" Margin="0,0,8,0" VerticalAlignment="Center"/><TextBlock Text="Imprimir conta" VerticalAlignment="Center"/></StackPanel></Button.Content></Button><Button x:Name="BotaoVoltar"  IsCancel="True" Command="{Binding VoltarCommand}" MinHeight="38" Padding="14,5" Margin="0,0,10,0"><Button.Content><StackPanel Orientation="Horizontal"><Path Data="M 16,2 L 6,12 16,22" Width="16" Height="16" Stretch="Uniform" Stroke="{Binding Foreground,RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.5" Margin="0,0,8,0" VerticalAlignment="Center"/><TextBlock Text="Voltar" VerticalAlignment="Center"/></StackPanel></Button.Content></Button><Button x:Name="BotaoFinalizarImprimir" Content="Finalizar e imprimir" Click="FinalizarImprimir_Click" IsEnabled="{Binding ContaQuitada}" MinHeight="38" Padding="12,5" Margin="0,0,10,0"/><Button x:Name="BotaoConfirmarEncerrar"  IsDefault="True" IsEnabled="{Binding ContaQuitada}" Command="{Binding ConfirmarEncerrarCommand}" MinHeight="38" Padding="14,5" Style="{StaticResource BotaoPrimario}"><Button.Content><StackPanel Orientation="Horizontal"><Path Data="M 2,12 L 9,19 23,3" Width="16" Height="16" Stretch="Uniform" Stroke="{Binding Foreground,RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.5" Margin="0,0,8,0" VerticalAlignment="Center"/><TextBlock Text="{Binding RotuloFinalizar}" VerticalAlignment="Center"/></StackPanel></Button.Content></Button></WrapPanel></Grid></Border>
+ </Grid>
 </Window>
