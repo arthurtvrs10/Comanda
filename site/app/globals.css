@@ -139,3 +139,16 @@ a,button,summary{ -webkit-tap-highlight-color:transparent;touch-action:manipulat
 .social-instagram:focus-visible{color:#B72D70}.social-whatsapp:focus-visible{color:#137B40}
 @media(hover:hover){.social-link:hover>svg{transform:scale(1.2)}.social-link:hover .social-tooltip{opacity:1;transform:translateX(-50%) scale(1)}.social-instagram:hover{color:#B72D70}.social-whatsapp:hover{color:#137B40}}
 @media(prefers-reduced-motion:reduce){.word-reel{animation:none}.social-link>svg,.social-tooltip{transition:none}}
+
+/* A lightweight laptop chassis frames the original product captures. */
+.laptop-mockup{position:relative;padding:0 4% 16px;isolation:isolate}
+.laptop-mockup::after{content:"";position:absolute;z-index:-1;left:8%;right:8%;bottom:0;height:20px;background:#17252c24;border-radius:50%;filter:blur(10px)}
+.laptop-mockup .showcase-screen{position:relative;padding:0 10px 13px;background:#1d252c;border:1px solid #53616a;border-radius:16px 16px 5px 5px;box-shadow:none}
+.laptop-camera{height:20px;display:flex;align-items:center;justify-content:center}
+.laptop-camera span{width:5px;height:5px;border-radius:50%;background:#07121b;box-shadow:inset 0 0 0 1px #3a4853}
+.laptop-mockup .showcase-image{padding:0;aspect-ratio:16/10;background:#edf2f5;border-radius:2px;overflow:hidden}
+.laptop-mockup .showcase-image img{object-fit:contain}
+.laptop-base{position:relative;height:16px;margin:0 -4.35%;background:linear-gradient(#d7dce0 0%,#b4bfc7 35%,#85929d 100%);border-radius:2px 2px 50% 50% / 2px 2px 12px 12px;border-top:1px solid #e9edf0;box-shadow:0 3px 4px #17252c14}
+.laptop-base span{position:absolute;left:43%;right:43%;top:0;height:5px;background:#85919b;border-radius:0 0 6px 6px;box-shadow:inset 0 1px 2px #17252c30}
+@media(max-width:640px){.laptop-mockup{padding-bottom:10px}.laptop-mockup .showcase-screen{padding:0 5px 7px;border-radius:9px 9px 3px 3px}.laptop-camera{height:12px}.laptop-camera span{width:3px;height:3px}.laptop-base{height:9px}.laptop-base span{height:3px}}
+@media(max-width:640px){.product-tabs{flex-wrap:wrap}.product-tabs button{flex:1 1 45%}}

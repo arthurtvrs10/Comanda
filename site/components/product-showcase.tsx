@@ -3,9 +3,10 @@
 import Image from 'next/image';
 import {useRef, useState} from 'react';
 import {motion, useReducedMotion} from 'motion/react';
-import {LayoutGrid, WalletCards, ChartNoAxesCombined} from 'lucide-react';
+import {LayoutGrid, WalletCards, ChartNoAxesCombined, Monitor} from 'lucide-react';
 
 const views = [
+  {id:'visao-geral', label:'Visão geral', title:'A Comanda, no seu computador.', description:'Conheça a interface do sistema Comanda para Windows.', src:'/assets/sistema.webp', width:1280, height:720, alt:'Print completo da tela principal do sistema Comanda por Varthex', icon:Monitor},
   {id:'atendimento', label:'Atendimento', title:'Cada comanda, no seu lugar.', description:'Visualize as comandas livres e ocupadas e acompanhe o consumo de cada atendimento.', src:'/assets/atendimento.webp', width:1180, height:350, alt:'Grade real de comandas livres e ocupadas da Comanda', icon:LayoutGrid},
   {id:'fechamento', label:'Fechamento', title:'Confira. Divida. Registre.', description:'Confira os itens, registre recebimentos parciais ou mistos e acompanhe o saldo da conta.', src:'/assets/pagamento.webp', width:1120, height:700, alt:'Tela real de fechamento com formas de recebimento e saldo da conta', icon:WalletCards},
   {id:'historico', label:'Histórico', title:'O atendimento termina. O registro fica.', description:'Consulte o histórico de vendas com filtros, detalhes e exportação para Excel.', src:'/assets/historico.webp', width:1180, height:600, alt:'Tela real do histórico de vendas da Comanda', icon:ChartNoAxesCombined},
@@ -39,12 +40,15 @@ export function ProductShowcase() {
     </div>
     {views.map((item,index) => <div key={item.id} role="tabpanel" id={`panel-${item.id}`} aria-labelledby={`tab-${item.id}`} hidden={index!==selected} tabIndex={0}>
       {index===selected && <>
+        <div className="laptop-mockup">
         <motion.div className="showcase-screen" initial={false} animate={{opacity:1,transform:'translateY(0px)'}}>
           <motion.figure key={view.id} initial={reduced||keyboardChange?false:{opacity:.7,transform:'translateY(6px)'}} animate={{opacity:1,transform:'translateY(0px)'}} transition={{duration:.2,ease:[.16,1,.3,1]}}>
-            <div className="showcase-top"><span>Comanda por Varthex</span><span>{view.label}</span></div>
+            <div className="laptop-camera" aria-hidden="true"><span/></div>
             <div className="showcase-image"><Image src={view.src} alt={view.alt} width={view.width} height={view.height} sizes="(max-width:640px) calc(100vw - 48px), (max-width:1100px) 80vw, 760px"/></div>
           </motion.figure>
         </motion.div>
+        <div className="laptop-base" aria-hidden="true"><span/></div>
+        </div>
         <div className="showcase-description"><h3>{view.title}</h3><p>{view.description}</p></div>
       </>}
     </div>)}
