@@ -2,9 +2,13 @@
 
 Data: 23/10/2026. Status: aceito pelo pedido explícito do responsável nesta conversa. Ele solicitou iniciar o servidor no modelo do Food Flow POS e escolheu priorizar o garçom lançando pedidos pelo celular.
 
+Atualização aceita em 24/10/2026: a pedido explícito do responsável, substituir o início manual obrigatório pelo início automático ao abrir o Comanda, ativado por padrão e configurável. O restante da arquitetura desta ADR permanece. [Contrato da atualização](../../../specs/2026-10-24-servidor-automatico-informacoes.md).
+
 ## Decisão
 
 Preservar C#/.NET 10, WPF, SQLite e os casos de uso. Acrescentar biblioteca ASP.NET Core/Kestrel no processo do desktop, iniciada manualmente em Configurações → Servidor / acesso pelo celular. Porta padrão 3001, selecionável, rede privada IPv4 e QR Code. O desktop continua operando sem servidor e sem internet. Não copiar código, banco ou tecnologias Node/React do projeto de referência.
+
+O início manual descrito acima registra a decisão original, substituída em 24/10/2026: o desktop agenda uma tentativa em segundo plano após carregar a janela saudável. Preferência/porta persistem; licença inválida, porta ocupada ou configurações incorretas deixam o desktop utilizável. Recuperação não inicia o host; a guarda de restauração inclui início e parada. Fechar apenas Informações do Servidor conserva o serviço; fechar o aplicativo o encerra. Não instalar serviço do Windows, banco no cliente ou pareamento em nuvem. Painel informa rede, porta/estado, caminho local, QR/link e acessos autenticados da sessão; não declara firewall liberado nem inventa histórico de 30 dias.
 
 Antecipar somente o atendimento móvel da P3 proposta na ADR 0005: abrir/consultar comandas e adicionar produtos às comandas existentes. Não introduzir entidade Pedido, estados de preparo, entrega ou KDS remoto nesta etapa. A categoria COZINHA (KDS) preserva a consulta local de cozinha existente.
 

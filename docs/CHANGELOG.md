@@ -1,5 +1,11 @@
 # Histórico de alterações
 
+## Não lançado — 2026-10-24 — Servidor automático e informações da rede
+
+- Servidor local inicia ao abrir o Comanda por padrão; porta e preferência persistidas, tentativa em segundo plano e falha sem bloquear o desktop. Recuperação não inicia o host; parada e fechamento preservam a guarda de restauração.
+- Painel de Informações do Servidor inspirado na referência: computador, interfaces/IPs, porta/estado, banco local, QR/link, teste HTTP e acessos autenticados desta sessão. Dois temas e adaptação por rolagem; firewall não é declarado liberado sem verificação.
+- RF31/CT26/RN29 e RNF02/RNF07/RNF18. 847 testes aprovados, revisão visual independente `ship` no escopo de 12 capturas/fontes e compilação local gerada. Sem nova publicação dos instaladores. [Contrato e limites](../specs/2026-10-24-servidor-automatico-informacoes.md).
+
 ## 1.4.0 — recompilação de 2026-10-23
 
 - Instaladores normal e demonstração recompilados com Principal, Balcão, KDS, atendimento móvel com fotos e melhorias nas janelas. As entradas Não lançado abaixo registram o histórico de desenvolvimento agora incluído nesta recompilação.

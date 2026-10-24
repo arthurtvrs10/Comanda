@@ -1,5 +1,7 @@
 # Rastreabilidade
 
+Extensão do servidor — 24/10/2026: RF31/RN29/CT26 e RNF02/RNF07/RNF18 → ConfiguracaoServidorTests, ServidorAutomaticoTests, ServidorLocalTests.InformacoesRegistramSomenteAcessosAutenticadosDaSessaoSemConfiarEmCabecalhoDeIp e ServidorJanelaTests. Cobrem preferência, início na janela real, falhas, restauração, repetição, parada e informações. [Contrato e evidências](../../specs/2026-10-24-servidor-automatico-informacoes.md).
+
 Extensão Balcão e cores do KDS — 23/10/2026: RF33/RN31/CT28 → AbrirComandaTests.BalcaoEscolhePrimeiroNumeroLivreSemMesaEPreservaPedidosExistentes, BalcaoXamlTests, ServidorJanelaTests.PrincipalAgrupaDestinosECozinhaTemCategoriaPropria. Refinamento RF32/CT27 e RNF18 → CozinhaViewModelTests.ResumoDoPreparoEObservacaoDoPedidoAcompanhamMudancasSemPerderCartao e CozinhaKdsXamlTests. [Contrato e evidências](../../specs/2026-10-23-balcao-kds-cores.md).
 
 Complemento do movimento — RNF02/RNF18, preservação de CT12/CT17/CT27 → MovimentoWorkspaceTests.TelasReaisMovemComConteudoEmCacheEContinuamUtilizaveisAoSoltar (quatro views reais) e CacheTemporarioTerminaAoMaximizarFecharOuDescarregarEAtivarDeNovoNaoRefazRecursos. [Evidências e limites](../../specs/2026-10-23-movimento-workspace.md#complemento--produtos-históricos-e-cozinha).
