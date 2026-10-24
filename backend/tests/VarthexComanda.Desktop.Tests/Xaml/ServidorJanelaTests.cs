@@ -32,7 +32,7 @@ public class ServidorJanelaTests
                 {
                     TemaInterface.Aplicar(escuro,false);((CheckBox)janela.FindName("ModoEscuro")).IsChecked=escuro;categorias.Children.OfType<Button>().Single(b=>Equals(b.Content,categoria)).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
                     var botoes=AlinhamentoInterfaceTests.Filhos((FrameworkElement)janela.FindName("GruposRibbon")).OfType<Button>().Select(b=>System.Windows.Automation.AutomationProperties.GetName(b));
-                    Assert.Equal(categoria=="Principal"?new[]{"Mesas / comandas","Produtos","Histórico de pedidos","Histórico de vendas","Painel de senhas"}:new[]{"Cozinha"},botoes);
+                    Assert.Equal(categoria=="Principal"?new[]{"Mesas / comandas","Balcão","Produtos","Histórico de pedidos","Histórico de vendas","Painel de senhas"}:new[]{"Cozinha"},botoes);
                     janela.Width=largura;var raiz=(FrameworkElement)janela.Content;raiz.Measure(new Size(largura,780));raiz.Arrange(new Rect(0,0,largura,780));raiz.UpdateLayout();
                     Capturar(raiz,$"menu-{(categoria=="Principal"?"principal":"kds")}-{(escuro?"escuro":"claro")}-{largura}");
                 }

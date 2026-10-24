@@ -455,7 +455,7 @@ public class CarregamentoDeXamlTests
                 }
                 acesso.Sair();tipo.GetMethod("AtualizarPerfil",flags)!.Invoke(janela,null);
                 pesquisa.Text="backup";Assert.NotEmpty(resultados.Items.Cast<object>());
-                Categoria("Principal");Assert.Equal(5,Descendentes((FrameworkElement)janela.FindName("GruposRibbon")).OfType<Button>().Count());
+                Categoria("Principal");Assert.Equal(6,Descendentes((FrameworkElement)janela.FindName("GruposRibbon")).OfType<Button>().Count());
                 Assert.False(MainWindow.IrParaProdutosCommand.CanExecute(null,janela));
                 TemaInterface.Aplicar(false);
             });

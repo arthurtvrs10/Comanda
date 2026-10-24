@@ -231,6 +231,23 @@ public partial class AtendimentoViewModel : ObservableObject
     [RelayCommand]
     private void SelecionarComanda(Comanda comanda) => AbrirParaEdicao(comanda.Id);
 
+    public Comanda? CriarPedidoBalcao()
+    {
+        try
+        {
+            var resultado=_abrirComanda.ExecutarBalcao();
+            if(!resultado.Sucesso){Mensagem=string.Join(" ",resultado.Erros);return null;}
+            AtualizarComandasAbertas();Mensagem="";return resultado.Valor;
+        }
+        catch(Exception ex)
+        {
+            _logger?.Error(ex,"Falha ao abrir pedido de balcão");
+            Mensagem="Não foi possível abrir o pedido. Atualize a lista antes de tentar novamente.";return null;
+        }
+    }
+
+    public void PrepararPedidoBalcao(int id,bool novo)=>AbrirParaEdicao(id,novo);
+
     [RelayCommand]
     private void AbrirOuSelecionarSlot(ComandaSlotItem slot)
     {

@@ -43,4 +43,20 @@ public class AbrirComanda
             return Resultado<Comanda>.Falha(ex.Message);
         }
     }
+
+    /// <summary>Pedido sem mesa, usando o primeiro número livre da faixa configurada.</summary>
+    public Resultado<Comanda> ExecutarBalcao()
+    {
+        var configuracao = _obterConfiguracao.Executar();
+        var ocupados = _comandas.ListarAbertas().Select(c => c.Numero).ToHashSet();
+        long numero = configuracao.NumeroInicialComandas;
+        var limite = configuracao.QuantidadeMaximaComandas is int quantidade
+            ? Math.Min(int.MaxValue, numero + quantidade - 1) : int.MaxValue;
+        while (numero <= limite && ocupados.Contains((int)numero)) numero++;
+        if (numero > limite)
+            return Resultado<Comanda>.Falha("Não há número de comanda livre. Encerre um pedido ou ajuste a quantidade de comandas nas configurações.");
+        // A gravação mantém a restrição de número único. Uma disputa com outro
+        // atendimento falha sem selecionar nem alterar o pedido de outra pessoa.
+        return Executar((int)numero);
+    }
 }

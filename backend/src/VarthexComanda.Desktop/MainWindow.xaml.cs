@@ -27,6 +27,7 @@ public partial class MainWindow : Window
     private readonly AcessoAtendimento _acessoAtendimento;
     private readonly BloqueioAtendimentoView _bloqueioView;
     private readonly AtendimentoView _atendimentoView;
+    private readonly BalcaoView _balcaoView;
     private readonly ProdutosView _produtosView;
     private readonly HistoricoView _historicoView;
     private readonly HistoricoPedidosView? _historicoPedidosView;
@@ -52,6 +53,12 @@ public partial class MainWindow : Window
         RegistrarAtalho(IrParaBackupCommand, BotaoBackup, IrParaBackup);
         RegistrarAtalho(IrParaConfiguracoesCommand, BotaoConfiguracoes, IrParaConfiguracoes);
         _atendimentoView = atendimentoView;
+        _balcaoView = new BalcaoView(new BalcaoViewModel(atendimentoView.ViewModel));
+        _balcaoView.ViewModel.AbrirPedidoSolicitado += (pedido,novo) =>
+        {
+            if(_bloqueado||_cozinhaAtiva||_restauracao)return;
+            _atendimentoView.AbrirPedidoBalcao(pedido,novo,this);
+        };
         _produtosView = produtosView;
         _historicoView = historicoView;
         _historicoPedidosView = historicoPedidosView;
@@ -175,11 +182,18 @@ public partial class MainWindow : Window
         MostrarConteudo(_atendimentoView);
     }
 
+    private void IrParaBalcao()
+    {
+        if(_bloqueado||_cozinhaAtiva||_restauracao)return;
+        _balcaoView.ViewModel.AtualizarCommand.Execute(null);
+        MostrarConteudo(_balcaoView);
+    }
+
     private readonly Dictionary<UIElement,JanelaInterna> _janelasInternas=new();
     private JanelaInterna ObterJanela(UIElement view)
     {
         if(_janelasInternas.TryGetValue(view,out var existente))return existente;
-        var titulo=view==_atendimentoView?"Mesas / comandas":view==_produtosView?"Produtos":view==_historicoView?"Histórico de vendas":view==_historicoPedidosView?"Histórico de pedidos":view==_cozinhaView?"Cozinha":view==_backupView?"Backup e restauração":"Configurações";
+        var titulo=view==_atendimentoView?"Mesas / comandas":view==_balcaoView?"Balcão":view==_produtosView?"Produtos":view==_historicoView?"Histórico de vendas":view==_historicoPedidosView?"Histórico de pedidos":view==_cozinhaView?"Cozinha":view==_backupView?"Backup e restauração":"Configurações";
         var janela=new JanelaInterna(titulo,view,view==_historicoPedidosView?0:view==_atendimentoView?760:720,view==_historicoPedidosView?0:view==_atendimentoView?540:360);
         if(view==_atendimentoView)
         {

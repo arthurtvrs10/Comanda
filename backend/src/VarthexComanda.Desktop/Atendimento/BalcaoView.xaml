@@ -1,0 +1,35 @@
+<UserControl x:Class="VarthexComanda.Desktop.Atendimento.BalcaoView"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:local="clr-namespace:VarthexComanda.Desktop.Atendimento"
+ FontFamily="Segoe UI" FontSize="12" Background="{DynamicResource Canvas}" Foreground="{DynamicResource Ink}">
+ <UserControl.Resources>
+  <ResourceDictionary><ResourceDictionary.MergedDictionaries><ResourceDictionary Source="EstilosHistorico.xaml"/></ResourceDictionary.MergedDictionaries><BooleanToVisibilityConverter x:Key="Visivel"/><local:UtcParaHorarioLocalConverter x:Key="Horario"/><local:CentavosParaMoedaConverter x:Key="Moeda"/><local:NumeroPedidoBalcaoConverter x:Key="NumeroPedido"/><Style x:Key="NumeroPedidoDestacado" TargetType="TextBlock" BasedOn="{StaticResource NumeroTabela}"><Setter Property="FontWeight" Value="Bold"/></Style></ResourceDictionary>
+ </UserControl.Resources>
+ <UserControl.InputBindings><KeyBinding Key="F2" Command="{Binding NovoPedidoCommand}"/></UserControl.InputBindings>
+ <Grid Margin="16"><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+  <WrapPanel Margin="0,0,0,14" VerticalAlignment="Center">
+   <StackPanel Margin="0,0,24,8"><TextBlock Text="Balcão" FontSize="22" FontWeight="SemiBold"/><TextBlock Text="Pedidos sem mesa" Foreground="{DynamicResource TextMuted}" Margin="0,4,0,0"/></StackPanel>
+   <Button Content="+ Novo pedido" Command="{Binding NovoPedidoCommand}" MinHeight="46" Margin="0,0,8,8" Padding="16,8" ToolTip="Abrir um novo pedido no balcão (F2)"/>
+   <Button Content="Atualizar" Command="{Binding AtualizarCommand}" MinHeight="46" Margin="0,0,16,8"/>
+   <StackPanel Margin="0,0,0,8"><Label Content="Pesquisar pedido ou cliente" Target="{Binding ElementName=BuscaPedido}" Padding="0,0,0,4"/><TextBox x:Name="BuscaPedido" Width="230" MinHeight="32" Text="{Binding Busca, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Pesquisar pedidos do balcão"/></StackPanel>
+  </WrapPanel>
+  <TextBlock Grid.Row="1" Text="{Binding Mensagem}" TextWrapping="Wrap" Margin="0,0,0,8" AutomationProperties.LiveSetting="Polite"/>
+  <Grid Grid.Row="2">
+   <DataGrid x:Name="TabelaPedidos" ItemsSource="{Binding Pedidos}" SelectedItem="{Binding Selecionado}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" SelectionMode="Single" SelectionUnit="FullRow" RowHeight="34" HeadersVisibility="Column" RowHeaderWidth="0" GridLinesVisibility="Horizontal"
+    Background="{DynamicResource Surface}" Foreground="{DynamicResource Ink}" RowBackground="{DynamicResource Surface}" AlternatingRowBackground="{DynamicResource Canvas}" BorderBrush="{DynamicResource Line}" HorizontalGridLinesBrush="{DynamicResource Line}" BorderThickness="1"
+    MouseDoubleClick="Tabela_MouseDoubleClick" PreviewKeyDown="Tabela_PreviewKeyDown" AutomationProperties.Name="Pedidos abertos no balcão">
+    <DataGrid.Columns>
+     <DataGridTextColumn Header="Pedido" Binding="{Binding Converter={StaticResource NumeroPedido}}" SortMemberPath="Id" Width="85" MinWidth="75" ElementStyle="{StaticResource NumeroPedidoDestacado}"/>
+     <DataGridTextColumn Header="Comanda" Binding="{Binding Numero}" Width="85" MinWidth="75" ElementStyle="{StaticResource NumeroTabela}"/>
+     <DataGridTextColumn Header="Cliente" Binding="{Binding NomeCliente, TargetNullValue='Não informado'}" Width="*" MinWidth="130" ElementStyle="{StaticResource TextoTabela}"/>
+     <DataGridTextColumn Header="Abertura" Binding="{Binding AbertaEm, Converter={StaticResource Horario}}" Width="90" MinWidth="80" ElementStyle="{StaticResource NumeroTabela}"/>
+     <DataGridTemplateColumn Header="Situação" Width="120" MinWidth="110"><DataGridTemplateColumn.CellTemplate><DataTemplate><TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"><TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Text" Value="Em aberto"/><Style.Triggers><DataTrigger Binding="{Binding Bloqueada}" Value="True"><Setter Property="Text" Value="Em fechamento"/><Setter Property="Foreground" Value="{DynamicResource PrioridadeNumeroMediana}"/></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock></DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
+     <DataGridTextColumn Header="Total" Binding="{Binding TotalCentavos, Converter={StaticResource Moeda}}" Width="100" MinWidth="85" ElementStyle="{StaticResource NumeroTabela}"/>
+     <DataGridTemplateColumn Header="Abrir" Width="75" CanUserSort="False"><DataGridTemplateColumn.CellTemplate><DataTemplate><Button Content="Abrir" MinHeight="28" Padding="8,2" Command="{Binding DataContext.AbrirPedidoCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" AutomationProperties.Name="{Binding Numero, StringFormat='Abrir comanda {0} do balcão'}"/></DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
+    </DataGrid.Columns>
+   </DataGrid>
+   <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="24" IsHitTestVisible="False" Visibility="{Binding Vazio, Converter={StaticResource Visivel}}"><TextBlock Text="Nenhum pedido nesta lista" TextAlignment="Center" FontSize="20" FontWeight="SemiBold"/><TextBlock Text="Use Novo pedido ou confira a pesquisa." TextAlignment="Center" Foreground="{DynamicResource TextMuted}" Margin="0,8,0,0"/></StackPanel>
+  </Grid>
+  <TextBlock Grid.Row="3" Text="{Binding Contagem}" Margin="0,10,0,0" Foreground="{DynamicResource TextMuted}" AutomationProperties.LiveSetting="Polite"/>
+ </Grid>
+</UserControl>

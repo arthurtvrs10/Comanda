@@ -22,6 +22,7 @@ public partial class MainWindow
         _destinosRibbon = new()
         {
             new("Principal", "Pedido", "Mesas / comandas", IconeVarthex.Mesas, () => !_bloqueado && !_cozinhaAtiva && !_restauracao, IrParaAtendimento),
+            new("Principal", "Pedido", "Balcão", IconeVarthex.Balcao, () => !_bloqueado && !_cozinhaAtiva && !_restauracao, IrParaBalcao),
             new("Principal", "Catálogo", "Produtos", IconeVarthex.Produtos, PodeGerir, IrParaProdutos),
             new("Principal", "Vendas", "Histórico de pedidos", IconeVarthex.Historico, () => !_bloqueado && !_cozinhaAtiva && !_restauracao && _historicoPedidosView is not null, IrParaHistoricoPedidos),
             new("Principal", "Vendas", "Histórico de vendas", IconeVarthex.Historico, () => !_bloqueado && !_cozinhaAtiva && !_restauracao, IrParaHistorico),

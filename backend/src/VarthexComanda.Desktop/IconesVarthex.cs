@@ -4,7 +4,7 @@ using System.Windows.Media;
 
 namespace VarthexComanda.Desktop;
 
-internal enum IconeVarthex { Mesas, Cozinha, Painel, Produtos, NovoProduto, Historico, Configuracoes, Numeracao, Impressoras, Colaboradores, Senha, Backup, Assinatura, Ajuda, Diagnostico, Contato, Feedback, Treinamento, CentralAjuda, SuporteRemoto, FecharAjuda, GoogleDrive, OneDrive, Pasta, Fotos, Alerta }
+internal enum IconeVarthex { Mesas, Balcao, Cozinha, Painel, Produtos, NovoProduto, Historico, Configuracoes, Numeracao, Impressoras, Colaboradores, Senha, Backup, Assinatura, Ajuda, Diagnostico, Contato, Feedback, Treinamento, CentralAjuda, SuporteRemoto, FecharAjuda, GoogleDrive, OneDrive, Pasta, Fotos, Alerta }
 
 /// <summary>Ilustrações vetoriais originais para comandos, desenhadas em 32 unidades.</summary>
 internal static class IconesVarthex
@@ -75,6 +75,10 @@ internal static class IconesVarthex
                 Disco(1,1,23,"#349BC0");Disco(3,3,19,"#E5F5FA");Linha("M5,13 H9 L11,8 L14,17 L17,11 L19,13","#2686B0",1.3);
                 Forma("M19,22 L23,18 L32,27 L28,31 Z","#EB9A38");Linha("M23,22 L28,27","#FFD379",1.3);
                 Forma("M26,1 L28,4 L31,4 L30,7 L32,10 L28,11 L27,14 L25,11 L22,10 L24,7 L23,4 L26,4 Z","#F1AB39");Disco(25,5,4,"#FBE6AB");break;
+            case IconeVarthex.Balcao:
+                Caixa(2,17,28,5,"#E6A341");Caixa(4,22,24,8,"#667F8C");Caixa(7,25,18,2,"#C8D8DF");
+                Caixa(5,5,14,10,"#3D6E90",1);Caixa(7,7,10,6,"#BCE4F4");Linha("M12,15 V17 M8,17 H16","#40545F",1.8);
+                Disco(23,8,5,"#F4CB71");Caixa(22,13,7,4,"#F3E2BD",1);break;
             case IconeVarthex.Mesas:
                 Caixa(9,13,21,5,"#F7BF28",1);Caixa(11,18,3,10,"#52636B");Caixa(25,18,3,10,"#52636B");
                 Caixa(2,3,3,21,"#40545F",1);Caixa(2,18,12,3,"#40545F",1);Caixa(11,21,3,8,"#40545F");Caixa(2,21,3,8,"#40545F");

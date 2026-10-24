@@ -26,6 +26,14 @@ public partial class AtendimentoView : UserControl
     private Window? _janelaComanda;
     private bool _abrindoJanelaComanda;
 
+    public void AbrirPedidoBalcao(Comanda pedido,bool novo,Window owner)
+    {
+        if(_janelaComanda is not null){_janelaComanda.Activate();return;}
+        ViewModel.AtualizarCategorias();
+        ViewModel.PrepararPedidoBalcao(pedido.Id,novo);
+        if(ViewModel.ComandaAtual?.Id==pedido.Id)AbrirJanelaComanda(owner);
+    }
+
     private void AgendarJanelaComanda()
     {
         if (ViewModel.ComandaAtual is null)

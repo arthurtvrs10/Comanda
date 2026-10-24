@@ -10,6 +10,24 @@ namespace VarthexComanda.Application.Tests.Atendimento;
 public class AbrirComandaTests
 {
     [Fact]
+    public void BalcaoEscolhePrimeiroNumeroLivreSemMesaEPreservaPedidosExistentes()
+    {
+        var repo=new FakeComandaRepository();var relogio=new FakeClock();var config=new FakeConfiguracaoRepository();
+        config.Definir(NumeracaoComandasService.ChaveAtiva,"true",relogio.UtcNow);
+        config.Definir(NumeracaoComandasService.ChaveInicio,"100",relogio.UtcNow);
+        config.Definir("comandas.quantidade_maxima","3",relogio.UtcNow);
+        var caso=new AbrirComanda(repo,relogio,new ObterConfiguracao(config));
+        var existente=caso.Executar(100).Valor!;repo.DefinirMesa(existente.Id,7);
+        var pedido=caso.ExecutarBalcao();
+        Assert.True(pedido.Sucesso);Assert.Equal(101,pedido.Valor!.Numero);Assert.Null(pedido.Valor.NumeroMesa);
+        Assert.Equal(7,repo.BuscarComItens(existente.Id)!.Comanda.NumeroMesa);
+        Assert.Equal(102,caso.ExecutarBalcao().Valor!.Numero);
+        var lotado=caso.ExecutarBalcao();Assert.False(lotado.Sucesso);Assert.Equal(3,repo.ListarAbertas().Count);
+        repo.CancelarComanda(pedido.Valor.Id,relogio.UtcNow);
+        Assert.Equal(101,caso.ExecutarBalcao().Valor!.Numero);
+    }
+
+    [Fact]
     [Trait("Caso", "CT01")]
     public void Executar_NumeroValido_AbreComanda()
     {
