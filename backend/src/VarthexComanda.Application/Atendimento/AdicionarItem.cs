@@ -1,4 +1,4 @@
-using VarthexComanda.Application.Abstractions;
+﻿using VarthexComanda.Application.Abstractions;
 using VarthexComanda.Application.Catalogo;
 
 namespace VarthexComanda.Application.Atendimento;
@@ -8,15 +8,21 @@ public class AdicionarItem
     private readonly IComandaRepository _comandas;
     private readonly IProdutoRepository _produtos;
     private readonly IClock _relogio;
+    private readonly RegistroEventos? _eventos;
 
-    public AdicionarItem(IComandaRepository comandas, IProdutoRepository produtos, IClock relogio)
+    public AdicionarItem(IComandaRepository comandas, IProdutoRepository produtos, IClock relogio, RegistroEventos? eventos = null)
     {
         _comandas = comandas;
         _produtos = produtos;
         _relogio = relogio;
+        _eventos = eventos;
     }
 
-    public Resultado<ComandaComItens> Executar(int comandaId, int produtoId, decimal quantidade, string? observacao = null, string? operador = null)
+    public Resultado<ComandaComItens> Executar(int comandaId, int produtoId, decimal quantidade, string? observacao = null, string? operador = null) => _eventos is null
+        ? ExecutarCore(comandaId, produtoId, quantidade, observacao, operador)
+        : _eventos.Executar(OrigemEvento.Atendimento, AcaoEvento.AdicionarItem, () => ExecutarCore(comandaId, produtoId, quantidade, observacao, operador));
+
+    private Resultado<ComandaComItens> ExecutarCore(int comandaId, int produtoId, decimal quantidade, string? observacao = null, string? operador = null)
     {
         observacao = string.IsNullOrWhiteSpace(observacao) ? null : observacao.Trim();
         if (observacao?.Length > 300)

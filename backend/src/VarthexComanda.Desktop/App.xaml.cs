@@ -136,6 +136,12 @@ public partial class App : System.Windows.Application
         services.AddSingleton(paths);
         services.AddSingleton(pastasMascaradas);
         services.AddSingleton(_logger);
+        services.AddSingleton(new VarthexComanda.Application.Abstractions.RegistroEventos(e =>
+        {
+            if (e.Estado is VarthexComanda.Application.Abstractions.EstadoEvento.Falha)
+                _logger.Warning("Evento {Id}: {Origem} / {Operacao} / {Situacao}", e.Id, e.Origem, e.Operacao, e.Situacao);
+            else _logger.Information("Evento {Id}: {Origem} / {Operacao} / {Situacao}", e.Id, e.Origem, e.Operacao, e.Situacao);
+        }));
         services.AddSingleton<IClock, SystemClock>();
         services.AddDbContextFactory<VarthexComandaDbContext>(options =>
             options.UseSqlite($"Data Source={paths.DatabasePath};Foreign Keys=True"));
@@ -162,7 +168,7 @@ public partial class App : System.Windows.Application
         services.AddSingleton(new VarthexComanda.Servidor.FotosProdutos(paths.FotosDirectory));
         services.AddSingleton<VarthexComanda.Servidor.AtendimentoRemoto>();
         services.AddSingleton<VarthexComanda.Servidor.ServidorLocal>(sp => new(sp.GetRequiredService<VarthexComanda.Servidor.AtendimentoRemoto>(),
-            () => { try { _licenca!.Verificar(); return true; } catch { return false; } }));
+            () => { try { _licenca!.Verificar(); return true; } catch { return false; } }, sp.GetRequiredService<VarthexComanda.Application.Abstractions.RegistroEventos>()));
         services.AddTransient<AlterarQuantidade>();
         services.AddTransient<RemoverItem>();
         services.AddTransient<CancelarComanda>();

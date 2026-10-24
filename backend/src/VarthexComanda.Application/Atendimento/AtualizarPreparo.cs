@@ -1,4 +1,4 @@
-using VarthexComanda.Application.Abstractions;
+﻿using VarthexComanda.Application.Abstractions;
 using VarthexComanda.Application.Catalogo;
 using VarthexComanda.Domain;
 
@@ -11,9 +11,12 @@ public sealed class ConsultarFilaCozinha(ICozinhaRepository repositorio)
 
 public sealed record ConfirmacaoPreparo(int ComandaId);
 
-public sealed class AtualizarPreparo(ICozinhaRepository repositorio, IClock relogio)
+public sealed class AtualizarPreparo(ICozinhaRepository repositorio, IClock relogio, RegistroEventos? eventos = null)
 {
-    public Resultado<ConfirmacaoPreparo> Executar(int comandaId, IReadOnlyList<AlteracaoPreparo> alteracoes)
+    public Resultado<ConfirmacaoPreparo> Executar(int comandaId, IReadOnlyList<AlteracaoPreparo> alteracoes) => eventos is null
+        ? ExecutarCore(comandaId, alteracoes)
+        : eventos.Executar(OrigemEvento.Cozinha, AcaoEvento.AtualizarPreparo, () => ExecutarCore(comandaId, alteracoes));
+    private Resultado<ConfirmacaoPreparo> ExecutarCore(int comandaId, IReadOnlyList<AlteracaoPreparo> alteracoes)
     {
         if (alteracoes.Count == 0 || alteracoes.Select(a => a.ItemId).Distinct().Count() != alteracoes.Count)
             return Resultado<ConfirmacaoPreparo>.Falha("Selecione os itens exibidos que deseja atualizar.");

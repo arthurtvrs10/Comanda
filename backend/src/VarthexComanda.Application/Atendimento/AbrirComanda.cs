@@ -1,4 +1,4 @@
-using VarthexComanda.Application.Abstractions;
+﻿using VarthexComanda.Application.Abstractions;
 using VarthexComanda.Application.Catalogo;
 using VarthexComanda.Application.Configuracao;
 using VarthexComanda.Domain;
@@ -9,16 +9,22 @@ public class AbrirComanda
 {
     private readonly IComandaRepository _comandas;
     private readonly IClock _relogio;
+    private readonly RegistroEventos? _eventos;
     private readonly ObterConfiguracao _obterConfiguracao;
 
-    public AbrirComanda(IComandaRepository comandas, IClock relogio, ObterConfiguracao obterConfiguracao)
+    public AbrirComanda(IComandaRepository comandas, IClock relogio, ObterConfiguracao obterConfiguracao, RegistroEventos? eventos = null)
     {
         _comandas = comandas;
         _relogio = relogio;
+        _eventos = eventos;
         _obterConfiguracao = obterConfiguracao;
     }
 
-    public Resultado<Comanda> Executar(int numero)
+    public Resultado<Comanda> Executar(int numero) => _eventos is null
+        ? ExecutarCore(numero)
+        : _eventos.Executar(OrigemEvento.Atendimento, AcaoEvento.AbrirComanda, () => ExecutarCore(numero));
+
+    private Resultado<Comanda> ExecutarCore(int numero)
     {
         if (numero <= 0)
         {
@@ -45,7 +51,11 @@ public class AbrirComanda
     }
 
     /// <summary>Pedido sem mesa, usando o primeiro número livre da faixa configurada.</summary>
-    public Resultado<Comanda> ExecutarBalcao()
+    public Resultado<Comanda> ExecutarBalcao() => _eventos is null
+        ? ExecutarBalcaoCore()
+        : _eventos.Executar(OrigemEvento.Atendimento, AcaoEvento.AbrirComanda, ExecutarBalcaoCore);
+
+    private Resultado<Comanda> ExecutarBalcaoCore()
     {
         var configuracao = _obterConfiguracao.Executar();
         var ocupados = _comandas.ListarAbertas().Select(c => c.Numero).ToHashSet();
@@ -56,6 +66,6 @@ public class AbrirComanda
             return Resultado<Comanda>.Falha("Não há número de comanda livre. Encerre um pedido ou ajuste a quantidade de comandas nas configurações.");
         // A gravação mantém a restrição de número único. Uma disputa com outro
         // atendimento falha sem selecionar nem alterar o pedido de outra pessoa.
-        return Executar((int)numero);
+        return ExecutarCore((int)numero);
     }
 }

@@ -1,4 +1,4 @@
-using System.Globalization;
+﻿using System.Globalization;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -35,6 +35,7 @@ public partial class MainWindow
             new("Configurações", "Configurações", "Alterar senha", IconeVarthex.Senha, PodeAlterarSenha, () => AbrirAlteracaoAcesso(false)),
             new("Configurações", "Configurações", "Backup e restauração", IconeVarthex.Backup, () => !_bloqueado && _acesso.Autenticado, IrParaBackup),
             new("Configurações", "Rede local", "Servidor / acesso pelo celular", IconeVarthex.Diagnostico, PodeGerir, AbrirServidorLocal),
+            new("Configurações", "Verificações", "Logs e fila de eventos", IconeVarthex.Historico, PodeGerir, () => { if (PodeGerir()) MostrarConteudo(_registrosView); }),
             new("Configurações", "Versão premium", "Minha assinatura", IconeVarthex.Assinatura, PodeGerir, AbrirMinhaAssinatura),
             new("Ajuda", "Ajuda e suporte", "Ajuda", IconeVarthex.Ajuda, () => !_bloqueado, AbrirAjuda),
             new("Ajuda", "Ideias e aprendizado", "Feedback", IconeVarthex.Feedback, () => !_bloqueado, AbrirFeedback, false),

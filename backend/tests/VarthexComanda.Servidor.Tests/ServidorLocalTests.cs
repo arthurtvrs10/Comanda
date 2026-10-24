@@ -1,4 +1,4 @@
-using System.Net;
+﻿using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
@@ -148,6 +148,22 @@ public class ServidorLocalTests
         p.Ativo=true;produtos.Salvar(p);var categorias=new EfCategoriaRepository(e.Banco.Fabrica);var categoria=categorias.BuscarPorId(p.CategoriaId)!;categoria.Ativo=false;categorias.Salvar(categoria);
         Assert.Equal(HttpStatusCode.NotFound,(await e.Cliente.GetAsync($"/api/produtos/{p.Id}/foto")).StatusCode);
     }
+    [Fact]
+    public async Task FilaObservaRecebimentoRealSemRepetirGravacaoNemGuardarConteudo()
+    {
+        await using var e=await Ensaio.Criar();
+        var chave=Guid.NewGuid();
+        Assert.Equal(HttpStatusCode.Created,(await e.Enviar("/api/comandas",new {numero=10},chave)).StatusCode);
+        Assert.Equal(HttpStatusCode.Created,(await e.Enviar("/api/comandas",new {numero=10},chave)).StatusCode);
+        Assert.Equal(HttpStatusCode.Conflict,(await e.Enviar("/api/comandas",new {numero=11},chave)).StatusCode);
+        var eventos=e.Servidor.Eventos.Consultar();
+        Assert.Equal(3,eventos.Count);Assert.All(eventos,x=>Assert.False(x.EmCurso));
+        Assert.Equal(2,eventos.Count(x=>x.Estado==VarthexComanda.Application.Abstractions.EstadoEvento.Concluido));
+        Assert.Equal(VarthexComanda.Application.Abstractions.EstadoEvento.Recusado,eventos[0].Estado);
+        Assert.Single(e.Repositorio.ListarAbertas());
+        Assert.DoesNotContain(e.Chave,string.Join("",eventos));Assert.DoesNotContain(chave.ToString(),string.Join("",eventos));
+    }
+
     private sealed class Ensaio : IAsyncDisposable
     {
         public BancoDeHomologacao Banco { get; }=new();

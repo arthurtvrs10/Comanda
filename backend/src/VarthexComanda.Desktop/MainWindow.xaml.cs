@@ -1,4 +1,4 @@
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
@@ -33,9 +33,10 @@ public partial class MainWindow : Window
     private readonly HistoricoPedidosView? _historicoPedidosView;
     private readonly BackupView _backupView;
     private readonly ConfiguracaoView _configuracaoView;
+    private readonly Registros.RegistrosView _registrosView;
 
 
-    public MainWindow(AtendimentoView atendimentoView, ProdutosView produtosView, HistoricoView historicoView, BackupView backupView, ConfiguracaoView configuracaoView, VarthexComanda.Infrastructure.Storage.AppPaths? paths = null, VarthexComanda.Application.Configuracao.IConfiguracaoRepository? configuracoes = null, HistoricoPedidosView? historicoPedidosView = null, VarthexComanda.Servidor.ServidorLocal? servidorLocal = null, VarthexComanda.Application.Atendimento.ConsultarFilaCozinha? filaCozinha = null, VarthexComanda.Application.Atendimento.AtualizarPreparo? atualizarPreparo = null)
+    public MainWindow(AtendimentoView atendimentoView, ProdutosView produtosView, HistoricoView historicoView, BackupView backupView, ConfiguracaoView configuracaoView, VarthexComanda.Infrastructure.Storage.AppPaths? paths = null, VarthexComanda.Application.Configuracao.IConfiguracaoRepository? configuracoes = null, HistoricoPedidosView? historicoPedidosView = null, VarthexComanda.Servidor.ServidorLocal? servidorLocal = null, VarthexComanda.Application.Atendimento.ConsultarFilaCozinha? filaCozinha = null, VarthexComanda.Application.Atendimento.AtualizarPreparo? atualizarPreparo = null, VarthexComanda.Application.Abstractions.RegistroEventos? registroEventos = null)
     {
         InitializeComponent();
         Title = $"Comanda · Versão {VersaoDoAplicativo.Atual}";
@@ -70,6 +71,9 @@ public partial class MainWindow : Window
         };
         _backupView = backupView;
         _configuracaoView = configuracaoView;
+        _registrosView = new Registros.RegistrosView(new(registroEventos ?? servidorLocal?.Eventos ?? new(),
+            new VarthexComanda.Infrastructure.Logging.ConsultarLogs((paths ?? new VarthexComanda.Infrastructure.Storage.AppPaths()).LogsDirectory)));
+        _registrosView.IsEnabled = false;
         _bloqueioView.Desbloqueado += () =>
         {
             _areaPendente="garcom";
@@ -193,8 +197,8 @@ public partial class MainWindow : Window
     private JanelaInterna ObterJanela(UIElement view)
     {
         if(_janelasInternas.TryGetValue(view,out var existente))return existente;
-        var titulo=view==_atendimentoView?"Mesas / comandas":view==_balcaoView?"Balcão":view==_produtosView?"Produtos":view==_historicoView?"Histórico de vendas":view==_historicoPedidosView?"Histórico de pedidos":view==_cozinhaView?"Cozinha":view==_backupView?"Backup e restauração":"Configurações";
-        var janela=new JanelaInterna(titulo,view,view==_historicoPedidosView?0:view==_atendimentoView?760:720,view==_historicoPedidosView?0:view==_atendimentoView?540:360);
+        var titulo=view==_atendimentoView?"Mesas / comandas":view==_balcaoView?"Balcão":view==_produtosView?"Produtos":view==_historicoView?"Histórico de vendas":view==_historicoPedidosView?"Histórico de pedidos":view==_registrosView?"Logs e fila de eventos":view==_cozinhaView?"Cozinha":view==_backupView?"Backup e restauração":"Configurações";
+        var janela=new JanelaInterna(titulo,view,view==_historicoPedidosView?0:view==_atendimentoView?760:720,view==_historicoPedidosView?0:view==_atendimentoView||view==_registrosView?540:360);
         if(view==_atendimentoView)
         {
             void AjustarMinimoAtendimento()=>janela.DefinirMinimoConteudo(_atendimentoView.ViewModel.ComandaAtual is null?0:760,_atendimentoView.ViewModel.ComandaAtual is null?0:540);
@@ -422,6 +426,7 @@ public partial class MainWindow : Window
         LicencaRodape.ToolTip = LicencaRodape.Text;
         BotaoBackupRodape.IsEnabled = true;
         AtualizarAbaAtiva();
+        _registrosView.IsEnabled = PodeGerir();
         BotaoPerfil.Content = _acesso.Autenticado ? "Voltar ao garçom" : "Entrar como gestor";
         CommandManager.InvalidateRequerySuggested();
         AtualizarRibbon();

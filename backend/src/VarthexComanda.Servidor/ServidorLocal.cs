@@ -10,12 +10,14 @@ using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using VarthexComanda.Application.Abstractions;
 
 namespace VarthexComanda.Servidor;
 
 /// <summary>Servidor no mesmo processo do desktop. Nunca abre o SQLite pela rede.</summary>
-public sealed class ServidorLocal(AtendimentoRemoto atendimento, Func<bool>? podeOperar = null) : IDisposable, IAsyncDisposable
+public sealed class ServidorLocal(AtendimentoRemoto atendimento, Func<bool>? podeOperar = null, RegistroEventos? eventos = null) : IDisposable, IAsyncDisposable
 {
+    public RegistroEventos Eventos { get; } = eventos ?? new();
     private readonly SemaphoreSlim _ciclo = new(1,1), _escritas = new(1,1);
     private readonly Dictionary<Guid,(string Assinatura,RespostaRemota Resposta)> _confirmadas = new();
     private readonly object _travaAcessos=new();
@@ -129,12 +131,20 @@ public sealed class ServidorLocal(AtendimentoRemoto atendimento, Func<bool>? pod
         using var texto = new StreamReader(contexto.Request.Body,Encoding.UTF8);
         var corpo = await texto.ReadToEndAsync(contexto.RequestAborted);
         var assinatura = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(contexto.Request.Path + "\n" + corpo)));
-        await _escritas.WaitAsync(contexto.RequestAborted).ConfigureAwait(false);
+        using var evento = Eventos.Iniciar(OrigemEvento.Servidor, comandaId is null ? AcaoEvento.ReceberPedido : AcaoEvento.ReceberItem, aguarda: true);
+        try { await _escritas.WaitAsync(contexto.RequestAborted).ConfigureAwait(false); }
+        catch (OperationCanceledException) { evento.Finalizar(EstadoEvento.Cancelado); throw; }
+        evento.Processar();
+        IResult Concluir(RespostaRemota resposta)
+        {
+            evento.Finalizar(resposta.Status < 300 ? EstadoEvento.Concluido : resposta.Status < 500 ? EstadoEvento.Recusado : EstadoEvento.Falha);
+            return Resultado(resposta);
+        }
         try
         {
             if (_confirmadas.TryGetValue(chave,out var anterior))
-                return anterior.Assinatura==assinatura ? Resultado(anterior.Resposta) : Resultado(AtendimentoRemoto.Erro(409,"Esta identificação já foi usada em outro lançamento."));
-            if (_confirmadas.Count>=20000) return Resultado(AtendimentoRemoto.Erro(503,"Limite da sessão atingido. Confira os lançamentos e reinicie o servidor no computador."));
+                return anterior.Assinatura==assinatura ? Concluir(anterior.Resposta) : Concluir(AtendimentoRemoto.Erro(409,"Esta identificação já foi usada em outro lançamento."));
+            if (_confirmadas.Count>=20000) return Concluir(AtendimentoRemoto.Erro(503,"Limite da sessão atingido. Confira os lançamentos e reinicie o servidor no computador."));
             var opcoes = new JsonSerializerOptions(JsonSerializerDefaults.Web) { UnmappedMemberHandling=System.Text.Json.Serialization.JsonUnmappedMemberHandling.Disallow };
             var resposta = comandaId is int id
                 ? atendimento.Adicionar(id,JsonSerializer.Deserialize<LancamentoRemoto>(corpo,opcoes) ?? throw new JsonException())
@@ -147,8 +157,12 @@ public sealed class ServidorLocal(AtendimentoRemoto atendimento, Func<bool>? pod
                 _confirmadas[chave]=(assinatura,resposta);
                 try { ComandaAlterada?.Invoke(alterada.Id); } catch { /* O commit confirmado não depende da apresentação. */ }
             }
-            return Resultado(resposta);
+            return Concluir(resposta);
         }
+        catch (Exception ex) when (ex is JsonException or OverflowException or ArgumentException)
+        { evento.Finalizar(EstadoEvento.Recusado); throw; }
+        catch (OperationCanceledException) when (contexto.RequestAborted.IsCancellationRequested)
+        { evento.Finalizar(EstadoEvento.Cancelado); throw; }
         finally { _escritas.Release(); }
     }
     private static IResult Resultado(RespostaRemota resposta) => Results.Json(resposta.Dados,statusCode:resposta.Status);
