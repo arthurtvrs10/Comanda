@@ -13,20 +13,33 @@ using Microsoft.Extensions.Logging;
 
 namespace VarthexComanda.Servidor;
 
-/// <summary>Servidor opt-in no mesmo processo do desktop. Nunca abre o SQLite pela rede.</summary>
+/// <summary>Servidor no mesmo processo do desktop. Nunca abre o SQLite pela rede.</summary>
 public sealed class ServidorLocal(AtendimentoRemoto atendimento, Func<bool>? podeOperar = null) : IDisposable, IAsyncDisposable
 {
     private readonly SemaphoreSlim _ciclo = new(1,1), _escritas = new(1,1);
     private readonly Dictionary<Guid,(string Assinatura,RespostaRemota Resposta)> _confirmadas = new();
+    private readonly object _travaAcessos=new();
+    private readonly Dictionary<string,AcessoServidor> _acessos=new();
     private WebApplication? _app;
     private string _chave = "";
     private bool _somenteNesteComputador;
     public bool Ativo => _app is not null;
     public bool Iniciando { get; private set; }
+    public bool Parando { get; private set; }
+    public DateTime? IniciadoEm { get; private set; }
+    public IReadOnlyList<AcessoServidor> Acessos { get { lock(_travaAcessos)return _acessos.Values.OrderByDescending(a=>a.UltimoAcesso).ToArray(); } }
     public Func<bool>? InicioPermitido { get; set; }
     public int Porta { get; private set; }
     public event Action<int>? ComandaAlterada;
-    public IReadOnlyList<string> Enderecos => Ativo ? (_somenteNesteComputador ? new[]{"127.0.0.1"} : ObterEnderecos()).Select(ip => $"http://{ip}:{Porta}").ToArray() : [];
+    public IReadOnlyList<string> Enderecos
+    {
+        get
+        {
+            if(!Ativo)return [];
+            try{return (_somenteNesteComputador?new[]{"127.0.0.1"}:ObterEnderecos()).Select(ip=>$"http://{ip}:{Porta}").ToArray();}
+            catch(NetworkInformationException){return [$"http://127.0.0.1:{Porta}"];}
+        }
+    }
     public string LinkAcesso(string endereco) => Ativo && Enderecos.Contains(endereco)
         ? endereco + "/#chave=" + _chave : throw new InvalidOperationException("Inicie o servidor e selecione um endereço disponível.");
 
@@ -55,13 +68,19 @@ public sealed class ServidorLocal(AtendimentoRemoto atendimento, Func<bool>? pod
                 if (!EnderecoLocal(contexto.Connection.RemoteIpAddress)) { contexto.Response.StatusCode=403; return; }
                 if (contexto.Request.Path.StartsWithSegments("/api"))
                 {
+                    if(Parando){contexto.Response.StatusCode=503;return;}
                     var esperado = Encoding.UTF8.GetBytes("Bearer "+chave);
                     var recebido = Encoding.UTF8.GetBytes(contexto.Request.Headers.Authorization.ToString());
                     if (!CryptographicOperations.FixedTimeEquals(esperado,recebido)) { contexto.Response.StatusCode=401; return; }
                     if (podeOperar?.Invoke() == false) { contexto.Response.StatusCode=403; await contexto.Response.WriteAsJsonAsync(new { Erro="Acesso interrompido. Confira a licença no computador." }); return; }
                     if (contexto.Request.Headers.Origin.Count > 0 && contexto.Request.Headers.Origin.ToString() != $"http://{contexto.Request.Host}") { contexto.Response.StatusCode=403; return; }
                 }
-                try { await proximo(contexto); }
+                try
+                {
+                    await proximo(contexto);
+                    if(contexto.Request.Path.StartsWithSegments("/api") && contexto.Response.StatusCode<400 && contexto.Connection.RemoteIpAddress is { } ip)
+                        RegistrarAcesso(ip.IsIPv4MappedToIPv6?ip.MapToIPv4().ToString():ip.ToString());
+                }
                 catch (Exception ex) when (ex is JsonException or BadHttpRequestException or OverflowException or ArgumentException)
                 { if (!contexto.Response.HasStarted) { contexto.Response.StatusCode=400; await contexto.Response.WriteAsJsonAsync(new { Erro="Dados inválidos. Confira os campos e tente novamente." }); } }
                 catch (OperationCanceledException) when (contexto.RequestAborted.IsCancellationRequested) { }
@@ -84,11 +103,23 @@ public sealed class ServidorLocal(AtendimentoRemoto atendimento, Func<bool>? pod
                 await app.StartAsync().ConfigureAwait(false);
                 var urls = app.Services.GetRequiredService<IServer>().Features.Get<IServerAddressesFeature>()!.Addresses;
                 Porta=new Uri(urls.First()).Port;
-                _chave=chave; _confirmadas.Clear(); _somenteNesteComputador=somenteNesteComputador; _app=app;
+                _chave=chave; _confirmadas.Clear(); _somenteNesteComputador=somenteNesteComputador;
+                lock(_travaAcessos)_acessos.Clear();
+                IniciadoEm=DateTime.UtcNow;_app=app;
             }
             catch { await app.DisposeAsync().ConfigureAwait(false); throw; }
         }
         finally { Iniciando=false; _ciclo.Release(); }
+    }
+
+    private void RegistrarAcesso(string endereco)
+    {
+        lock(_travaAcessos)
+        {
+            if(!_acessos.ContainsKey(endereco) && _acessos.Count>=256)_acessos.Remove(_acessos.Values.MinBy(a=>a.UltimoAcesso)!.Endereco);
+            _acessos.TryGetValue(endereco,out var anterior);
+            _acessos[endereco]=new(endereco,DateTime.UtcNow,Math.Min(int.MaxValue-1,anterior?.Requisicoes??0)+1);
+        }
     }
 
     private async Task<IResult> Escrever(HttpContext contexto,int? comandaId)
@@ -133,14 +164,21 @@ public sealed class ServidorLocal(AtendimentoRemoto atendimento, Func<bool>? pod
         try
         {
             var app=_app; if(app is null)return;
-            _app=null; _chave=""; Porta=0;
+            Parando=true;
             using var prazo=new CancellationTokenSource(TimeSpan.FromSeconds(5));
             try { await app.StopAsync(prazo.Token).ConfigureAwait(false); }
-            finally { await app.DisposeAsync().ConfigureAwait(false); }
+            finally
+            {
+                try{await app.DisposeAsync().ConfigureAwait(false);}
+                finally{_app=null;_chave="";Porta=0;IniciadoEm=null;}
+            }
         }
-        finally { _ciclo.Release(); }
+        finally { Parando=false;_ciclo.Release(); }
     }
-    public void Dispose() => PararAsync().GetAwaiter().GetResult();
+    // O host também é encerrado pelo Closed do WPF. Não executar o começo da
+    // parada no contexto STA que aguarda o resultado: callbacks do host podem
+    // capturar esse contexto e esperar uma Dispatcher já bloqueada.
+    public void Dispose() => Task.Run(PararAsync).GetAwaiter().GetResult();
     public async ValueTask DisposeAsync() => await PararAsync().ConfigureAwait(false);
     private static bool EnderecoLocal(IPAddress? endereco)
     {

@@ -16,6 +16,20 @@ namespace VarthexComanda.Servidor.Tests;
 public class ServidorLocalTests
 {
     [Fact]
+    public async Task InformacoesRegistramSomenteAcessosAutenticadosDaSessaoSemConfiarEmCabecalhoDeIp()
+    {
+        await using var e=await Ensaio.Criar();
+        using var anonimo=new HttpClient{BaseAddress=e.Cliente.BaseAddress};
+        await anonimo.GetAsync("/");await anonimo.GetAsync("/api/catalogo");Assert.Empty(e.Servidor.Acessos);
+        e.Cliente.DefaultRequestHeaders.Add("X-Forwarded-For","192.168.99.99");
+        await Task.WhenAll(Enumerable.Range(0,4).Select(_=>e.Cliente.GetAsync("/api/catalogo")));
+        for(var i=0;i<100&&e.Servidor.Acessos.SingleOrDefault()?.Requisicoes!=4;i++)await Task.Delay(10);
+        var acesso=Assert.Single(e.Servidor.Acessos);Assert.Equal("127.0.0.1",acesso.Endereco);Assert.Equal(4,acesso.Requisicoes);Assert.Equal(DateTimeKind.Utc,acesso.UltimoAcesso.Kind);
+        Assert.NotNull(e.Servidor.IniciadoEm);
+        await e.Servidor.PararAsync();Assert.False(e.Servidor.Parando);Assert.False(e.Servidor.Ativo);Assert.Null(e.Servidor.IniciadoEm);
+        await e.Servidor.IniciarAsync(0,true);Assert.Empty(e.Servidor.Acessos);
+    }
+    [Fact]
     public async Task ExigeChaveNoCabecalhoERevogaAoReiniciar()
     {
         await using var e=await Ensaio.Criar();
