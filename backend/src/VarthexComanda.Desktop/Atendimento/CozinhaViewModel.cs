@@ -14,7 +14,8 @@ public sealed record ItemKds(int ComandaId, int Id, int ProdutoId, string Nome, 
     public string Estado => Status switch { StatusPreparo.EmPreparo=>"Em preparo",StatusPreparo.Pronto=>"Pronto",_=>"Pendente" };
     public StatusPreparo Proximo => Status switch { StatusPreparo.Pendente=>StatusPreparo.EmPreparo,StatusPreparo.EmPreparo=>StatusPreparo.Pronto,_=>StatusPreparo.Entregue };
     public string Acao => Status switch { StatusPreparo.Pendente=>"Iniciar preparo",StatusPreparo.EmPreparo=>"Marcar pronto",_=>"Entregar item" };
-    public string NomeAcessivel => $"{Descricao}. {Estado}. {Acao}";
+    public bool TemObservacao=>!string.IsNullOrWhiteSpace(Observacao);
+    public string NomeAcessivel => $"{Descricao}. {Estado}."+(TemObservacao?$" Observação: {Observacao}.":"")+$" {Acao}";
     public AlteracaoPreparo AlterarPara(StatusPreparo destino) => new(Id,Status,Quantidade,destino);
 }
 
@@ -22,6 +23,7 @@ public sealed class PedidoKds : ObservableObject
 {
     public int Id { get; }
     private string _local="",_referencia="",_cliente="",_tempo="",_nivel="normal",_alerta="";
+    private string _estadoPreparo="Pendente",_observacao="";
     private bool _encerrada,_podeMarcarPronto,_podeEntregar;
     private DateTime _desde;
     private PrioridadeComanda _prioridade;
@@ -31,6 +33,9 @@ public sealed class PedidoKds : ObservableObject
     public string Tempo { get=>_tempo; private set=>SetProperty(ref _tempo,value); }
     public string Nivel { get=>_nivel; private set=>SetProperty(ref _nivel,value); }
     public string Alerta { get=>_alerta;private set=>SetProperty(ref _alerta,value); }
+    public string Estado { get=>_estadoPreparo;private set=>SetProperty(ref _estadoPreparo,value); }
+    public string Observacao { get=>_observacao;private set { if(SetProperty(ref _observacao,value))OnPropertyChanged(nameof(TemObservacao)); } }
+    public bool TemObservacao=>!string.IsNullOrWhiteSpace(Observacao);
     public bool Encerrada { get=>_encerrada; private set=>SetProperty(ref _encerrada,value); }
     public bool PodeMarcarPronto { get=>_podeMarcarPronto; private set=>SetProperty(ref _podeMarcarPronto,value); }
     public bool PodeEntregar { get=>_podeEntregar; private set=>SetProperty(ref _podeEntregar,value); }
@@ -41,6 +46,8 @@ public sealed class PedidoKds : ObservableObject
         Local=comanda.NumeroMesa is int mesa?$"Mesa {mesa:00}":"Balcão";
         Referencia=$"Comanda {comanda.Numero:00}"+(comanda.CodigoPedido is long numero?$" · Pedido #{numero}":"");
         Cliente=comanda.NomeCliente??"";Encerrada=comanda.Status==StatusComanda.Fechada;
+        Observacao=comanda.Observacao??"";
+        Estado=itens.All(i=>i.Status==StatusPreparo.Pronto)?"Pronto":itens.All(i=>i.Status==StatusPreparo.Pendente)?"Pendente":"Em preparo";
         _desde=itens.Min(i=>i.CriadoEm);_prioridade=comanda.Prioridade;
         if(!Itens.SequenceEqual(itens)) { Itens.Clear();foreach(var item in itens)Itens.Add(item); }
         PodeMarcarPronto=itens.Any(i=>i.Status is StatusPreparo.Pendente or StatusPreparo.EmPreparo);

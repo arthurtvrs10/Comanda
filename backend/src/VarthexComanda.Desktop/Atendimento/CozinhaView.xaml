@@ -7,6 +7,24 @@
   <Style x:Key="TextoOpcional" TargetType="TextBlock"><Setter Property="TextWrapping" Value="Wrap"/><Style.Triggers><Trigger Property="Text" Value=""><Setter Property="Visibility" Value="Collapsed"/></Trigger><Trigger Property="Text" Value="{x:Null}"><Setter Property="Visibility" Value="Collapsed"/></Trigger></Style.Triggers></Style>
   <Style x:Key="MolduraPedido" TargetType="Border"><Setter Property="BorderBrush" Value="{DynamicResource AjudaLine}"/><Setter Property="BorderThickness" Value="1"/><Setter Property="Background" Value="{DynamicResource AjudaSurface}"/><Style.Triggers><DataTrigger Binding="{Binding Nivel}" Value="atencao"><Setter Property="BorderBrush" Value="{DynamicResource PrioridadeNumeroMediana}"/></DataTrigger><DataTrigger Binding="{Binding Nivel}" Value="atraso"><Setter Property="BorderBrush" Value="{DynamicResource PrioridadeNumeroAlta}"/></DataTrigger></Style.Triggers></Style>
   <Style x:Key="TextoEspera" TargetType="TextBlock"><Setter Property="Foreground" Value="{DynamicResource AjudaMuted}"/><Setter Property="FontWeight" Value="SemiBold"/><Style.Triggers><DataTrigger Binding="{Binding Nivel}" Value="atencao"><Setter Property="Foreground" Value="{DynamicResource PrioridadeNumeroMediana}"/></DataTrigger><DataTrigger Binding="{Binding Nivel}" Value="atraso"><Setter Property="Foreground" Value="{DynamicResource PrioridadeNumeroAlta}"/></DataTrigger></Style.Triggers></Style>
+  <Style x:Key="SeloEstado" TargetType="Border">
+   <Setter Property="Background" Value="{DynamicResource KdsPendenteSurface}"/><Setter Property="TextElement.Foreground" Value="{DynamicResource KdsPendenteInk}"/><Setter Property="BorderBrush" Value="{DynamicResource KdsPendenteLine}"/><Setter Property="BorderThickness" Value="1"/><Setter Property="Padding" Value="7,4"/>
+   <Style.Triggers>
+    <DataTrigger Binding="{Binding Estado}" Value="Em preparo"><Setter Property="Background" Value="{DynamicResource KdsPreparoSurface}"/><Setter Property="TextElement.Foreground" Value="{DynamicResource KdsPreparoInk}"/><Setter Property="BorderBrush" Value="{DynamicResource KdsPreparoLine}"/></DataTrigger>
+    <DataTrigger Binding="{Binding Estado}" Value="Pronto"><Setter Property="Background" Value="{DynamicResource KdsProntoSurface}"/><Setter Property="TextElement.Foreground" Value="{DynamicResource KdsProntoInk}"/><Setter Property="BorderBrush" Value="{DynamicResource KdsProntoLine}"/></DataTrigger>
+   </Style.Triggers>
+  </Style>
+  <Style x:Key="CabecalhoPedido" TargetType="Border" BasedOn="{StaticResource SeloEstado}">
+   <Setter Property="Padding" Value="14,12"/><Setter Property="BorderThickness" Value="0,0,0,1"/>
+   <Style.Triggers>
+    <DataTrigger Binding="{Binding Nivel}" Value="atencao"><Setter Property="Background" Value="{DynamicResource KdsPendenteSurface}"/><Setter Property="TextElement.Foreground" Value="{DynamicResource KdsPendenteInk}"/></DataTrigger>
+    <DataTrigger Binding="{Binding Nivel}" Value="atraso"><Setter Property="Background" Value="{DynamicResource KdsAtrasoSurface}"/><Setter Property="TextElement.Foreground" Value="{DynamicResource KdsAtrasoInk}"/></DataTrigger>
+   </Style.Triggers>
+  </Style>
+  <Style x:Key="ObservacaoDestacada" TargetType="Border">
+   <Setter Property="Background" Value="{DynamicResource KdsObservacaoSurface}"/><Setter Property="TextElement.Foreground" Value="{DynamicResource KdsObservacaoInk}"/><Setter Property="BorderBrush" Value="{DynamicResource KdsObservacaoLine}"/><Setter Property="BorderThickness" Value="4,0,0,0"/><Setter Property="Padding" Value="9,8"/>
+   <Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding TemObservacao}" Value="True"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers>
+  </Style>
  </UserControl.Resources>
  <Grid Margin="16"><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
   <StackPanel Margin="0,0,0,12">
@@ -16,6 +34,12 @@
     <StackPanel Margin="0,0,12,0"><Label Content="Situação dos itens" Target="{Binding ElementName=FiltroEstado}" Padding="0,0,0,5"/><ComboBox x:Name="FiltroEstado" Width="180" MinHeight="38" ItemsSource="{Binding Estados}" SelectedItem="{Binding Estado}" AutomationProperties.Name="Situação dos itens na cozinha"/></StackPanel>
     <Button Content="Atualizar" Click="Atualizar_Click" VerticalAlignment="Bottom" MinHeight="38" Margin="0,19,0,0"/>
    </WrapPanel>
+   <WrapPanel Margin="0,10,0,0" AutomationProperties.Name="Legenda das situações de preparo">
+    <Border Background="{DynamicResource KdsPendenteSurface}" BorderBrush="{DynamicResource KdsPendenteLine}" BorderThickness="1" Padding="8,4" Margin="0,0,6,4"><TextBlock Text="Pendente" Foreground="{DynamicResource KdsPendenteInk}" FontWeight="SemiBold"/></Border>
+    <Border Background="{DynamicResource KdsPreparoSurface}" BorderBrush="{DynamicResource KdsPreparoLine}" BorderThickness="1" Padding="8,4" Margin="0,0,6,4"><TextBlock Text="Em preparo" Foreground="{DynamicResource KdsPreparoInk}" FontWeight="SemiBold"/></Border>
+    <Border Background="{DynamicResource KdsProntoSurface}" BorderBrush="{DynamicResource KdsProntoLine}" BorderThickness="1" Padding="8,4" Margin="0,0,6,4"><TextBlock Text="Pronto" Foreground="{DynamicResource KdsProntoInk}" FontWeight="SemiBold"/></Border>
+    <Border Background="{DynamicResource KdsAtrasoSurface}" BorderBrush="{DynamicResource PrioridadeNumeroAlta}" BorderThickness="1" Padding="8,4" Margin="0,0,6,4"><TextBlock Text="Atraso / alta prioridade" Foreground="{DynamicResource KdsAtrasoInk}" FontWeight="SemiBold"/></Border>
+   </WrapPanel>
   </StackPanel>
   <TextBlock Grid.Row="1" Text="{Binding Mensagem}" Style="{StaticResource TextoOpcional}" Margin="0,0,0,12" Foreground="{DynamicResource AjudaInk}" AutomationProperties.LiveSetting="Polite"/>
   <Grid Grid.Row="2">
@@ -24,24 +48,26 @@
      <ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
      <ItemsControl.ItemTemplate><DataTemplate>
       <Border Style="{StaticResource MolduraPedido}" Margin="6,0,6,12" Width="{Binding DataContext.LarguraCartao, RelativeSource={RelativeSource AncestorType=UserControl}}" VerticalAlignment="Top">
-       <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-        <Border BorderBrush="{DynamicResource AjudaLine}" BorderThickness="0,0,0,1" Background="{DynamicResource AjudaSoft}" Padding="14,12">
+       <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+        <Border Style="{StaticResource CabecalhoPedido}">
          <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
           <StackPanel Margin="0,0,10,0"><TextBlock Text="{Binding Local}" FontSize="15" FontWeight="SemiBold"/><TextBlock Text="{Binding Referencia}" FontSize="12" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,4,0,0"/><TextBlock Text="{Binding Cliente}" Style="{StaticResource TextoOpcional}" Margin="0,4,0,0" Foreground="{DynamicResource AjudaMuted}"/><TextBlock Text="Comanda encerrada · entrega pendente" TextWrapping="Wrap" Foreground="{DynamicResource AjudaMuted}" FontSize="11" Margin="0,7,0,0" Visibility="{Binding Encerrada, Converter={StaticResource Visivel}}"/></StackPanel>
-          <StackPanel Grid.Column="1" VerticalAlignment="Top" ToolTip="Tempo desde o lançamento mais antigo ainda não entregue. Atenção após 10 min; atraso após 20 min. A prioridade da comanda também sinaliza atenção."><StackPanel Orientation="Horizontal" HorizontalAlignment="Right"><Path Data="M9 1A8 8 0 1 0 9 17A8 8 0 1 0 9 1 M9 4V9L12 11" Stroke="{DynamicResource AjudaMuted}" StrokeThickness="1.4" Width="16" Height="16" Stretch="Uniform" Margin="0,1,5,0"/><TextBlock Text="{Binding Tempo}" Style="{StaticResource TextoEspera}"/></StackPanel><TextBlock Text="{Binding Alerta}" Style="{StaticResource TextoOpcional}" Foreground="{DynamicResource AjudaMuted}" HorizontalAlignment="Right" Margin="0,4,0,0" FontSize="10"/></StackPanel>
+          <StackPanel Grid.Column="1" VerticalAlignment="Top" ToolTip="Tempo desde o lançamento mais antigo ainda não entregue. Atenção após 10 min; atraso após 20 min. A prioridade da comanda também sinaliza atenção."><Border Style="{StaticResource SeloEstado}" HorizontalAlignment="Right" Margin="0,0,0,7"><TextBlock Text="{Binding Estado}" FontSize="10" FontWeight="SemiBold"/></Border><StackPanel Orientation="Horizontal" HorizontalAlignment="Right"><Path Data="M9 1A8 8 0 1 0 9 17A8 8 0 1 0 9 1 M9 4V9L12 11" Stroke="{DynamicResource AjudaMuted}" StrokeThickness="1.4" Width="16" Height="16" Stretch="Uniform" Margin="0,1,5,0"/><TextBlock Text="{Binding Tempo}" Style="{StaticResource TextoEspera}"/></StackPanel><TextBlock Text="{Binding Alerta}" Style="{StaticResource TextoOpcional}" Foreground="{DynamicResource AjudaMuted}" HorizontalAlignment="Right" Margin="0,4,0,0" FontSize="10"/></StackPanel>
          </Grid>
         </Border>
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" MaxHeight="360" Padding="12,10" Focusable="False">
+        <Border Grid.Row="1" Style="{StaticResource ObservacaoDestacada}" Margin="12,10,12,0" AutomationProperties.Name="Observação do pedido"><StackPanel><TextBlock Text="OBSERVAÇÃO DO PEDIDO" FontSize="10" FontWeight="Bold"/><TextBlock Text="{Binding Observacao}" TextWrapping="Wrap" FontSize="13" FontWeight="SemiBold" Margin="0,4,0,0"/></StackPanel></Border>
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" MaxHeight="360" Padding="12,10" Focusable="False">
          <ItemsControl ItemsSource="{Binding Itens}"><ItemsControl.ItemTemplate><DataTemplate>
           <Button Tag="{Binding}" Click="Item_Click" Margin="0,0,0,8" Padding="10,9" HorizontalContentAlignment="Stretch" Background="{DynamicResource AjudaSurface}" IsEnabled="{Binding DataContext.PodeAlterar, RelativeSource={RelativeSource AncestorType=UserControl}}" AutomationProperties.Name="{Binding NomeAcessivel}" ToolTip="{Binding Acao}">
-           <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-            <StackPanel Margin="0,0,8,0"><TextBlock Text="{Binding Descricao}" TextWrapping="Wrap" FontSize="13" FontWeight="SemiBold"/><TextBlock Text="{Binding Observacao}" Style="{StaticResource TextoOpcional}" Foreground="{DynamicResource AjudaMuted}" Margin="0,5,0,0" FontSize="12"/></StackPanel>
-            <Border Grid.Column="1" Background="{DynamicResource AjudaSoft}" Padding="6,4" VerticalAlignment="Top"><TextBlock Text="{Binding Estado}" FontSize="10" FontWeight="SemiBold"/></Border>
+           <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+            <TextBlock Margin="0,0,8,0" Text="{Binding Descricao}" TextWrapping="Wrap" FontSize="13" FontWeight="SemiBold"/>
+            <Border Grid.Column="1" Style="{StaticResource SeloEstado}" VerticalAlignment="Top"><TextBlock Text="{Binding Estado}" FontSize="10" FontWeight="SemiBold"/></Border>
+            <Border Grid.Row="1" Grid.ColumnSpan="2" Style="{StaticResource ObservacaoDestacada}" Margin="0,8,0,0"><StackPanel><TextBlock Text="OBSERVAÇÃO" FontSize="10" FontWeight="Bold"/><TextBlock Text="{Binding Observacao}" TextWrapping="Wrap" FontSize="13" FontWeight="SemiBold" Margin="0,4,0,0"/></StackPanel></Border>
            </Grid>
           </Button>
          </DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
         </ScrollViewer>
-        <Border Grid.Row="2" BorderBrush="{DynamicResource AjudaLine}" BorderThickness="0,1,0,0" Padding="12" IsEnabled="{Binding DataContext.PodeAlterar, RelativeSource={RelativeSource AncestorType=UserControl}}">
+        <Border Grid.Row="3" BorderBrush="{DynamicResource AjudaLine}" BorderThickness="0,1,0,0" Padding="12" IsEnabled="{Binding DataContext.PodeAlterar, RelativeSource={RelativeSource AncestorType=UserControl}}">
          <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition/></Grid.ColumnDefinitions>
           <Button Content="Marcar pronto" Click="Pronto_Click" Tag="{Binding}" Margin="0,0,8,0" IsEnabled="{Binding PodeMarcarPronto}" Background="{DynamicResource Accent}" Foreground="{DynamicResource ToggleInk}" ToolTip="Marca como prontos somente os itens exibidos neste cartão."/>
           <Button Grid.Column="1" Content="Entregue" Click="Entregue_Click" Tag="{Binding}" IsEnabled="{Binding PodeEntregar}" ToolTip="Disponível quando todos os itens exibidos estão prontos. Não encerra a comanda."/>

@@ -8,6 +8,15 @@ namespace VarthexComanda.Desktop.Tests.Atendimento;
 
 public class CozinhaViewModelTests
 {
+    [Fact]
+    public void ResumoDoPreparoEObservacaoDoPedidoAcompanhamMudancasSemPerderCartao()
+    {
+        var a=Item(1);var b=Item(2);var pedido=Pedido(1,1,a,b);pedido.Comanda.Observacao="Sem talheres";
+        var vm=new CozinhaViewModel(()=>[pedido]);vm.Atualizar();var cartao=Assert.Single(vm.Pedidos);
+        Assert.Equal("Pendente",cartao.Estado);Assert.True(cartao.TemObservacao);Assert.Equal("Sem talheres",cartao.Observacao);
+        a.StatusPreparo=StatusPreparo.Pronto;vm.Atualizar();Assert.Same(cartao,vm.Pedidos.Single());Assert.Equal("Em preparo",cartao.Estado);
+        b.StatusPreparo=StatusPreparo.Pronto;pedido.Comanda.Observacao=" ";vm.Atualizar();Assert.Equal("Pronto",cartao.Estado);Assert.False(cartao.TemObservacao);
+    }
     internal static readonly DateTime Agora=new(2026,10,23,19,0,0,DateTimeKind.Utc);
     internal static ItemComanda Item(int id,string nome="Lanche",StatusPreparo estado=StatusPreparo.Pendente,int produto=1,int minutos=5)=>new()
     {
