@@ -95,3 +95,5 @@ Extensão do mesmo RF31/UC12/CT26: ServidorLocalTests valida entrega autenticada
 ## KDS desktop — 23/10/2026
 
 RF32 → UC13 → CT27 → CozinhaKdsTests (SQLite/migração/transação), CozinhaViewModelTests (filtros/ações/som/falhas) e CozinhaKdsXamlTests (capturas WPF reais). RN30, RN04–RN06/RN19/RN21, RNF01/RNF07/RNF18. [ADR 0007](adr/0007-kds-nativo-estados-preparo.md) e [spec](../../specs/2026-10-23-cozinha-kds-desktop.md). Não equivale a P1/P2/P3 completos ou a KDS web.
+
+Extensão de registros e atendimento — 24/10/2026: RF26/RF31/RF32/RF33/RF05/RF06/RF07/RF09/RF25 → RN32 → CT29 (preserva CT01/CT02/CT26/CT27). `RegistroEventosTests`, `ConsultarLogsTests`, `RegistrosXamlTests`, `ServidorLocalTests.FilaObservaRecebimentoRealSemRepetirGravacaoNemGuardarConteudo`, `LimiteComandasTests`, `AbrirComandaTests`, `LocalizadorProdutoTests`, `CozinhaKdsXamlTests` e `CarregamentoDeXamlTests.RibbonPreservaConteudoFiltrosPermissoesETemaEntreSessoes`. [Contrato, capturas e limites](../../specs/2026-10-24-registros-kds-limite-catalogo.md).

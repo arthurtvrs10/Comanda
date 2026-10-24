@@ -1,5 +1,14 @@
 # Histórico de alterações
 
+## Não lançado — 2026-10-24 — Registros e fluxo de produtos
+
+- Configurações → Logs e fila de eventos: consulta dos registros locais, detalhes, busca, filtros e acompanhamento real das operações do servidor e desktop. Leitura em segundo plano, retenção limitada e nenhum reenvio de pedidos.
+- KDS marca a descrição dos itens prontos com letras verdes e risco no texto; observações continuam legíveis.
+- Configuração de 1 a 500 comandas, aplicada à abertura, balcão e movimentação; pedidos anteriores são preservados.
+- Catálogo: clique no cartão ou + de UN adiciona uma unidade; KG/L abrem Personalizar item. … personaliza em qualquer medida, sem lançamento antecipado.
+- 862 testes aprovados; revisão visual independente `ship` no escopo amostrado e build local gerado.
+- RF26/RF31/RF32/RF33/RF05/RF06/RF07/RF09/RF25, RN32 e CT29. [Contrato, evidências e limites](../specs/2026-10-24-registros-kds-limite-catalogo.md). Sem nova publicação de instaladores.
+
 ## Não lançado — 2026-10-24 — Servidor automático e informações da rede
 
 - Servidor local inicia ao abrir o Comanda por padrão; porta e preferência persistidas, tentativa em segundo plano e falha sem bloquear o desktop. Recuperação não inicia o host; parada e fechamento preservam a guarda de restauração.

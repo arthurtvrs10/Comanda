@@ -82,3 +82,9 @@ Preparo avança Pendente → Em preparo → Pronto → Entregue; Marcar pronto p
 ## RN31 — Balcão compartilha a faixa de comandas — 23/10/2026
 
 Balcão lista somente comandas abertas sem número de mesa, incluindo as anteriores a esta tela. Novo pedido escolhe o primeiro número livre a partir do início configurado, respeitando o máximo e toda ocupação existente. Faixa lotada recusa abertura; disputa na gravação não reaproveita o pedido de outra pessoa. A consulta filtrada do Balcão não filtra a grade de Mesas. Associar uma mesa retira o pedido da lista de Balcão na atualização; retirar a mesa o devolve. Preços, itens, pagamento, preparo e numeração histórica usam os fluxos existentes, sem nova migração.
+
+## RN32 — Limites e observabilidade do atendimento — 24/10/2026
+
+Configurações aceitam de 1 a 500 comandas na faixa iniciada pelo número configurado. O teto é de quantidade, não do identificador; a faixa 100–599 possui 500 posições. Em branco, grade inicial de 20 posições e teto de 500 para abertura manual, balcão e movimentação. Preferências antigas acima do teto não impedem iniciar: são lidas como 500. Pedidos antigos fora da faixa e histórico não são renumerados nem excluídos. Servidor usa o mesmo caso de uso de abertura.
+
+O clique rápido em UN lança quantidade 1; KG/L exigem personalização e a mesma validação de medidas. … não lança antes da confirmação. Eventos são diagnóstico de operações reais, sem reenvio ou conteúdo do atendimento; falha no registro não desfaz gravação confirmada. Até 500 eventos em memória, priorizando a preservação dos que aguardam/processam; estados finais também no log local mascarado. [Contrato](../../specs/2026-10-24-registros-kds-limite-catalogo.md).

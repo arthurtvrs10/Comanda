@@ -111,3 +111,7 @@ Refinamento visual: pendente amarelo, em preparo azul, pronto verde e atraso/alt
 ## RF33 — Atendimento de balcão no desktop — 23/10/2026
 
 Principal → Pedido reúne Mesas/comandas e Balcão lado a lado. Balcão abre janela interna com pedidos abertos sem mesa, pesquisa, atualização, abertura e Novo pedido. A criação escolhe o primeiro número livre da faixa existente e reutiliza o editor com produtos, quantidades, observações, impressão e pagamento. Mesmas permissões de atendimento; sem criar numeração ou tipo persistido independente. Pedidos antigos sem mesa também aparecem. [Contrato, limites e testes](../../specs/2026-10-23-balcao-kds-cores.md).
+
+## Extensão de registros e atendimento — 24/10/2026
+
+RF26/RF31: Configurações → Logs e fila de eventos reúne logs locais e estados reais do servidor/desktop, com filtros, retenção limitada, leitura em segundo plano e proteção de dados. Não reprocessa pedidos. RF06/RF07/RF25/RF33: quantidade configurável de 1 a 500 posições, preservando pedidos já existentes fora da faixa. RF05/RF09: cartão UN adiciona uma unidade; KG/L abrem personalização; … sempre personaliza. RF32: descrição de Pronto em verde e riscada, mantendo observações legíveis. [Contrato, implementação e limites](../../specs/2026-10-24-registros-kds-limite-catalogo.md).
