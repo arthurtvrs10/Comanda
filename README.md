@@ -12,8 +12,10 @@ Sistema Windows para organizar mesas, comandas e consumo em pequenos estabelecim
 
 | Edição 1.4.1 | Para quem | Download |
 | --- | --- | --- |
-| **Normal — sem demonstração** | Cadastrar os produtos reais do estabelecimento; catálogo vazio em uma instalação nova | [Baixar instalador Windows x64](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.1/VarthexComanda-1.4.1-Setup-win-x64.exe) · [SHA-256](downloads/windows/VarthexComanda-1.4.1-Setup-win-x64.exe.sha256) |
-| **Demonstração** | Conhecer o sistema com 12 produtos fictícios e fotos; sem comandas abertas em uma base nova | [Baixar instalador Windows x64](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.1/VarthexComanda-Demo-1.4.1-Setup-win-x64.exe) · [SHA-256](downloads/demo/VarthexComanda-Demo-1.4.1-Setup-win-x64.exe.sha256) |
+| **Normal — sem demonstração** | Cadastrar os produtos reais do estabelecimento; catálogo vazio em uma instalação nova | [![Baixar edição normal para Windows](docs/design/download-windows.svg)](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.1/VarthexComanda-1.4.1-Setup-win-x64.exe) · [SHA-256](downloads/windows/VarthexComanda-1.4.1-Setup-win-x64.exe.sha256) |
+| **Demonstração** | Conhecer o sistema com 12 produtos fictícios e fotos; sem comandas abertas em uma base nova | [![Baixar demonstração para Windows](docs/design/download-windows.svg)](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.1/VarthexComanda-Demo-1.4.1-Setup-win-x64.exe) · [SHA-256](downloads/demo/VarthexComanda-Demo-1.4.1-Setup-win-x64.exe.sha256) |
+
+**Instaladores atualizados em 24/10/2026:** os pacotes foram recompilados com o Inno Setup 7.1.0 após bloqueio dos anteriores pelo Defender. Os dois novos arquivos passaram na verificação local, com proteção ativa; baixe novamente e confira o SHA-256. Esse resultado não garante a decisão de todas as instalações de antivírus. [Detalhes da verificação](specs/2026-10-24-release-1.4.1-defender.md).
 
 [Notas da release 1.4.1](https://github.com/arthurtvrs10/Comanda/releases/tag/v1.4.1) · [Instalação normal](downloads/windows/README.md) · [Instalação da demonstração](downloads/demo/README.md)
 

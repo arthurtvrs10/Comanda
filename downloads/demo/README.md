@@ -1,6 +1,6 @@
 # Comanda · por Varthex 1.4.1 — Demonstração
 
-[Baixar instalador Windows x64](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.1/VarthexComanda-Demo-1.4.1-Setup-win-x64.exe) · [SHA-256](VarthexComanda-Demo-1.4.1-Setup-win-x64.exe.sha256)
+[![Baixar para Windows](../../docs/design/download-windows.svg)](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.1/VarthexComanda-Demo-1.4.1-Setup-win-x64.exe) · [SHA-256](VarthexComanda-Demo-1.4.1-Setup-win-x64.exe.sha256)
 
 **Demonstração:** em uma base nova, inclui 12 produtos fictícios com fotos, sem comandas, consumo ou vendas pré-abertos. O catálogo é carregado somente uma vez e não substitui alterações posteriores. Atualizações preservam os dados e a licença existentes.
 
@@ -15,3 +15,5 @@ O Google Drive exige configurar um cliente OAuth; credenciais não acompanham o 
 A 1.4.1 permanece uma **pré-release**. Instalação em Windows limpo, impressão física, rede móvel física e OAuth/envio com conta Google real continuam pendentes. [Notas e limites](../RELEASE-1.4.1.md) · [Release no GitHub](https://github.com/arthurtvrs10/Comanda/releases/tag/v1.4.1).
 
 [Edição normal](../windows/README.md) · [Demonstração](../demo/README.md) · [Versão estável anterior 1.2.2](https://github.com/arthurtvrs10/Comanda/releases/tag/v1.2.2)
+
+Pacote recompilado com Inno Setup 7.1.0 após bloqueio dos anteriores pelo Defender. Verificação local dos novos arquivos sem detecção, com proteção ativa e definições 1.461.184.0. Baixe novamente e confira o SHA-256 atualizado. [Evidências e limites](../../specs/2026-10-24-release-1.4.1-defender.md).

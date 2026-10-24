@@ -2,6 +2,8 @@
 
 Pré-release Windows x64 de **24/10/2026**, nas edições normal e demonstração. Atualiza a 1.4.0; não substitui os arquivos históricos dessa versão. A 1.2.2 permanece como versão estável anterior.
 
+> **Instaladores recompilados em 24/10/2026:** os pacotes anteriores foram bloqueados pelo Microsoft Defender como `Program:Win32/Contebrew.A!ml`. A recompilação com Inno Setup 7.1.0 oficial passou na verificação local do Defender, com proteção ativa e definições 1.461.184.0. Os arquivos do aplicativo permaneceram os mesmos. Baixe novamente e confira os novos SHA-256 abaixo. Não houve determinação da Microsoft de falso positivo; a análise local não garante o resultado em outros computadores.
+
 ## Novidades
 
 - Servidor local inicia automaticamente com o desktop. Preferência e porta persistidas; painel com nome do computador, IPs, escuta, QR/link, teste local e acessos autenticados da sessão. Falha de inicialização não bloqueia o atendimento; recuperação mantém o servidor parado.
@@ -38,7 +40,7 @@ O Google Drive exige cliente OAuth próprio configurado separadamente; o OneDriv
 
 | Instalador | Bytes | SHA-256 |
 | --- | ---: | --- |
-| [VarthexComanda-1.4.1-Setup-win-x64.exe](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.1/VarthexComanda-1.4.1-Setup-win-x64.exe) | 64569132 | `6C91EC221E5F8C758CE394EAFF32265377595FCD503E60C024F2CD8C61F3560A` |
-| [VarthexComanda-Demo-1.4.1-Setup-win-x64.exe](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.1/VarthexComanda-Demo-1.4.1-Setup-win-x64.exe) | 82779776 | `C4ED6EE3726D1513C02F16A820796BE1A6DD206D6DCF5355D538D9C4FB4ECD82` |
+| [VarthexComanda-1.4.1-Setup-win-x64.exe](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.1/VarthexComanda-1.4.1-Setup-win-x64.exe) | 64569680 | `31AF8D092B81E4C1BBA8E9D1D67396A113B97A00257CC1A02DC84101FFDCC7E5` |
+| [VarthexComanda-Demo-1.4.1-Setup-win-x64.exe](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.1/VarthexComanda-Demo-1.4.1-Setup-win-x64.exe) | 82780342 | `AE0EF5E8198A05727BC82B50C14164D3CE6C1DC16D39448176012CAAB48E9D46` |
 
 Os arquivos `.sha256` também acompanham os instaladores nos anexos da release.

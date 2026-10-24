@@ -1,5 +1,12 @@
 # Histórico de alterações
 
+## 1.4.1 — recompilação dos instaladores — 24/10/2026
+
+- Após bloqueio dos pacotes pelo Defender (`Program:Win32/Contebrew.A!ml`), recompilados os dois instaladores com Inno Setup 7.1.0 oficial, mantendo os mesmos arquivos da aplicação. Assinatura e atestação do compilador conferidas.
+- Novos instaladores verificados localmente com Defender ativo, definições 1.461.184.0, sem detecção. Não representa determinação oficial de falso positivo nem homologação em outros dispositivos.
+- Empacotamento passa a preferir Inno Setup 7 e verificar os instaladores finais antes do hash. Falhas, detecção, arquivo removido ou alterado interrompem a geração. Nenhuma exclusão, restauração ou desativação de antivírus.
+- README com botões de download para normal e demonstração; notas e SHA-256 atualizados. RNF09/CT21. [Evidências](../specs/2026-10-24-release-1.4.1-defender.md).
+
 ## 1.4.1 — 2026-10-24 — pré-release
 
 - Servidor automático ao abrir o Comanda, com preferência/porta persistidas, painel de rede, QR/link, teste local e acessos autenticados da sessão. Falhas não bloqueiam o desktop; restauração não inicia o host.
