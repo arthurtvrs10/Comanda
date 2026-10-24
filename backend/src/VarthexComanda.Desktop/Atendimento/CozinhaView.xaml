@@ -1,4 +1,4 @@
-<UserControl x:Class="VarthexComanda.Desktop.Atendimento.CozinhaView"
+﻿<UserControl x:Class="VarthexComanda.Desktop.Atendimento.CozinhaView"
  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
  FontFamily="Segoe UI" FontSize="12" Background="{DynamicResource AjudaCanvas}" Foreground="{DynamicResource AjudaInk}">
  <UserControl.Resources>
@@ -7,6 +7,7 @@
   <Style x:Key="TextoOpcional" TargetType="TextBlock"><Setter Property="TextWrapping" Value="Wrap"/><Style.Triggers><Trigger Property="Text" Value=""><Setter Property="Visibility" Value="Collapsed"/></Trigger><Trigger Property="Text" Value="{x:Null}"><Setter Property="Visibility" Value="Collapsed"/></Trigger></Style.Triggers></Style>
   <Style x:Key="MolduraPedido" TargetType="Border"><Setter Property="BorderBrush" Value="{DynamicResource AjudaLine}"/><Setter Property="BorderThickness" Value="1"/><Setter Property="Background" Value="{DynamicResource AjudaSurface}"/><Style.Triggers><DataTrigger Binding="{Binding Nivel}" Value="atencao"><Setter Property="BorderBrush" Value="{DynamicResource PrioridadeNumeroMediana}"/></DataTrigger><DataTrigger Binding="{Binding Nivel}" Value="atraso"><Setter Property="BorderBrush" Value="{DynamicResource PrioridadeNumeroAlta}"/></DataTrigger></Style.Triggers></Style>
   <Style x:Key="TextoEspera" TargetType="TextBlock"><Setter Property="Foreground" Value="{DynamicResource AjudaMuted}"/><Setter Property="FontWeight" Value="SemiBold"/><Style.Triggers><DataTrigger Binding="{Binding Nivel}" Value="atencao"><Setter Property="Foreground" Value="{DynamicResource PrioridadeNumeroMediana}"/></DataTrigger><DataTrigger Binding="{Binding Nivel}" Value="atraso"><Setter Property="Foreground" Value="{DynamicResource PrioridadeNumeroAlta}"/></DataTrigger></Style.Triggers></Style>
+  <Style x:Key="DescricaoItemKds" TargetType="TextBlock"><Setter Property="Foreground" Value="{DynamicResource AjudaInk}"/><Style.Triggers><DataTrigger Binding="{Binding Estado}" Value="Pronto"><Setter Property="TextDecorations" Value="Strikethrough"/><Setter Property="Foreground" Value="{DynamicResource Success}"/></DataTrigger></Style.Triggers></Style>
   <Style x:Key="SeloEstado" TargetType="Border">
    <Setter Property="Background" Value="{DynamicResource KdsPendenteSurface}"/><Setter Property="TextElement.Foreground" Value="{DynamicResource KdsPendenteInk}"/><Setter Property="BorderBrush" Value="{DynamicResource KdsPendenteLine}"/><Setter Property="BorderThickness" Value="1"/><Setter Property="Padding" Value="7,4"/>
    <Style.Triggers>
@@ -60,7 +61,7 @@
          <ItemsControl ItemsSource="{Binding Itens}"><ItemsControl.ItemTemplate><DataTemplate>
           <Button Tag="{Binding}" Click="Item_Click" Margin="0,0,0,8" Padding="10,9" HorizontalContentAlignment="Stretch" Background="{DynamicResource AjudaSurface}" IsEnabled="{Binding DataContext.PodeAlterar, RelativeSource={RelativeSource AncestorType=UserControl}}" AutomationProperties.Name="{Binding NomeAcessivel}" ToolTip="{Binding Acao}">
            <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-            <TextBlock Margin="0,0,8,0" Text="{Binding Descricao}" TextWrapping="Wrap" FontSize="13" FontWeight="SemiBold"/>
+            <TextBlock Margin="0,0,8,0" Text="{Binding Descricao}" Style="{StaticResource DescricaoItemKds}" TextWrapping="Wrap" FontSize="13" FontWeight="SemiBold"/>
             <Border Grid.Column="1" Style="{StaticResource SeloEstado}" VerticalAlignment="Top"><TextBlock Text="{Binding Estado}" FontSize="10" FontWeight="SemiBold"/></Border>
             <Border Grid.Row="1" Grid.ColumnSpan="2" Style="{StaticResource ObservacaoDestacada}" Margin="0,8,0,0"><StackPanel><TextBlock Text="OBSERVAÇÃO" FontSize="10" FontWeight="Bold"/><TextBlock Text="{Binding Observacao}" TextWrapping="Wrap" FontSize="13" FontWeight="SemiBold" Margin="0,4,0,0"/></StackPanel></Border>
            </Grid>

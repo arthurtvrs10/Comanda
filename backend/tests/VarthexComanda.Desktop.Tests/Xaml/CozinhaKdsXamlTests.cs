@@ -1,4 +1,4 @@
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -44,6 +44,9 @@ public class CozinhaKdsXamlTests
                     var selos=AlinhamentoInterfaceTests.Filhos(view).OfType<Border>().Where(b=>b.Style==view.FindResource("SeloEstado")).ToArray();
                     Assert.Contains(selos,b=>((SolidColorBrush)b.Background).Color==((SolidColorBrush)view.FindResource("KdsPreparoSurface")).Color);
                     Assert.Contains(selos,b=>((SolidColorBrush)b.Background).Color==((SolidColorBrush)view.FindResource("KdsProntoSurface")).Color);
+                    var descricoes=AlinhamentoInterfaceTests.Filhos(view).OfType<TextBlock>().Where(t=>t.Style==view.FindResource("DescricaoItemKds")).ToArray();
+                    Assert.Equal(2,descricoes.Count(t=>t.TextDecorations?.Any(d=>d.Location==TextDecorationLocation.Strikethrough)==true));
+                    Assert.All(descricoes.Where(t=>((ItemKds)t.DataContext).Estado=="Pronto"),t=>Assert.Equal(((SolidColorBrush)view.FindResource("Success")).Color,((SolidColorBrush)t.Foreground).Color));
                     Assert.Contains("Comanda encerrada · entrega pendente",textos);
                     var botoes=AlinhamentoInterfaceTests.Filhos(view).OfType<Button>().Where(b=>Equals(b.Content,"Entregue")).ToArray();
                     Assert.Equal(4,botoes.Length);Assert.Single(botoes,b=>b.IsEnabled);
