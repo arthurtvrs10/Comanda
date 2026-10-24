@@ -1,5 +1,13 @@
 # Histórico de alterações
 
+## 1.4.0 — recompilação de 2026-10-23
+
+- Instaladores normal e demonstração recompilados com Principal, Balcão, KDS, atendimento móvel com fotos e melhorias nas janelas. As entradas Não lançado abaixo registram o histórico de desenvolvimento agora incluído nesta recompilação.
+- 835 testes aprovados em Release (4 Domain, 135 Application, 310 Infrastructure, 374 Desktop, 12 Servidor). Distribuição continua como pré-release; homologação em Windows limpo e celular físico permanece pendente.
+- README, instruções de acesso/firewall, SHA-256 e notas da release atualizados. A liberação de firewall realizada neste computador não é automatizada nem distribuída pelo instalador.
+- [Distribuição e limites](../specs/2026-10-23-release-recompilacao.md).
+
+
 ## Não lançado — 2026-10-23 — Balcão e cores da Cozinha
 
 - Balcão ao lado de Mesas/comandas na Principal: pedidos sem mesa, pesquisa, atualização e Novo pedido com primeiro número livre da faixa configurada. Reutiliza o editor de produtos, observações e pagamento.

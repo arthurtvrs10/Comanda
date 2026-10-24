@@ -4,7 +4,7 @@
 
 Inclui **12 produtos fictícios com fotos e preços de teste**: pastéis, coxinha, kibe, bolinha de queijo, batata frita, refrigerantes e água. As fotos foram geradas por IA e acompanham o pacote para uso offline.
 
-Traz os mesmos recursos da edição normal 1.4.0 atualizada em 23/10/2026: identidade Comanda · por Varthex, abertura de pelo menos 5 segundos, modo escuro, janelas internas, comandas, UN/KG/L, backup com progresso e os dois históricos em Relatórios → Vendas. A conexão Google exige um cliente OAuth configurado separadamente.
+Traz os mesmos recursos da edição normal 1.4.0 atualizada em 23/10/2026: identidade Comanda · por Varthex, abertura de pelo menos 5 segundos, modo escuro, janelas internas, comandas, UN/KG/L, backup com progresso e os dois históricos em Principal. A conexão Google exige um cliente OAuth configurado separadamente.
 
 Os pacotes da 1.4.0 foram recompilados. Se você baixou a compilação anterior, baixe novamente e use o SHA-256 atual.
 
@@ -23,3 +23,9 @@ Instalações novas iniciam sem senha e com acesso livre. A proteção é opcion
 Recebimentos manuais parciais e mistos, divisão por pessoas ou itens, troco em dinheiro e finalização com impressão. Convite do Drive somente uma vez por abertura, após login; conexão manual continua em Backup. Aviso de licença nos últimos sete dias, com renovação pelo WhatsApp. A atualização aplica a migração de recebimentos e preserva backup antes da alteração.
 
 Uma base nova da demonstração começa sem comandas, itens ou vendas; apenas os 12 produtos de exemplo. Reabrir ou atualizar preserva o uso posterior da demonstração, sem apagar pedidos automaticamente.
+
+## Recompilação — Balcão, Cozinha e celular
+
+Inclui Principal reorganizada, Balcão, Cozinha (KDS) com estados e observações, arraste de janelas aprimorado e atendimento pelo celular com catálogo e fotos. Inicie em Configurações → Servidor / acesso pelo celular (porta padrão 3001) e leia o QR Code na mesma rede. Pagamento e fechamento ficam no desktop; sem KDS web.
+
+O instalador não configura o firewall. Permita o executável instalado no perfil da rede, somente TCP na porta escolhida e sub-rede local; bloqueios explícitos devem ser resolvidos. A edição demonstração mantém a base separada e os 12 produtos fictícios em instalação nova. Ambas exigem ativação offline. Baixe novamente e confira o SHA-256. Windows limpo, celular físico, impressão e OAuth real permanecem pendentes.

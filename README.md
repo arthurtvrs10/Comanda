@@ -4,7 +4,7 @@ A identidade **Comanda · por Varthex** aparece na abertura, área de trabalho, 
 
 Sistema Windows para organizar mesas, comandas e consumo em pequenos estabelecimentos de alimentação. Produtos, atendimento, fechamento e histórico funcionam localmente, sem depender da internet.
 
-**Release 1.4.0 atualizada em 23/10/2026 · versão em testes.** Edições normal e demonstração recompiladas com pagamentos parciais e mistos, divisão por itens, novos avisos de início e renovação. Ambas incluem o .NET e exigem ativação offline.
+**Release 1.4.0 atualizada em 23/10/2026 · versão em testes.** Edições normal e demonstração recompiladas com Balcão, Cozinha (KDS), atendimento pelo celular e melhorias nas janelas internas. Ambas incluem o .NET e exigem ativação offline.
 
 <img src="docs/design/principal-claro.png" alt="Área de trabalho Comanda com fundo cinza, logo centralizado e alternância de modo escuro" width="1000">
 
@@ -21,7 +21,7 @@ Instalação por usuário, sem administrador, em Windows x64. Feche o aplicativo
 
 A release é uma **pré-release**: instalação em Windows limpo e autorização/envio com uma conta Google real continuam pendentes. A [versão estável anterior 1.2.2](https://github.com/arthurtvrs10/Comanda/releases/tag/v1.2.2) permanece disponível.
 
-## Em desenvolvimento — Principal e atendimento pelo celular
+## Principal, Balcão, Cozinha e atendimento pelo celular
 
 Principal reúne Mesas / comandas, Produtos, os dois históricos e Painel de senhas. COZINHA (KDS) é uma categoria própria; Configurações e Ajuda permanecem. As antigas categorias Produtos, Marketing, Financeiro, Relatórios e Apps foram removidas da navegação.
 
@@ -31,7 +31,17 @@ No celular, abrir uma comanda mostra seus itens, observações e total. **+ Prod
 
 **Cozinha (KDS) no desktop:** cartões por comanda/mesa, observações, estados Pendente → Em preparo → Pronto → Entregue, ações por item e pelo conjunto exibido, filtros de local/situação e aviso sonoro opcional. Atualiza a cada três segundos; atenção após 10 minutos e atraso após 20. Entrega e cobrança são independentes. [Fluxo, migração e validação](specs/2026-10-23-cozinha-kds-desktop.md).
 
-Esta etapa ainda não integra os instaladores publicados. Ensaio de Wi-Fi/firewall e revisão visual em navegador/celular físico permanecem pendentes. [Contrato e limites](specs/2026-10-23-principal-servidor-local.md) · [Decisão arquitetural](docs/docs/adr/0006-servidor-local-atendimento-movel.md).
+Esta recompilação integra esses recursos aos dois instaladores. HTTP local verificado; homologação em celular físico e outras redes permanece pendente. [Contrato e limites](specs/2026-10-23-principal-servidor-local.md) · [Decisão arquitetural](docs/docs/adr/0006-servidor-local-atendimento-movel.md).
+
+## Celular e firewall
+
+No desktop: **Configurações → Servidor / acesso pelo celular → Iniciar servidor**, porta padrão **3001**. Selecione o IP da rede e leia o QR Code atualizado no celular conectado ao mesmo Wi-Fi. O link contém a chave da sessão; abrir apenas o endereço não autoriza operações. Fechar o aplicativo ou parar o servidor encerra o acesso; reiniciar exige um novo link.
+
+O instalador não altera o firewall. Se houver bloqueio, permita o executável instalado no perfil da rede, somente entrada TCP na porta escolhida e sub-rede local. Regras de bloqueio prevalecem sobre permissões. Não desligue o firewall nem encaminhe portas no roteador. A permissão de um executável em artifacts não cobre necessariamente o caminho instalado. A demonstração oferece o mesmo servidor com base separada.
+
+## Landing page
+
+A apresentação está em `site/`, em Next.js e TypeScript, separada do servidor de atendimento. Execute `npm ci` nessa pasta e `npm run dev -- --port 3010`. Para produção local: `npm run build` e `npx next start --port 3010`. A porta 3010 evita conflito com o acesso móvel em 3001.
 
 ## Novidades da 1.4.0
 
@@ -54,7 +64,7 @@ Esta etapa ainda não integra os instaladores publicados. Ensaio de Wi-Fi/firewa
 - **Catálogo e lançamento:** produtos com fotos ou em lista, filtro por categoria, ordenação visível e personalização de quantidade e observações. Venda por **UN, KG ou L**, com até três casas decimais para KG/L.
 - **Backup com progresso:** janela própria, barra e mensagens da execução, restauração de dados e fotos, Google Drive por OAuth preparado e OneDrive por pasta sincronizada.
 - **Ajuda:** painel compacto ao lado do atalho, WhatsApp, RustDesk, sugestões e tutorial guiado. A central de ajuda está em preparação.
-- **Relatórios:** Histórico de pedidos e Histórico de vendas reunidos no grupo Vendas da versão publicada; no desenvolvimento, ambos estão em Principal. Pesquisa, colunas, ordenação, exportação Excel e prévia de impressão; detalhes preservam os registros originais.
+- **Relatórios:** Histórico de pedidos e Histórico de vendas reunidos em Principal. Pesquisa, colunas, ordenação, exportação Excel e prévia de impressão; detalhes preservam os registros originais.
 
 ## Recursos
 
@@ -67,7 +77,7 @@ Esta etapa ainda não integra os instaladores publicados. Ensaio de Wi-Fi/firewa
 | Continuidade | Backup automático/manual local, checksum, restauração, recuperação de comandas e logs |
 | Acesso | Senha opcional, login de gestor/colaboradores, senha de recuperação offline e licença vinculada ao computador |
 
-A cobrança é realizada fora do sistema; não há integração com maquininha, emissão fiscal, estoque completo ou atendimento em rede nos instaladores publicados. Nesses instaladores, a cozinha é uma consulta local de comandas abertas; o KDS com preparo descrito acima está em desenvolvimento. Pedidos independentes e evolução do atendimento continuam no [plano](docs/docs/21-evolucao-atendimento.md).
+A cobrança é realizada fora do sistema; não há integração com maquininha, emissão fiscal ou estoque completo. O atendimento pelo celular depende do servidor e da mesma rede. A Cozinha (KDS) é local, sem KDS web. Pedidos independentes e evolução do atendimento continuam no [plano](docs/docs/21-evolucao-atendimento.md).
 
 ## Instalar e começar
 
@@ -159,9 +169,9 @@ Distribua somente os pacotes preparados. A pasta `artifacts` pode conter materia
 
 ## Documentação e validação
 
-Esta atualização da 1.4.0 inclui os dois históricos em **Relatórios → Vendas** e a tela de abertura com duração mínima de 5 segundos. Os instaladores e os arquivos SHA-256 foram substituídos juntos; quem baixou a compilação anterior deve baixar novamente.
+Esta atualização da 1.4.0 inclui os históricos em **Principal**, Balcão, Cozinha (KDS) e atendimento pelo celular e a tela de abertura com duração mínima de 5 segundos. Os instaladores e os arquivos SHA-256 foram substituídos juntos; quem baixou a compilação anterior deve baixar novamente.
 
-Validação: **770 testes distintos aprovados em Release** (4 Domain, 133 Application, 303 Infrastructure e 330 Desktop). Instalação em Windows limpo, impressão física e OAuth com conta Google real permanecem pendentes.
+Validação desta recompilação registrada nas [notas de distribuição](specs/2026-10-23-release-recompilacao.md). Instalação em Windows limpo, impressão física e OAuth com conta Google real permanecem pendentes.
 
 - [Índice completo](docs/README.md)
 - [Notas e evidências da 1.4.0](specs/2026-10-22-release-1.4.0.md)
