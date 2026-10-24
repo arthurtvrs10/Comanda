@@ -1,29 +1,17 @@
-# Comanda · por Varthex 1.4.0 — edição normal
+# Comanda · por Varthex 1.4.1 — Normal
 
-[Baixar instalador Windows x64](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.0/VarthexComanda-1.4.0-Setup-win-x64.exe) · [SHA-256](VarthexComanda-1.4.0-Setup-win-x64.exe.sha256)
+[Baixar instalador Windows x64](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.1/VarthexComanda-1.4.1-Setup-win-x64.exe) · [SHA-256](VarthexComanda-1.4.1-Setup-win-x64.exe.sha256)
 
-**Sem demonstração:** em uma instalação nova, o catálogo começa vazio para você cadastrar os produtos reais. Atualizações preservam o catálogo e a licença existentes.
+**Sem demonstração:** em uma base nova, o catálogo começa vazio para cadastrar produtos reais. Atualizações preservam os dados e a licença existentes.
 
-Atualização de 23/10/2026: nova identidade Comanda · por Varthex, abertura de pelo menos 5 segundos, temas com superfícies neutras e os dois históricos em Principal, com filtros, colunas, detalhes, Excel e impressão. Inclui janelas internas, comandas com prioridade e fechamento, produtos UN/KG/L e backup com progresso. O Google Drive exige configurar um cliente OAuth; nenhuma credencial acompanha o instalador. OneDrive usa pasta sincronizada.
+Atualização de 24/10/2026: servidor local automático, informações da rede e QR Code, logs e fila de eventos do servidor/desktop, configuração de até 500 comandas, adição rápida de UN e personalização de KG/L. Os botões + e … ficam abaixo do preço no cartão; itens prontos no KDS aparecem em verde e riscados. Mantém pagamentos manuais, backup, históricos e janelas internas.
 
-Os pacotes da 1.4.0 foram recompilados. Se você baixou a compilação anterior, baixe novamente e use o SHA-256 atual.
+O servidor inicia com o sistema por padrão. Para acessar pelo celular, confira **Configurações → Servidor / acesso pelo celular** e leia o QR Code na mesma rede. Ao parar/reiniciar, use o novo link. O instalador não altera o firewall.
 
-Feche o aplicativo antes de atualizar. A instalação é por usuário, sem administrador, e inclui o runtime .NET. Os dados ficam em `%LOCALAPPDATA%\VarthexComanda`; o aplicativo exige ativação offline. O instalador não possui assinatura de código.
+Feche o aplicativo e faça backup antes de atualizar. Instalação por usuário em Windows x64, sem administrador e com runtime .NET incluído. Dados em `%LOCALAPPDATA%\VarthexComanda`, fora do programa; ativação offline obrigatória. O instalador não possui assinatura de código.
 
-A 1.4.0 é uma **pré-release**. Instalação em Windows limpo e autorização/envio com conta Google real permanecem pendentes. [Notas e limites da release](https://github.com/arthurtvrs10/Comanda/releases/tag/v1.4.0).
+O Google Drive exige configurar um cliente OAuth; credenciais não acompanham o instalador. O OneDrive usa pasta sincronizada. As edições têm instalações, atalhos e bases separados.
 
-[Demonstração 1.4.0 com produtos de teste](../demo/README.md) · [Versão estável anterior 1.2.2](https://github.com/arthurtvrs10/Comanda/releases/tag/v1.2.2)
+A 1.4.1 permanece uma **pré-release**. Instalação em Windows limpo, impressão física, rede móvel física e OAuth/envio com conta Google real continuam pendentes. [Notas e limites](../RELEASE-1.4.1.md) · [Release no GitHub](https://github.com/arthurtvrs10/Comanda/releases/tag/v1.4.1).
 
-## Acesso nesta recompilação
-
-Instalações novas iniciam sem senha e com acesso livre. A proteção é opcional em Configurações do sistema → Segurança. Ao ativar, defina senha de acesso e senha de recuperação diferentes, confirme e salve. Com a proteção ativa, use o login `gestor` ou uma conta cadastrada. O login de bloqueio mantém o sistema desfocado ao fundo. A recuperação funciona offline com a senha de recuperação; não usa códigos nem e-mail. Preferências e dados existentes são preservados.
-
-## Pagamentos e avisos
-
-Recebimentos manuais parciais e mistos, divisão por pessoas ou itens, troco em dinheiro e finalização com impressão. Convite do Drive somente uma vez por abertura, após login; conexão manual continua em Backup. Aviso de licença nos últimos sete dias, com renovação pelo WhatsApp. A atualização aplica a migração de recebimentos e preserva backup antes da alteração.
-
-## Recompilação — Balcão, Cozinha e celular
-
-Inclui Principal reorganizada, Balcão, Cozinha (KDS) com estados e observações, arraste de janelas aprimorado e atendimento pelo celular com catálogo e fotos. Inicie em Configurações → Servidor / acesso pelo celular (porta padrão 3001) e leia o QR Code na mesma rede. Pagamento e fechamento ficam no desktop; sem KDS web.
-
-O instalador não configura o firewall. Permita o executável instalado no perfil da rede, somente TCP na porta escolhida e sub-rede local; bloqueios explícitos devem ser resolvidos. A edição demonstração mantém a base separada e os 12 produtos fictícios em instalação nova. Ambas exigem ativação offline. Baixe novamente e confira o SHA-256. Windows limpo, celular físico, impressão e OAuth real permanecem pendentes.
+[Edição normal](../windows/README.md) · [Demonstração](../demo/README.md) · [Versão estável anterior 1.2.2](https://github.com/arthurtvrs10/Comanda/releases/tag/v1.2.2)

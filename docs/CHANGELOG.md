@@ -1,19 +1,14 @@
 # Histórico de alterações
 
-## Não lançado — 2026-10-24 — Registros e fluxo de produtos
+## 1.4.1 — 2026-10-24 — pré-release
 
-- Configurações → Logs e fila de eventos: consulta dos registros locais, detalhes, busca, filtros e acompanhamento real das operações do servidor e desktop. Leitura em segundo plano, retenção limitada e nenhum reenvio de pedidos.
-- KDS marca a descrição dos itens prontos com letras verdes e risco no texto; observações continuam legíveis.
-- Configuração de 1 a 500 comandas, aplicada à abertura, balcão e movimentação; pedidos anteriores são preservados.
-- Catálogo: clique no cartão ou + de UN adiciona uma unidade; KG/L abrem Personalizar item. … personaliza em qualquer medida, sem lançamento antecipado. Ações + e … ficam dentro do cartão, abaixo do preço.
-- 862 testes aprovados; revisão visual independente `ship` no escopo amostrado e build local gerado.
-- RF26/RF31/RF32/RF33/RF05/RF06/RF07/RF09/RF25, RN32 e CT29. [Contrato, evidências e limites](../specs/2026-10-24-registros-kds-limite-catalogo.md). Sem nova publicação de instaladores.
-
-## Não lançado — 2026-10-24 — Servidor automático e informações da rede
-
-- Servidor local inicia ao abrir o Comanda por padrão; porta e preferência persistidas, tentativa em segundo plano e falha sem bloquear o desktop. Recuperação não inicia o host; parada e fechamento preservam a guarda de restauração.
-- Painel de Informações do Servidor inspirado na referência: computador, interfaces/IPs, porta/estado, banco local, QR/link, teste HTTP e acessos autenticados desta sessão. Dois temas e adaptação por rolagem; firewall não é declarado liberado sem verificação.
-- RF31/CT26/RN29 e RNF02/RNF07/RNF18. 847 testes aprovados, revisão visual independente `ship` no escopo de 12 capturas/fontes e compilação local gerada. Sem nova publicação dos instaladores. [Contrato e limites](../specs/2026-10-24-servidor-automatico-informacoes.md).
+- Servidor automático ao abrir o Comanda, com preferência/porta persistidas, painel de rede, QR/link, teste local e acessos autenticados da sessão. Falhas não bloqueiam o desktop; restauração não inicia o host.
+- Configurações → Logs e fila de eventos acompanha o servidor e o desktop com busca, filtros e detalhes. Leitura em segundo plano, retenção limitada, proteção dos dados e nenhum reenvio de pedidos.
+- Configuração de 1 a 500 comandas para abertura, balcão e movimentação; pedidos anteriores e históricos preservados.
+- Catálogo: cartão ou + de UN adiciona uma unidade; KG/L abrem Personalizar item. … personaliza em qualquer medida, sem lançamento antecipado. Ações + e … ficam dentro do cartão, abaixo do preço.
+- KDS mostra descrições de itens prontos em verde e riscadas; observações permanecem legíveis.
+- 862 testes aprovados em Release (4 Domain, 146 Application, 312 Infrastructure, 14 Servidor e 386 Desktop). Instaladores normal e demonstração gerados da mesma publicação limpa, com runtime .NET e SHA-256.
+- README, instruções das duas edições, notas e capturas WPF atualizados. RF05/RF06/RF07/RF09/RF25/RF26/RF31/RF32/RF33, RN29/RN30/RN31/RN32, CT21/CT26/CT27/CT29 e RNF09/RNF18. [Notas e limites](../downloads/RELEASE-1.4.1.md) · [Empacotamento](../specs/2026-10-24-release-1.4.1.md).
 
 ## 1.4.0 — recompilação de 2026-10-23
 

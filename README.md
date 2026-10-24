@@ -4,18 +4,18 @@ A identidade **Comanda · por Varthex** aparece na abertura, área de trabalho, 
 
 Sistema Windows para organizar mesas, comandas e consumo em pequenos estabelecimentos de alimentação. Produtos, atendimento, fechamento e histórico funcionam localmente, sem depender da internet.
 
-**Release 1.4.0 atualizada em 23/10/2026 · versão em testes.** Edições normal e demonstração recompiladas com Balcão, Cozinha (KDS), atendimento pelo celular e melhorias nas janelas internas. Ambas incluem o .NET e exigem ativação offline.
+**Release 1.4.1 · 24/10/2026 · versão em testes.** Edições normal e demonstração com servidor automático, logs e fila de eventos, até 500 comandas e melhorias no catálogo e na Cozinha (KDS). Ambas incluem o .NET e exigem ativação offline.
 
 <img src="docs/design/principal-claro.png" alt="Área de trabalho Comanda com fundo cinza, logo centralizado e alternância de modo escuro" width="1000">
 
 ## Baixar para Windows
 
-| Edição 1.4.0 | Para quem | Download |
+| Edição 1.4.1 | Para quem | Download |
 | --- | --- | --- |
-| **Normal — sem demonstração** | Cadastrar os produtos reais do estabelecimento; catálogo vazio em uma instalação nova | [Baixar instalador Windows x64](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.0/VarthexComanda-1.4.0-Setup-win-x64.exe) · [SHA-256](downloads/windows/VarthexComanda-1.4.0-Setup-win-x64.exe.sha256) |
-| **Demonstração** | Conhecer o sistema com 12 produtos fictícios e fotos; sem comandas abertas em uma base nova | [Baixar instalador Windows x64](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.0/VarthexComanda-Demo-1.4.0-Setup-win-x64.exe) · [SHA-256](downloads/demo/VarthexComanda-Demo-1.4.0-Setup-win-x64.exe.sha256) |
+| **Normal — sem demonstração** | Cadastrar os produtos reais do estabelecimento; catálogo vazio em uma instalação nova | [Baixar instalador Windows x64](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.1/VarthexComanda-1.4.1-Setup-win-x64.exe) · [SHA-256](downloads/windows/VarthexComanda-1.4.1-Setup-win-x64.exe.sha256) |
+| **Demonstração** | Conhecer o sistema com 12 produtos fictícios e fotos; sem comandas abertas em uma base nova | [Baixar instalador Windows x64](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.1/VarthexComanda-Demo-1.4.1-Setup-win-x64.exe) · [SHA-256](downloads/demo/VarthexComanda-Demo-1.4.1-Setup-win-x64.exe.sha256) |
 
-[Notas da release 1.4.0](https://github.com/arthurtvrs10/Comanda/releases/tag/v1.4.0) · [Instalação normal](downloads/windows/README.md) · [Instalação da demonstração](downloads/demo/README.md)
+[Notas da release 1.4.1](https://github.com/arthurtvrs10/Comanda/releases/tag/v1.4.1) · [Instalação normal](downloads/windows/README.md) · [Instalação da demonstração](downloads/demo/README.md)
 
 Instalação por usuário, sem administrador, em Windows x64. Feche o aplicativo antes de atualizar. Reinstalar ou atualizar preserva os dados e a licença existentes. Os instaladores não possuem assinatura de código.
 
@@ -25,22 +25,22 @@ A release é uma **pré-release**: instalação em Windows limpo e autorização
 
 Principal reúne Mesas / comandas, Produtos, os dois históricos e Painel de senhas. COZINHA (KDS) é uma categoria própria; Configurações e Ajuda permanecem. As antigas categorias Produtos, Marketing, Financeiro, Relatórios e Apps foram removidas da navegação.
 
-O primeiro servidor local permite ao garçom abrir comandas e lançar produtos pelo navegador na mesma rede. No desktop: **Configurações → Servidor / acesso pelo celular → Iniciar servidor**. Selecione o IP da rede e leia o QR Code no celular. Informe seu nome antes de lançar itens; quantidade e observação seguem as regras de UN/KG/L. Cobrança e fechamento ficam no computador. Pare o servidor antes de restaurar backups.
+O primeiro servidor local permite ao garçom abrir comandas e lançar produtos pelo navegador na mesma rede. O servidor inicia ao abrir o desktop. Em **Configurações → Servidor / acesso pelo celular**, selecione o IP da rede e leia o QR Code no celular. Informe seu nome antes de lançar itens; quantidade e observação seguem as regras de UN/KG/L. Cobrança e fechamento ficam no computador. Pare o servidor antes de restaurar backups.
 
-**Atualização local de 24/10/2026:** no código atualizado, o servidor inicia automaticamente ao abrir o Comanda. O painel **Informações do Servidor**, acessível pelo mesmo comando em Configurações, reúne nome do computador, IPs, porta, QR Code e acessos autenticados desta sessão. Permite desativar o início automático, testar o serviço neste PC e iniciar/parar manualmente. Porta ocupada ou falha de inicialização não impedem o uso do desktop; restauração mantém o servidor parado. Essa atualização ainda não está nos instaladores publicados acima. [Fluxo e validação](specs/2026-10-24-servidor-automatico-informacoes.md).
+**Servidor automático na 1.4.1:** o servidor inicia automaticamente ao abrir o Comanda. O painel **Informações do Servidor**, acessível pelo mesmo comando em Configurações, reúne nome do computador, IPs, porta, QR Code e acessos autenticados desta sessão. Permite desativar o início automático, testar o serviço neste PC e iniciar/parar manualmente. Porta ocupada ou falha de inicialização não impedem o uso do desktop; restauração mantém o servidor parado. Essa atualização está incluída nos dois instaladores da 1.4.1. [Fluxo e validação](specs/2026-10-24-servidor-automatico-informacoes.md).
 
-**Refinamentos locais de atendimento:** Configurações → **Logs e fila de eventos** acompanha o servidor e o desktop com busca, filtros e detalhes. Quantidade de comandas configurável até 500 posições; pedidos anteriores preservados. No catálogo de fotos, UN adiciona uma unidade no clique, KG/L abrem personalização e … permite personalizar qualquer medida. O KDS destaca itens prontos com texto verde e riscado. [Contrato e validação](specs/2026-10-24-registros-kds-limite-catalogo.md). Também ainda não incluídos nos instaladores publicados.
+**Atendimento na 1.4.1:** Configurações → **Logs e fila de eventos** acompanha o servidor e o desktop com busca, filtros e detalhes. Quantidade de comandas configurável até 500 posições; pedidos anteriores preservados. No catálogo de fotos, UN adiciona uma unidade no clique, KG/L abrem personalização e … permite personalizar qualquer medida. O KDS destaca itens prontos com texto verde e riscado. [Contrato e validação](specs/2026-10-24-registros-kds-limite-catalogo.md). Os botões + e … ficam dentro do cartão, abaixo do preço.
 
 
 No celular, abrir uma comanda mostra seus itens, observações e total. **+ Produtos** abre uma tela separada com busca, categorias e cartões com as mesmas fotos cadastradas no desktop. Toque no cartão para ajustar quantidade/observações e confirmar; o sistema retorna à comanda atualizada. Produtos sem imagem mostram um substituto neutro. [Fluxo e validação](specs/2026-10-23-web-comanda-catalogo-fotos.md).
 
 **Cozinha (KDS) no desktop:** cartões por comanda/mesa, observações, estados Pendente → Em preparo → Pronto → Entregue, ações por item e pelo conjunto exibido, filtros de local/situação e aviso sonoro opcional. Atualiza a cada três segundos; atenção após 10 minutos e atraso após 20. Entrega e cobrança são independentes. [Fluxo, migração e validação](specs/2026-10-23-cozinha-kds-desktop.md).
 
-Esta recompilação integra esses recursos aos dois instaladores. HTTP local verificado; homologação em celular físico e outras redes permanece pendente. [Contrato e limites](specs/2026-10-23-principal-servidor-local.md) · [Decisão arquitetural](docs/docs/adr/0006-servidor-local-atendimento-movel.md).
+A release 1.4.1 integra esses recursos aos dois instaladores. HTTP local verificado; homologação em celular físico e outras redes permanece pendente. [Contrato e limites](specs/2026-10-23-principal-servidor-local.md) · [Decisão arquitetural](docs/docs/adr/0006-servidor-local-atendimento-movel.md).
 
 ## Celular e firewall
 
-No desktop: **Configurações → Servidor / acesso pelo celular → Iniciar servidor**, porta padrão **3001**. Selecione o IP da rede e leia o QR Code atualizado no celular conectado ao mesmo Wi-Fi. O link contém a chave da sessão; abrir apenas o endereço não autoriza operações. Fechar o aplicativo ou parar o servidor encerra o acesso; reiniciar exige um novo link.
+O servidor inicia automaticamente no desktop, na porta padrão **3001**. Confira em **Configurações → Servidor / acesso pelo celular**; se o início automático estiver desativado, clique em **Iniciar servidor**. Selecione o IP da rede e leia o QR Code atualizado no celular conectado ao mesmo Wi-Fi. O link contém a chave da sessão; abrir apenas o endereço não autoriza operações. Fechar o aplicativo ou parar o servidor encerra o acesso; reiniciar exige um novo link.
 
 O instalador não altera o firewall. Se houver bloqueio, permita o executável instalado no perfil da rede, somente entrada TCP na porta escolhida e sub-rede local. Regras de bloqueio prevalecem sobre permissões. Não desligue o firewall nem encaminhe portas no roteador. A permissão de um executável em artifacts não cobre necessariamente o caminho instalado. A demonstração oferece o mesmo servidor com base separada.
 
@@ -48,7 +48,17 @@ O instalador não altera o firewall. Se houver bloqueio, permita o executável i
 
 A apresentação está em `site/`, em Next.js e TypeScript, separada do servidor de atendimento. Execute `npm ci` nessa pasta e `npm run dev -- --port 3010`. Para produção local: `npm run build` e `npx next start --port 3010`. A porta 3010 evita conflito com o acesso móvel em 3001.
 
-## Novidades da 1.4.0
+## Novidades da 1.4.1
+
+- **Servidor automático:** preferência e porta salvas, informações de rede, QR Code, teste local e acessos autenticados da sessão. Falhas de inicialização não bloqueiam o desktop.
+- **Logs e fila de eventos:** em Configurações, consulte registros com detalhes, busca e filtros. Acompanhe abertura de comandas, inclusão de itens e preparo no desktop e no servidor, com estados reais de espera, processamento e conclusão. A fila não reenvia pedidos.
+- **Até 500 comandas:** configure de 1 a 500 posições em Numeração de pedidos. A faixa respeita o número inicial; pedidos existentes e históricos são preservados.
+- **Catálogo por medida:** clique no cartão ou em + para adicionar uma unidade de UN. KG/L abrem a personalização para informar a medida. … sempre personaliza. As ações ficam dentro do cartão, abaixo do preço.
+- **KDS mais claro:** itens prontos ficam com texto verde e riscado; observações permanecem legíveis.
+
+[Notas, verificação e limites da 1.4.1](downloads/RELEASE-1.4.1.md).
+
+## Recursos mantidos
 
 - **Pagamento por etapas:** selecione dinheiro, Pix, débito ou crédito, informe o valor na janela de lançamento e confirme o recebimento. Registros parciais e mistos ficam salvos; resumo com valor pago, recebido, troco em dinheiro, saldo e progresso. Finalize ou finalize e imprima após quitar a conta.
 - **Conferir e rachar a conta:** toggle à esquerda revela os itens e a divisão igual por pessoas. A seleção de itens calcula o pagamento e identifica as linhas já pagas; cada seleção inclui toda a quantidade da linha.
@@ -124,7 +134,7 @@ Capturas da interface WPF desta atualização, geradas com dados fictícios de t
 
 **Tela de abertura**
 
-<img src="docs/design/abertura.png" alt="Abertura Comanda por Varthex com arte abstrata, logo branco, carregamento e versão 1.4.0" width="760">
+<img src="docs/design/abertura.png" alt="Abertura Comanda por Varthex com arte abstrata, logo branco, carregamento e versão 1.4.1" width="760">
 
 **Modo escuro e toggle ativado**
 
@@ -149,6 +159,18 @@ Capturas da interface WPF desta atualização, geradas com dados fictícios de t
 **Histórico de pedidos**
 
 <img src="docs/design/historico-pedidos.png" alt="Histórico de pedidos com pesquisa por período, colunas, situação, totais e exportação" width="1000">
+
+**Catálogo com fotos e ações abaixo do preço**
+
+<img src="docs/design/catalogo-fotos.png" alt="Produtos com fotos, preço e botões de adicionar e personalizar dentro do cartão" width="1000">
+
+**Logs e fila de eventos**
+
+<img src="docs/design/logs-eventos.png" alt="Fila de eventos do servidor e desktop com origem, operação, estado e filtros" width="1000">
+
+**Cozinha (KDS)**
+
+<img src="docs/design/cozinha-kds.png" alt="Cozinha com observações destacadas e itens prontos em verde e riscados" width="1000">
 
 ## Android — gerador de licenças
 
