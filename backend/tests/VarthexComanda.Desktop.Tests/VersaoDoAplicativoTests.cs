@@ -1,4 +1,4 @@
-﻿using VarthexComanda.Application.Configuracao;
+using VarthexComanda.Application.Configuracao;
 using VarthexComanda.Application.Tests.Catalogo;
 using VarthexComanda.Application.Tests.Configuracao;
 using VarthexComanda.Desktop.Configuracao;
@@ -9,10 +9,10 @@ namespace VarthexComanda.Desktop.Tests;
 public class VersaoDoAplicativoTests
 {
     [Fact]
-    public void Atual_E1Ponto4Ponto0_SemSufixoDeRevisao()
+    public void Atual_E1Ponto4Ponto1_SemSufixoDeRevisao()
     {
         // Constante intencional: ao mudar <Version> no csproj, atualize aqui de proposito.
-        Assert.Equal("1.4.0", VersaoDoAplicativo.Atual);
+        Assert.Equal("1.4.1", VersaoDoAplicativo.Atual);
     }
 
     [Fact]
