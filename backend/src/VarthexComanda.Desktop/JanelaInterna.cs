@@ -14,7 +14,10 @@ public sealed class JanelaInterna : Grid
     private readonly Button _maximizar;
     private readonly Grid _barra;
     private readonly ViewportInterno _viewport;
+    private readonly Thumb _arrastar;
     private readonly TranslateTransform _posicao=new();
+    private CacheMode? _cacheAntesDoArraste;
+    private bool _arrastando;
     private bool _posicionada;
     private double _x,_y;
     private double _larguraNormal=1180,_alturaNormal=600,_deslocamentoInicial;
@@ -33,9 +36,11 @@ public sealed class JanelaInterna : Grid
         var layout=new DockPanel();superficie.Children.Add(layout);
         var barra=new Grid { Height=30 };_barra=barra;barra.SetResourceReference(Panel.BackgroundProperty,"RibbonHover");DockPanel.SetDock(barra,Dock.Top);layout.Children.Add(barra);
         barra.Resources["HoverOverlay"]=new SolidColorBrush(Color.FromArgb(38,255,255,255));
-        var arrastar=new Thumb { Cursor=Cursors.SizeAll,Margin=new Thickness(0,0,84,0),Template=(ControlTemplate)System.Windows.Markup.XamlReader.Parse("<ControlTemplate xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation' TargetType='Thumb'><Border Background='Transparent'/></ControlTemplate>") };
+        var arrastar=new Thumb { Cursor=Cursors.SizeAll,Margin=new Thickness(0,0,84,0),Template=(ControlTemplate)System.Windows.Markup.XamlReader.Parse("<ControlTemplate xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation' TargetType='Thumb'><Border Background='Transparent'/></ControlTemplate>") };_arrastar=arrastar;
         System.Windows.Automation.AutomationProperties.SetName(arrastar,"Mover janela de "+titulo);
+        arrastar.DragStarted+=(_,_)=>IniciarArraste();
         arrastar.DragDelta+=(_,e)=>Mover(e.HorizontalChange,e.VerticalChange);
+        arrastar.DragCompleted+=(_,_)=>FinalizarArraste();
         arrastar.MouseDoubleClick+=(_,e)=>{AlternarMaximizar();e.Handled=true;};barra.Children.Add(arrastar);
         barra.Children.Add(new TextBlock { Text=titulo,Foreground=Brushes.White,FontSize=12,FontWeight=FontWeights.SemiBold,VerticalAlignment=VerticalAlignment.Center,Margin=new Thickness(10,0,90,0),IsHitTestVisible=false,TextTrimming=TextTrimming.CharacterEllipsis });
         var acoes=new StackPanel { Orientation=Orientation.Horizontal,HorizontalAlignment=HorizontalAlignment.Right };barra.Children.Add(acoes);
@@ -61,6 +66,7 @@ public sealed class JanelaInterna : Grid
             _redimensionadores.Add(alca);superficie.Children.Add(alca);
         }
         SizeChanged+=(_,_)=>AjustarLimites();Loaded+=(_,_)=>AjustarLimites();
+        Unloaded+=(_,_)=>CancelarArraste();
         PreviewKeyDown+=(_,e)=>
         {
             if(e.KeyboardDevice.Modifiers!=ModifierKeys.Control)return;
@@ -73,6 +79,24 @@ public sealed class JanelaInterna : Grid
         if(!_posicionada)_deslocamentoInicial=deslocamento;
     }
     public void DefinirMinimoConteudo(double largura,double altura)=>_viewport.DefinirMinimo(largura,altura);
+    private void IniciarArraste()
+    {
+        if(Maximizada||_arrastando)return;
+        _arrastando=true;_cacheAntesDoArraste=_moldura.CacheMode;
+        // O transform evita medir novamente; o cache evita redesenhar tabelas,
+        // fotos e cartões a cada posição. Existe somente durante o gesto.
+        var cache=new BitmapCache { EnableClearType=true,SnapsToDevicePixels=true,RenderAtScale=VisualTreeHelper.GetDpi(this).DpiScaleX };
+        cache.Freeze();_moldura.CacheMode=cache;
+    }
+    private void FinalizarArraste()
+    {
+        if(!_arrastando)return;
+        _moldura.CacheMode=_cacheAntesDoArraste;_cacheAntesDoArraste=null;_arrastando=false;
+    }
+    internal void CancelarArraste()
+    {
+        _arrastar.CancelDrag();FinalizarArraste();
+    }
     internal void DefinirAtiva(bool ativa)
     {
         _barra.SetResourceReference(Panel.BackgroundProperty,ativa?"RibbonHover":"RibbonBar");
@@ -113,6 +137,7 @@ public sealed class JanelaInterna : Grid
     }
     public void AlternarMaximizar()
     {
+        CancelarArraste();
         Maximizada=!Maximizada;
         var nome=Maximizada?"Restaurar janela":"Maximizar janela";
         System.Windows.Automation.AutomationProperties.SetName(_maximizar,nome);_maximizar.ToolTip=nome;

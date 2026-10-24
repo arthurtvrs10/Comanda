@@ -44,18 +44,18 @@ public sealed class AreaTrabalhoInterna : Grid
 
     public void Ativar(JanelaInterna janela)
     {
-        if (!Children.Contains(janela)) return;
+        if (!Children.Contains(janela) || ReferenceEquals(JanelaAtiva, janela)) return;
+        JanelaAtiva = janela;
         // Renumera para não acumular índices indefinidamente na sessão.
         var ordem = Janelas.OrderBy(GetZIndex).Where(j => j != janela).Append(janela).ToArray();
         for (var i = 0; i < ordem.Length; i++) { SetZIndex(ordem[i], i); ordem[i].DefinirAtiva(ordem[i]==janela); }
-        if (ReferenceEquals(JanelaAtiva, janela)) return;
-        JanelaAtiva = janela;
         JanelaAtivaAlterada?.Invoke();
     }
 
     public void Fechar(JanelaInterna janela)
     {
         if (!Children.Contains(janela)) return;
+        janela.CancelarArraste();
         janela.PreviewMouseDown -= AoSelecionar;
         janela.GotKeyboardFocus -= AoFocar;
         janela.FecharSolicitado -= AoFechar;
