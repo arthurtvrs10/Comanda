@@ -1,4 +1,4 @@
-using System.Globalization;
+﻿using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using VarthexComanda.Application.Configuracao;
@@ -26,11 +26,11 @@ public sealed class JanelaNumeracaoPedidos : Window
         _ativa=new CheckBox { Content="Definir o número inicial das mesas / comandas",IsChecked=_configuracao.Ativa,Margin=new Thickness(0,0,0,14) };conteudo.Children.Add(_ativa);
         _inicio=new TextBox { Text=_configuracao.Inicio.ToString(CultureInfo.InvariantCulture),MaxLength=9,TextAlignment=TextAlignment.Right,Margin=new Thickness(0,3,0,12),IsEnabled=_configuracao.Ativa };
         System.Windows.Automation.AutomationProperties.SetName(_inicio,"Começa com");conteudo.Children.Add(new Label { Content="Começa com",Target=_inicio,Padding=new Thickness(0) });conteudo.Children.Add(_inicio);
-        _quantidade=new TextBox { Text=service.Quantidade?.ToString(CultureInfo.InvariantCulture)??"",MaxLength=4,Margin=new Thickness(0,3,0,12) };
-        System.Windows.Automation.AutomationProperties.SetName(_quantidade,"Quantidade de comandas");conteudo.Children.Add(new Label { Content="Quantidade de comandas",Target=_quantidade,Padding=new Thickness(0) });conteudo.Children.Add(_quantidade);
+        _quantidade=new TextBox { Text=service.Quantidade?.ToString(CultureInfo.InvariantCulture)??"",MaxLength=3,Margin=new Thickness(0,3,0,12) };
+        System.Windows.Automation.AutomationProperties.SetName(_quantidade,"Quantidade de comandas");conteudo.Children.Add(new Label { Content="Quantidade de comandas (1 a 500)",Target=_quantidade,Padding=new Thickness(0) });conteudo.Children.Add(_quantidade);
         _senha=new CheckBox { Content=new TextBlock { Text="Imprimir o número da comanda como senha no final do comprovante",TextWrapping=TextWrapping.Wrap },IsChecked=_configuracao.UsarComoSenhaAtendimento,Margin=new Thickness(0,0,0,14) };conteudo.Children.Add(_senha);
         conteudo.Children.Add(new TextBlock { Text="Sequência na grade",FontWeight=FontWeights.SemiBold,Margin=new Thickness(0,4,0,5) });_previa=new TextBlock { TextWrapping=TextWrapping.Wrap };conteudo.Children.Add(_previa);
-        var explicacao=new TextBlock { Text="Deixe a quantidade vazia para usar a quantidade automática. Comandas já abertas mantêm seus números e continuam disponíveis até serem encerradas.",TextWrapping=TextWrapping.Wrap,Margin=new Thickness(0,14,0,0) };explicacao.SetResourceReference(TextBlock.ForegroundProperty,"Text59665E");conteudo.Children.Add(explicacao);
+        var explicacao=new TextBlock { Text="Informe de 1 a 500 comandas. Em branco, a grade começa com 20 posições; novas aberturas ficam limitadas a 500 posições na faixa. Comandas já abertas mantêm seus números e continuam disponíveis até serem encerradas.",TextWrapping=TextWrapping.Wrap,Margin=new Thickness(0,14,0,0) };explicacao.SetResourceReference(TextBlock.ForegroundProperty,"Text59665E");conteudo.Children.Add(explicacao);
         _mensagem=new TextBlock { TextWrapping=TextWrapping.Wrap,Margin=new Thickness(0,10,0,0) };_mensagem.SetResourceReference(TextBlock.ForegroundProperty,"TextA12822");conteudo.Children.Add(_mensagem);
         _inicio.TextChanged+=(_,_)=>AtualizarPrevia();_ativa.Click+=(_,_)=>{_inicio.IsEnabled=_ativa.IsChecked==true;AtualizarPrevia();};AtualizarPrevia();
         Closing+=(_,e)=>{if(TemAlteracoes&&!new Atendimento.JanelaConfirmador().Confirmar("Descartar alterações?","Há alterações de numeração não salvas. Deseja descartá-las e fechar?"))e.Cancel=true;};

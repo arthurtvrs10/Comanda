@@ -28,8 +28,8 @@ public class AbrirComanda
         var configuracao = _obterConfiguracao.Executar();
         if(numero < configuracao.NumeroInicialComandas)
             return Resultado<Comanda>.Falha($"O número da comanda deve ser no mínimo {configuracao.NumeroInicialComandas}.");
-        var maximo = configuracao.QuantidadeMaximaComandas is int quantidade ? (int?)checked(configuracao.NumeroInicialComandas + quantidade - 1) : null;
-        if (maximo is int limite && numero > limite)
+        var maximo = Math.Min(999_999_999L, (long)configuracao.NumeroInicialComandas + (configuracao.QuantidadeMaximaComandas ?? NumeracaoComandasService.LimiteQuantidade) - 1);
+        if (numero > maximo)
         {
             return Resultado<Comanda>.Falha($"O número da comanda deve ser no máximo {maximo}.");
         }
@@ -50,8 +50,7 @@ public class AbrirComanda
         var configuracao = _obterConfiguracao.Executar();
         var ocupados = _comandas.ListarAbertas().Select(c => c.Numero).ToHashSet();
         long numero = configuracao.NumeroInicialComandas;
-        var limite = configuracao.QuantidadeMaximaComandas is int quantidade
-            ? Math.Min(int.MaxValue, numero + quantidade - 1) : int.MaxValue;
+        var limite = Math.Min(999_999_999L, numero + (configuracao.QuantidadeMaximaComandas ?? NumeracaoComandasService.LimiteQuantidade) - 1);
         while (numero <= limite && ocupados.Contains((int)numero)) numero++;
         if (numero > limite)
             return Resultado<Comanda>.Falha("Não há número de comanda livre. Encerre um pedido ou ajuste a quantidade de comandas nas configurações.");

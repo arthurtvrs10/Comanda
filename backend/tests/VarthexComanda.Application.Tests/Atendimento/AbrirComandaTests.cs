@@ -66,13 +66,15 @@ public class AbrirComandaTests
     }
 
     [Fact]
-    public void Executar_SemConfiguracao_NumeroAltoContinuaFuncionando()
+    public void Executar_SemConfiguracao_AceitaAte500ERecusaAcima()
     {
         var caso = new AbrirComanda(new FakeComandaRepository(), new FakeClock(), new ObterConfiguracao(new FakeConfiguracaoRepository()));
 
         var resultado = caso.Executar(9999);
 
-        Assert.True(resultado.Sucesso);
+        Assert.False(resultado.Sucesso);
+        Assert.True(caso.Executar(500).Sucesso);
+        Assert.False(caso.Executar(501).Sucesso);
     }
 
     [Fact]

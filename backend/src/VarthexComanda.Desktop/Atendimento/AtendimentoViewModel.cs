@@ -1,4 +1,4 @@
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Serilog;
@@ -694,7 +694,7 @@ public partial class AtendimentoViewModel : ObservableObject
                     { Mensagem = "Informe o número de uma comanda livre."; return false; }
                     var faixa = _obterConfiguracao.Executar();
                     if(numero < faixa.NumeroInicialComandas){Mensagem=$"O número da comanda deve ser no mínimo {faixa.NumeroInicialComandas}.";return false;}
-                    var maximo = faixa.QuantidadeMaximaComandas is int quantidadeFaixa ? (int?)(faixa.NumeroInicialComandas + quantidadeFaixa - 1) : null;
+                    var maximo = (int)Math.Min(999_999_999L, (long)faixa.NumeroInicialComandas + (faixa.QuantidadeMaximaComandas ?? NumeracaoComandasService.LimiteQuantidade) - 1);
                     if (maximo is int limite && numero > limite)
                     { Mensagem = $"O número da comanda deve ser no máximo {limite}."; return false; }
                     atualizada = _comandas.MoverPara(ComandaAtual.Id, numero);

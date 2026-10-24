@@ -29,7 +29,7 @@ public class SalvarConfiguracao
         }
 
         var inicio = new NumeracaoComandasService(_configuracoes).Carregar().PrimeiroNumero;
-        try { NumeracaoComandasService.ValidarFaixa(inicio,configuracao.QuantidadeMaximaComandas ?? 20); }
+        try { NumeracaoComandasService.ValidarQuantidade(configuracao.QuantidadeMaximaComandas); NumeracaoComandasService.ValidarFaixa(inicio,configuracao.QuantidadeMaximaComandas ?? 20); }
         catch(ArgumentException ex){return Resultado<ConfiguracaoEstabelecimento>.Falha(ex.Message);}
         if (configuracao.QuantidadeMaximaComandas is int quantidadeFaixa && _comandas is not null)
         {

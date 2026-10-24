@@ -1,4 +1,4 @@
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
@@ -44,7 +44,7 @@ public partial class ConfiguracaoView : UserControl
         switch(secao)
         {
             case 0: Campo("Nome do estabelecimento",nameof(ViewModel.NomeEstabelecimento),"Use o nome pelo qual seu estabelecimento é conhecido.");break;
-            case 1: Campo("Quantidade de comandas",nameof(ViewModel.QuantidadeComandasTexto),"Informe um número maior que zero. Em branco, mantém o comportamento automático do sistema. Comandas abertas são preservadas.",160);break;
+            case 1: Campo("Quantidade de comandas",nameof(ViewModel.QuantidadeComandasTexto),"Informe de 1 a 500 comandas. Em branco, a grade começa com 20 posições, com limite de 500 para novas aberturas. Comandas abertas são preservadas.",160);break;
             case 2:
                 Linha("Senha do gestor","Protege produtos, configurações, backups e licença.","Alterar senha","senha");
                 Linha("Bloqueio ao concluir lançamento","Ativo. Ao concluir, o atendimento volta ao menu principal e solicita o PIN.");break;

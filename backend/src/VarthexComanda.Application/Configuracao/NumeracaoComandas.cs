@@ -12,6 +12,12 @@ public sealed class ConfiguracaoNumeracaoComandas
 
 public sealed class NumeracaoComandasService(IConfiguracaoRepository repositorio)
 {
+    public const int LimiteQuantidade = 500;
+    public static void ValidarQuantidade(int? quantidade)
+    {
+        if (quantidade is <= 0 or > LimiteQuantidade)
+            throw new ArgumentException("Informe de 1 a 500 comandas ou deixe vazio para usar a quantidade automática.");
+    }
     public const string ChaveAtiva="comandas.numeracao.ativa";
     public const string ChaveInicio="comandas.numeracao.inicio";
     public const string ChaveSenha="comandas.numeracao.senha-atendimento";
@@ -23,12 +29,12 @@ public sealed class NumeracaoComandasService(IConfiguracaoRepository repositorio
         if(inicio<1)throw new InvalidOperationException("Informe um número inicial de comanda maior que zero.");
         return new() { Ativa=ativa=="true",Inicio=(int)inicio,UsarComoSenhaAtendimento=(repositorio.ObterValor(ChaveSenha)??repositorio.ObterValor(NumeracaoPedidosService.ChaveSenhaAtendimento))=="true" };
     }
-    public int? Quantidade => int.TryParse(repositorio.ObterValor("comandas.quantidade_maxima"),out var n)?n:null;
+    public int? Quantidade => int.TryParse(repositorio.ObterValor("comandas.quantidade_maxima"),out var n)?Math.Min(n,LimiteQuantidade):null;
     public void Salvar(ConfiguracaoNumeracaoComandas configuracao,DateTime agora) => Salvar(configuracao,agora,Quantidade);
     public void Salvar(ConfiguracaoNumeracaoComandas configuracao,DateTime agora,int? limite)
     {
         if(configuracao.Inicio is <1 or >999_999_999)throw new ArgumentException("Informe um número inicial de 1 a 999.999.999.");
-        if(limite is <=0 or >9999)throw new ArgumentException("Informe de 1 a 9999 comandas ou deixe vazio.");
+        ValidarQuantidade(limite);
         var quantidade=limite??20;
         ValidarFaixa(configuracao.PrimeiroNumero,quantidade);
         repositorio.DefinirValores(new Dictionary<string,string>
