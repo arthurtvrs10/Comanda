@@ -11,6 +11,9 @@ public sealed record ProdutoLocalizado(Produto Produto, string Categoria)
     public int Codigo => Produto.Id;
     public string Nome => Produto.Nome;
     public string? Foto => Produto.FotoArquivo;
+    public bool AdicaoDireta => Produto.UnidadeVenda == UnidadeVenda.Unidade;
+    public string AcaoPrincipal => AdicaoDireta ? $"Adicionar 1 unidade de {Nome}" : $"Personalizar {Nome}";
+    public string DicaAdicao => AdicaoDireta ? "Adicionar 1 unidade (F11). Use … para personalizar." : "Informar quantidade e personalizar item (F11).";
     public string Preco => CentavosParaMoedaConverter.Formatar(Produto.PrecoCentavos);
     public string PrecoVenda => (Produto.PrecoCentavos / 100m).ToString("N2", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")) + (Produto.UnidadeVenda == UnidadeVenda.Unidade ? "" : " / " + Produto.Medida);
 }
@@ -51,7 +54,12 @@ public partial class LocalizarProdutoViewModel : ObservableObject, IDisposable
         try { Pedido.AtualizarCategorias(); Categoria = Pedido.CategoriaCatalogo; RecarregarLista(); Mensagem = "Produtos atualizados."; }
         catch { Mensagem = "Não foi possível atualizar. Tente novamente."; }
     }
-    [RelayCommand] private void Adicionar(ProdutoLocalizado? item) => Lancar(item ?? Selecionado, 1, Pedido.ObservacaoNovoItem);
+    [RelayCommand] private void Adicionar(ProdutoLocalizado? item)
+    {
+        item ??= Selecionado;
+        if (item is { AdicaoDireta: false }) { Mensagem = "Informe a quantidade na personalização do item."; return; }
+        Lancar(item, 1, Pedido.ObservacaoNovoItem);
+    }
     public bool Lancar(ProdutoLocalizado? item, decimal quantidade, string? observacao)
     {
         if (item is null) { Mensagem = "Selecione um produto."; return false; }

@@ -1,4 +1,4 @@
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -121,7 +121,7 @@ public class LocalizadorProdutoTests
     }
 
     [Fact]
-    public void CartaoInteiroAbrePersonalizacaoSemLancarAntesDeConfirmar()
+    public void BotaoPersonalizarAbreSemLancarAntesDeConfirmar()
     {
         using var banco=new BancoDeHomologacao();banco.CriarProduto("Almoço executivo",4500,"Refeições");
         ThreadingHelper.EmSta(()=>
@@ -136,6 +136,7 @@ public class LocalizadorProdutoTests
                 var cartao=AlinhamentoInterfaceTests.Filhos(catalogo).OfType<Button>().Single(b=>b.Name=="CartaoProduto");
                 Assert.Equal(154,cartao.ActualHeight);
                 Assert.DoesNotContain(AlinhamentoInterfaceTests.Filhos(cartao).OfType<Button>(),b=>b!=cartao);
+                var editar=AlinhamentoInterfaceTests.Filhos(catalogo).OfType<Button>().Single(b=>b.Name=="PersonalizarCartao");
                 catalogo.Dispatcher.BeginInvoke(new Action(()=>
                 {
                     var personalizar=catalogo.OwnedWindows.OfType<PersonalizarItemView>().Single();
@@ -143,7 +144,7 @@ public class LocalizadorProdutoTests
                     Assert.Same(catalogo,personalizar.Owner);
                     personalizar.Close();
                 }));
-                cartao.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                editar.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
                 Assert.Empty(repo.BuscarComItens(comanda.Id)!.Itens);
                 var vm=new PersonalizarItemViewModel(catalogo.ViewModel,catalogo.ViewModel.Produtos.Single());
                 vm.Quantidade="0";Assert.False(vm.Adicionar());Assert.NotEmpty(vm.Erro);
@@ -186,6 +187,34 @@ public class LocalizadorProdutoTests
                 Assert.Equal("Sem cebola",pedido.ObservacaoNovoItem);Assert.Empty(repo.BuscarComItens(comanda.Id)!.Itens);
             }
             finally{TemaInterface.Aplicar(false,false);}
+        });
+    }
+
+    [Theory]
+    [InlineData(UnidadeVenda.Unidade)] [InlineData(UnidadeVenda.Quilo)] [InlineData(UnidadeVenda.Litro)]
+    public void CliqueNoCartaoRespeitaUnidadeEPontosNuncaAdicionamAntesDeConfirmar(UnidadeVenda unidade)
+    {
+        using var banco=new BancoDeHomologacao();var produto=banco.CriarProduto("Produto",4500);
+        using(var db=banco.Fabrica.CreateDbContext()){db.Produtos.Single(p=>p.Id==produto.Id).UnidadeVenda=unidade;db.SaveChanges();}
+        ThreadingHelper.EmSta(()=>
+        {
+            CarregamentoDeXamlTests.GarantirApp();var repo=new EfComandaRepository(banco.Fabrica);var comanda=repo.AbrirComanda(1,DateTime.UtcNow);
+            var pedido=OperacoesComandaRegressaoTests.Criar(banco,repo);pedido.SelecionarComandaCommand.Execute(comanda);
+            var janela=new LocalizarProdutoView(pedido);janela.Show();janela.UpdateLayout();
+            try
+            {
+                var botoes=AlinhamentoInterfaceTests.Filhos(janela).OfType<Button>().ToArray();
+                void CancelarPersonalizacao()=>janela.Dispatcher.BeginInvoke(new Action(()=>janela.OwnedWindows.OfType<PersonalizarItemView>().Single().Close()));
+                if(unidade!=UnidadeVenda.Unidade)CancelarPersonalizacao();
+                botoes.Single(b=>b.Name=="CartaoProduto").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                Assert.Equal(unidade==UnidadeVenda.Unidade?1:0,repo.BuscarComItens(comanda.Id)!.Itens.Sum(i=>i.Quantidade));
+                CancelarPersonalizacao();botoes.Single(b=>b.Name=="PersonalizarCartao").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                Assert.Equal(unidade==UnidadeVenda.Unidade?1:0,repo.BuscarComItens(comanda.Id)!.Itens.Sum(i=>i.Quantidade));
+                if(unidade!=UnidadeVenda.Unidade)CancelarPersonalizacao();
+                botoes.Single(b=>b.Name=="AdicionarCartao").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                Assert.Equal(unidade==UnidadeVenda.Unidade?2:0,repo.BuscarComItens(comanda.Id)!.Itens.Sum(i=>i.Quantidade));
+            }
+            finally{janela.Close();}
         });
     }
 
