@@ -12,14 +12,17 @@ if (-not $Saida) { $Saida = Join-Path $raiz 'artifacts' }
 $Saida = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Saida)
 if (-not $Compilador) {
     $candidatos = @(
+        (Join-Path $raiz 'artifacts\tools\InnoSetup7\ISCC.exe'),
         (Join-Path $raiz 'artifacts\tools\InnoSetup\ISCC.exe'),
+        "$env:LOCALAPPDATA\Programs\Inno Setup 7\ISCC.exe",
+        "$env:ProgramFiles\Inno Setup 7\ISCC.exe",
         "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe",
         "$env:LOCALAPPDATA\Programs\Inno Setup 6\ISCC.exe"
     )
     $Compilador = $candidatos | Where-Object { Test-Path -LiteralPath $_ } | Select-Object -First 1
 }
 if (-not $Compilador -or -not (Test-Path -LiteralPath $Compilador)) {
-    throw 'Instale Inno Setup 6 (https://jrsoftware.org/isdl.php) ou informe -Compilador <caminho de ISCC.exe>.'
+    throw 'Instale Inno Setup atualizado (https://jrsoftware.org/isdl.php) ou informe -Compilador <caminho de ISCC.exe>.'
 }
 & (Join-Path $PSScriptRoot 'publicar.ps1') -Saida $Saida
 $projeto = Join-Path $raiz 'backend\src\VarthexComanda.Desktop\VarthexComanda.Desktop.csproj'
@@ -28,6 +31,7 @@ $versao = (Select-Xml -Path $projeto -XPath '//Version' | Select-Object -First 1
 if ($LASTEXITCODE -ne 0) { throw "Compilacao do instalador falhou: $LASTEXITCODE" }
 $instalador = Join-Path $Saida "VarthexComanda-$versao-Setup-win-x64.exe"
 if (-not (Test-Path -LiteralPath $instalador)) { throw 'Instalador nao foi gerado.' }
+& (Join-Path $PSScriptRoot 'verificar-antivirus.ps1') -Caminho $instalador
 $hash = (Get-FileHash -LiteralPath $instalador -Algorithm SHA256).Hash
 "$hash  $([IO.Path]::GetFileName($instalador))" | Set-Content -LiteralPath "$instalador.sha256" -Encoding ascii
 Write-Host "Instalador gerado: $instalador"

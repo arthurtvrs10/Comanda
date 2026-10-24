@@ -7,8 +7,11 @@ $raiz = Split-Path -Parent $PSScriptRoot
 $versao = (Select-Xml -Path "$raiz/backend/src/VarthexComanda.Desktop/VarthexComanda.Desktop.csproj" -XPath '//Version').Node.InnerText.Trim()
 $saida = if ($Saida) { $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Saida) } else { Join-Path $raiz "artifacts/demo-$versao" }
 $publicacao = Join-Path $saida 'publish/win-x64'
-if (-not $Compilador) { $Compilador = Join-Path $raiz 'artifacts/tools/InnoSetup/ISCC.exe' }
-if (-not (Test-Path -LiteralPath $Compilador)) { throw 'Informe o caminho do Inno Setup em -Compilador.' }
+if (-not $Compilador) {
+    $Compilador = @((Join-Path $raiz 'artifacts/tools/InnoSetup7/ISCC.exe'), (Join-Path $raiz 'artifacts/tools/InnoSetup/ISCC.exe'), "$env:LOCALAPPDATA\Programs\Inno Setup 7\ISCC.exe", "$env:ProgramFiles\Inno Setup 7\ISCC.exe") |
+        Where-Object { Test-Path -LiteralPath $_ } | Select-Object -First 1
+}
+if (-not $Compilador -or -not (Test-Path -LiteralPath $Compilador)) { throw 'Informe o caminho do Inno Setup em -Compilador.' }
 if ($PublicacaoExistente) {
     $publicacao = (Resolve-Path -LiteralPath $PublicacaoExistente).Path
     if (-not (Test-Path -LiteralPath (Join-Path $publicacao 'VarthexComanda.exe'))) { throw 'Publicação existente sem executável.' }
@@ -25,6 +28,7 @@ if ($indevidos) { throw 'Publicação contém dados locais ou marcador de ediç�
 & $Compilador "/DAppVersion=$versao" "/DPublishPath=$publicacao" "/DOutputPath=$saida" (Join-Path $PSScriptRoot 'instalador-demo.iss')
 if ($LASTEXITCODE -ne 0) { throw 'Compilação do instalador demo falhou.' }
 $instalador = Join-Path $saida "VarthexComanda-Demo-$versao-Setup-win-x64.exe"
+& (Join-Path $PSScriptRoot 'verificar-antivirus.ps1') -Caminho $instalador
 $hash = (Get-FileHash -LiteralPath $instalador -Algorithm SHA256).Hash
 "$hash  $([IO.Path]::GetFileName($instalador))" | Set-Content -LiteralPath "$instalador.sha256" -Encoding ascii
 Write-Host "Instalador de demonstração: $instalador"
