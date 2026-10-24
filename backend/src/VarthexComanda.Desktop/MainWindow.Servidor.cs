@@ -8,14 +8,21 @@ public partial class MainWindow
 {
     private ServidorLocal? _servidorLocal;
     private JanelaServidor? _janelaServidor;
+    private ServidorViewModel? _controleServidor;
+    private Task _inicioAutomaticoServidor=Task.CompletedTask;
     private void InicializarServidor(ServidorLocal? servidor)
     {
         _servidorLocal=servidor;
         if(servidor is null)return;
         servidor.InicioPermitido=()=>!_restauracao && !_backupView.ViewModel.EmAndamento;
-        _backupView.ViewModel.RestauracaoPermitida=()=>!servidor.Ativo && !servidor.Iniciando;
+        _backupView.ViewModel.RestauracaoPermitida=()=>!servidor.Ativo && !servidor.Iniciando && !servidor.Parando;
+        _controleServidor=new ServidorViewModel(servidor,_pathsSistema.DatabasePath,_repositorioSistema is null?null:new VarthexComanda.Application.Configuracao.ConfiguracaoServidorService(_repositorioSistema));
+        Loaded+=(_,_)=>
+        {
+            if(!_restauracao)_inicioAutomaticoServidor=_controleServidor.IniciarAutomaticamenteAsync();
+        };
         servidor.ComandaAlterada+=NotificarLancamentoRemoto;
-        Closed+=(_,_)=>{ servidor.ComandaAlterada-=NotificarLancamentoRemoto; _janelaServidor?.Close(); servidor.Dispose(); };
+        Closed+=(_,_)=>{ servidor.ComandaAlterada-=NotificarLancamentoRemoto; _janelaServidor?.Close(); _controleServidor.Encerrar(); };
     }
     private void NotificarLancamentoRemoto(int id)
     {
@@ -31,7 +38,7 @@ public partial class MainWindow
         if(!PodeGerir())return;
         if(_servidorLocal is null){JanelaAviso.Mostrar("Servidor","O servidor não está disponível nesta sessão.",TipoAviso.Informacao);return;}
         if(_janelaServidor is not null){_janelaServidor.Activate();return;}
-        _janelaServidor=new JanelaServidor(_servidorLocal){Owner=this};
+        _janelaServidor=new JanelaServidor(_controleServidor!){Owner=this};
         _janelaServidor.Closed+=(_,_)=>_janelaServidor=null;
         _janelaServidor.Show();
     }

@@ -154,15 +154,19 @@ public class CarregamentoDeXamlTests
         return new ConfiguracaoViewModel(new ObterConfiguracao(repositorio), new SalvarConfiguracao(repositorio, new FakeClock()));
     }
 
-    internal static MainWindow CriarMainWindow(VarthexComanda.Infrastructure.Storage.AppPaths? paths = null, HistoricoPedidosView? historicoPedidos = null, VarthexComanda.Application.Configuracao.IConfiguracaoRepository? configuracoes = null)
+    internal static MainWindow CriarMainWindow(VarthexComanda.Infrastructure.Storage.AppPaths? paths = null, HistoricoPedidosView? historicoPedidos = null, VarthexComanda.Application.Configuracao.IConfiguracaoRepository? configuracoes = null, VarthexComanda.Servidor.ServidorLocal? servidor = null)
     {
         var (atendimento, _) = CriarAtendimento();
-        return new MainWindow(
+        var janela = new MainWindow(
             new AtendimentoView(atendimento),
             new ProdutosView(CriarProdutos()),
             new HistoricoView(CriarHistorico()),
             new BackupView(CriarBackup()),
-            new ConfiguracaoView(CriarConfiguracao()), paths, configuracoes, historicoPedidosView: historicoPedidos);
+            new ConfiguracaoView(CriarConfiguracao()), paths, configuracoes, historicoPedidosView: historicoPedidos, servidorLocal: servidor);
+        // As fixtures não consultam a licença instalada nem abrem convites
+        // operacionais ao bombear o Dispatcher. A política tem testes próprios.
+        ((AvisosInicioSessao)typeof(MainWindow).GetField("_avisosInicio",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic)!.GetValue(janela)!).TentarAgendar(true,true,false,false);
+        return janela;
     }
 
     // ---- testes ----
