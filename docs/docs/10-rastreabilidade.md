@@ -1,5 +1,7 @@
 # Rastreabilidade
 
+Complemento do movimento — RNF02/RNF18, preservação de CT12/CT17/CT27 → MovimentoWorkspaceTests.TelasReaisMovemComConteudoEmCacheEContinuamUtilizaveisAoSoltar (quatro views reais) e CacheTemporarioTerminaAoMaximizarFecharOuDescarregarEAtivarDeNovoNaoRefazRecursos. [Evidências e limites](../../specs/2026-10-23-movimento-workspace.md#complemento--produtos-históricos-e-cozinha).
+
 Regressão de movimento do workspace — 23/10/2026: RNF02/RNF18, preservação de CT17 → MovimentoWorkspaceTests, AreaTrabalhoInternaTests, JanelaInternaTests e GradeComandasLayoutTests. Requisitos funcionais e regras existentes preservados. [Diagnóstico e validação](../../specs/2026-10-23-movimento-workspace.md).
 
 Matriz do MVP preservada. A cadeia EV → RE → UCE → CTE e a etapa de cada entrega estão no [plano de evolução](21-evolucao-atendimento.md). Não atribuir aprovação aos testes planejados.

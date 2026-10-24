@@ -1,5 +1,10 @@
 # Histórico de alterações
 
+## Não lançado — 2026-10-23 — Arraste das telas restantes
+
+- Produtos, Histórico de pedidos, Histórico de vendas e Cozinha usam cache visual temporário durante o arraste pela barra de título; finalização e cancelamento liberam o cache. Reativar a janela atual evita reaplicar recursos e sobreposições.
+- Cobertura com as quatro views reais e ciclo completo do gesto; 369 testes desktop aprovados. Fluidez com mouse físico ainda depende de confirmação operacional. RNF02/RNF18, CT17 e preservação de CT12/CT27. [Evidências e limites](../specs/2026-10-23-movimento-workspace.md#complemento--produtos-históricos-e-cozinha).
+
 ## Não lançado — 2026-10-23 — Movimento das janelas internas
 
 - Movimento compartilhado de Mesas/comandas e demais janelas usa deslocamento visual imediato, sem recalcular o workspace a cada evento de arraste.

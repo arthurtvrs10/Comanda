@@ -1,5 +1,7 @@
 # Testes e aceitação
 
+Complemento do arraste: Produtos, Histórico de pedidos, Histórico de vendas e Cozinha exercitados com views reais, conclusão/cancelamento, troca de janela e liberação do cache em maximização, fechamento e descarregamento. 369 testes desktop aprovados; ensaio de fluidez com mouse físico pendente. RNF02/RNF18, preservação de CT12/CT17/CT27. [Evidências e limites](../../specs/2026-10-23-movimento-workspace.md#complemento--produtos-históricos-e-cozinha).
+
 Regressão da área de trabalho em 23/10/2026 (RNF02/RNF18 e preservação de CT17): arraste contínuo sem remedir o workspace, posição visual imediata, clique após deslocamento, limites, oito alças, maximizar/restaurar e rascunho preservado. Fixture carrega recursos reais sem iniciar a sessão operacional. [Evidências](../../specs/2026-10-23-movimento-workspace.md). Medições sintéticas não homologam o percentil de RNF02 no equipamento operacional.
 
 CT01–CT25 são critérios da base atual e das extensões documentadas em desenvolvimento; resultados dependem de evidências na homologação. CTE01–CTE11 são cenários futuros ainda não executados, definidos no [plano de evolução](21-evolucao-atendimento.md).
