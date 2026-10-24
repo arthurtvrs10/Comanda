@@ -4,20 +4,20 @@ A identidade **Comanda · por Varthex** aparece na abertura, área de trabalho, 
 
 Sistema Windows para organizar mesas, comandas e consumo em pequenos estabelecimentos de alimentação. Produtos, atendimento, fechamento e histórico funcionam localmente, sem depender da internet.
 
-**Release 1.4.1 · 24/10/2026 · versão em testes.** Edições normal e demonstração com servidor automático, logs e fila de eventos, até 500 comandas e melhorias no catálogo e na Cozinha (KDS). Ambas incluem o .NET e exigem ativação offline.
+**Release 1.4.2 · 24/10/2026 · versão em testes.** Correção compartilhada do arraste rápido nas nove janelas internas. Mantém servidor automático, logs e fila de eventos, até 500 comandas, catálogo e Cozinha (KDS). Edições normal e demonstração incluem o .NET e exigem ativação offline.
 
 <img src="docs/design/principal-claro.png" alt="Área de trabalho Comanda com fundo cinza, logo centralizado e alternância de modo escuro" width="1000">
 
 ## Baixar para Windows
 
-| Edição 1.4.1 | Para quem | Download |
+| Edição 1.4.2 | Para quem | Download |
 | --- | --- | --- |
-| **Normal — sem demonstração** | Cadastrar os produtos reais do estabelecimento; catálogo vazio em uma instalação nova | [![Baixar edição normal para Windows](docs/design/download-windows.svg)](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.1/VarthexComanda-1.4.1-Setup-win-x64.exe) · [SHA-256](downloads/windows/VarthexComanda-1.4.1-Setup-win-x64.exe.sha256) |
-| **Demonstração** | Conhecer o sistema com 12 produtos fictícios e fotos; sem comandas abertas em uma base nova | [![Baixar demonstração para Windows](docs/design/download-windows.svg)](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.1/VarthexComanda-Demo-1.4.1-Setup-win-x64.exe) · [SHA-256](downloads/demo/VarthexComanda-Demo-1.4.1-Setup-win-x64.exe.sha256) |
+| **Normal — sem demonstração** | Cadastrar os produtos reais do estabelecimento; catálogo vazio em uma instalação nova | [![Baixar edição normal para Windows](docs/design/download-windows.svg)](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.2/VarthexComanda-1.4.2-Setup-win-x64.exe) · [SHA-256](downloads/windows/VarthexComanda-1.4.2-Setup-win-x64.exe.sha256) |
+| **Demonstração** | Conhecer o sistema com 12 produtos fictícios e fotos; sem comandas abertas em uma base nova | [![Baixar demonstração para Windows](docs/design/download-windows.svg)](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.2/VarthexComanda-Demo-1.4.2-Setup-win-x64.exe) · [SHA-256](downloads/demo/VarthexComanda-Demo-1.4.2-Setup-win-x64.exe.sha256) |
 
-**Instaladores atualizados em 24/10/2026:** os pacotes foram recompilados com o Inno Setup 7.1.0 após bloqueio dos anteriores pelo Defender. Os dois novos arquivos passaram na verificação local, com proteção ativa; baixe novamente e confira o SHA-256. Esse resultado não garante a decisão de todas as instalações de antivírus. [Detalhes da verificação](specs/2026-10-24-release-1.4.1-defender.md).
+**Instaladores 1.4.2 verificados em 24/10/2026:** gerados com Inno Setup 7.1.0 e verificados localmente pelo Defender, com proteção ativa e sem detecção. Confira o SHA-256; o resultado local não garante a decisão de outros computadores. [Notas e verificação](downloads/RELEASE-1.4.2.md).
 
-[Notas da release 1.4.1](https://github.com/arthurtvrs10/Comanda/releases/tag/v1.4.1) · [Instalação normal](downloads/windows/README.md) · [Instalação da demonstração](downloads/demo/README.md)
+[Notas da release 1.4.2](https://github.com/arthurtvrs10/Comanda/releases/tag/v1.4.2) · [Instalação normal](downloads/windows/README.md) · [Instalação da demonstração](downloads/demo/README.md)
 
 Instalação por usuário, sem administrador, em Windows x64. Feche o aplicativo antes de atualizar. Reinstalar ou atualizar preserva os dados e a licença existentes. Os instaladores não possuem assinatura de código.
 
@@ -50,7 +50,15 @@ O instalador não altera o firewall. Se houver bloqueio, permita o executável i
 
 A apresentação está em `site/`, em Next.js e TypeScript, separada do servidor de atendimento. Execute `npm ci` nessa pasta e `npm run dev -- --port 3010`. Para produção local: `npm run build` e `npx next start --port 3010`. A porta 3010 evita conflito com o acesso móvel em 3001.
 
-## Novidades da 1.4.1
+## Novidades da 1.4.2
+
+- **Arraste das nove janelas internas:** Mesas / comandas, Balcão, Produtos, históricos de pedidos e vendas, Cozinha, Configurações, Backup e Logs compartilham a mesma correção. O movimento usa a posição do mouse em uma referência fixa e aplica apenas o destino mais recente por quadro, sem acumular posições intermediárias.
+- **Cronômetros durante o gesto:** a atualização visual dos tempos das comandas pausa durante o arraste e retoma no próximo segundo, calculando o tempo real.
+- **Validação:** 869 testes aprovados em Release, incluindo 17 testes de janelas e movimento. Rajadas de 2.002 movimentos nas nove telas preservam conteúdo, posição final e medição. A fluidez com mouse físico ainda precisa ser confirmada no uso real.
+
+[Notas, arquivos e limites da 1.4.2](downloads/RELEASE-1.4.2.md).
+
+### Recursos da 1.4.1 mantidos
 
 - **Servidor automático:** preferência e porta salvas, informações de rede, QR Code, teste local e acessos autenticados da sessão. Falhas de inicialização não bloqueiam o desktop.
 - **Logs e fila de eventos:** em Configurações, consulte registros com detalhes, busca e filtros. Acompanhe abertura de comandas, inclusão de itens e preparo no desktop e no servidor, com estados reais de espera, processamento e conclusão. A fila não reenvia pedidos.
@@ -132,11 +140,19 @@ A atualização adiciona a migração de recebimentos à comanda e à venda. Man
 
 ## Telas da release
 
-Capturas da interface WPF desta atualização, geradas com dados fictícios de teste. Não contêm registros de clientes.
+Capturas da interface WPF 1.4.2, geradas novamente em 24/10/2026 com dados fictícios de teste. Não contêm registros de clientes. [Galeria e origem das novas capturas](docs/design/release-1.4.2/README.md).
+
+**Janelas organizadas na área de trabalho**
+
+<img src="docs/design/release-1.4.2/janelas-claro.png" alt="Mesas e produtos em janelas internas independentes na área de trabalho, com dados fictícios" width="1000">
+
+**Balcão**
+
+<img src="docs/design/release-1.4.2/balcao.png" alt="Balcão da versão 1.4.2 com pedidos fictícios e ações de atendimento" width="1000">
 
 **Tela de abertura**
 
-<img src="docs/design/abertura.png" alt="Abertura Comanda por Varthex com arte abstrata, logo branco, carregamento e versão 1.4.1" width="760">
+<img src="docs/design/abertura.png" alt="Abertura Comanda por Varthex com arte abstrata, logo branco, carregamento e versão 1.4.2" width="760">
 
 **Modo escuro e toggle ativado**
 
@@ -192,15 +208,15 @@ dotnet test backend/VarthexComanda.slnx --configuration Release
 dotnet run --project backend/src/VarthexComanda.Desktop
 ```
 
-Instalador normal: `scripts/gerar-instalador.ps1`. Demonstração: `scripts/gerar-demo.ps1`. Exigem Inno Setup 6. ZIP alternativo: `scripts/publicar.ps1`.
+Instalador normal: `scripts/gerar-instalador.ps1`. Demonstração: `scripts/gerar-demo.ps1`. Preferem Inno Setup 7 e verificam os instaladores com Defender antes de gerar os hashes. ZIP alternativo: `scripts/publicar.ps1`.
 
 Distribua somente os pacotes preparados. A pasta `artifacts` pode conter material privado do emissor e não deve ser publicada inteira. JSON OAuth, tokens Google e chaves privadas ficam fora do Git e dos instaladores.
 
 ## Documentação e validação
 
-Esta atualização da 1.4.0 inclui os históricos em **Principal**, Balcão, Cozinha (KDS) e atendimento pelo celular e a tela de abertura com duração mínima de 5 segundos. Os instaladores e os arquivos SHA-256 foram substituídos juntos; quem baixou a compilação anterior deve baixar novamente.
+Esta atualização 1.4.2 reúne a correção compartilhada do arraste, novas capturas e instaladores normal e demonstração. Os arquivos históricos das versões anteriores permanecem disponíveis.
 
-Validação desta recompilação registrada nas [notas de distribuição](specs/2026-10-23-release-recompilacao.md). Instalação em Windows limpo, impressão física e OAuth com conta Google real permanecem pendentes.
+Validação registrada nas [notas de distribuição 1.4.2](specs/2026-10-24-release-1.4.2.md). Instalação em Windows limpo, impressão física, fluidez com mouse físico e OAuth com conta Google real permanecem pendentes.
 
 - [Índice completo](docs/README.md)
 - [Notas e evidências da 1.4.0](specs/2026-10-22-release-1.4.0.md)

@@ -10,6 +10,10 @@ namespace VarthexComanda.Desktop;
 /// <summary>Janela filha limitada à área de trabalho, sem criar outra janela do Windows.</summary>
 public sealed class JanelaInterna : Grid
 {
+    private static readonly DependencyPropertyKey EmArrastePropertyKey=DependencyProperty.RegisterAttachedReadOnly(
+        "EmArraste",typeof(bool),typeof(JanelaInterna),new FrameworkPropertyMetadata(false,FrameworkPropertyMetadataOptions.Inherits));
+    public static readonly DependencyProperty EmArrasteProperty=EmArrastePropertyKey.DependencyProperty;
+    public static bool GetEmArraste(DependencyObject elemento)=>(bool)elemento.GetValue(EmArrasteProperty);
     private readonly Border _moldura;
     private readonly Button _maximizar;
     private readonly Grid _barra;
@@ -18,6 +22,8 @@ public sealed class JanelaInterna : Grid
     private readonly TranslateTransform _posicao=new();
     private CacheMode? _cacheAntesDoArraste;
     private bool _arrastando;
+    private bool _movimentoPendente;
+    private Point _mouseInicial,_janelaInicial;
     private bool _posicionada;
     private double _x,_y;
     private double _larguraNormal=1180,_alturaNormal=600,_deslocamentoInicial;
@@ -39,7 +45,15 @@ public sealed class JanelaInterna : Grid
         var arrastar=new Thumb { Cursor=Cursors.SizeAll,Margin=new Thickness(0,0,84,0),Template=(ControlTemplate)System.Windows.Markup.XamlReader.Parse("<ControlTemplate xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation' TargetType='Thumb'><Border Background='Transparent'/></ControlTemplate>") };_arrastar=arrastar;
         System.Windows.Automation.AutomationProperties.SetName(arrastar,"Mover janela de "+titulo);
         arrastar.DragStarted+=(_,_)=>IniciarArraste();
-        arrastar.DragDelta+=(_,e)=>Mover(e.HorizontalChange,e.VerticalChange);
+        // O Thumb se move junto com a moldura. Seus deltas locais não são uma
+        // referência estável quando vários eventos chegam antes do próximo frame.
+        arrastar.PreviewMouseMove+=(_,e)=>
+        {
+            if(!_arrastando||!arrastar.IsDragging)return;
+            var mouse=e.GetPosition(this);
+            MoverPara(_janelaInicial.X+mouse.X-_mouseInicial.X,_janelaInicial.Y+mouse.Y-_mouseInicial.Y);
+        };
+        arrastar.DragDelta+=(_,e)=>{if(!arrastar.IsDragging)Mover(e.HorizontalChange,e.VerticalChange);};
         arrastar.DragCompleted+=(_,_)=>FinalizarArraste();
         arrastar.MouseDoubleClick+=(_,e)=>{AlternarMaximizar();e.Handled=true;};barra.Children.Add(arrastar);
         barra.Children.Add(new TextBlock { Text=titulo,Foreground=Brushes.White,FontSize=12,FontWeight=FontWeights.SemiBold,VerticalAlignment=VerticalAlignment.Center,Margin=new Thickness(10,0,90,0),IsHitTestVisible=false,TextTrimming=TextTrimming.CharacterEllipsis });
@@ -82,7 +96,9 @@ public sealed class JanelaInterna : Grid
     private void IniciarArraste()
     {
         if(Maximizada||_arrastando)return;
-        _arrastando=true;_cacheAntesDoArraste=_moldura.CacheMode;
+        _arrastando=true;SetValue(EmArrastePropertyKey,true);_cacheAntesDoArraste=_moldura.CacheMode;
+        _mouseInicial=Mouse.GetPosition(this);_janelaInicial=new Point(_x,_y);
+        CompositionTarget.Rendering+=RenderizarMovimento;
         // O transform evita medir novamente; o cache evita redesenhar tabelas,
         // fotos e cartões a cada posição. Existe somente durante o gesto.
         var cache=new BitmapCache { EnableClearType=true,SnapsToDevicePixels=true,RenderAtScale=VisualTreeHelper.GetDpi(this).DpiScaleX };
@@ -91,7 +107,10 @@ public sealed class JanelaInterna : Grid
     private void FinalizarArraste()
     {
         if(!_arrastando)return;
+        CompositionTarget.Rendering-=RenderizarMovimento;
+        AplicarPosicao();
         _moldura.CacheMode=_cacheAntesDoArraste;_cacheAntesDoArraste=null;_arrastando=false;
+        SetValue(EmArrastePropertyKey,false);
     }
     internal void CancelarArraste()
     {
@@ -105,11 +124,24 @@ public sealed class JanelaInterna : Grid
     private void Mover(double dx,double dy)
     {
         if(Maximizada||ActualWidth<=0||ActualHeight<=0||!double.IsFinite(dx)||!double.IsFinite(dy))return;
-        _x=Math.Clamp(_x+dx,0,Math.Max(0,ActualWidth-_moldura.Width));
-        _y=Math.Clamp(_y+dy,0,Math.Max(0,ActualHeight-_moldura.Height));
+        MoverPara(_x+dx,_y+dy);
+    }
+    private void MoverPara(double x,double y)
+    {
+        if(Maximizada||ActualWidth<=0||ActualHeight<=0||!double.IsFinite(x)||!double.IsFinite(y))return;
+        _x=Math.Clamp(x,0,Math.Max(0,ActualWidth-_moldura.Width));
+        _y=Math.Clamp(y,0,Math.Max(0,ActualHeight-_moldura.Height));
         _posicionada=true;
-        // Thumb calcula o próximo delta na posição visual atual. Margin aguardava
-        // outro layout e também voltava a medir a área inteira a cada movimento.
+        _movimentoPendente=true;
+        if(!_arrastando)AplicarPosicao();
+    }
+    private void RenderizarMovimento(object? sender,EventArgs e)=>AplicarPosicao();
+    private void AplicarPosicao()
+    {
+        if(!_movimentoPendente)return;
+        // Usa somente a posição mais recente por frame, sem enfileirar posições
+        // intermediárias quando o mouse envia centenas de eventos por segundo.
+        _movimentoPendente=false;
         _posicao.X=_x;_posicao.Y=_y;
     }
     private void Redimensionar(double dx,double dy,int horizontal,int vertical)

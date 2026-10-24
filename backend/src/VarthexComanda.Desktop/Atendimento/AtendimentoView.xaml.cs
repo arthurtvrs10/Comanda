@@ -200,13 +200,20 @@ public partial class AtendimentoView : UserControl
         AtualizarDadosLaterais();
         viewModel.Itens.CollectionChanged += (_, _) => viewModel.NotificarItensPedido();
         var cronometro = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
-        cronometro.Tick += (_, _) => ViewModel.AtualizarCronometros();
+        cronometro.Tick += (_, _) => AtualizarCronometrosSeDisponivel();
         Loaded += (_, _) => { ViewModel.AtualizarCronometros(); cronometro.Start(); AgendarJanelaComanda(); };
         Unloaded += (_, _) => cronometro.Stop();
         DataObject.AddPastingHandler(CampoNumeroComanda, CampoNumero_Colar);
         // as linhas sao recriadas a cada alteracao; garante que o teclado continue chegando (F4/Esc)
         viewModel.Itens.CollectionChanged += (_, _) => RestaurarFocoSePerdido();
         viewModel.PropertyChanged += (_, e) => { if (e.PropertyName == nameof(AtendimentoViewModel.ComandaAtual)) AgendarJanelaComanda(); };
+    }
+
+    private void AtualizarCronometrosSeDisponivel()
+    {
+        // Alterar os textos durante o gesto invalida o bitmap da janela inteira.
+        // O próximo tick calcula o tempo real, sem acumular atualizações atrasadas.
+        if(!JanelaInterna.GetEmArraste(this))ViewModel.AtualizarCronometros();
     }
 
     // ---- foco inicial: so depois que o elemento esta de fato visivel (focar antes falha em silencio) ----

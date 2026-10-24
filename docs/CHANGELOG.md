@@ -1,5 +1,12 @@
 # Histórico de alterações
 
+## 1.4.2 — 24/10/2026 — pré-release
+
+- Arraste compartilhado pelas nove janelas internas passa a acompanhar o mouse em uma referência fixa e a aplicar somente a posição mais recente por quadro. Evita trabalho repetido em movimentos rápidos, sem refazer a medição do conteúdo.
+- Cronômetros das comandas deixam de invalidar o cache durante o gesto e retomam pelo tempo real no próximo tick. Finalizar, cancelar, fechar, maximizar e descarregar liberam o estado de arraste.
+- 869 testes aprovados em Release; 17 cobrem movimento e janelas, incluindo rajadas nas nove telas e preservação do destino final.
+- README, capturas WPF com dados fictícios, instaladores normal/demonstração e SHA-256 atualizados. RNF09/CT21 e RNF18; nenhuma alteração de banco ou regras de atendimento. Fluidez com mouse físico permanece pendente de confirmação. [Notas](../downloads/RELEASE-1.4.2.md) · [Evidências](../specs/2026-10-24-release-1.4.2.md).
+
 ## 1.4.1 — recompilação dos instaladores — 24/10/2026
 
 - Após bloqueio dos pacotes pelo Defender (`Program:Win32/Contebrew.A!ml`), recompilados os dois instaladores com Inno Setup 7.1.0 oficial, mantendo os mesmos arquivos da aplicação. Assinatura e atestação do compilador conferidas.

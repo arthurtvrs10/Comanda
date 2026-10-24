@@ -14,10 +14,15 @@ namespace VarthexComanda.Desktop.Tests.Xaml;
 public class MovimentoWorkspaceTests(ITestOutputHelper saida)
 {
     [Theory]
+    [InlineData("_atendimentoView")]
     [InlineData("_produtosView")]
     [InlineData("_historicoPedidosView")]
     [InlineData("_historicoView")]
     [InlineData("_cozinhaView")]
+    [InlineData("_balcaoView")]
+    [InlineData("_backupView")]
+    [InlineData("_configuracaoView")]
+    [InlineData("_registrosView")]
     public void TelasReaisMovemComConteudoEmCacheEContinuamUtilizaveisAoSoltar(string campo)
     {
         ThreadingHelper.EmSta(()=>
@@ -42,25 +47,57 @@ public class MovimentoWorkspaceTests(ITestOutputHelper saida)
             area.Abrir(janela);area.Abrir(outra);area.Ativar(janela);
             raiz.Measure(new Size(1920,1000));raiz.Arrange(new Rect(0,0,1920,1000));raiz.UpdateLayout();
             if(view is CozinhaView kds)Assert.NotEmpty(kds.ViewModel.Pedidos);
-            else Assert.Contains(AlinhamentoInterfaceTests.Filhos(view).OfType<DataGrid>(),t=>t.Items.Count>0);
+            else if(view is AtendimentoView atendimento)Assert.NotEmpty(atendimento.ViewModel.Slots);
+            else if(campo is "_produtosView" or "_historicoPedidosView" or "_historicoView")
+                Assert.Contains(AlinhamentoInterfaceTests.Filhos(view).OfType<DataGrid>(),t=>t.Items.Count>0);
+            Assert.NotNull(view.DataContext);
             var barra=AlinhamentoInterfaceTests.Filhos(janela).OfType<Thumb>().Single(t=>System.Windows.Automation.AutomationProperties.GetName(t).StartsWith("Mover janela"));
             var moldura=AreaTrabalhoInternaTests.Moldura(janela);
-            var medidas=raiz.Medidas;var contexto=view.DataContext;var posicao=AreaTrabalhoInternaTests.Posicao(janela);
+            var medidas=raiz.Medidas;var contexto=view.DataContext;var posicao=AreaTrabalhoInternaTests.Posicao(janela);var habilitada=view.IsEnabled;
             foreach(var cancelar in new[]{false,true})
             {
                 barra.RaiseEvent(new DragStartedEventArgs(20,15){RoutedEvent=Thumb.DragStartedEvent});
                 Assert.IsType<BitmapCache>(moldura.CacheMode);
-                var tempo=Stopwatch.StartNew();
-                for(var i=0;i<240;i++)
+                Assert.True(JanelaInterna.GetEmArraste(view));
+                if(view is AtendimentoView tela)
                 {
-                    AreaTrabalhoInternaTests.Mover(janela,i%2==0?1:-1,i%2==0?1:-1);
+                    var notificacoes=0;
+                    System.ComponentModel.PropertyChangedEventHandler observar=(_,e)=>{if(e.PropertyName==nameof(AtendimentoViewModel.TempoComandaAtual))notificacoes++;};
+                    tela.ViewModel.PropertyChanged+=observar;
+                    typeof(AtendimentoView).GetMethod("AtualizarCronometrosSeDisponivel",BindingFlags.Instance|BindingFlags.NonPublic)!.Invoke(tela,null);
+                    tela.ViewModel.PropertyChanged-=observar;
+                    Assert.Equal(0,notificacoes);
+                }
+                var tempo=Stopwatch.StartNew();
+                var transform=(TranslateTransform)moldura.RenderTransform;var alteracoes=0;
+                EventHandler observarMovimento=(_,_)=>alteracoes++;
+                transform.Changed+=observarMovimento;
+                for(var i=0;i<2000;i++)
+                {
+                    AreaTrabalhoInternaTests.Mover(janela,i%2==0?20:-20,i%2==0?20:-20);
                     raiz.UpdateLayout();
                 }
-                saida.WriteLine($"{campo}: 240 movimentos em {tempo.Elapsed.TotalMilliseconds:F2} ms; {raiz.Medidas-medidas} novas medições.");
+                Assert.Equal(0,alteracoes);
+                AreaTrabalhoInternaTests.Mover(janela,40,40);
+                typeof(JanelaInterna).GetMethod("RenderizarMovimento",BindingFlags.Instance|BindingFlags.NonPublic)!.Invoke(janela,[null,EventArgs.Empty]);
+                Assert.Equal(2,alteracoes);Assert.Equal(new Point(posicao.X+40,posicao.Y+40),AreaTrabalhoInternaTests.Posicao(janela));
+                AreaTrabalhoInternaTests.Mover(janela,-40,-40);
+                saida.WriteLine($"{campo}: 2002 movimentos em {tempo.Elapsed.TotalMilliseconds:F2} ms; {raiz.Medidas-medidas} novas medições.");
                 barra.RaiseEvent(new DragCompletedEventArgs(0,0,cancelar){RoutedEvent=Thumb.DragCompletedEvent});
+                transform.Changed-=observarMovimento;
                 Assert.Null(moldura.CacheMode);Assert.Equal(medidas,raiz.Medidas);
+                Assert.False(JanelaInterna.GetEmArraste(view));
+                if(view is AtendimentoView retomada)
+                {
+                    var notificacoes=0;
+                    System.ComponentModel.PropertyChangedEventHandler observar=(_,e)=>{if(e.PropertyName==nameof(AtendimentoViewModel.TempoComandaAtual))notificacoes++;};
+                    retomada.ViewModel.PropertyChanged+=observar;
+                    typeof(AtendimentoView).GetMethod("AtualizarCronometrosSeDisponivel",BindingFlags.Instance|BindingFlags.NonPublic)!.Invoke(retomada,null);
+                    retomada.ViewModel.PropertyChanged-=observar;
+                    Assert.Equal(1,notificacoes);
+                }
                 Assert.Equal(posicao,AreaTrabalhoInternaTests.Posicao(janela));
-                Assert.Same(contexto,view.DataContext);Assert.True(view.IsEnabled);
+                Assert.Same(contexto,view.DataContext);Assert.Equal(habilitada,view.IsEnabled);
                 area.Ativar(outra);area.Ativar(janela);Assert.Same(janela,area.JanelaAtiva);
             }
             janela.AlternarMaximizar();raiz.UpdateLayout();janela.AlternarMaximizar();raiz.UpdateLayout();
@@ -143,6 +180,37 @@ public class MovimentoWorkspaceTests(ITestOutputHelper saida)
             janela.AlternarMaximizar();area.UpdateLayout();var maximizada=AreaTrabalhoInternaTests.Posicao(janela);
             AreaTrabalhoInternaTests.Mover(janela,200,100);Assert.Equal(maximizada,AreaTrabalhoInternaTests.Posicao(janela));
             janela.AlternarMaximizar();area.UpdateLayout();Assert.Equal(new Point(antes.X+50,antes.Y-50),AreaTrabalhoInternaTests.Posicao(janela));
+        });
+    }
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void RajadaDeMovimentosAplicaSomenteUltimaPosicaoPorQuadroESoltaSemPerderDestino(bool cancelar)
+    {
+        ThreadingHelper.EmSta(()=>
+        {
+            CarregamentoDeXamlTests.GarantirApp();
+            var area=new AreaTrabalhoInterna();var conteudo=new PainelMedido();
+            var janela=new JanelaInterna("Mesas / comandas",conteudo);area.Abrir(janela);
+            area.Measure(new Size(1920,1000));area.Arrange(new Rect(0,0,1920,1000));area.UpdateLayout();
+            var barra=AlinhamentoInterfaceTests.Filhos(janela).OfType<Thumb>().Single(t=>System.Windows.Automation.AutomationProperties.GetName(t).StartsWith("Mover janela"));
+            var transform=(TranslateTransform)AreaTrabalhoInternaTests.Moldura(janela).RenderTransform;
+            var antes=AreaTrabalhoInternaTests.Posicao(janela);var medidas=conteudo.Medidas;var alteracoes=0;
+            transform.Changed+=(_,_)=>alteracoes++;
+            barra.RaiseEvent(new DragStartedEventArgs(0,0){RoutedEvent=Thumb.DragStartedEvent});
+            var tempo=Stopwatch.StartNew();
+            for(var i=0;i<2000;i++)AreaTrabalhoInternaTests.Mover(janela,i%2==0?40:-40,i%2==0?20:-20);
+            AreaTrabalhoInternaTests.Mover(janela,100,50);
+            Assert.Equal(0,alteracoes);Assert.Equal(antes,AreaTrabalhoInternaTests.Posicao(janela));
+            typeof(JanelaInterna).GetMethod("RenderizarMovimento",BindingFlags.Instance|BindingFlags.NonPublic)!.Invoke(janela,[null,EventArgs.Empty]);
+            Assert.Equal(2,alteracoes);Assert.Equal(new Point(antes.X+100,antes.Y+50),AreaTrabalhoInternaTests.Posicao(janela));
+            AreaTrabalhoInternaTests.Mover(janela,10,10);
+            barra.RaiseEvent(new DragCompletedEventArgs(0,0,cancelar){RoutedEvent=Thumb.DragCompletedEvent});
+            Assert.Equal(new Point(antes.X+110,antes.Y+60),AreaTrabalhoInternaTests.Posicao(janela));
+            Assert.False(JanelaInterna.GetEmArraste(conteudo));Assert.Null(AreaTrabalhoInternaTests.Moldura(janela).CacheMode);
+            area.UpdateLayout();Assert.Equal(medidas,conteudo.Medidas);
+            saida.WriteLine($"2001 eventos agrupados em um quadro: {tempo.Elapsed.TotalMilliseconds:F2} ms; 2 alterações do transform; nenhuma nova medição.");
+            area.Limpar();
         });
     }
     private sealed class PainelMedido : Grid
