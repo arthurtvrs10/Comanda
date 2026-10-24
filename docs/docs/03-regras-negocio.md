@@ -76,3 +76,7 @@ O desktop é a autoridade e único processo que abre o banco. Acesso remoto exig
 ## RN30 — Preparo separado do consumo — 23/10/2026
 
 Preparo avança Pendente → Em preparo → Pronto → Entregue; Marcar pronto permite Pendente → Pronto. Entregar exige pronto e não encerra a comanda. Encerramento financeiro não elimina entrega pendente; cancelamento retira a comanda da fila. Lote só altera os IDs/quantidades/estados conferidos, em transação, sem incluir novos lançamentos. Não agregar novo consumo a item que já iniciou preparo; criar pendente separado. Quantidade de item iniciado não é editável; mover preserva estado, copiar reinicia em pendente. Sem mudar preço/nome históricos, observação ou total ao avançar preparo. Na migração, itens antigos de comandas encerradas/canceladas são entregues; abertas começam pendentes para conferência.
+
+## RN31 — Balcão compartilha a faixa de comandas — 23/10/2026
+
+Balcão lista somente comandas abertas sem número de mesa, incluindo as anteriores a esta tela. Novo pedido escolhe o primeiro número livre a partir do início configurado, respeitando o máximo e toda ocupação existente. Faixa lotada recusa abertura; disputa na gravação não reaproveita o pedido de outra pessoa. A consulta filtrada do Balcão não filtra a grade de Mesas. Associar uma mesa retira o pedido da lista de Balcão na atualização; retirar a mesa o devolve. Preços, itens, pagamento, preparo e numeração histórica usam os fluxos existentes, sem nova migração.

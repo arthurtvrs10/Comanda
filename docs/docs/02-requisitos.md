@@ -103,3 +103,9 @@ Refinamento solicitado: abrir comanda apresenta os itens e o total imediatamente
 ## RF32 — KDS nativo com preparo e entrega — 23/10/2026
 
 Fila no desktop por comanda/mesa, itens, quantidades e observações; estados persistidos Pendente, Em preparo, Pronto e Entregue. Ações por item e por conjunto exibido, filtros por local/situação, tempo de espera e som opcional de novos lançamentos. Entrega e cobrança independentes; atualização não altera snapshots ou totais. Conflito de leitura recusa lote e exige conferir novamente. [ADR 0007](adr/0007-kds-nativo-estados-preparo.md) e [contrato](../../specs/2026-10-23-cozinha-kds-desktop.md).
+
+Refinamento visual: pendente amarelo, em preparo azul, pronto verde e atraso/alta prioridade vermelho, sempre com rótulos. Observações do pedido e dos itens em blocos destacados; campos vazios não ocupam espaço. Recursos específicos dos dois temas; fundo geral neutro. [Contrato e evidências](../../specs/2026-10-23-balcao-kds-cores.md).
+
+## RF33 — Atendimento de balcão no desktop — 23/10/2026
+
+Principal → Pedido reúne Mesas/comandas e Balcão lado a lado. Balcão abre janela interna com pedidos abertos sem mesa, pesquisa, atualização, abertura e Novo pedido. A criação escolhe o primeiro número livre da faixa existente e reutiliza o editor com produtos, quantidades, observações, impressão e pagamento. Mesmas permissões de atendimento; sem criar numeração ou tipo persistido independente. Pedidos antigos sem mesa também aparecem. [Contrato, limites e testes](../../specs/2026-10-23-balcao-kds-cores.md).

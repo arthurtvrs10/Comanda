@@ -1,5 +1,7 @@
 # Rastreabilidade
 
+Extensão Balcão e cores do KDS — 23/10/2026: RF33/RN31/CT28 → AbrirComandaTests.BalcaoEscolhePrimeiroNumeroLivreSemMesaEPreservaPedidosExistentes, BalcaoXamlTests, ServidorJanelaTests.PrincipalAgrupaDestinosECozinhaTemCategoriaPropria. Refinamento RF32/CT27 e RNF18 → CozinhaViewModelTests.ResumoDoPreparoEObservacaoDoPedidoAcompanhamMudancasSemPerderCartao e CozinhaKdsXamlTests. [Contrato e evidências](../../specs/2026-10-23-balcao-kds-cores.md).
+
 Complemento do movimento — RNF02/RNF18, preservação de CT12/CT17/CT27 → MovimentoWorkspaceTests.TelasReaisMovemComConteudoEmCacheEContinuamUtilizaveisAoSoltar (quatro views reais) e CacheTemporarioTerminaAoMaximizarFecharOuDescarregarEAtivarDeNovoNaoRefazRecursos. [Evidências e limites](../../specs/2026-10-23-movimento-workspace.md#complemento--produtos-históricos-e-cozinha).
 
 Regressão de movimento do workspace — 23/10/2026: RNF02/RNF18, preservação de CT17 → MovimentoWorkspaceTests, AreaTrabalhoInternaTests, JanelaInternaTests e GradeComandasLayoutTests. Requisitos funcionais e regras existentes preservados. [Diagnóstico e validação](../../specs/2026-10-23-movimento-workspace.md).

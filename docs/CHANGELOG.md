@@ -1,5 +1,11 @@
 # Histórico de alterações
 
+## Não lançado — 2026-10-23 — Balcão e cores da Cozinha
+
+- Balcão ao lado de Mesas/comandas na Principal: pedidos sem mesa, pesquisa, atualização e Novo pedido com primeiro número livre da faixa configurada. Reutiliza o editor de produtos, observações e pagamento.
+- KDS com estados em amarelo/azul/verde e alerta vermelho; observações do pedido e dos itens destacadas nos dois temas, com rótulos além das cores.
+- RF33/RN31/CT28 e refinamento RF32/CT27/RNF18. 835 testes aprovados nas execuções completas dos cinco projetos e revisão visual independente `ship` no escopo das capturas/fontes. [Evidências e limites](../specs/2026-10-23-balcao-kds-cores.md). Versão local gerada; sem nova migração ou publicação externa.
+
 ## Não lançado — 2026-10-23 — Arraste das telas restantes
 
 - Produtos, Histórico de pedidos, Histórico de vendas e Cozinha usam cache visual temporário durante o arraste pela barra de título; finalização e cancelamento liberam o cache. Reativar a janela atual evita reaplicar recursos e sobreposições.
