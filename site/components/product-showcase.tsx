@@ -40,7 +40,7 @@ export function ProductShowcase() {
     </div>
     {views.map((item,index) => <div key={item.id} role="tabpanel" id={`panel-${item.id}`} aria-labelledby={`tab-${item.id}`} hidden={index!==selected} tabIndex={0}>
       {index===selected && <>
-        <div className="laptop-mockup">
+        <div className="device-pair"><div className="laptop-mockup">
         <motion.div className="showcase-screen" initial={false} animate={{opacity:1,transform:'translateY(0px)'}}>
           <motion.figure key={view.id} initial={reduced||keyboardChange?false:{opacity:.7,transform:'translateY(6px)'}} animate={{opacity:1,transform:'translateY(0px)'}} transition={{duration:.2,ease:[.16,1,.3,1]}}>
             <div className="laptop-camera" aria-hidden="true"><span/></div>
@@ -49,7 +49,7 @@ export function ProductShowcase() {
         </motion.div>
         <div className="laptop-base" aria-hidden="true"><span/></div>
         </div>
-        <div className="showcase-description"><h3>{view.title}</h3><p>{view.description}</p></div>
+        <div className="phone-device paired-phone"><div className="phone-speaker" aria-hidden="true"/><Image src="/assets/atendimento-celular.webp" alt="Atendimento real da Comanda pelo celular, com dados fictícios" width={390} height={844} sizes="(max-width:640px) 100px, 180px"/><span className="phone-home" aria-hidden="true"/></div></div><div className="showcase-description"><h3>{view.title}</h3><p>{view.description}</p></div>
       </>}
     </div>)}
     <p className="showcase-caption">Telas reais da versão 1.4.0 · dados fictícios de demonstração</p>

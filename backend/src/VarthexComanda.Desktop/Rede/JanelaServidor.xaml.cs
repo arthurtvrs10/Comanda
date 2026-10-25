@@ -49,5 +49,6 @@ public partial class JanelaServidor : Window
         try{Clipboard.SetText(link);ViewModel.Mensagem="Link copiado. Compartilhe somente com a equipe.";}
         catch{ViewModel.Mensagem="Não foi possível copiar. Use o QR Code para conectar.";}
     }
+    private void ComoHabilitar_Click(object sender,RoutedEventArgs e) => new JanelaGuiaServidor { Owner=this }.ShowDialog();
     private void Fechar_Click(object sender,RoutedEventArgs e)=>Close();
 }

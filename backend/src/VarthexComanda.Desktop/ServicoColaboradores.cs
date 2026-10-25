@@ -11,6 +11,20 @@ public sealed record Colaborador
     public string Cpf { get; init; } = "";
     public string Funcao { get; init; } = "";
     public string Telefone { get; init; } = "";
+    public string Email { get; init; } = "";
+    public decimal ComissaoPercentual { get; init; }
+    public string[] Funcoes { get; init; } = [];
+    public bool CriarUsuario { get; init; } = true;
+    public bool AcessoLiberado { get; init; } = true;
+    public bool SenhaMestra { get; init; }
+    public string[]? Permissoes { get; init; }
+    public bool Administrador => Perfil == "gestor";
+    public string UsuarioCriadoDescricao => CriarUsuario ? "Sim" : "Não";
+    public string AdministradorDescricao => Administrador ? "Sim" : "Não";
+    public string SenhaMestraDescricao => SenhaMestra ? "Sim" : "Não";
+    public bool AcessoPermitido => Ativo && CriarUsuario && AcessoLiberado;
+    public string AcessoPermitidoDescricao => AcessoPermitido ? "Sim" : "Não";
+    public string AcessoDescricao => CriarUsuario && AcessoLiberado ? "Liberado" : "Sem acesso";
     public string Login { get; init; } = "";
     public string Perfil { get; init; } = "garcom";
     public bool Ativo { get; init; } = true;
@@ -23,28 +37,38 @@ public sealed class ServicoColaboradores(string caminho, TimeProvider? relogio =
 {
     private readonly TimeProvider _relogio = relogio ?? TimeProvider.System;
     private Colaborador? _sessao;
+    public bool ExigeLoginIndividual => Listar().Any(c => c.Ativo && c.CriarUsuario && c.AcessoLiberado);
+    public bool SessaoIndividualIniciada { get; private set; }
     private int _falhas;
     private DateTimeOffset _aguardarAte;
-    public Colaborador? SessaoAtual => _sessao;
-    public void Sair() => _sessao = null;
+    public Colaborador? SessaoAtual => _sessao is null ? null : Copiar(_sessao);
+    private static Colaborador Copiar(Colaborador c) => c with { Funcoes = [.. c.Funcoes], Permissoes = c.Permissoes is null ? null : [.. c.Permissoes] };
+    public void Sair() { _sessao = null; SessaoIndividualIniciada = false; }
 
-    public IReadOnlyList<Colaborador> Listar() => Ler().Select(c => c.Dados).OrderBy(c => c.Nome, StringComparer.CurrentCultureIgnoreCase).ToArray();
+    public IReadOnlyList<Colaborador> Listar() => Ler().Select(c => Copiar(c.Dados)).OrderBy(c => c.Nome, StringComparer.CurrentCultureIgnoreCase).ToArray();
 
     public void Salvar(Colaborador dados, string? novaSenha)
     {
         dados = Normalizar(dados);
+        if (SessaoIndividualIniciada && !Pode("colaboradores")) throw new InvalidOperationException("Você não tem permissão para gerenciar colaboradores.");
+        if (_sessao is { } propria && propria.Id == dados.Id &&
+            (propria.Ativo != dados.Ativo || propria.CriarUsuario != dados.CriarUsuario || propria.AcessoLiberado != dados.AcessoLiberado ||
+             propria.Perfil != dados.Perfil || propria.SenhaMestra != dados.SenhaMestra || !string.IsNullOrEmpty(novaSenha) ||
+             !(propria.Permissoes ?? PermissoesColaborador.Padrao(propria.Perfil)).Order().SequenceEqual((dados.Permissoes ?? PermissoesColaborador.Padrao(dados.Perfil)).Order())))
+            throw new InvalidOperationException("Entre com outro administrador para alterar seu próprio acesso. Para trocar sua senha, use Alterar senha.");
         Alterar(contas =>
         {
             var existente = contas.SingleOrDefault(c => c.Dados.Id == dados.Id);
-            if (contas.Any(c => c.Dados.Id != dados.Id && c.Dados.Login.Equals(dados.Login, StringComparison.OrdinalIgnoreCase)))
+            if (dados.CriarUsuario && contas.Any(c => c.Dados.CriarUsuario && c.Dados.Id != dados.Id && c.Dados.Login.Equals(dados.Login, StringComparison.OrdinalIgnoreCase)))
                 throw new ArgumentException("Este login já está em uso. Escolha outro.");
-            if (existente is null && string.IsNullOrEmpty(novaSenha)) throw new ArgumentException("Defina uma senha para o novo colaborador.");
+            if (dados.CriarUsuario && (existente is null || existente.Hash.Length == 0) && string.IsNullOrEmpty(novaSenha)) throw new ArgumentException("Defina uma senha para o novo colaborador.");
             var conta = existente ?? new Conta();
-            if (!string.IsNullOrEmpty(novaSenha)) DefinirSenha(conta, novaSenha);
+            if (dados.CriarUsuario && !string.IsNullOrEmpty(novaSenha)) DefinirSenha(conta, novaSenha);
+            if (!dados.CriarUsuario) { conta.Sal = ""; conta.Hash = ""; }
             conta.Dados = dados;
             if (existente is null) contas.Add(conta);
         });
-        if (_sessao?.Id == dados.Id) _sessao = dados.Ativo ? dados : null;
+        if (_sessao?.Id == dados.Id) _sessao = dados.Ativo && dados.CriarUsuario && dados.AcessoLiberado ? dados : null;
     }
 
     public bool Autenticar(string login, string senha, out string mensagem)
@@ -55,10 +79,11 @@ public sealed class ServicoColaboradores(string caminho, TimeProvider? relogio =
             mensagem = $"Aguarde {(int)Math.Ceiling((_aguardarAte - _relogio.GetUtcNow()).TotalSeconds)} segundos para tentar novamente.";
             return false;
         }
-        var conta = Ler().SingleOrDefault(c => c.Dados.Login.Equals(login.Trim(), StringComparison.OrdinalIgnoreCase));
-        if (conta is not null && Conferir(conta, senha) && conta.Dados.Ativo)
+        var conta = Ler().SingleOrDefault(c => c.Dados.CriarUsuario && c.Dados.Login.Equals(login.Trim(), StringComparison.OrdinalIgnoreCase));
+        if (conta is not null && conta.Dados.CriarUsuario && conta.Dados.AcessoLiberado && conta.Dados.Ativo && Conferir(conta, senha))
         {
             _sessao = conta.Dados;
+            SessaoIndividualIniciada = true;
             _falhas = 0;
             mensagem = "";
             return true;
@@ -87,8 +112,26 @@ public sealed class ServicoColaboradores(string caminho, TimeProvider? relogio =
     internal Colaborador? ConferirSessao()
     {
         if (_sessao is null) return null;
-        _sessao = Ler().SingleOrDefault(c => c.Dados.Id == _sessao.Id && c.Dados.Ativo)?.Dados;
-        return _sessao;
+        _sessao = Ler().SingleOrDefault(c => c.Dados.Id == _sessao.Id && c.Dados.Ativo && c.Dados.CriarUsuario && c.Dados.AcessoLiberado)?.Dados;
+        return _sessao is null ? null : Copiar(_sessao);
+    }
+
+    public bool Pode(string permissao) => ConferirSessao() is { } c && PermissoesColaborador.Permite(c, permissao);
+
+    // Autoriza apenas a operação solicitada, preservando o operador e sua sessão.
+    public bool AutorizarComSenhaMestra(string login, string senha, string permissao)
+    {
+        if (_relogio.GetUtcNow() < _aguardarAte) return false;
+        var conta = Ler().SingleOrDefault(c => c.Dados.CriarUsuario && c.Dados.Login.Equals(login.Trim(), StringComparison.OrdinalIgnoreCase));
+        if (conta is null || !conta.Dados.SenhaMestra || !PermissoesColaborador.Permite(conta.Dados, permissao) || !Conferir(conta, senha))
+        {
+            if (++_falhas >= 5) { _falhas = 0; _aguardarAte = _relogio.GetUtcNow().AddSeconds(30); }
+            return false;
+        }
+        var registro = new { Em = _relogio.GetUtcNow(), Operador = _sessao?.Id, Autorizador = conta.Dados.Id, Permissao = permissao };
+        File.AppendAllText(caminho + ".autorizacoes.jsonl", JsonSerializer.Serialize(registro) + Environment.NewLine);
+        _falhas = 0;
+        return true;
     }
 
     private static Colaborador Normalizar(Colaborador c)
@@ -96,12 +139,19 @@ public sealed class ServicoColaboradores(string caminho, TimeProvider? relogio =
         var nome = c.Nome.Trim();
         var login = c.Login.Trim();
         if (nome.Length is < 1 or > 120) throw new ArgumentException("Informe um nome de até 120 caracteres.");
-        if (login.Length is < 3 or > 60 || login.Any(char.IsWhiteSpace)) throw new ArgumentException("Use um login com 3 a 60 caracteres, sem espaços.");
+        if (c.CriarUsuario && (login.Length is < 3 or > 60 || login.Any(char.IsWhiteSpace))) throw new ArgumentException("Use um login com 3 a 60 caracteres, sem espaços.");
         if (c.Perfil is not ("gestor" or "garcom" or "cozinha")) throw new ArgumentException("Selecione um perfil de acesso válido.");
         var cpf = new string(c.Cpf.Where(char.IsAsciiDigit).ToArray());
         if (cpf.Length != 0 && (cpf.Length != 11 || !CpfValido(cpf))) throw new ArgumentException("Informe um CPF válido ou deixe o campo vazio.");
         if (c.Funcao.Trim().Length > 80 || c.Telefone.Trim().Length > 30) throw new ArgumentException("Revise o tamanho da função e do telefone.");
-        return c with { Nome = nome, Login = login, Cpf = cpf, Funcao = c.Funcao.Trim(), Telefone = c.Telefone.Trim() };
+        if (c.ComissaoPercentual is < 0 or > 100) throw new ArgumentException("A comissão deve estar entre 0% e 100%.");
+        var email = c.Email.Trim();
+        if (email.Length > 254 || (email.Length > 0 && (!System.Net.Mail.MailAddress.TryCreate(email, out var endereco) || endereco.Address != email)))
+            throw new ArgumentException("Informe um e-mail válido ou deixe o campo vazio.");
+        if (c.Funcoes.Any(f => f is not ("Supervisor" or "Atendente" or "Entregador" or "Cozinha"))) throw new ArgumentException("Selecione funções válidas.");
+        if (c.Permissoes?.Any(id => !PermissoesColaborador.Todas.Any(p => p.Id == id)) == true) throw new ArgumentException("Há uma permissão desconhecida.");
+        return c with { Email = email, Funcoes = c.Funcoes.Distinct().ToArray(), Permissoes = c.Permissoes?.Distinct().ToArray(),
+            SenhaMestra = c.CriarUsuario && c.SenhaMestra, Nome = nome, Login = c.CriarUsuario ? login : "", Cpf = cpf, Funcao = c.Funcao.Trim(), Telefone = c.Telefone.Trim() };
     }
 
     private static bool CpfValido(string cpf)

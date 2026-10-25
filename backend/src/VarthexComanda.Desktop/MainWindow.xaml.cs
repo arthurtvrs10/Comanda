@@ -76,8 +76,9 @@ public partial class MainWindow : Window
         _registrosView.IsEnabled = false;
         _bloqueioView.Desbloqueado += () =>
         {
-            _areaPendente="garcom";
-            _acesso.EntrarSemSenha(_colaboradores.SessaoAtual is not null);_acessoAtendimento.EntrarSemSenha();
+            _areaPendente=_colaboradores.SessaoAtual?.Perfil ?? "garcom";
+            if (_colaboradores.SessaoIndividualIniciada) { _acesso.EntrarColaborador(_colaboradores); _acessoAtendimento.EntrarSemSenha(); }
+            else if (PodeDispensarSenha) { _acesso.EntrarSemSenha(); _acessoAtendimento.EntrarSemSenha(); }
             if(_acesso.Autenticado)
             {
                 _bloqueado=false;_cozinhaAtiva=false;CamadaBloqueio.Visibility=Visibility.Collapsed;AreaSistema.IsEnabled=true;AtualizarPerfil();
@@ -90,9 +91,15 @@ public partial class MainWindow : Window
         _repositorioSistema=configuracoes;
         _atendimentoView.ImpressaoSolicitada=ImprimirConta;
         _atendimentoView.ImprimirPedido=ImprimirPedido;
+        _atendimentoView.ViewModel.Autorizar = AutorizarOperacao;
+        if (_produtosView.DataContext is ProdutosViewModel produtosVm) produtosVm.Autorizar = () => !_bloqueado && PermiteColaborador("produtos");
+        foreach (var tela in new FrameworkElement[] { _produtosView, _historicoView, _backupView, _configuracaoView, _registrosView, _cozinhaView })
+            if (PermissaoDaTela(tela) is { } id) ProtegerTela(tela, id);
+        if (_historicoPedidosView is not null) ProtegerTela(_historicoPedidosView, "historico-pedidos");
         _atendimentoView.ViewModel.ObterOperador=()=>_colaboradores.SessaoAtual?.Nome ?? Environment.UserName;
         _atendimentoView.ViewModel.ObterResponsaveis=()=>_colaboradores.Listar().Where(c=>c.Ativo).Select(c=>c.Nome).Append(_colaboradores.SessaoAtual?.Nome ?? Environment.UserName).Distinct().Order().ToArray();
         _atendimentoView.OrigensCliente=()=>LerPreferencias().OrigensCliente;
+        _cozinhaView.ViewModel.Autorizar = () => !_bloqueado && PermiteColaborador("cozinha");
         _cozinhaView.ConsultarLocais=()=>LerPreferencias().Cozinhas;
         AplicarFundoSistema();
         InicializarRibbon((paths ?? new VarthexComanda.Infrastructure.Storage.AppPaths()).Root);
@@ -108,13 +115,13 @@ public partial class MainWindow : Window
         };
         Closing += (_, e) => { if (_backupView.ViewModel.EmAndamento || (!_bloqueado && !PodeSairDasConfiguracoes())) e.Cancel=true; };
         Closed += (_,_) => _painelSenhas?.Dispose();
-        _atendimentoView.ViewModel.AtendimentoConcluido += BloquearAtendimento;
+        _atendimentoView.ViewModel.AtendimentoConcluido += AoConcluirAtendimento;
         Loaded += (_,_)=>SugerirConexaoDriveAposLogin();
         Loaded += (_,_)=>InicializarDicaMascote();
         Closed += (_,_)=>OcultarDicaMascote();
         InicializarServidor(servidorLocal);
         MostrarAreaPrincipal();
-        if(LerPreferencias().SolicitarSenha)BloquearAtendimento(false);
+        if(!PodeDispensarSenha)BloquearAtendimento(false);
     }
 
     /// <summary>
@@ -180,6 +187,7 @@ public partial class MainWindow : Window
 
     private void IrParaAtendimento()
     {
+        if (!PermiteColaborador("atendimento")) return;
         if (_bloqueado || _cozinhaAtiva || _restauracao) return;
         _atendimentoView.ViewModel.AtualizarCategorias();
         _atendimentoView.ViewModel.AtualizarComandasAbertas();
@@ -188,6 +196,7 @@ public partial class MainWindow : Window
 
     private void IrParaBalcao()
     {
+        if (!PermiteColaborador("atendimento")) return;
         if(_bloqueado||_cozinhaAtiva||_restauracao)return;
         _balcaoView.ViewModel.AtualizarCommand.Execute(null);
         MostrarConteudo(_balcaoView);
@@ -220,12 +229,13 @@ public partial class MainWindow : Window
     }
     private void IrParaProdutos()
     {
-        if(_bloqueado||!_acesso.Autenticado||_restauracao)return;
+        if(_bloqueado||!PodeGerir()||!PermiteColaborador("produtos"))return;
         MostrarConteudo(_produtosView);
     }
 
     private void IrParaHistorico()
     {
+        if (!PermiteColaborador("historico-vendas")) return;
         if (_bloqueado || _cozinhaAtiva || _restauracao) return;
         _historicoView.ViewModel.AtualizarVendas();
         MostrarConteudo(_historicoView);
@@ -233,6 +243,7 @@ public partial class MainWindow : Window
 
     private void IrParaHistoricoPedidos()
     {
+        if (!PermiteColaborador("historico-pedidos")) return;
         if (_bloqueado || _cozinhaAtiva || _restauracao || _historicoPedidosView is null) return;
         _historicoPedidosView.ViewModel.Atualizar();
         MostrarConteudo(_historicoPedidosView);
@@ -240,7 +251,7 @@ public partial class MainWindow : Window
 
     private void IrParaBackup()
     {
-        if (_bloqueado || !_acesso.Autenticado) return;
+        if (_bloqueado || (!_restauracao && !PodeGerir()) || (_restauracao && !_acesso.Autenticado) || !PermiteColaborador("backup")) return;
         if (!_restauracao) { AcaoConfiguracao("backups"); return; }
         _backupView.ViewModel.AtualizarLista();
         MostrarConteudo(_backupView);
@@ -248,12 +259,13 @@ public partial class MainWindow : Window
 
     private void IrParaConfiguracoes()
     {
-        if (_bloqueado || !_acesso.Autenticado || _restauracao) return;
+        if (!PodeGerir() || !PermiteColaborador("configuracoes")) return;
         AbrirSistemaConfiguracoes();
     }
 
     private void AlternarPerfil_Click(object sender, RoutedEventArgs e)
     {
+        if (_colaboradores.SessaoIndividualIniciada) { BloquearAtendimento(false); return; }
         if (_bloqueado || _cozinhaAtiva) return;
         if (!PodeSairDasConfiguracoes()) return;
         if (_acesso.Autenticado)
@@ -276,11 +288,26 @@ public partial class MainWindow : Window
         BloquearAtendimento(false);
     }
 
-    private bool PodeDispensarSenha => !_restauracao&&!LerPreferencias().SolicitarSenha;
+    private bool PodeDispensarSenha
+    {
+        get
+        {
+            return !_restauracao && !_colaboradores.SessaoIndividualIniciada && !LerPreferencias().SolicitarSenha;
+        }
+    }
+
+    private void AoConcluirAtendimento()
+    {
+        // Fechar um pedido mantém a identidade e as permissões da sessão quando
+        // a opção de solicitar senha está desligada.
+        if (!_restauracao && !LerPreferencias().SolicitarSenha) return;
+        BloquearAtendimento();
+    }
 
     private void BloquearAtendimento() => BloquearAtendimento(true);
     private void BloquearAtendimento(bool permitirAcessoSemSenha)
     {
+        ConteudoPrincipal.Limpar();
         _painelSenhas?.FecharChamador();
         _bloqueado = true;
         _acesso.Sair();
@@ -408,12 +435,14 @@ public partial class MainWindow : Window
         if (_acesso.Autenticado && !_acesso.AutenticadoPorColaborador) _colaboradores.Sair();
         foreach (var botao in new[] { BotaoProdutos, BotaoBackup, BotaoConfiguracoes, BotaoLicenca })
         {
-            botao.Visibility = _acesso.Autenticado ? Visibility.Visible : Visibility.Collapsed;
+            var id = botao == BotaoProdutos ? "produtos" : botao == BotaoBackup ? "backup" : botao == BotaoLicenca ? "assinatura" : "configuracoes";
+            var permitido = (_acesso.Autenticado || _colaboradores.SessaoIndividualIniciada) && PermiteColaborador(id);
+            botao.Visibility = permitido ? Visibility.Visible : Visibility.Collapsed;
             if (botao == BotaoLicenca || (botao == BotaoBackup && !_restauracao)) botao.Visibility=Visibility.Collapsed;
-            botao.IsEnabled = !_bloqueado && _acesso.Autenticado && (!_restauracao || botao == BotaoBackup);
+            botao.IsEnabled = !_bloqueado && permitido && (!_restauracao || botao == BotaoBackup);
         }
-        BotaoAtendimento.IsEnabled = !_bloqueado && !_cozinhaAtiva && !_restauracao;
-        BotaoHistorico.IsEnabled = !_bloqueado && !_cozinhaAtiva && !_restauracao;
+        BotaoAtendimento.IsEnabled = !_bloqueado && !_cozinhaAtiva && !_restauracao && PermiteColaborador("atendimento");
+        BotaoHistorico.IsEnabled = !_bloqueado && !_cozinhaAtiva && !_restauracao && PermiteColaborador("historico-vendas");
         BotaoPerfil.IsEnabled = !_bloqueado && !_cozinhaAtiva;
         BotaoAtendimento.Visibility = _cozinhaAtiva ? Visibility.Collapsed : Visibility.Visible;
         BotaoHistorico.Visibility = _cozinhaAtiva ? Visibility.Collapsed : Visibility.Visible;
@@ -427,7 +456,7 @@ public partial class MainWindow : Window
         BotaoBackupRodape.IsEnabled = true;
         AtualizarAbaAtiva();
         _registrosView.IsEnabled = PodeGerir();
-        BotaoPerfil.Content = _acesso.Autenticado ? "Voltar ao garçom" : "Entrar como gestor";
+        BotaoPerfil.Content = _colaboradores.SessaoIndividualIniciada ? "Trocar usuário" : _acesso.Autenticado ? "Voltar ao garçom" : "Entrar como gestor";
         CommandManager.InvalidateRequerySuggested();
         AtualizarRibbon();
     }
@@ -455,7 +484,7 @@ public partial class MainWindow : Window
 
     private void MostrarConteudo(UIElement view)
     {
-        if (_bloqueado) return;
+        if (_bloqueado || (PermissaoDaTela(view) is { } permissao && !PermiteColaborador(permissao))) return;
         var janela=ObterJanela(view);
         ConteudoPrincipal.Abrir(janela);
         AtualizarAbaAtiva();
@@ -478,8 +507,8 @@ public partial class MainWindow : Window
 
     private void AcaoConfiguracao(string acao)
     {
-        if(_bloqueado || !_acesso.Autenticado || _restauracao) return;
-        if(acao=="recuperacao")
+        if(!PodeGerir() || !PermiteColaborador(acao is "backups" or "criar-backup" ? "backup" : acao == "licenca" ? "assinatura" : "configuracoes")) return;
+        if(acao=="recuperacao" && (!_colaboradores.SessaoIndividualIniciada || _colaboradores.Pode("colaboradores")))
         {
             new JanelaRecuperacaoGestor(_acesso,false,_configuracoesModal??(Window)this).ShowDialog();
         }

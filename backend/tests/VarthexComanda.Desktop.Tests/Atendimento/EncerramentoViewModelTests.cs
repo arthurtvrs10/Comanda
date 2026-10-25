@@ -9,6 +9,19 @@ namespace VarthexComanda.Desktop.Tests.Atendimento;
 
 public class EncerramentoViewModelTests
 {
+    [Fact]
+    public void SemPermissaoNaoRegistraPagamentoNemFinalizaVenda()
+    {
+        var (vm, repo, _) = CriarViewModel();
+        vm.Autorizar = _ => false;
+        vm.SelecionarFormaCommand.Execute(FormaPagamento.Debito);
+        vm.PagamentoRecebido = true;
+        vm.RegistrarPagamentoCommand.Execute(null);
+        vm.ConfirmarEncerrarCommand.Execute(null);
+        Assert.Empty(vm.Pagamentos); Assert.Single(repo.ListarAbertas());
+        Assert.Contains("não autorizado", vm.Mensagem);
+    }
+
     private static (EncerramentoViewModel viewModel, FakeComandaRepository comandas, int comandaId) CriarViewModel(bool comItem = true)
     {
         var relogio = new FakeClock();

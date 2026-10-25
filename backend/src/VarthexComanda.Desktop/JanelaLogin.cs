@@ -29,7 +29,7 @@ public sealed class JanelaLogin : Window
         var perfis = new ComboBox { MinHeight = 46, SelectedValuePath = "Tag", DisplayMemberPath = "Content" };
         perfis.Items.Add(new ComboBoxItem { Content = "Gestor", Tag = "gestor" });
         if (colaboradores is not null) perfis.Items.Add(new ComboBoxItem { Content = "Colaborador · login individual", Tag = "colaborador" });
-        if (!somenteGestor)
+        if (!somenteGestor && colaboradores?.ExigeLoginIndividual != true)
         {
             perfis.Items.Add(new ComboBoxItem { Content = "Garçom", Tag = "garcom" });
             perfis.Items.Add(new ComboBoxItem { Content = "Cozinha", Tag = "cozinha" });
@@ -91,6 +91,7 @@ public sealed class JanelaLogin : Window
                 }
                 else
                 {
+                    if (colaboradores?.ExigeLoginIndividual == true) { erro.Text="Use seu login individual. O PIN compartilhado está desabilitado enquanto houver usuários com acesso liberado."; return; }
                     if (!atendimento.Entrar(senha.Password,out var mensagem)) { erro.Text=mensagem; senha.Clear(); senha.Focus(); return; }
                     colaboradores?.Sair();
                 }

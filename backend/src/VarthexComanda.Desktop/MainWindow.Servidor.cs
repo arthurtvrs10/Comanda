@@ -33,12 +33,15 @@ public partial class MainWindow
             catch { /* A confirmação remota já foi persistida; a próxima atualização recupera os dados. */ }
         }));
     }
+    private void AbrirGuiaServidor() => new JanelaGuiaServidor(()=>ExecutarDestino(_destinosRibbon.Single(d=>d.Nome=="Servidor / acesso pelo celular"))) { Owner=this }.ShowDialog();
+
     private void AbrirServidorLocal()
     {
-        if(!PodeGerir())return;
+        if(!PodeGerir() || !PermiteColaborador("servidor"))return;
         if(_servidorLocal is null){JanelaAviso.Mostrar("Servidor","O servidor não está disponível nesta sessão.",TipoAviso.Informacao);return;}
         if(_janelaServidor is not null){_janelaServidor.Activate();return;}
         _janelaServidor=new JanelaServidor(_controleServidor!){Owner=this};
+        ProtegerTela(_janelaServidor,"servidor");
         _janelaServidor.Closed+=(_,_)=>_janelaServidor=null;
         _janelaServidor.Show();
     }

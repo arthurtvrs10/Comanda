@@ -10,6 +10,7 @@ namespace VarthexComanda.Desktop.Catalogo;
 
 public partial class ProdutosViewModel : ObservableObject
 {
+    public Func<bool>? Autorizar { get; set; }
     private static readonly CultureInfo CulturaMoeda = CultureInfo.GetCultureInfo("pt-BR");
 
     private readonly ListarCategoriasAtivas _listarCategoriasAtivas;
@@ -194,6 +195,7 @@ public partial class ProdutosViewModel : ObservableObject
     [RelayCommand]
     private void Salvar()
     {
+        if (Autorizar?.Invoke() == false) { Mensagem = "Você não tem permissão para alterar o catálogo."; return; }
         if (CategoriaProduto is null)
         {
             Mensagem = "Selecione uma categoria.";
@@ -290,6 +292,7 @@ public partial class ProdutosViewModel : ObservableObject
     [RelayCommand]
     private void Desativar()
     {
+        if (Autorizar?.Invoke() == false) { Mensagem = "Você não tem permissão para alterar o catálogo."; return; }
         if (ProdutoSelecionado is null)
         {
             Mensagem = "Selecione um produto para desativar.";
@@ -317,6 +320,7 @@ public partial class ProdutosViewModel : ObservableObject
 
     public void DefinirFoto(string caminhoOrigem)
     {
+        if (Autorizar?.Invoke() == false) { Mensagem = "Você não tem permissão para alterar o catálogo."; return; }
         if (ProdutoSelecionado is null || AdiarFotoAteSalvar)
         {
             _removerFotoPendente = false;
@@ -348,6 +352,7 @@ public partial class ProdutosViewModel : ObservableObject
     [RelayCommand(CanExecute = nameof(PodeRemoverFoto))]
     private void RemoverFoto()
     {
+        if (Autorizar?.Invoke() == false) { Mensagem = "Você não tem permissão para alterar o catálogo."; return; }
         if (AdiarFotoAteSalvar)
         {
             _removerFotoPendente = true;

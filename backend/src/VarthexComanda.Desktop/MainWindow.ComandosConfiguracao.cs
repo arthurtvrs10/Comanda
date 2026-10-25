@@ -10,7 +10,7 @@ public partial class MainWindow
 
     private void AbrirNumeracaoPedidos()
     {
-        if (!PodeGerir() || _repositorioSistema is null) return;
+        if (!PodeGerir() || !PermiteColaborador("configuracoes") || _repositorioSistema is null) return;
         AbrirComandoConfiguracao(()=>
         {
             var resultado=new JanelaNumeracaoPedidos(new NumeracaoComandasService(_repositorioSistema),()=>_atendimentoView.ViewModel.ComandasAbertas.Select(c=>c.Numero).DefaultIfEmpty(0).Max()) { Owner=this }.ShowDialog();
@@ -28,13 +28,13 @@ public partial class MainWindow
 
     private void AbrirColaboradores()
     {
-        if (!PodeGerir()) return;
+        if (!PodeGerir() || !PermiteColaborador("colaboradores")) return;
         AbrirComandoConfiguracao(() => new JanelaColaboradores(_colaboradores,_acesso) { Owner=this }.ShowDialog());
         AtualizarPerfil();
     }
     private void AbrirMinhaAssinatura()
     {
-        if(!PodeGerir())return;
+        if(!PodeGerir() || !PermiteColaborador("assinatura"))return;
         AbrirComandoConfiguracao(()=>
         {
             var janela=new Licenciamento.JanelaMinhaAssinatura(()=>new Licenciamento.ServicoLicenca().Verificar()) { Owner=this };

@@ -33,11 +33,12 @@ public partial class MainWindow
             new("Configurações", "Configurações", "Impressoras", IconeVarthex.Impressoras, PodeGerir, AbrirImpressoras),
             new("Configurações", "Configurações", "Colaboradores", IconeVarthex.Colaboradores, PodeGerir, AbrirColaboradores),
             new("Configurações", "Configurações", "Alterar senha", IconeVarthex.Senha, PodeAlterarSenha, () => AbrirAlteracaoAcesso(false)),
-            new("Configurações", "Configurações", "Backup e restauração", IconeVarthex.Backup, () => !_bloqueado && _acesso.Autenticado, IrParaBackup),
+            new("Configurações", "Configurações", "Backup e restauração", IconeVarthex.Backup, () => PodeGerir() || (!_bloqueado && _restauracao && _acesso.Autenticado), IrParaBackup),
             new("Configurações", "Rede local", "Servidor / acesso pelo celular", IconeVarthex.Diagnostico, PodeGerir, AbrirServidorLocal),
             new("Configurações", "Verificações", "Logs e fila de eventos", IconeVarthex.Historico, PodeGerir, () => { if (PodeGerir()) MostrarConteudo(_registrosView); }),
             new("Configurações", "Versão premium", "Minha assinatura", IconeVarthex.Assinatura, PodeGerir, AbrirMinhaAssinatura),
             new("Ajuda", "Ajuda e suporte", "Ajuda", IconeVarthex.Ajuda, () => !_bloqueado, AbrirAjuda),
+            new("Ajuda", "Acesso pelo celular", "Como habilitar o servidor", IconeVarthex.CentralAjuda, () => !_bloqueado, AbrirGuiaServidor),
             new("Ajuda", "Ideias e aprendizado", "Feedback", IconeVarthex.Feedback, () => !_bloqueado, AbrirFeedback, false),
             new("Ajuda", "Ideias e aprendizado", "Show training", IconeVarthex.Treinamento, () => !_bloqueado, AbrirTreinamento, false),
             new("Ajuda", "Verificações", "Diagnóstico de serviços", IconeVarthex.Diagnostico, PodeGerir, AbrirDiagnostico, false)
@@ -54,7 +55,7 @@ public partial class MainWindow
         AreaSistema.SizeChanged += (_,_) => AtualizarRibbonCompacta();
         SelecionarCategoriaRibbon("Principal");
     }
-    private bool PodeGerir() => !_bloqueado && _acesso.Autenticado && !_restauracao;
+    private bool PodeGerir() => !_bloqueado && (_acesso.Autenticado || _colaboradores.SessaoIndividualIniciada) && !_restauracao;
     private void AbrirConfiguracaoRibbon(int secao)
     {
         IrParaConfiguracoes();
@@ -118,6 +119,20 @@ public partial class MainWindow
             JanelaAviso.Mostrar("Recuperação", "Restaure um backup antes de acessar esta função.", TipoAviso.Informacao);
             return false;
         }
+        var permissao = destino.Nome switch
+        {
+            "Mesas / comandas" or "Balcão" => "atendimento", "Produtos" => "produtos",
+            "Histórico de pedidos" => "historico-pedidos", "Histórico de vendas" => "historico-vendas",
+            "Painel de senhas" => "painel", "Cozinha" => "cozinha", "Colaboradores" => "colaboradores",
+            "Backup e restauração" => "backup", "Servidor / acesso pelo celular" => "servidor",
+            "Logs e fila de eventos" or "Diagnóstico de serviços" => "logs", "Minha assinatura" => "assinatura",
+            "Configurações do sistema" or "Numeração de pedidos" or "Impressoras" => "configuracoes", _ => null
+        };
+        if (permissao is not null && !PermiteColaborador(permissao))
+        {
+            JanelaAviso.Mostrar("Acesso restrito", "Seu usuário não tem permissão para esta função. Peça ao administrador para revisar seu acesso.", TipoAviso.Informacao);
+            return false;
+        }
         if (PodeDispensarSenha)
         {
             _acesso.EntrarSemSenha(_colaboradores.SessaoAtual is not null);_acessoAtendimento.EntrarSemSenha();_bloqueado=false;_cozinhaAtiva=false;
@@ -129,7 +144,7 @@ public partial class MainWindow
             EscolherArea("garcom");
             return false;
         }
-        if (destino.Nome == "Produtos" || destino.Categoria == "Configurações")
+        if (destino.Nome is "Produtos" or "Complementos" || destino.Categoria == "Configurações")
         {
             if (new JanelaAcessoGestor(_acesso) { Owner=this }.ShowDialog()!=true) return false;
             _bloqueado=false;

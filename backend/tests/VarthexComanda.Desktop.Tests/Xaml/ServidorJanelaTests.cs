@@ -16,6 +16,30 @@ namespace VarthexComanda.Desktop.Tests.Xaml;
 public class ServidorJanelaTests
 {
     [Fact]
+    public void GuiaExplicaCancelamentoEAbreConfiguracoesSomentePorAcaoDoUsuario()
+    {
+        ThreadingHelper.EmSta(()=>
+        {
+            CarregamentoDeXamlTests.GarantirApp();
+            foreach(var escuro in new[] { false,true })
+            {
+                TemaInterface.Aplicar(escuro,false);var aberturas=0;
+                var janela=new JanelaGuiaServidor(abrirFirewall:()=>aberturas++,executavel:@"C:\VComanda\VarthexComanda.exe");
+                var raiz=(FrameworkElement)janela.Content;raiz.Measure(new Size(820,660));raiz.Arrange(new Rect(0,0,820,660));raiz.UpdateLayout();
+                var filhos=AlinhamentoInterfaceTests.Filhos(raiz).ToArray();
+                Assert.Equal(0,aberturas);
+                Assert.Contains(filhos.OfType<TextBlock>(),t=>t.Text.Contains("Alterar configurações"));
+                Assert.Contains(filhos.OfType<TextBlock>(),t=>t.Text.Contains("Firewall permanece ligado"));
+                Assert.Equal(@"C:\VComanda\VarthexComanda.exe",Assert.Single(filhos.OfType<TextBox>()).Text);
+                Capturar(raiz,$"servidor-guia-{(escuro?"escuro":"claro")}");
+                filhos.OfType<Button>().Single(b=>Equals(b.Content,"Abrir o Firewall")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                Assert.Equal(1,aberturas);janela.Close();
+            }
+            TemaInterface.Aplicar(false,false);
+        });
+    }
+
+    [Fact]
     public void PrincipalAgrupaDestinosECozinhaTemCategoriaPropria()
     {
         using var banco=new BancoDeHomologacao();

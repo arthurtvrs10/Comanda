@@ -9,6 +9,8 @@ namespace VarthexComanda.Desktop.Atendimento;
 
 public partial class EncerramentoViewModel : ObservableObject
 {
+    public Func<string, bool>? Autorizar { get; set; }
+    private bool ExigirPagamento() { if (Autorizar?.Invoke("pagamento") != false) return true; Mensagem = "Pagamento não autorizado."; return false; }
     private readonly EncerrarComanda _encerrarComanda;
     private readonly IComandaRepository _comandas;
     private int _comandaId;
@@ -112,6 +114,7 @@ public partial class EncerramentoViewModel : ObservableObject
     [RelayCommand(CanExecute = nameof(PodeConfirmarEncerrar))]
     private void ConfirmarEncerrar()
     {
+        if (!ExigirPagamento()) return;
         if (!PodeConfirmarEncerrar())
         {
             return;

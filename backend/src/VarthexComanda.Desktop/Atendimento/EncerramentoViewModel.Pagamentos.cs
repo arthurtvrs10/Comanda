@@ -81,6 +81,7 @@ public partial class EncerramentoViewModel
     [RelayCommand(CanExecute=nameof(PodeRegistrarPagamento))]
     private void RegistrarPagamento()
     {
+        if (!ExigirPagamento()) return;
         if(!PodeRegistrarPagamento())return;
         try
         {
@@ -94,6 +95,7 @@ public partial class EncerramentoViewModel
     }
     public void RemoverRegistro(PagamentoRegistrado registro)
     {
+        if (!ExigirPagamento()) return;
         if(Processando||_registrado)return;
         try{ComandaAtual=_comandas.RemoverRegistroPagamento(_comandaId,registro.Id);AtualizarPagamentos();Mensagem="Registro removido. Nenhuma devolução foi feita pelo sistema.";}
         catch(Exception ex){Mensagem=ex is ArgumentException or InvalidOperationException?ex.Message:"Não foi possível remover o registro.";}

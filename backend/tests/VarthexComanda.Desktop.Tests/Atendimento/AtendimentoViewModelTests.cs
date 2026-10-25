@@ -12,6 +12,22 @@ namespace VarthexComanda.Desktop.Tests.Atendimento;
 public class AtendimentoViewModelTests
 {
     [Fact]
+    public void PermissoesNegadasImpedemAlteracaoMesmoExecutandoComandoDiretamente()
+    {
+        var (vm, produtos, _, _) = CriarViewModel();
+        vm.NovoNumero = "1"; vm.AbrirCommand.Execute(null);
+        vm.AdicionarProdutoAoItemCommand.Execute(produtos.Pesquisar(null, null)[0]);
+        var item = vm.Itens.Single();
+        vm.Autorizar = _ => false;
+        vm.RemoverCommand.Execute(item); vm.DiminuirQuantidadeCommand.Execute(item);
+        vm.AumentarQuantidadeCommand.Execute(item); vm.CancelarComandaAtualCommand.Execute(null);
+        Assert.Single(vm.Itens); Assert.Equal(item.Quantidade, vm.Itens.Single().Quantidade);
+        Assert.NotNull(vm.ComandaAtual); Assert.False(vm.SalvarDadosComanda("mesa", "5"));
+        Assert.False(vm.TransferirItens(99, [item.Id], false));
+        Assert.Null(vm.CriarPedidoBalcao());
+    }
+
+    [Fact]
     public void MesaValidaAtualizaGradeEPermiteVoltarAoBalcao()
     {
         var (vm, _, _, _) = CriarViewModel();

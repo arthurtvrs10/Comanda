@@ -43,6 +43,11 @@
     <StackPanel x:Name="Conectar" Grid.Column="1">
      <TextBlock Text="Conectar um PC ou celular" FontSize="22" FontWeight="SemiBold" Margin="0,0,0,16"/>
      <Border Style="{StaticResource Grupo}"><StackPanel>
+      <TextBlock Text="Cancelou o aviso de rede do Windows?" FontWeight="SemiBold" TextWrapping="Wrap"/>
+      <TextBlock Text="Veja como permitir o Comanda no Firewall e conectar os aparelhos à rede do estabelecimento." TextWrapping="Wrap" Margin="0,6,0,10"/>
+      <Button x:Name="ComoHabilitar" Content="Como habilitar o acesso" Click="ComoHabilitar_Click" HorizontalAlignment="Left" MinHeight="36"/>
+     </StackPanel></Border>
+     <Border Style="{StaticResource Grupo}"><StackPanel>
       <TextBlock Text="Preparar o dispositivo cliente" Style="{StaticResource TituloSecao}"/>
       <TextBlock Text="1. Conecte o aparelho à mesma rede do servidor.&#10;2. Use o navegador para abrir o link ou leia o QR Code.&#10;3. Mantenha este computador ligado com o Comanda aberto." TextWrapping="Wrap" LineHeight="21"/>
       <TextBlock Text="Não é necessário instalar um banco de dados no cliente. Para manter o endereço estável, reserve o IP deste PC no roteador." Foreground="{DynamicResource TextMuted}" TextWrapping="Wrap" Margin="0,8,0,0"/>

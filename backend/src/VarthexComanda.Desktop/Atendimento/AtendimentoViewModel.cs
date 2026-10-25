@@ -12,6 +12,18 @@ namespace VarthexComanda.Desktop.Atendimento;
 
 public partial class AtendimentoViewModel : ObservableObject
 {
+    private Func<string, bool>? _autorizar;
+    public Func<string, bool>? Autorizar
+    {
+        get => _autorizar;
+        set { _autorizar = value; if (_encerramentoDialog is EncerramentoDialog dialogo) dialogo.Autorizar = value; }
+    }
+    private bool Exigir(string permissao)
+    {
+        if (Autorizar?.Invoke(permissao) != false) return true;
+        Mensagem = "Operação não autorizada. Peça a autorização de um responsável.";
+        return false;
+    }
     public long ConsultarMaiorCodigoPedido() => _comandas.ObterMaiorCodigoPedido();
     private readonly AbrirComanda _abrirComanda;
     private readonly AdicionarItem _adicionarItem;
@@ -101,6 +113,7 @@ public partial class AtendimentoViewModel : ObservableObject
 
     public bool JuntarComandas(int origemId, int destinoId)
     {
+        if (!Exigir("transferir")) return false;
         try
         {
             _comandas.JuntarComandas(origemId, destinoId, _relogio.UtcNow);
@@ -132,6 +145,7 @@ public partial class AtendimentoViewModel : ObservableObject
     [RelayCommand]
     private void SalvarNomeCliente()
     {
+        if (!Exigir("editar-pedido")) return;
         if (ComandaAtual is null) return;
         try
         {
@@ -192,6 +206,7 @@ public partial class AtendimentoViewModel : ObservableObject
     [RelayCommand]
     private void Abrir()
     {
+        if (!Exigir("editar-pedido")) return;
         if (!int.TryParse(NovoNumero, out var numero))
         {
             Mensagem = "Informe um número de comanda válido.";
@@ -233,6 +248,7 @@ public partial class AtendimentoViewModel : ObservableObject
 
     public Comanda? CriarPedidoBalcao()
     {
+        if (!Exigir("editar-pedido")) return null;
         try
         {
             var resultado=_abrirComanda.ExecutarBalcao();
@@ -325,7 +341,10 @@ public partial class AtendimentoViewModel : ObservableObject
     private bool PodeVerTotal() => !SalvandoFechamento && ComandaAtual is not null && Itens.Count > 0;
 
     [RelayCommand]
-    private void AdicionarProdutoAoItem(Produto produto) => AdicionarProduto(produto, 1, ObservacaoNovoItem);
+    private void AdicionarProdutoAoItem(Produto produto)
+    {
+        AdicionarProduto(produto,1,ObservacaoNovoItem);
+    }
 
     public bool AdicionarProduto(Produto produto, decimal quantidade, string? observacao)
     {
@@ -366,7 +385,7 @@ public partial class AtendimentoViewModel : ObservableObject
     [RelayCommand]
     private void DiminuirQuantidade(ItemComanda item)
     {
-        if (!PermitirAlteracao()) return;
+        if (!PermitirAlteracao("remover-item")) return;
         try
         {
             var passo = item.UnidadeVenda == UnidadeVenda.Unidade ? 1m : 0.100m;
@@ -393,7 +412,7 @@ public partial class AtendimentoViewModel : ObservableObject
     [RelayCommand]
     private void Remover(ItemComanda item)
     {
-        if (!PermitirAlteracao()) return;
+        if (!PermitirAlteracao("remover-item")) return;
         if (!_confirmador.Confirmar("Remover item", MensagemRemocao(item)))
         {
             return;
@@ -416,6 +435,7 @@ public partial class AtendimentoViewModel : ObservableObject
     [RelayCommand]
     private void CancelarComandaAtual()
     {
+        if (!Exigir("cancelar-pedido")) return;
         if (ComandaAtual is null)
         {
             return;
@@ -669,6 +689,7 @@ public partial class AtendimentoViewModel : ObservableObject
         : ComandaSlotItem.FormatarTempo(ComandaAtual.AbertaEm, _relogio.UtcNow);
     public bool SalvarDadosComanda(string campo, string valor)
     {
+        if (!Exigir("editar-pedido")) return false;
         if (ComandaAtual is null) return false;
         try
         {
@@ -747,6 +768,7 @@ public partial class AtendimentoViewModel : ObservableObject
     [RelayCommand]
     private void AlterarPrioridade(PrioridadeComanda prioridade)
     {
+        if (!Exigir("editar-pedido")) return;
         if (ComandaAtual is null) return;
         try
         {

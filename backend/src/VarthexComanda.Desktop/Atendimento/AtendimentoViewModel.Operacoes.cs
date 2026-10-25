@@ -37,16 +37,17 @@ public partial class AtendimentoViewModel
     }
     public void NotificarItensPedido() => AtualizarResumoPedido();
 
-    private bool PermitirAlteracao()
+    private bool PermitirAlteracao(string permissao = "editar-pedido")
     {
-        if (SalvandoFechamento) return false;
+        if (SalvandoFechamento || !Exigir(permissao)) return false;
         if (ComandaAtual is not { Bloqueada: true }) return true;
         Mensagem = "Comanda em fechamento. Desative o fechamento para alterar os itens.";
         return false;
     }
 
-    public bool ExecutarOperacaoPedido(Func<ComandaComItens> operacao, string mensagem)
+    public bool ExecutarOperacaoPedido(Func<ComandaComItens> operacao, string mensagem, string permissao = "editar-pedido")
     {
+        if (!Exigir(permissao)) return false;
         try { AplicarResultado(Resultado<ComandaComItens>.Ok(operacao())); Mensagem = mensagem; return true; }
         catch (Exception ex)
         {
@@ -58,14 +59,14 @@ public partial class AtendimentoViewModel
 
     public bool DefinirBloqueio(bool bloqueada)
     {
-        if (ComandaAtual is null || SalvandoFechamento) return false;
+        if (ComandaAtual is null || SalvandoFechamento || !Exigir("editar-pedido")) return false;
         try { AplicarFechamento(_comandas.DefinirBloqueio(ComandaAtual.Id, bloqueada)); return true; }
         catch (Exception ex) { FalhaFechamento(ex); return false; }
     }
 
     public async Task<bool> DefinirFechamentoAsync(bool fechamento)
     {
-        if (ComandaAtual is not { } atual || SalvandoFechamento) return false;
+        if (ComandaAtual is not { } atual || SalvandoFechamento || !Exigir("editar-pedido")) return false;
         SalvandoFechamento = true;
         Mensagem = fechamento ? "Salvando fechamento…" : "Reabrindo comanda…";
         try
@@ -113,7 +114,7 @@ public partial class AtendimentoViewModel
 
     public bool RecalcularPedido() => ComandaAtual is not null && ExecutarOperacaoPedido(() => _comandas.Recalcular(ComandaAtual.Id), "Pedido recalculado. Os preços lançados foram preservados.");
     public bool TransferirItens(int destinoId, IReadOnlyCollection<int> ids, bool copiar) => ComandaAtual is not null && ExecutarOperacaoPedido(
-        () => _comandas.TransferirItens(ComandaAtual.Id, destinoId, ids, copiar, _relogio.UtcNow), copiar ? "Itens copiados para o destino." : "Itens transferidos para o destino.");
+        () => _comandas.TransferirItens(ComandaAtual.Id, destinoId, ids, copiar, _relogio.UtcNow), copiar ? "Itens copiados para o destino." : "Itens transferidos para o destino.", "transferir");
     public void RegistrarImpressao(IReadOnlyDictionary<int, decimal> quantidades, bool cozinha)
     {
         if (ComandaAtual is null) return;

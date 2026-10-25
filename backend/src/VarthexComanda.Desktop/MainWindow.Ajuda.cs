@@ -136,7 +136,7 @@ public partial class MainWindow
     }
     private void AbrirDiagnostico()
     {
-        if(_pathsSistema is null)return;
+        if(_pathsSistema is null || !PermiteColaborador("logs"))return;
         new Ajuda.JanelaDiagnosticoServicos(()=>Ajuda.DiagnosticoServicos.Avaliar(_pathsSistema,()=>
         {
             try{new Licenciamento.ServicoLicenca().Verificar();return true;}catch{return false;}

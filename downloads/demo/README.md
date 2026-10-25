@@ -1,10 +1,10 @@
-# Comanda · por Varthex 1.4.2 — Demonstração
+# Comanda · por Varthex 1.4.3 — Demonstração
 
-[![Baixar para Windows](../../docs/design/download-windows.svg)](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.2/VarthexComanda-Demo-1.4.2-Setup-win-x64.exe) · [SHA-256](VarthexComanda-Demo-1.4.2-Setup-win-x64.exe.sha256)
+[![Baixar para Windows](../../docs/design/download-windows.svg)](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.3/VarthexComanda-Demo-1.4.3-Setup-win-x64.exe) · [SHA-256](VarthexComanda-Demo-1.4.3-Setup-win-x64.exe.sha256)
 
 **Demonstração:** em uma base nova, inclui 12 produtos fictícios com fotos, sem comandas, consumo ou vendas pré-abertos. O catálogo é carregado somente uma vez e não substitui alterações posteriores. Atualizações preservam os dados e a licença existentes.
 
-Atualização 1.4.2 de 24/10/2026: correção compartilhada do arraste rápido nas nove janelas internas, com posição fixa do mouse e uma atualização visual por quadro. Mantém servidor local automático, informações da rede e QR Code, logs e fila de eventos do servidor/desktop, configuração de até 500 comandas, adição rápida de UN e personalização de KG/L. Os botões + e … ficam abaixo do preço no cartão; itens prontos no KDS aparecem em verde e riscados. Mantém pagamentos manuais, backup, históricos e janelas internas.
+Atualização 1.4.3 de 25/10/2026: colaboradores, permissões por área e operação, senha mestra, guia do servidor e correção do acesso sem senha. Produtos e complementos em desenvolvimento não acompanham esta versão.
 
 O servidor inicia com o sistema por padrão. Para acessar pelo celular, confira **Configurações → Servidor / acesso pelo celular** e leia o QR Code na mesma rede. Ao parar/reiniciar, use o novo link. O instalador não altera o firewall.
 
@@ -12,8 +12,8 @@ Feche o aplicativo e faça backup antes de atualizar. Instalação por usuário 
 
 O Google Drive exige configurar um cliente OAuth; credenciais não acompanham o instalador. O OneDrive usa pasta sincronizada. As edições têm instalações, atalhos e bases separados.
 
-A 1.4.2 permanece uma **pré-release**. Fluidez com mouse físico, instalação em Windows limpo, impressão física, rede móvel física e OAuth/envio com conta Google real continuam pendentes. [Notas e limites](../RELEASE-1.4.2.md) · [Release no GitHub](https://github.com/arthurtvrs10/Comanda/releases/tag/v1.4.2).
+A 1.4.3 permanece uma **pré-release**. Fluidez com mouse físico, instalação em Windows limpo, impressão física, rede móvel física e OAuth/envio com conta Google real continuam pendentes. [Notas e limites](../RELEASE-1.4.3.md) · [Release no GitHub](https://github.com/arthurtvrs10/Comanda/releases/tag/v1.4.3).
 
 [Edição normal](../windows/README.md) · [Demonstração](../demo/README.md) · [Versão estável anterior 1.2.2](https://github.com/arthurtvrs10/Comanda/releases/tag/v1.2.2)
 
-Instalador 1.4.2 gerado com Inno Setup 7.1.0 e verificado localmente com Defender ativo, definições 1.461.184.0, sem detecção. Confira o SHA-256. [Evidências e limites](../../specs/2026-10-24-release-1.4.2.md).
+Instalador 1.4.3 gerado com Inno Setup 7.1.0 e verificado localmente com Defender ativo, definições 1.461.184.0, sem detecção. Confira o SHA-256. [Evidências e limites](../../specs/2026-10-24-release-1.4.3.md).

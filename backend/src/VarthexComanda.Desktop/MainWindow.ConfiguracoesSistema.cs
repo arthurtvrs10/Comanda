@@ -18,7 +18,7 @@ public partial class MainWindow
     }
     private void AbrirSistemaConfiguracoes()
     {
-        if(_bloqueado||!_acesso.Autenticado||_restauracao)return;
+        if(!PodeGerir() || !PermiteColaborador("configuracoes"))return;
         if(_configuracoesModal!=null){_configuracoesModal.Activate();return;}
         if(_repositorioSistema is null)
         {

@@ -4,24 +4,37 @@ A identidade **Comanda · por Varthex** aparece na abertura, área de trabalho, 
 
 Sistema Windows para organizar mesas, comandas e consumo em pequenos estabelecimentos de alimentação. Produtos, atendimento, fechamento e histórico funcionam localmente, sem depender da internet.
 
-**Release 1.4.2 · 24/10/2026 · versão em testes.** Correção compartilhada do arraste rápido nas nove janelas internas. Mantém servidor automático, logs e fila de eventos, até 500 comandas, catálogo e Cozinha (KDS). Edições normal e demonstração incluem o .NET e exigem ativação offline.
+**Release 1.4.3 · 25/10/2026 · versão em testes.** Cadastro de colaboradores e permissões por operação, autorização com senha mestra, guia do servidor e correção do acesso sem senha. Mantém servidor automático, logs e fila de eventos, até 500 comandas, catálogo e Cozinha (KDS). Edições normal e demonstração incluem o .NET e exigem ativação offline.
 
 <img src="docs/design/principal-claro.png" alt="Área de trabalho Comanda com fundo cinza, logo centralizado e alternância de modo escuro" width="1000">
 
 ## Baixar para Windows
 
-| Edição 1.4.2 | Para quem | Download |
+| Edição 1.4.3 | Para quem | Download |
 | --- | --- | --- |
-| **Normal — sem demonstração** | Cadastrar os produtos reais do estabelecimento; catálogo vazio em uma instalação nova | [![Baixar edição normal para Windows](docs/design/download-windows.svg)](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.2/VarthexComanda-1.4.2-Setup-win-x64.exe) · [SHA-256](downloads/windows/VarthexComanda-1.4.2-Setup-win-x64.exe.sha256) |
-| **Demonstração** | Conhecer o sistema com 12 produtos fictícios e fotos; sem comandas abertas em uma base nova | [![Baixar demonstração para Windows](docs/design/download-windows.svg)](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.2/VarthexComanda-Demo-1.4.2-Setup-win-x64.exe) · [SHA-256](downloads/demo/VarthexComanda-Demo-1.4.2-Setup-win-x64.exe.sha256) |
+| **Normal — sem demonstração** | Cadastrar os produtos reais do estabelecimento; catálogo vazio em uma instalação nova | [![Baixar edição normal para Windows](docs/design/download-windows.svg)](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.3/VarthexComanda-1.4.3-Setup-win-x64.exe) · [SHA-256](downloads/windows/VarthexComanda-1.4.3-Setup-win-x64.exe.sha256) |
+| **Demonstração** | Conhecer o sistema com 12 produtos fictícios e fotos; sem comandas abertas em uma base nova | [![Baixar demonstração para Windows](docs/design/download-windows.svg)](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.3/VarthexComanda-Demo-1.4.3-Setup-win-x64.exe) · [SHA-256](downloads/demo/VarthexComanda-Demo-1.4.3-Setup-win-x64.exe.sha256) |
 
-**Instaladores 1.4.2 verificados em 24/10/2026:** gerados com Inno Setup 7.1.0 e verificados localmente pelo Defender, com proteção ativa e sem detecção. Confira o SHA-256; o resultado local não garante a decisão de outros computadores. [Notas e verificação](downloads/RELEASE-1.4.2.md).
+**Instaladores 1.4.3 verificados em 25/10/2026:** edições normal e demonstração verificadas localmente pelo Defender, sem detecção. São 881 testes .NET e 7 testes JavaScript aprovados na versão isolada. Confira os arquivos SHA-256 e os limites nas [notas da 1.4.3](downloads/RELEASE-1.4.3.md).
 
-[Notas da release 1.4.2](https://github.com/arthurtvrs10/Comanda/releases/tag/v1.4.2) · [Instalação normal](downloads/windows/README.md) · [Instalação da demonstração](downloads/demo/README.md)
+[Notas da release 1.4.3](https://github.com/arthurtvrs10/Comanda/releases/tag/v1.4.3) · [Instalação normal](downloads/windows/README.md) · [Instalação da demonstração](downloads/demo/README.md)
 
 Instalação por usuário, sem administrador, em Windows x64. Feche o aplicativo antes de atualizar. Reinstalar ou atualizar preserva os dados e a licença existentes. Os instaladores não possuem assinatura de código.
 
 A release é uma **pré-release**: instalação em Windows limpo e autorização/envio com uma conta Google real continuam pendentes. A [versão estável anterior 1.2.2](https://github.com/arthurtvrs10/Comanda/releases/tag/v1.2.2) permanece disponível.
+
+## Novidades da 1.4.3
+
+- **Colaboradores:** e-mail, percentual de comissão cadastrado, múltiplas funções, login opcional, acesso liberado, administrador e habilitação de senha mestra. O percentual é um dado cadastral; esta versão não apura nem paga comissões.
+- **Permissões:** controle por área e operação, cópia entre colaboradores e autorização pontual com login e senha de uma pessoa habilitada.
+- **Lista de colaboradores:** indicadores verdes/vermelhos acompanhados de texto e paginação adaptada ao espaço da janela.
+- **Acesso sem senha:** concluir ou fechar um atendimento respeita a configuração de segurança desativada, preservando a sessão individual e suas permissões. O bloqueio manual continua disponível.
+- **Servidor:** guia em Ajuda → Como habilitar o servidor e na janela do servidor, com orientação para quem cancelou o aviso de rede do Windows. O aplicativo não desativa nem altera automaticamente o firewall.
+- **Site:** mascote, apresentação do atendimento pelo celular e ajustes visuais.
+
+Produtos, complementos, estoque de complementos e novas regras de personalização continuam em desenvolvimento e não integram esta release, inclusive no navegador. Não há mudança no banco de dados nesta publicação.
+
+[Notas e arquivos da 1.4.3](downloads/RELEASE-1.4.3.md).
 
 ## Principal, Balcão, Cozinha e atendimento pelo celular
 
@@ -77,7 +90,7 @@ A apresentação está em `site/`, em Next.js e TypeScript, separada do servidor
 - **Demonstração pronta para começar:** catálogo de exemplo sem pedidos, comandas ou vendas pré-abertas. Os dados reais ficam separados.
 
 - **Configurações redesenhadas:** navegação com ícones, toggles com estado visível, campos agrupados e aviso de alterações reais. A quantidade de comandas fica em Numeração de pedidos.
-- **Acesso opcional:** instalações novas abrem na área inicial, sem senha e sem abrir comandas automaticamente. Todos os usuários têm acesso às áreas nesta versão.
+- **Acesso opcional:** instalações novas abrem na área inicial, sem senha e sem abrir comandas automaticamente. Sem login individual, o acesso segue a preferência de segurança. Após login individual, as permissões do colaborador controlam o acesso.
 - **Proteção por senha:** ao ligar o toggle em Segurança, crie e confirme a senha de acesso e uma senha de recuperação diferente (mínimo de 4 caracteres). Salve as alterações para aplicar. Login inicial: `gestor`.
 - **Bloqueio e recuperação:** com proteção ativa, o login aparece ao iniciar e bloquear. Campos centralizados, placeholders, toggle Mostrar senha e sistema desfocado ao fundo. Esqueci minha senha permite definir uma nova senha de acesso usando a senha de recuperação, sem internet.
 - **Impressos térmicos:** conta, cozinha, reimpressão, fichas e teste de impressora com papel de 58 ou 80 mm, conforme a impressora configurada.

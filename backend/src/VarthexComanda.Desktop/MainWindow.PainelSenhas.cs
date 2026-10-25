@@ -6,7 +6,7 @@ namespace VarthexComanda.Desktop;
 public partial class MainWindow
 {
     private GerenciadorPainelSenhas? _painelSenhas;
-    private bool PodeChamarSenha()=>!_bloqueado&&!_cozinhaAtiva&&!_restauracao;
+    private bool PodeChamarSenha()=>!_bloqueado&&!_cozinhaAtiva&&!_restauracao&&PermiteColaborador("painel");
     private void AbrirPainelSenhas()
     {
         if(!PodeChamarSenha()||_repositorioSistema is null)return;

@@ -5,6 +5,7 @@ namespace VarthexComanda.Desktop.Atendimento;
 
 public class EncerramentoDialog : IEncerramentoDialog
 {
+    public Func<string, bool>? Autorizar { get; set; }
     private readonly Func<EncerramentoViewModel> _fabricaViewModel;
     private readonly IConfiguracaoRepository? _configuracoes;
 
@@ -16,6 +17,7 @@ public class EncerramentoDialog : IEncerramentoDialog
     public bool Abrir(int comandaId)
     {
         var viewModel = _fabricaViewModel();
+        viewModel.Autorizar = Autorizar;
         viewModel.Carregar(comandaId);
         Action<System.Windows.Window>? imprimir=_configuracoes is null?null:owner=>
         {

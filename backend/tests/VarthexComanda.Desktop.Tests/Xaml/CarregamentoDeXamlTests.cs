@@ -156,6 +156,8 @@ public class CarregamentoDeXamlTests
 
     internal static MainWindow CriarMainWindow(VarthexComanda.Infrastructure.Storage.AppPaths? paths = null, HistoricoPedidosView? historicoPedidos = null, VarthexComanda.Application.Configuracao.IConfiguracaoRepository? configuracoes = null, VarthexComanda.Servidor.ServidorLocal? servidor = null)
     {
+        var pastaTemporaria = paths is null ? Path.Combine(Path.GetTempPath(),"vcomanda-xaml-"+Guid.NewGuid().ToString("N")) : null;
+        paths ??= new VarthexComanda.Infrastructure.Storage.AppPaths(pastaTemporaria!);
         var (atendimento, _) = CriarAtendimento();
         var janela = new MainWindow(
             new AtendimentoView(atendimento),
@@ -163,6 +165,7 @@ public class CarregamentoDeXamlTests
             new HistoricoView(CriarHistorico()),
             new BackupView(CriarBackup()),
             new ConfiguracaoView(CriarConfiguracao()), paths, configuracoes, historicoPedidosView: historicoPedidos, servidorLocal: servidor);
+        if (pastaTemporaria is not null) janela.Closed += (_,_) => { if(Directory.Exists(pastaTemporaria))Directory.Delete(pastaTemporaria,true); };
         // As fixtures não consultam a licença instalada nem abrem convites
         // operacionais ao bombear o Dispatcher. A política tem testes próprios.
         ((AvisosInicioSessao)typeof(MainWindow).GetField("_avisosInicio",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic)!.GetValue(janela)!).TentarAgendar(true,true,false,false);
@@ -441,7 +444,7 @@ public class CarregamentoDeXamlTests
                     raiz.Measure(new Size(1280,780));raiz.Arrange(new Rect(0,0,1280,780));raiz.UpdateLayout();
                     SalvarPrevia(raiz,$"ribbon-configuracoes-{(escuro?"escuro":"claro")}");
                     Categoria("Ajuda");raiz.UpdateLayout();
-                    Assert.Equal(new[]{"Ajuda"},Descendentes((FrameworkElement)janela.FindName("GruposRibbon")).OfType<Button>().Select(b=>System.Windows.Automation.AutomationProperties.GetName(b)));
+                    Assert.Equal(new[]{"Ajuda","Como habilitar o servidor"},Descendentes((FrameworkElement)janela.FindName("GruposRibbon")).OfType<Button>().Select(b=>System.Windows.Automation.AutomationProperties.GetName(b)));
                     SalvarPrevia(raiz,$"ribbon-ajuda-{(escuro?"escuro":"claro")}");
                     // As duas telas continuam abertas e podem ocupar posições independentes.
                     Assert.Equal(2,conteudo.Janelas.Count);
@@ -732,8 +735,10 @@ public class CarregamentoDeXamlTests
         });
     }
 
-    [Fact]
-    public void LoginBloqueiaSistemaEAceitaContaIndividual()
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void LoginBloqueiaSistemaEAceitaContaIndividual(bool solicitarSenha)
     {
         var pasta=Path.Combine(Path.GetTempPath(),"login-fluxo-"+Guid.NewGuid());
         try
@@ -744,12 +749,17 @@ public class CarregamentoDeXamlTests
                 var paths=new VarthexComanda.Infrastructure.Storage.AppPaths(pasta);
                 new ServicoColaboradores(Path.Combine(pasta,"colaboradores.json")).Salvar(new(){Nome="Operador",Login="operador"},"1234");
                 var repo=new VarthexComanda.Application.Tests.Configuracao.FakeConfiguracaoRepository();
-                new VarthexComanda.Application.Configuracao.ConfiguracoesSistemaService(repo).Salvar(new(){SolicitarSenha=true},"Loja",20,DateTime.UtcNow);
+                new VarthexComanda.Application.Configuracao.ConfiguracoesSistemaService(repo).Salvar(new(){SolicitarSenha=solicitarSenha},"Loja",20,DateTime.UtcNow);
                 var janela=CriarMainWindow(paths,configuracoes:repo);
                 try
                 {
                     var area=(DockPanel)janela.FindName("AreaSistema");var camada=(ContentControl)janela.FindName("CamadaBloqueio");
                     var bloqueio=(BloqueioAtendimentoView)camada.Content;MedirEOrganizar((FrameworkElement)janela.Content);
+                    if(!solicitarSenha)
+                    {
+                        Assert.True(area.IsEnabled);Assert.Equal(Visibility.Collapsed,camada.Visibility);
+                        typeof(MainWindow).GetMethod("BloquearAtendimento",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic,null,new[] { typeof(bool) },null)!.Invoke(janela,new object[] { false });
+                    }
                     Assert.False(area.IsEnabled);
                     foreach(var escuro in new[]{false,true})
                     {
@@ -766,7 +776,20 @@ public class CarregamentoDeXamlTests
                     ((PasswordBox)bloqueio.FindName("Senha")).Password="1234";
                     ((Button)bloqueio.FindName("BotaoEntrar")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
                     Assert.True(area.IsEnabled);Assert.Equal(Visibility.Collapsed,camada.Visibility);
-                    Assert.True(MainWindow.IrParaProdutosCommand.CanExecute(null,janela));
+                    Assert.False(MainWindow.IrParaProdutosCommand.CanExecute(null,janela));
+                    if(!solicitarSenha)
+                    {
+                        var flags=System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic;
+                        var atendimento=(AtendimentoView)typeof(MainWindow).GetField("_atendimentoView",flags)!.GetValue(janela)!;
+                        var contas=(ServicoColaboradores)typeof(MainWindow).GetField("_colaboradores",flags)!.GetValue(janela)!;
+                        var pessoa=contas.SessaoAtual!.Id;
+                        atendimento.ViewModel.NovoNumero="1";atendimento.ViewModel.AbrirCommand.Execute(null);
+                        Assert.NotNull(atendimento.ViewModel.ComandaAtual);
+                        atendimento.ViewModel.FecharEdicaoCommand.Execute(null);
+                        Assert.True(area.IsEnabled);Assert.Equal(Visibility.Collapsed,camada.Visibility);
+                        Assert.Equal(pessoa,contas.SessaoAtual!.Id);
+                        Assert.False(MainWindow.IrParaProdutosCommand.CanExecute(null,janela));
+                    }
                     Descendentes((FrameworkElement)janela.Content).OfType<Button>().Single(b=>Equals(b.Content,"Bloquear ou trocar usuário")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
                     Assert.False(area.IsEnabled);Assert.Equal(Visibility.Visible,camada.Visibility);
                 }

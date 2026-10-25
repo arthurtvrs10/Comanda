@@ -94,9 +94,11 @@ public sealed class CozinhaViewModel : ObservableObject
     public CozinhaViewModel(Func<IReadOnlyList<ComandaComItens>> consultar,Func<int,IReadOnlyList<AlteracaoPreparo>,Resultado<ConfirmacaoPreparo>>? alterar=null)
     { _consultar=consultar;_alterar=alterar; }
 
-    public void Atualizar() { try { Receber(_consultar()); }catch { RegistrarFalha(); } }
+    public Func<bool>? Autorizar { get; set; }
+    public void Atualizar() { if (Autorizar?.Invoke() == false) { Pedidos.Clear(); return; } try { Receber(_consultar()); }catch { RegistrarFalha(); } }
     public async Task AtualizarAsync()
     {
+        if (Autorizar?.Invoke() == false) { Pedidos.Clear(); return; }
         if(Ocupado)return;Ocupado=true;
         try { Receber(await Task.Run(_consultar)); }
         catch { RegistrarFalha(); }
@@ -150,6 +152,7 @@ public sealed class CozinhaViewModel : ObservableObject
     public Task EntregarAsync(PedidoKds pedido)=>pedido.PodeEntregar?AlterarAsync(pedido.Id,pedido.Itens.Select(i=>i.AlterarPara(StatusPreparo.Entregue)).ToArray()):Task.CompletedTask;
     private async Task AlterarAsync(int id,IReadOnlyList<AlteracaoPreparo> alteracoes)
     {
+        if (Autorizar?.Invoke() == false) return;
         if(!PodeAlterar||alteracoes.Count==0)return;Ocupado=true;
         try
         {

@@ -9,6 +9,36 @@ namespace VarthexComanda.Desktop.Tests.Xaml;
 public sealed class ColaboradoresXamlTests
 {
     [Fact]
+    public void ListaDistribuiColunasEPaginaSemRolagem()
+    {
+        ThreadingHelper.EmSta(()=>
+        {
+            CarregamentoDeXamlTests.GarantirApp();
+            var pasta=Path.Combine(Path.GetTempPath(),"colaboradores-paginas-"+Guid.NewGuid());
+            try
+            {
+                var servico=new ServicoColaboradores(Path.Combine(pasta,"contas.json"));
+                var gestor=new AcessoGestor(Path.Combine(pasta,"gestor"));gestor.Cadastrar("senha-segura");
+                for(var i=0;i<45;i++)servico.Salvar(new() { Nome=$"Pessoa {i:00}",CriarUsuario=false },null);
+                var janela=new JanelaColaboradores(servico,gestor);
+                var raiz=(FrameworkElement)janela.Content;
+                raiz.Measure(new Size(1024,590));raiz.Arrange(new Rect(0,0,1024,590));raiz.UpdateLayout();
+                var lista=Descendentes<ListView>(raiz).Single();
+                Assert.Equal(ScrollBarVisibility.Disabled,ScrollViewer.GetHorizontalScrollBarVisibility(lista));
+                Assert.Equal(ScrollBarVisibility.Disabled,ScrollViewer.GetVerticalScrollBarVisibility(lista));
+                Assert.True(((GridView)lista.View).Columns.Sum(c=>c.Width)<lista.ActualWidth);
+                Assert.InRange(lista.Items.Count,1,44);
+                var primeiro=((Colaborador)lista.Items[0]).Id;
+                var proxima=Descendentes<Button>(raiz).Single(b=>Equals(b.Content,"Próxima"));
+                Assert.True(proxima.IsEnabled);proxima.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                Assert.NotEqual(primeiro,((Colaborador)lista.Items[0]).Id);
+                janela.Close();
+            }
+            finally { if(Directory.Exists(pasta))Directory.Delete(pasta,true); }
+        });
+    }
+
+    [Fact]
     public void ListaCompactaPesquisaDadosReaisEEditorRespeitaTemas()
     {
         ThreadingHelper.EmSta(()=>
@@ -21,6 +51,9 @@ public sealed class ColaboradoresXamlTests
                 var gestor=new AcessoGestor(Path.Combine(pasta,"gestor.credencial"));gestor.Cadastrar("senha-segura");
                 var pessoa=new Colaborador { Nome="Ana Teste",Login="ana",Funcao="Atendimento",Telefone="(11) 90000-0000" };
                 servico.Salvar(pessoa,"senha-segura");servico.Salvar(new Colaborador { Nome="Carlos Teste",Login="carlos",Perfil="cozinha",Funcao="Preparo" },"senha-segura");
+                var loginIndividual = new JanelaLogin(gestor,new AcessoAtendimento(Path.Combine(pasta,"pin")),colaboradores:servico);
+                Assert.Equal(2,((Panel)loginIndividual.Content).Children.OfType<ComboBox>().Single().Items.Count);
+                loginIndividual.Close();
                 foreach(var escuro in new[]{false,true})
                 {
                     TemaInterface.Aplicar(escuro);
@@ -36,9 +69,20 @@ public sealed class ColaboradoresXamlTests
                     SalvarPrevia(raiz,$"colaboradores-{(escuro?"escuro":"claro")}.png");janela.Close();
                     var editor=new JanelaEditarColaborador(servico,gestor,pessoa,false);
                     var formulario=(FrameworkElement)editor.Content;
-                    formulario.Measure(new Size(540,690));formulario.Arrange(new Rect(0,0,540,690));formulario.UpdateLayout();
-                    Assert.Equal(5,Descendentes<TextBox>(formulario).Count());
-                    SalvarPrevia(formulario,$"colaborador-editor-{(escuro?"escuro":"claro")}.png");editor.Close();
+                    formulario.Measure(new Size(980,630));formulario.Arrange(new Rect(0,0,980,630));formulario.UpdateLayout();
+                    Assert.Equal(7,Descendentes<TextBox>(formulario).Count());
+                    Assert.DoesNotContain(Descendentes<ScrollViewer>(formulario),v=>v.TemplatedParent is null);
+                    foreach(var campo in Descendentes<CheckBox>(formulario))
+                    {
+                        var limite=campo.TransformToAncestor(formulario).TransformBounds(new Rect(campo.RenderSize));
+                        Assert.True(limite.Bottom<=formulario.ActualHeight-35,$"Campo fora da tela: {campo.ToolTip}");
+                    }
+                    var abas=Descendentes<TabControl>(formulario).Single();
+                    Assert.Equal(2,abas.Items.Count);
+                    SalvarPrevia(formulario,$"colaborador-editor-{(escuro?"escuro":"claro")}.png");
+                    abas.SelectedIndex=1; formulario.UpdateLayout();
+                    Assert.Contains(Descendentes<CheckBox>(formulario),c=>c.Content is TextBlock t && t.Text=="Atendimento > Cancelar pedidos");
+                    SalvarPrevia(formulario,$"colaborador-permissoes-{(escuro?"escuro":"claro")}.png");editor.Close();
                 }
                 TemaInterface.Aplicar(false);
             }
