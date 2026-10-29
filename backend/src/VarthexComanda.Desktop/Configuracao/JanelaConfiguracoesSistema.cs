@@ -26,12 +26,14 @@ public sealed partial class JanelaConfiguracoesSistema : Window
     private string _nome;
     private string _quantidade;
     private string _snapshot;
+    private string _imagemEstabelecimento="";
+    private string _imagemSalva="";
     private readonly StackPanel _form=new() { Margin=new Thickness(28,24,28,28) };
     private readonly TextBlock _mensagem=new() { TextWrapping=TextWrapping.Wrap,Margin=new Thickness(12) };
     private readonly TextBlock _titulo=new() { FontSize=25,FontWeight=FontWeights.SemiBold,Margin=new Thickness(0,0,0,8) };
     private string _secao="Geral";
     private Panel? _camposGeral;
-    public bool TemAlteracoes => _snapshot != Estado();
+    public bool TemAlteracoes => _snapshot != Estado()||_imagemEstabelecimento!=_imagemSalva;
     private int _inicioComandas = 1;
     private string Estado()=>JsonSerializer.Serialize(new { Preferencias=_prefs,Nome=_nome,Quantidade=_quantidade });
 
@@ -40,6 +42,7 @@ public sealed partial class JanelaConfiguracoesSistema : Window
         Func<VarthexComanda.Application.Licenciamento.DadosLicenca?>? assinatura=null, Func<bool>? prepararProtecao=null)
     {
         _prepararProtecao=prepararProtecao;_service=service;_prefs=service.Carregar();_nome=atual.NomeEstabelecimento;_quantidade=atual.QuantidadeMaximaComandas?.ToString()??"";_inicioComandas=atual.NumeroInicialComandas;
+        _imagemEstabelecimento=service.LayoutTicket.Carregar()?.LogoBase64??"";_imagemSalva=_imagemEstabelecimento;
         _maiorComanda=maiorComanda;_produtos=produtos;_diagnostico=diagnostico;_acao=acao;_salvo=salvo;_snapshot=Estado();
         _assinatura=assinatura??(()=>new Licenciamento.ServicoLicenca().Verificar());
         Title="Configurações do sistema";Width=Math.Min(1180,SystemParameters.WorkArea.Width);Height=Math.Min(760,SystemParameters.WorkArea.Height);
@@ -140,10 +143,13 @@ public sealed partial class JanelaConfiguracoesSistema : Window
         }
         AtualizarEstado();
     }
+
+
     private void Geral()
     {
 
         Subtitulo("Dados do estabelecimento");
+        ImagemEstabelecimento();
         _camposGeral=new System.Windows.Controls.Primitives.UniformGrid { Columns=2 };_form.Children.Add(_camposGeral);
         DadoGeral("Nome do estabelecimento",_nome,v=>_nome=v,"Nome pelo qual seus clientes conhecem o estabelecimento. É usado na identificação e nos comprovantes.");
         DadoGeral("Razão social",_prefs.RazaoSocial,v=>_prefs.RazaoSocial=v,"Nome oficial da empresa registrado no CNPJ. Pode ser diferente do nome do estabelecimento. Copie como aparece no cadastro da empresa.");
@@ -207,7 +213,7 @@ public sealed partial class JanelaConfiguracoesSistema : Window
         Marcar("Exibir endereço do estabelecimento",_prefs.ExibirEnderecoCupom,v=>_prefs.ExibirEnderecoCupom=v,"Usa o endereço cadastrado em Geral, sem imprimir campos vazios.");
         Subtitulo("Mensagens impressas");
         Campo("Mensagem do cabeçalho",_prefs.CabecalhoCupom,v=>_prefs.CabecalhoCupom=v,true);Campo("Mensagem do rodapé",_prefs.RodapeCupom,v=>_prefs.RodapeCupom=v,true);
-        Botao("Visualizar exemplo do cupom",()=>ComprovanteConta.VisualizarExemplo(this,_prefs,_nome));
+        Botao("Visualizar exemplo do cupom",()=>{var layout=_service.LayoutTicket.Carregar()??new();if(_imagemEstabelecimento!=_imagemSalva){layout.LogoBase64=_imagemEstabelecimento;layout.ImprimirLogo=_imagemEstabelecimento.Length>0;}ComprovanteConta.VisualizarExemplo(this,_prefs,_nome,layout);});
         Texto("Impressão automática, impressão fiscal, etiquetas e integração com entregador não estão habilitadas no Varthex.");
     }
     private void Fundo()
@@ -365,6 +371,6 @@ public sealed partial class JanelaConfiguracoesSistema : Window
     {
         int? quantidade=null;if(!string.IsNullOrWhiteSpace(_quantidade)){if(!int.TryParse(_quantidade,out var n))throw new ArgumentException("Informe uma quantidade válida de comandas.");quantidade=n;}
         if(quantidade is int limite&&_maiorComanda()>(long)_inicioComandas+limite-1)throw new ArgumentException("Há comandas abertas acima desse limite. Encerre ou transfira antes de reduzir.");
-        NormalizarDadosEstabelecimento();_service.Salvar(_prefs,_nome,quantidade,DateTime.UtcNow);_snapshot=Estado();_mensagem.Text="Configurações salvas.";AtualizarEstado();_salvo();
+        NormalizarDadosEstabelecimento();_service.Salvar(_prefs,_nome,quantidade,DateTime.UtcNow,_imagemEstabelecimento!=_imagemSalva?_imagemEstabelecimento:null);_imagemSalva=_imagemEstabelecimento;_snapshot=Estado();_mensagem.Text="Configurações salvas.";AtualizarEstado();_salvo();
     });
 }

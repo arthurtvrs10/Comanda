@@ -35,7 +35,7 @@ public class DadosEstabelecimentoTests
             ComboBox Seletor(string nome)=>filhos.OfType<ComboBox>().Single(t=>AutomationProperties.GetName(t)==nome);
             Assert.False(janela.TemAlteracoes);Assert.Equal("CPF",Seletor("Tipo de documento").SelectedItem);
             Assert.Equal("(61) 9 0000-0900",Campo("Telefone principal").Text);
-            Assert.Equal(12,filhos.OfType<Button>().Count(b=>AutomationProperties.GetName(b).StartsWith("Ajuda:")));
+            Assert.Equal(13,filhos.OfType<Button>().Count(b=>AutomationProperties.GetName(b).StartsWith("Ajuda:")));
             Assert.Equal(248,Seletor("País e código do telefone").Items.Count);
             Campo("Telefone principal").Text="6130000900";
             Campo("CEP").Text="71000123";

@@ -47,6 +47,7 @@ public sealed class LocalCozinha
 public sealed class ConfiguracoesSistemaService(IConfiguracaoRepository repositorio)
 {
     public const string Chave = "sistema.preferencias.v1";
+    public LayoutTicketService LayoutTicket=>new(repositorio);
     public PreferenciasSistema Carregar()
     {
         var json = repositorio.ObterValor(Chave);
@@ -55,18 +56,24 @@ public sealed class ConfiguracoesSistemaService(IConfiguracaoRepository reposito
         Validar(valor);
         return valor;
     }
-    public void Salvar(PreferenciasSistema preferencias, string nome, int? quantidade, DateTime agora)
+    public void Salvar(PreferenciasSistema preferencias, string nome, int? quantidade, DateTime agora,string? imagemEstabelecimento=null)
     {
         Validar(preferencias);
         if (string.IsNullOrWhiteSpace(nome) || nome.Trim().Length > 120) throw new ArgumentException("Informe o nome do estabelecimento com até 120 caracteres.");
         NumeracaoComandasService.ValidarQuantidade(quantidade);
         NumeracaoComandasService.ValidarFaixa(new NumeracaoComandasService(repositorio).Carregar().PrimeiroNumero,quantidade ?? 20);
-        repositorio.DefinirValores(new Dictionary<string,string>
+        var valores=new Dictionary<string,string>
         {
             [Chave]=JsonSerializer.Serialize(preferencias),
             ["estabelecimento.nome"]=nome.Trim(),
             ["comandas.quantidade_maxima"]=quantidade?.ToString() ?? ""
-        },agora);
+        };
+        if(imagemEstabelecimento is not null)
+        {
+            var layout=LayoutTicket.Carregar()??new();layout.LogoBase64=imagemEstabelecimento;layout.ImprimirLogo=imagemEstabelecimento.Length>0;
+            LayoutTicketService.Validar(layout);valores[LayoutTicketService.Chave]=JsonSerializer.Serialize(layout);
+        }
+        repositorio.DefinirValores(valores,agora);
     }
     public static void Validar(PreferenciasSistema p)
     {

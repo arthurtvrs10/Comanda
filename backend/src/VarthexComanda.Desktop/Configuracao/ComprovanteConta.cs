@@ -30,7 +30,7 @@ public static class ComprovanteConta
         else if(senhaAtendimento && codigoPedido is long senha)linhas.Add($"SENHA DE ATENDIMENTO: {senha}");
         return string.Join("\n",linhas.Where(x=>!string.IsNullOrWhiteSpace(x)));
     }
-    public static void VisualizarExemplo(Window owner,PreferenciasSistema prefs,string nome)
+    public static void VisualizarExemplo(Window owner,PreferenciasSistema prefs,string nome,LayoutTicket? layout=null)
     {
         var agora=DateTime.UtcNow;
         var c=new Comanda { Id=0,Numero=12,CodigoPedido=1042,NumeroMesa=5,Status=StatusComanda.Aberta,AbertaEm=agora,TotalCentavos=8000,Observacao="EXEMPLO — enviar os lanches juntos." };
@@ -38,7 +38,7 @@ public static class ComprovanteConta
         var quantidades=itens.ToDictionary(i=>i.Id,i=>i.Quantidade);
         var modelos=new Dictionary<string,Func<int,FlowDocument>>
         {
-            ["Conta do cliente"]=mm=>CupomTermico.Conta(prefs,nome,c,itens,mm),
+            ["Conta do cliente"]=mm=>CupomTermico.Conta(prefs,nome,c,itens,mm,layout:layout),
             ["Pedido da cozinha"]=mm=>CupomTermico.Producao(prefs,nome,c,itens,quantidades,false,mm),
             ["Reimpressão da cozinha"]=mm=>CupomTermico.Producao(prefs,nome,c,itens,quantidades,true,mm),
             ["Fichas de consumação"]=mm=>CupomTermico.Fichas(prefs,nome,c,itens,quantidades,mm),

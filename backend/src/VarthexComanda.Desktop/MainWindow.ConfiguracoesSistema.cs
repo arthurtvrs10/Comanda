@@ -37,6 +37,7 @@ public partial class MainWindow
                 {
                     return new JanelaAcessoGestor(_acesso,ativarProtecao:true){Owner=_configuracoesModal??(Window)this}.ShowDialog()==true;
                 }) { Owner=this };
+
             _configuracoesModal.ShowDialog();
         }
         catch{JanelaAviso.Mostrar("Configurações","Não foi possível abrir as configurações. Verifique os dados e tente novamente.",TipoAviso.Erro);}
@@ -64,6 +65,6 @@ public partial class MainWindow
         var numeracao=_repositorioSistema is null ? null : new NumeracaoComandasService(_repositorioSistema).Carregar();
         var impressora=_repositorioSistema is null ? null : new ConfiguracoesImpressaoService(_repositorioSistema).ObterCaixaConfigurado();
         ComprovanteConta.Visualizar(owner,ComprovanteConta.MontarTexto(LerPreferencias(),_configuracaoView.ViewModel.NomeEstabelecimento,comanda.Numero,_atendimentoView.ViewModel.Itens,comanda.CodigoPedido,false,numeracao?.UsarComoSenhaAtendimento==true?comanda.Numero:null),impressora,
-            criarDocumento:mm=>CupomTermico.Conta(LerPreferencias(),_configuracaoView.ViewModel.NomeEstabelecimento,comanda,_atendimentoView.ViewModel.Itens,mm,numeracao?.UsarComoSenhaAtendimento==true?comanda.Numero:null));
+            criarDocumento:mm=>CupomTermico.Conta(LerPreferencias(),_configuracaoView.ViewModel.NomeEstabelecimento,comanda,_atendimentoView.ViewModel.Itens,mm,numeracao?.UsarComoSenhaAtendimento==true?comanda.Numero:null,_repositorioSistema is null?null:new LayoutTicketService(_repositorioSistema).Carregar()));
     }
 }
