@@ -28,9 +28,16 @@ public class ImagemEstabelecimentoTests
                 service.Salvar(new(),"Restaurante",20,DateTime.UtcNow,imagem);var layout=service.LayoutTicket.Carregar()!;Assert.Equal(imagem,layout.LogoBase64);Assert.True(layout.ImprimirLogo);Assert.Equal(58,layout.PapelMm);Assert.False(layout.NomeCliente);
                 var doc=CupomTermico.Conta(new(),"Restaurante",new Comanda {Id=1,Numero=1,TotalCentavos=0,Status=StatusComanda.Aberta,AbertaEm=DateTime.UtcNow},[],58,layout:layout);
                 var foto=(Image)doc.Blocks.OfType<BlockUIContainer>().First().Child;Assert.Equal(600,((BitmapSource)foto.Source).PixelWidth);Assert.Equal(300,((BitmapSource)foto.Source).PixelHeight);
-                var janela=new JanelaConfiguracoesSistema(service,new(){NomeEstabelecimento="Restaurante",QuantidadeMaximaComandas=20},()=>0,()=>[],()=>"",_=>{},()=>{},()=>null);
+                var janela=new JanelaConfiguracoesSistema(service,new(){NomeEstabelecimento="",QuantidadeMaximaComandas=20},()=>0,()=>[],()=>"",_=>{},()=>{},()=>null);
                 var raiz=(FrameworkElement)janela.Content;raiz.Measure(new Size(1180,700));raiz.Arrange(new Rect(0,0,1180,700));raiz.UpdateLayout();Assert.False(janela.TemAlteracoes);
                 var filhos=AlinhamentoInterfaceTests.Filhos(raiz).ToArray();
+                var nome=filhos.OfType<TextBox>().Single(t=>System.Windows.Automation.AutomationProperties.GetName(t)=="Nome do estabelecimento");
+                Assert.True(System.Windows.Automation.AutomationProperties.GetIsRequiredForForm(nome));
+                filhos.OfType<Button>().Single(b=>Equals(b.Content,"Salvar alterações")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                Assert.Contains(filhos.OfType<TextBlock>(),t=>t.Text=="Preencha o nome do estabelecimento para salvar as alterações."&&t.Visibility==Visibility.Visible);
+                Assert.Equal(imagem,service.LayoutTicket.Carregar()!.LogoBase64);
+                Assert.Contains(filhos.OfType<TextBlock>().SelectMany(t=>t.Inlines.OfType<Run>()),r=>r.Text==" *"&&Equals(r.Foreground,Brushes.Firebrick));
+                nome.Text="Restaurante";
                 filhos.OfType<Button>().Single(b=>Equals(b.Content,"Remover foto")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));Assert.True(janela.TemAlteracoes);Assert.Equal(imagem,service.LayoutTicket.Carregar()!.LogoBase64);
                 filhos.OfType<Button>().Single(b=>Equals(b.Content,"Salvar alterações")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));Assert.Empty(service.LayoutTicket.Carregar()!.LogoBase64);Assert.False(service.LayoutTicket.Carregar()!.ImprimirLogo);Assert.False(janela.TemAlteracoes);
                 var invalido=Path.Combine(pasta,"invalido.png");File.WriteAllText(invalido,"não é imagem");Assert.ThrowsAny<Exception>(()=>JanelaConfiguracoesSistema.PrepararImagemEstabelecimento(invalido));

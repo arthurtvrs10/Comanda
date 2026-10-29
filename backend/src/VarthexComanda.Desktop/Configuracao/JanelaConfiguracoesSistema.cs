@@ -369,6 +369,7 @@ public sealed partial class JanelaConfiguracoesSistema : Window
     }
     private void Salvar()=>Executar(()=>
     {
+        if(!ValidarNomeEstabelecimento())return;
         int? quantidade=null;if(!string.IsNullOrWhiteSpace(_quantidade)){if(!int.TryParse(_quantidade,out var n))throw new ArgumentException("Informe uma quantidade válida de comandas.");quantidade=n;}
         if(quantidade is int limite&&_maiorComanda()>(long)_inicioComandas+limite-1)throw new ArgumentException("Há comandas abertas acima desse limite. Encerre ou transfira antes de reduzir.");
         NormalizarDadosEstabelecimento();_service.Salvar(_prefs,_nome,quantidade,DateTime.UtcNow,_imagemEstabelecimento!=_imagemSalva?_imagemEstabelecimento:null);_imagemSalva=_imagemEstabelecimento;_snapshot=Estado();_mensagem.Text="Configurações salvas.";AtualizarEstado();_salvo();

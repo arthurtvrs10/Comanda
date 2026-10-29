@@ -11,6 +11,8 @@ namespace VarthexComanda.Desktop.Configuracao;
 
 public sealed partial class JanelaConfiguracoesSistema
 {
+    private TextBox? _campoNomeEstabelecimento;
+    private TextBlock? _erroNomeEstabelecimento;
     internal sealed record PaisTelefone(string Iso,string Nome,string Ddi)
     {
         public override string ToString()=> $"{Ddi} {Nome}";
@@ -24,7 +26,13 @@ public sealed partial class JanelaConfiguracoesSistema
     {
         var bloco=new StackPanel {Margin=new Thickness(0,0,12,12)};
         var titulo=new StackPanel {Orientation=Orientation.Horizontal,Margin=new Thickness(0,0,0,3)};
-        titulo.Children.Add(new Label {Content=nome,Target=controle,Padding=new Thickness(0),VerticalAlignment=VerticalAlignment.Center});
+        object rotulo=nome;
+        if(nome=="Nome do estabelecimento")
+        {
+            var texto=new TextBlock();texto.Inlines.Add(new System.Windows.Documents.Run(nome));texto.Inlines.Add(new System.Windows.Documents.Run(" *"){Foreground=Brushes.Firebrick});rotulo=texto;
+            System.Windows.Automation.AutomationProperties.SetIsRequiredForForm(controle,true);
+        }
+        titulo.Children.Add(new Label {Content=rotulo,Target=controle,Padding=new Thickness(0),VerticalAlignment=VerticalAlignment.Center});
         var botao=AjudaCampos.Botao(nome,ajuda);
         titulo.Children.Add(botao);bloco.Children.Add(titulo);bloco.Children.Add(controle);_camposGeral!.Children.Add(bloco);return bloco;
     }
@@ -32,7 +40,25 @@ public sealed partial class JanelaConfiguracoesSistema
     {
         var input=new TextBox {Text=mascara is null?valor:mascara(valor),MinHeight=36,FontSize=13,MaxLength=limite};
         System.Windows.Automation.AutomationProperties.SetName(input,nome);
-        BlocoGeral(nome,ajuda,input);VincularEntrada(input,alterar,mascara);return input;
+        var bloco=BlocoGeral(nome,ajuda,input);VincularEntrada(input,alterar,mascara);
+        if(nome=="Nome do estabelecimento")
+        {
+            _campoNomeEstabelecimento=input;input.MaxLength=120;
+            _erroNomeEstabelecimento=new TextBlock {Foreground=Brushes.Firebrick,TextWrapping=TextWrapping.Wrap,Visibility=Visibility.Collapsed,Margin=new Thickness(0,4,0,0)};
+            System.Windows.Automation.AutomationProperties.SetLiveSetting(_erroNomeEstabelecimento,System.Windows.Automation.AutomationLiveSetting.Assertive);bloco.Children.Add(_erroNomeEstabelecimento);
+            input.TextChanged+=(_,_)=>{if(!string.IsNullOrWhiteSpace(input.Text)&&input.Text.Trim().Length<=120){if(_mensagem.Text==_erroNomeEstabelecimento.Text)_mensagem.Text="";_erroNomeEstabelecimento.Visibility=Visibility.Collapsed;input.ClearValue(Control.BorderBrushProperty);}};
+        }
+        return input;
+    }
+    private bool ValidarNomeEstabelecimento()
+    {
+        if(!string.IsNullOrWhiteSpace(_nome)&&_nome.Trim().Length<=120)return true;
+        if(_secao!="Geral")Mostrar("Geral");
+        var erro=string.IsNullOrWhiteSpace(_nome)?"Preencha o nome do estabelecimento para salvar as alterações.":"Use até 120 caracteres no nome do estabelecimento.";
+        _mensagem.Text=erro;
+        if(_erroNomeEstabelecimento is not null){_erroNomeEstabelecimento.Text=erro;_erroNomeEstabelecimento.Visibility=Visibility.Visible;}
+        if(_campoNomeEstabelecimento is not null){_campoNomeEstabelecimento.BorderBrush=Brushes.Firebrick;_campoNomeEstabelecimento.BringIntoView();_campoNomeEstabelecimento.Focus();}
+        return false;
     }
     internal static void VincularEntrada(TextBox input,Action<string> alterar,Func<string,string>? mascara)
     {
