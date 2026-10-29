@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:VarthexComanda.Desktop"
         mc:Ignorable="d"
-        Title="Comanda" Icon="pack://application:,,,/VarthexComanda;component/Assets/VarthexComanda.ico" Height="780" Width="1280" MinHeight="600" MinWidth="800">
+        Title="Comanda" Icon="pack://application:,,,/VarthexComanda;component/Assets/VarthexComanda.ico" Height="780" Width="1280" MinHeight="600" MinWidth="800" WindowState="Maximized">
     <Window.Resources>
         <local:TextoMaiusculoConverter x:Key="TextoMaiusculo"/>
         <DataTemplate x:Key="RotuloCategoriaRibbon"><TextBlock Text="{Binding Converter={StaticResource TextoMaiusculo}}"/></DataTemplate>
