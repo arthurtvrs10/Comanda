@@ -7,5 +7,6 @@ public sealed record AlteracaoPreparo(int ItemId, StatusPreparo Esperado, decima
 public interface ICozinhaRepository
 {
     IReadOnlyList<ComandaComItens> ListarFila();
+    IReadOnlyList<ComandaComItens> ListarQuadro() => ListarFila();
     void AlterarPreparo(int comandaId, IReadOnlyList<AlteracaoPreparo> alteracoes, DateTime agora);
 }

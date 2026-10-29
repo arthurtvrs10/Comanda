@@ -1,4 +1,4 @@
-﻿using VarthexComanda.Application.Abstractions;
+using VarthexComanda.Application.Abstractions;
 using VarthexComanda.Application.Catalogo;
 using VarthexComanda.Domain;
 
@@ -7,6 +7,7 @@ namespace VarthexComanda.Application.Atendimento;
 public sealed class ConsultarFilaCozinha(ICozinhaRepository repositorio)
 {
     public IReadOnlyList<ComandaComItens> Executar() => repositorio.ListarFila();
+    public IReadOnlyList<ComandaComItens> Quadro() => repositorio.ListarQuadro();
 }
 
 public sealed record ConfirmacaoPreparo(int ComandaId);

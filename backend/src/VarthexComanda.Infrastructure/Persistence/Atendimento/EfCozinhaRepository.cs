@@ -7,10 +7,16 @@ namespace VarthexComanda.Infrastructure.Persistence.Atendimento;
 public sealed class EfCozinhaRepository(IDbContextFactory<VarthexComandaDbContext> fabrica) : ICozinhaRepository
 {
     public IReadOnlyList<ComandaComItens> ListarFila()
+        => Consultar(null);
+
+    public IReadOnlyList<ComandaComItens> ListarQuadro()
+        => Consultar(FusoBrasilia.ParaUtc(FusoBrasilia.ParaLocal(DateTime.UtcNow).Date));
+
+    private IReadOnlyList<ComandaComItens> Consultar(DateTime? entreguesDesde)
     {
         using var contexto=fabrica.CreateDbContext();
         var itens=contexto.ItensComanda.AsNoTracking()
-            .Where(i=>i.StatusPreparo!=StatusPreparo.Entregue && contexto.Comandas.Any(c=>c.Id==i.ComandaId && c.Status!=StatusComanda.Cancelada))
+            .Where(i=>(i.StatusPreparo!=StatusPreparo.Entregue || (entreguesDesde!=null && i.AtualizadoEm>=entreguesDesde)) && contexto.Comandas.Any(c=>c.Id==i.ComandaId && c.Status!=StatusComanda.Cancelada))
             .OrderBy(i=>i.CriadoEm).ThenBy(i=>i.Id).ToList();
         var ids=itens.Select(i=>i.ComandaId).Distinct().ToArray();
         var comandas=contexto.Comandas.AsNoTracking().Where(c=>ids.Contains(c.Id)).ToDictionary(c=>c.Id);

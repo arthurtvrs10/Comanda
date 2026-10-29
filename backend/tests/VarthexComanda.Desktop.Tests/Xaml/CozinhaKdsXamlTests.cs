@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -34,13 +34,15 @@ public class CozinhaKdsXamlTests
                 {
                     TemaInterface.Aplicar(escuro,false);
                     var view=new CozinhaView(()=>dados,(_,_)=>Resultado<ConfirmacaoPreparo>.Ok(new(1)));view.ViewModel.Agora=()=>CozinhaViewModelTests.Agora;view.Atualizar();
-                    Medir(view,tamanho);
+                    Medir(view,new Size(800,600)); Medir(view,tamanho);
+                    var quadro=(ItemsControl)view.FindName("Quadro");var rolagem=(ScrollViewer)view.FindName("RolagemPedidos");
+                    Assert.Equal(Math.Max(1500,rolagem.ViewportWidth),quadro.Width,1);
                     var textos=AlinhamentoInterfaceTests.Filhos(view).OfType<TextBlock>().Select(t=>t.Text).ToArray();
-                    Assert.Contains("Cozinha (KDS)",textos);Assert.Contains("Pendente",textos);Assert.Contains("Em preparo",textos);Assert.Contains("Pronto",textos);
-                    Assert.Contains("Sem cebola. Entregar junto com os lanches.",textos);Assert.DoesNotContain(textos,t=>t.Contains("R$"));
+                    Assert.DoesNotContain("Cozinha (KDS)",textos);Assert.Contains("Pendente",textos);Assert.Contains("Em preparo",textos);Assert.Contains("Pronto",textos);
+                    Assert.Contains("Sem cebola. Entregar junto com os lanches.",textos);Assert.Contains(textos,t=>t.Contains("R$")); Assert.Equal(5,view.ViewModel.Colunas.Count);
                     Assert.Contains(dados[0].Comanda.Observacao,textos);
                     var notas=AlinhamentoInterfaceTests.Filhos(view).OfType<Border>().Where(b=>b.Visibility==Visibility.Visible&&b.Style==view.FindResource("ObservacaoDestacada")).ToArray();
-                    Assert.Equal(2,notas.Length);Assert.All(notas,b=>Assert.Equal(((SolidColorBrush)view.FindResource("KdsObservacaoSurface")).Color,((SolidColorBrush)b.Background).Color));
+                    Assert.Equal(3,notas.Length);Assert.All(notas,b=>Assert.Equal(((SolidColorBrush)view.FindResource("KdsObservacaoSurface")).Color,((SolidColorBrush)b.Background).Color));
                     var selos=AlinhamentoInterfaceTests.Filhos(view).OfType<Border>().Where(b=>b.Style==view.FindResource("SeloEstado")).ToArray();
                     Assert.Contains(selos,b=>((SolidColorBrush)b.Background).Color==((SolidColorBrush)view.FindResource("KdsPreparoSurface")).Color);
                     Assert.Contains(selos,b=>((SolidColorBrush)b.Background).Color==((SolidColorBrush)view.FindResource("KdsProntoSurface")).Color);
@@ -48,8 +50,8 @@ public class CozinhaKdsXamlTests
                     Assert.Equal(2,descricoes.Count(t=>t.TextDecorations?.Any(d=>d.Location==TextDecorationLocation.Strikethrough)==true));
                     Assert.All(descricoes.Where(t=>((ItemKds)t.DataContext).Estado=="Pronto"),t=>Assert.Equal(((SolidColorBrush)view.FindResource("Success")).Color,((SolidColorBrush)t.Foreground).Color));
                     Assert.Contains("Comanda encerrada · entrega pendente",textos);
-                    var botoes=AlinhamentoInterfaceTests.Filhos(view).OfType<Button>().Where(b=>Equals(b.Content,"Entregue")).ToArray();
-                    Assert.Equal(4,botoes.Length);Assert.Single(botoes,b=>b.IsEnabled);
+                    var botoes=AlinhamentoInterfaceTests.Filhos(view).OfType<Button>().Where(b=>Equals(b.ToolTip,"Cancelar pedido")).ToArray();
+                    Assert.Equal(5,botoes.Length);Assert.Equal(4,botoes.Count(b=>b.IsEnabled));
                     Assert.Contains(AlinhamentoInterfaceTests.Filhos(view).OfType<ScrollViewer>(),s=>s.ScrollableHeight>0);
                     Capturar(view,$"kds-{(escuro?"escuro":"claro")}-{tamanho.Width}");
                 }

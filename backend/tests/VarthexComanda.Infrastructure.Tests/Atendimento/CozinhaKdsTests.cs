@@ -11,6 +11,16 @@ namespace VarthexComanda.Infrastructure.Tests.Atendimento;
 public class CozinhaKdsTests
 {
     [Fact]
+    public void QuadroMantemEntregasDoDiaSemReintroduzirNaFilaAtiva()
+    {
+        using var banco=new BancoDeHomologacao();var repo=new EfComandaRepository(banco.Fabrica);var cozinha=new EfCozinhaRepository(banco.Fabrica);var agora=DateTime.UtcNow;
+        var c=repo.AbrirComanda(9,agora);var item=repo.AdicionarItem(c.Id,banco.CriarProduto("Teste entregue",1500),1,agora).Itens.Single();
+        cozinha.AlterarPreparo(c.Id,[new(item.Id,StatusPreparo.Pendente,1,StatusPreparo.Pronto)],agora);
+        cozinha.AlterarPreparo(c.Id,[new(item.Id,StatusPreparo.Pronto,1,StatusPreparo.Entregue)],agora);
+        Assert.Empty(cozinha.ListarFila());Assert.Equal(1500,Assert.Single(Assert.Single(cozinha.ListarQuadro()).Itens).SubtotalCentavos);
+        repo.CancelarComanda(c.Id,agora);Assert.Empty(cozinha.ListarQuadro());
+    }
+    [Fact]
     public void PreparoPersisteSemAlterarConsumoPagamentoOuEncerramento()
     {
         using var banco=new BancoDeHomologacao();var repo=new EfComandaRepository(banco.Fabrica);var cozinha=new EfCozinhaRepository(banco.Fabrica);

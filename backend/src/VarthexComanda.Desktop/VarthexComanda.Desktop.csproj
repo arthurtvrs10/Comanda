@@ -1,6 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <EmbeddedResource Include="Assets\KdsCampainhaDupla.wav" LogicalName="VComanda.KdsCampainhaDupla.wav" />
+    <EmbeddedResource Include="Assets\KdsPedidoPronto.wav" LogicalName="VComanda.KdsPedidoPronto.wav" />
     <ProjectReference Include="..\VarthexComanda.Application\VarthexComanda.Application.csproj" />
     <ProjectReference Include="..\VarthexComanda.Infrastructure\VarthexComanda.Infrastructure.csproj" />
     <ProjectReference Include="..\VarthexComanda.Servidor\VarthexComanda.Servidor.csproj" />

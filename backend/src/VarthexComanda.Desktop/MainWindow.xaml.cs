@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
@@ -29,6 +29,7 @@ public partial class MainWindow : Window
     private readonly AtendimentoView _atendimentoView;
     private readonly BalcaoView _balcaoView;
     private readonly ProdutosView _produtosView;
+
     private readonly HistoricoView _historicoView;
     private readonly HistoricoPedidosView? _historicoPedidosView;
     private readonly BackupView _backupView;
@@ -46,14 +47,24 @@ public partial class MainWindow : Window
         _acessoAtendimento.GarantirPinInicial();
         _bloqueioView = new BloqueioAtendimentoView(_acessoAtendimento,_acesso,_colaboradores);
         CamadaBloqueio.Content = _bloqueioView;
-        _cozinhaView = new CozinhaView(filaCozinha is null ? atendimentoView.ViewModel.ConsultarCozinha : filaCozinha.Executar,
-            atualizarPreparo is null ? null : atualizarPreparo.Executar);
+        _cozinhaView = new CozinhaView(filaCozinha is null ? atendimentoView.ViewModel.ConsultarCozinha : filaCozinha.Quadro,
+            atualizarPreparo is null ? null : atualizarPreparo.Executar, configuracoes);
         RegistrarAtalho(IrParaAtendimentoCommand, BotaoAtendimento, IrParaAtendimento);
         RegistrarAtalho(IrParaProdutosCommand, BotaoProdutos, IrParaProdutos);
         RegistrarAtalho(IrParaHistoricoCommand, BotaoHistorico, IrParaHistorico);
         RegistrarAtalho(IrParaBackupCommand, BotaoBackup, IrParaBackup);
         RegistrarAtalho(IrParaConfiguracoesCommand, BotaoConfiguracoes, IrParaConfiguracoes);
         _atendimentoView = atendimentoView;
+        _cozinhaView.CancelarPedido=id=>{if(!_bloqueado&&PermiteColaborador("cozinha"))_atendimentoView.ViewModel.CancelarPedidoKds(id);};
+        _cozinhaView.ImprimirPedidoKds=id=>
+        {
+            if(_bloqueado||!PermiteColaborador("cozinha"))return;
+            var pedido=_atendimentoView.ViewModel.ConsultarPedidoKds(id);if(pedido is null)return;
+            var preferencias=LerPreferencias();
+            var nome=configuracaoView.ViewModel.NomeEstabelecimento;
+            var texto=Configuracao.ComprovanteConta.MontarTexto(preferencias,nome,pedido.Comanda.Numero,pedido.Itens,pedido.Comanda.CodigoPedido);
+            Configuracao.ComprovanteConta.Visualizar(this,texto,_repositorioSistema is null?null:new VarthexComanda.Application.Configuracao.ConfiguracoesImpressaoService(_repositorioSistema).ObterCaixaConfigurado(),criarDocumento:mm=>Configuracao.CupomTermico.Conta(preferencias,nome,pedido.Comanda,pedido.Itens,mm));
+        };
         _balcaoView = new BalcaoView(new BalcaoViewModel(atendimentoView.ViewModel));
         _balcaoView.ViewModel.AbrirPedidoSolicitado += (pedido,novo) =>
         {
@@ -206,7 +217,7 @@ public partial class MainWindow : Window
     private JanelaInterna ObterJanela(UIElement view)
     {
         if(_janelasInternas.TryGetValue(view,out var existente))return existente;
-        var titulo=view==_atendimentoView?"Mesas / comandas":view==_balcaoView?"Balcão":view==_produtosView?"Produtos":view==_historicoView?"Histórico de vendas":view==_historicoPedidosView?"Histórico de pedidos":view==_registrosView?"Logs e fila de eventos":view==_cozinhaView?"Cozinha":view==_backupView?"Backup e restauração":"Configurações";
+        var titulo=view==_atendimentoView?"Mesas / comandas":view==_balcaoView?"Balcão":view==_produtosView?"Produtos":view==_historicoView?"Histórico de vendas":view==_historicoPedidosView?"Histórico de pedidos":view==_registrosView?"Logs e fila de eventos":view==_cozinhaView?"Cozinha (KDS)":view==_backupView?"Backup e restauração":"Configurações";
         var janela=new JanelaInterna(titulo,view,view==_historicoPedidosView?0:view==_atendimentoView?760:720,view==_historicoPedidosView?0:view==_atendimentoView||view==_registrosView?540:360);
         if(view==_atendimentoView)
         {
@@ -487,6 +498,11 @@ public partial class MainWindow : Window
         if (_bloqueado || (PermissaoDaTela(view) is { } permissao && !PermiteColaborador(permissao))) return;
         var janela=ObterJanela(view);
         ConteudoPrincipal.Abrir(janela);
+        if(ReferenceEquals(view,_cozinhaView))
+        {
+            WindowState=WindowState.Maximized;
+            if(!janela.Maximizada)janela.AlternarMaximizar();
+        }
         AtualizarAbaAtiva();
         // Foco no primeiro controle util da tela; adiado ate a nova tela ser carregada.
         Dispatcher.BeginInvoke(DispatcherPriority.Input, new Action(() =>
