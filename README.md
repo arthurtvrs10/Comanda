@@ -4,35 +4,35 @@ A identidade **Comanda · por Varthex** aparece na abertura, área de trabalho, 
 
 Sistema Windows para organizar mesas, comandas e consumo em pequenos estabelecimentos de alimentação. Produtos, atendimento, fechamento e histórico funcionam localmente, sem depender da internet.
 
-**Release 1.4.3 · 25/10/2026 · versão em testes.** Cadastro de colaboradores e permissões por operação, autorização com senha mestra, guia do servidor e correção do acesso sem senha. Mantém servidor automático, logs e fila de eventos, até 500 comandas, catálogo e Cozinha (KDS). Edições normal e demonstração incluem o .NET e exigem ativação offline.
+**Release 1.4.4 · 28/10/2026 · versão em testes.** Acesso direto a Prioridade e Vincular mesa no pedido e número da comanda destacado em faixa preta na impressão. Mantém servidor automático, logs e fila de eventos, até 500 comandas, catálogo e Cozinha (KDS). Edições normal e demonstração incluem o .NET e exigem ativação offline.
 
 <img src="docs/design/principal-claro.png" alt="Área de trabalho Comanda com fundo cinza, logo centralizado e alternância de modo escuro" width="1000">
 
 ## Baixar para Windows
 
-| Edição 1.4.3 | Para quem | Download |
+| Edição 1.4.4 | Para quem | Download |
 | --- | --- | --- |
-| **Normal — sem demonstração** | Cadastrar os produtos reais do estabelecimento; catálogo vazio em uma instalação nova | [![Baixar edição normal para Windows](docs/design/download-windows.svg)](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.3/VarthexComanda-1.4.3-Setup-win-x64.exe) · [SHA-256](downloads/windows/VarthexComanda-1.4.3-Setup-win-x64.exe.sha256) |
-| **Demonstração** | Conhecer o sistema com 12 produtos fictícios e fotos; sem comandas abertas em uma base nova | [![Baixar demonstração para Windows](docs/design/download-windows.svg)](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.3/VarthexComanda-Demo-1.4.3-Setup-win-x64.exe) · [SHA-256](downloads/demo/VarthexComanda-Demo-1.4.3-Setup-win-x64.exe.sha256) |
+| **Normal — sem demonstração** | Cadastrar os produtos reais do estabelecimento; catálogo vazio em uma instalação nova | [![Baixar edição normal para Windows](docs/design/download-windows.svg)](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.4/VarthexComanda-1.4.4-Setup-win-x64.exe) · [SHA-256](downloads/windows/VarthexComanda-1.4.4-Setup-win-x64.exe.sha256) |
+| **Demonstração** | Conhecer o sistema com 12 produtos fictícios e fotos; sem comandas abertas em uma base nova | [![Baixar demonstração para Windows](docs/design/download-windows.svg)](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.4/VarthexComanda-Demo-1.4.4-Setup-win-x64.exe) · [SHA-256](downloads/demo/VarthexComanda-Demo-1.4.4-Setup-win-x64.exe.sha256) |
 
-**Instaladores 1.4.3 verificados em 25/10/2026:** edições normal e demonstração verificadas localmente pelo Defender, sem detecção. São 881 testes .NET e 7 testes JavaScript aprovados na versão isolada. Confira os arquivos SHA-256 e os limites nas [notas da 1.4.3](downloads/RELEASE-1.4.3.md).
+**Instaladores 1.4.4 verificados em 28/10/2026:** edições normal e demonstração verificadas localmente pelo Defender, sem detecção. São 881 testes .NET e 7 testes JavaScript aprovados na versão isolada. Confira os arquivos SHA-256 e os limites nas [notas da 1.4.4](downloads/RELEASE-1.4.4.md).
 
-[Notas da release 1.4.3](https://github.com/arthurtvrs10/Comanda/releases/tag/v1.4.3) · [Instalação normal](downloads/windows/README.md) · [Instalação da demonstração](downloads/demo/README.md)
+[Notas da release 1.4.4](https://github.com/arthurtvrs10/Comanda/releases/tag/v1.4.4) · [Instalação normal](downloads/windows/README.md) · [Instalação da demonstração](downloads/demo/README.md)
 
 Instalação por usuário, sem administrador, em Windows x64. Feche o aplicativo antes de atualizar. Reinstalar ou atualizar preserva os dados e a licença existentes. Os instaladores não possuem assinatura de código.
 
 A release é uma **pré-release**: instalação em Windows limpo e autorização/envio com uma conta Google real continuam pendentes. A [versão estável anterior 1.2.2](https://github.com/arthurtvrs10/Comanda/releases/tag/v1.2.2) permanece disponível.
 
-## Alterações posteriores à 1.4.3 — ainda sem nova release
+## Novidades da 1.4.4
 
 - **Prioridade na lateral do pedido:** botão acima de Vincular mesa e Vincular cliente, com as opções Normal, Mediana e Alta e indicação da prioridade atual. A opção foi retirada de Mais opções → Dados do pedido.
 - **Vincular mesa:** acesso direto logo abaixo de Prioridade para vincular, alterar ou remover a mesa do pedido. Deixar o campo vazio mantém o pedido como balcão. A opção foi retirada de Mais opções → Dados do pedido.
 - **Espaço na lateral:** campo de observação e espaçamentos ajustados para manter os novos botões e o controle Em fechamento visíveis em janelas menores.
 - **Número da comanda na impressão:** faixa preta com texto branco centralizado, em destaque, nos modelos de conta, cozinha, reimpressão e fichas de consumação, para papel de 58 e 80 mm. O código do pedido fica em linha separada; MESA/BALCÃO e a data/hora de geração da impressão, no horário de Brasília, permanecem identificados.
 
-Esses ajustes são do código-fonte e não alteram os instaladores já publicados da 1.4.3. O módulo de complementos e seu estoque continuam em desenvolvimento local, fora deste commit e da release.
+A 1.4.4 inclui esses ajustes nos instaladores normal e demonstração. O módulo de complementos e seu estoque continuam em desenvolvimento local e não acompanham esta release. Não há migração de banco nesta versão.
 
-Validação: 14 testes de menus, catálogo e impressão aprovados em Release em uma cópia isolada da 1.4.3 com somente esses ajustes, sem o módulo de complementos.
+Validação e arquivos: consulte as [notas da 1.4.4](downloads/RELEASE-1.4.4.md).
 
 ## Novidades da 1.4.3
 
