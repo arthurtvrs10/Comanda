@@ -140,12 +140,9 @@ public sealed partial class JanelaConfiguracoesSistema : Window
         }
         AtualizarEstado();
     }
-    public void HabilitarPrimeirosPassos(){ExibirPrimeirosPassos=true;if(_secao=="Geral")Mostrar("Geral");}
-    private bool ExibirPrimeirosPassos {get;set;}
     private void Geral()
     {
 
-        if(ExibirPrimeirosPassos)Botao("Primeiros passos",()=>_acao("primeiros-passos"));
         Subtitulo("Dados do estabelecimento");
         _camposGeral=new System.Windows.Controls.Primitives.UniformGrid { Columns=2 };_form.Children.Add(_camposGeral);
         DadoGeral("Nome do estabelecimento",_nome,v=>_nome=v,"Nome pelo qual seus clientes conhecem o estabelecimento. É usado na identificação e nos comprovantes.");

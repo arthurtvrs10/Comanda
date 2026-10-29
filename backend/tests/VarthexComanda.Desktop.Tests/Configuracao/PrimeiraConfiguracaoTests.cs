@@ -18,7 +18,7 @@ public sealed class PrimeiraConfiguracaoTests
     private static EstadoConfiguracao Pronto()=>EstadoConfiguracao.Exemplo();
     [Fact] public void InstalacaoVaziaAbreMasBaseExistenteNaoEhForcada()
     {
-        using var banco=new BancoDeHomologacao();var s=Servico(banco);Assert.True(s.DeveAbrir());new EfConfiguracaoRepository(banco.Fabrica).Definir("estabelecimento.nome","Existente",DateTime.UtcNow);Assert.False(s.DeveAbrir());
+        using var banco=new BancoDeHomologacao();var s=Servico(banco);Assert.True(s.DeveAbrir());Assert.True(s.ConfiguracaoPendente);new EfConfiguracaoRepository(banco.Fabrica).Definir("estabelecimento.nome","Existente",DateTime.UtcNow);Assert.False(s.DeveAbrir());
     }
     [Fact] public void RetomaRascunhoSemGravarConfiguracoesOperacionais()
     {
@@ -27,7 +27,7 @@ public sealed class PrimeiraConfiguracaoTests
     [Fact] public void ConclusaoPersisteProdutosUnidadesCupomQuantidadeEFormasSemDuplicar()
     {
         using var banco=new BancoDeHomologacao();var s=Servico(banco);var e=Pronto();s.SalvarRascunho(e);s.Concluir(e);s.Concluir(e);
-        using var db=banco.Fabrica.CreateDbContext();Assert.Equal(2,db.Produtos.Count());Assert.Single(db.Categorias);Assert.Equal(UnidadeVenda.Quilo,db.Produtos.Single(p=>p.Nome=="Refeição no quilo").UnidadeVenda);var r=new EfConfiguracaoRepository(banco.Fabrica);Assert.Equal(e.Nome,r.ObterValor("estabelecimento.nome"));Assert.Equal("30",r.ObterValor("comandas.quantidade_maxima"));Assert.Equal("1",r.ObterValor(PrimeiraConfiguracaoService.ChaveConclusao));Assert.False(s.DeveAbrir());Assert.False(File.Exists(s.ArquivoRascunho));Assert.Equal(e.Cupom.Documento,new ConfiguracoesSistemaService(r).Carregar().Documento);Assert.Equal(e.Pagamentos,JsonSerializer.Deserialize<List<string>>(r.ObterValor(PrimeiraConfiguracaoService.ChavePagamentos)!));
+        using var db=banco.Fabrica.CreateDbContext();Assert.Equal(2,db.Produtos.Count());Assert.Single(db.Categorias);Assert.Equal(UnidadeVenda.Quilo,db.Produtos.Single(p=>p.Nome=="Refeição no quilo").UnidadeVenda);var r=new EfConfiguracaoRepository(banco.Fabrica);Assert.Equal(e.Nome,r.ObterValor("estabelecimento.nome"));Assert.Equal("30",r.ObterValor("comandas.quantidade_maxima"));Assert.Equal("1",r.ObterValor(PrimeiraConfiguracaoService.ChaveConclusao));Assert.False(s.DeveAbrir());Assert.False(s.ConfiguracaoPendente);Assert.False(File.Exists(s.ArquivoRascunho));Assert.Equal(e.Cupom.Documento,new ConfiguracoesSistemaService(r).Carregar().Documento);Assert.Equal(e.Pagamentos,JsonSerializer.Deserialize<List<string>>(r.ObterValor(PrimeiraConfiguracaoService.ChavePagamentos)!));
     }
     [Fact] public void ConflitoReverteProdutosCategoriaEConfiguracoesDaTentativa()
     {

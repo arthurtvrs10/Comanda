@@ -107,6 +107,7 @@
 <Button x:Name="BotaoLicenca" Click="MostrarLicenca_Click" Content="Licença"/>
 <Button x:Name="BotaoCozinha" Click="MostrarCozinha_Click" Content="Comandas abertas"/>
 </WrapPanel></StackPanel></Border>
+        <local:FaixaConfiguracaoInicial x:Name="FaixaConfiguracao" DockPanel.Dock="Top" Configurar="ConfigurarFaixa_Click" />
         <Grid Background="{DynamicResource Canvas}"><Border x:Name="FundoTrabalho"/><Border x:Name="ImagemTrabalho"/><local:AreaTrabalhoInterna x:Name="ConteudoPrincipal" />
             <Grid x:Name="BalaoAjudaMascote" Visibility="Collapsed" HorizontalAlignment="Right" VerticalAlignment="Bottom"
                   Margin="12,12,16,124" Width="220" Panel.ZIndex="4">

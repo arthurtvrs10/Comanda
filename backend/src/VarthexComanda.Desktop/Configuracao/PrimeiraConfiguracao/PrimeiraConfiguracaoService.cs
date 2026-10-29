@@ -13,6 +13,7 @@ public sealed class PrimeiraConfiguracaoService(IDbContextFactory<VarthexComanda
     public const string ChaveConclusao="primeira-configuracao.concluida.v1";
     public const string ChavePagamentos="primeira-configuracao.pagamentos.v1";
     public string ArquivoRascunho=>Path.Combine(paths.Root,"primeira-configuracao.rascunho.json");
+    public bool ConfiguracaoPendente=>configuracoes.ObterValor(ChaveConclusao)!="1";
     public bool DeveAbrir()
     {
         if(configuracoes.ObterValor(ChaveConclusao)=="1")return false;

@@ -132,9 +132,8 @@ public partial class MainWindow : Window
         _atendimentoView.ViewModel.AtendimentoConcluido += AoConcluirAtendimento;
         Loaded += (_,_)=>Dispatcher.BeginInvoke(new Action(()=>
         {
-            // Termine o assistente antes dos avisos de licença e conexão.
-            // Modais concorrentes podem bloquear a janela que ficou à frente.
-            if(_primeiraConfiguracao?.DeveAbrir()==true&&PodeGerir())AbrirPrimeirosPassos();
+            // A configuração pendente é oferecida pela faixa, sem abrir um modal ao iniciar.
+            AtualizarFaixaConfiguracao();
             SugerirConexaoDriveAposLogin();
         }));
         Loaded += (_,_)=>InicializarDicaMascote();
@@ -451,6 +450,7 @@ public partial class MainWindow : Window
 
     private void AtualizarPerfil()
     {
+        AtualizarFaixaConfiguracao();
         SugerirConexaoDriveAposLogin();
         if (_acesso.Autenticado && !_acesso.AutenticadoPorColaborador) _colaboradores.Sair();
         foreach (var botao in new[] { BotaoProdutos, BotaoBackup, BotaoConfiguracoes, BotaoLicenca })
