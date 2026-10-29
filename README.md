@@ -4,36 +4,35 @@ A identidade **Comanda · por Varthex** aparece na abertura, área de trabalho, 
 
 Sistema Windows para organizar mesas, comandas e consumo em pequenos estabelecimentos de alimentação. Produtos, atendimento, fechamento e histórico funcionam localmente, sem depender da internet.
 
-**Release 1.4.4 · 28/10/2026 · versão em testes.** Acesso direto a Prioridade e Vincular mesa no pedido e número da comanda destacado em faixa preta na impressão. Mantém servidor automático, logs e fila de eventos, até 500 comandas, catálogo e Cozinha (KDS). Edições normal e demonstração incluem o .NET e exigem ativação offline.
+**Release 1.4.5 · 29/10/2026 · pré-release em testes.** KDS Kanban e assistente de primeira configuração. Windows x64 com runtime .NET e ativação offline.
 
 <img src="docs/design/principal-claro.png" alt="Área de trabalho Comanda com fundo cinza, logo centralizado e alternância de modo escuro" width="1000">
 
 ## Baixar para Windows
 
-| Edição 1.4.4 | Para quem | Download |
+| Edição 1.4.5 | Para quem | Download |
 | --- | --- | --- |
-| **Normal — sem demonstração** | Cadastrar os produtos reais do estabelecimento; catálogo vazio em uma instalação nova | [![Baixar edição normal para Windows](docs/design/download-windows.svg)](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.4/VarthexComanda-1.4.4-Setup-win-x64.exe) · [SHA-256](downloads/windows/VarthexComanda-1.4.4-Setup-win-x64.exe.sha256) |
-| **Demonstração** | Conhecer o sistema com 12 produtos fictícios e fotos; sem comandas abertas em uma base nova | [![Baixar demonstração para Windows](docs/design/download-windows.svg)](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.4/VarthexComanda-Demo-1.4.4-Setup-win-x64.exe) · [SHA-256](downloads/demo/VarthexComanda-Demo-1.4.4-Setup-win-x64.exe.sha256) |
+| **Normal — sem demonstração** | Cadastrar os produtos reais do estabelecimento; catálogo vazio em uma instalação nova | [![Baixar edição normal para Windows](docs/design/download-windows.svg)](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.5/VarthexComanda-1.4.5-Setup-win-x64.exe) · [SHA-256](downloads/windows/VarthexComanda-1.4.5-Setup-win-x64.exe.sha256) |
+| **Demonstração** | Conhecer o sistema com 12 produtos fictícios e fotos; sem comandas abertas em uma base nova | [![Baixar demonstração para Windows](docs/design/download-windows.svg)](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.5/VarthexComanda-Demo-1.4.5-Setup-win-x64.exe) · [SHA-256](downloads/demo/VarthexComanda-Demo-1.4.5-Setup-win-x64.exe.sha256) |
 
-**Instaladores 1.4.4 verificados em 28/10/2026:** edições normal e demonstração verificadas localmente pelo Defender, sem detecção. São 881 testes .NET e 7 testes JavaScript aprovados na versão isolada. Confira os arquivos SHA-256 e os limites nas [notas da 1.4.4](downloads/RELEASE-1.4.4.md).
+**Validação 1.4.5:** 914 testes .NET, 7 testes do atendimento web e 9 do protótipo aprovados em fonte isolada sem complementos/estoque. Instaladores normal e demonstração verificados localmente pelo Defender, sem detecção. Consulte as notas para hashes e limites.
 
-[Notas da release 1.4.4](https://github.com/arthurtvrs10/Comanda/releases/tag/v1.4.4) · [Instalação normal](downloads/windows/README.md) · [Instalação da demonstração](downloads/demo/README.md)
+[Notas da release 1.4.5](https://github.com/arthurtvrs10/Comanda/releases/tag/v1.4.5) · [Instalação normal](downloads/windows/README.md) · [Instalação da demonstração](downloads/demo/README.md)
 
 Instalação por usuário, sem administrador, em Windows x64. Feche o aplicativo antes de atualizar. Reinstalar ou atualizar preserva os dados e a licença existentes. Os instaladores não possuem assinatura de código.
 
 A release é uma **pré-release**: instalação em Windows limpo e autorização/envio com uma conta Google real continuam pendentes. A [versão estável anterior 1.2.2](https://github.com/arthurtvrs10/Comanda/releases/tag/v1.2.2) permanece disponível.
 
-## Novidades da 1.4.4
+## Novidades da 1.4.5
 
-- **Prioridade na lateral do pedido:** botão acima de Vincular mesa e Vincular cliente, com as opções Normal, Mediana e Alta e indicação da prioridade atual. A opção foi retirada de Mais opções → Dados do pedido.
-- **Vincular mesa:** acesso direto logo abaixo de Prioridade para vincular, alterar ou remover a mesa do pedido. Deixar o campo vazio mantém o pedido como balcão. A opção foi retirada de Mais opções → Dados do pedido.
-- **Espaço na lateral:** campo de observação e espaçamentos ajustados para manter os novos botões e o controle Em fechamento visíveis em janelas menores.
-- **Número da comanda na impressão:** faixa preta com texto branco centralizado, em destaque, nos modelos de conta, cozinha, reimpressão e fichas de consumação, para papel de 58 e 80 mm. O código do pedido fica em linha separada; MESA/BALCÃO e a data/hora de geração da impressão, no horário de Brasília, permanecem identificados.
+- **KDS em Kanban:** cinco raias, contadores, títulos editáveis, abertura maximizada e cartões separados por etapa. Novos lançamentos da mesma comanda aparecem em Pendente sem alterar os itens em preparo ou prontos.
+- **Movimentação:** arraste pelas áreas não clicáveis, cursor de mão, prévia inteira e animação, ou botão de seta para avançar. Cancelamento com confirmação e impressão com prévia no cartão.
+- **Painel simplificado:** Chamadas mais estreita, ícones de áudio e limpeza, indicador de última atualização no topo e rolagem independente por raia. Limpar entregues oculta apenas a visualização, preservando pedidos, estados e vendas.
+- **Alertas:** campainha dupla para novos itens e marimba para pedido pronto; Preparando e Entregue sem som. Aviso de volume abaixo de 80% ou mudo, com opção de não repetir. O sistema não altera o volume do Windows.
+- **Primeiros passos:** assistente Windows de sete etapas, rascunho, validação sequencial, CPF/CNPJ e telefone formatados, dados do estabelecimento, prévia do cupom, comandas, produtos, pagamentos e equipe. Acesso em Configurações → Configurações do sistema → Geral → Primeiros passos.
+- Formas de pagamento selecionadas no assistente são respeitadas no fechamento. Os protótipos de pagamento permanecem ferramentas de desenvolvimento, sem substituir o fluxo operacional.
 
-A 1.4.4 inclui esses ajustes nos instaladores normal e demonstração. O módulo de complementos e seu estoque continuam em desenvolvimento local e não acompanham esta release. Não há migração de banco nesta versão.
-
-Validação e arquivos: consulte as [notas da 1.4.4](downloads/RELEASE-1.4.4.md).
-
+**Complementos, estoque e as quatro migrações em desenvolvimento não fazem parte desta versão.** A coluna Chamadas não tem envio pelas mesas conectado. Fluidez do arraste/rolagem, áudio no equipamento e impressão física continuam sujeitos à homologação manual. Consulte as [notas da 1.4.5](downloads/RELEASE-1.4.5.md).
 ## Novidades da 1.4.3
 
 - **Colaboradores:** e-mail, percentual de comissão cadastrado, múltiplas funções, login opcional, acesso liberado, administrador e habilitação de senha mestra. O percentual é um dado cadastral; esta versão não apura nem paga comissões.

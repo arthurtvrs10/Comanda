@@ -4,7 +4,7 @@ Substitui o protótipo web como referência de validação. Usa WPF, recursos re
 
 Executável atualizado: backend/artifacts/configuracao-primeiros-passos/VarthexComanda.ConfiguracaoPrototipo.exe.
 
-O programa inicializa App(false), sem iniciar operação, licença, servidor ou banco real. A autorização InternalsVisibleTo permite apenas essa inicialização para o projeto de protótipo. Este executável é uma ferramenta isolada de desenvolvimento. O aplicativo operacional usa a integração descrita nas notas da 1.5.0.
+O programa inicializa App(false), sem iniciar operação, licença, servidor ou banco real. A autorização InternalsVisibleTo permite apenas essa inicialização para o projeto de protótipo. Este executável é uma ferramenta isolada de desenvolvimento. O aplicativo operacional usa a integração descrita nas notas da 1.4.5.
 
 ## Fluxo
 
