@@ -209,6 +209,7 @@ public partial class App : System.Windows.Application
         services.AddTransient<AtendimentoView>();
         services.AddTransient<ProdutosViewModel>();
         services.AddTransient<ProdutosView>();
+        services.AddTransient<VarthexComanda.Desktop.Configuracao.PrimeiraConfiguracao.PrimeiraConfiguracaoService>();
         services.AddTransient<MainWindow>();
 
         _serviceProvider = services.BuildServiceProvider();

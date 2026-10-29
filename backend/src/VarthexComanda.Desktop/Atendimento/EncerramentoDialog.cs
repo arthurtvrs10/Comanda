@@ -17,6 +17,13 @@ public class EncerramentoDialog : IEncerramentoDialog
     public bool Abrir(int comandaId)
     {
         var viewModel = _fabricaViewModel();
+        var formas=new HashSet<VarthexComanda.Domain.FormaPagamento>(Enum.GetValues<VarthexComanda.Domain.FormaPagamento>());
+        if(_configuracoes?.ObterValor(Configuracao.PrimeiraConfiguracao.PrimeiraConfiguracaoService.ChavePagamentos) is string json)
+        {
+            var nomes=System.Text.Json.JsonSerializer.Deserialize<List<string>>(json)??[];
+            formas=Enum.GetValues<VarthexComanda.Domain.FormaPagamento>().Where(f=>nomes.Contains(VarthexComanda.Domain.PagamentosConta.Nome(f))).ToHashSet();
+            viewModel.DefinirFormasPermitidas(formas);
+        }
         viewModel.Autorizar = Autorizar;
         viewModel.Carregar(comandaId);
         Action<System.Windows.Window>? imprimir=_configuracoes is null?null:owner=>
@@ -29,6 +36,7 @@ public class EncerramentoDialog : IEncerramentoDialog
         };
         var view = new EncerramentoView(viewModel,imprimir) { Owner = System.Windows.Application.Current.Windows.OfType<System.Windows.Window>().FirstOrDefault(w => w.IsActive)
             ?? System.Windows.Application.Current.MainWindow };
+        view.AplicarFormasPermitidas(formas);
         var concluido = view.ShowDialog() == true;
         if(concluido&&view.ImprimirAposFinalizar&&imprimir is not null)
         {

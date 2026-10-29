@@ -37,6 +37,7 @@ public partial class MainWindow
                 {
                     return new JanelaAcessoGestor(_acesso,ativarProtecao:true){Owner=_configuracoesModal??(Window)this}.ShowDialog()==true;
                 }) { Owner=this };
+            if(_primeiraConfiguracao is not null)_configuracoesModal.HabilitarPrimeirosPassos();
             _configuracoesModal.ShowDialog();
         }
         catch{JanelaAviso.Mostrar("Configurações","Não foi possível abrir as configurações. Verifique os dados e tente novamente.",TipoAviso.Erro);}

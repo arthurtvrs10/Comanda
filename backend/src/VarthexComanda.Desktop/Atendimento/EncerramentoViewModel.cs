@@ -71,7 +71,15 @@ public partial class EncerramentoViewModel : ObservableObject
     [RelayCommand]
     private void SelecionarForma(FormaPagamento forma)
     {
-        if (!Processando && !_registrado && Enum.IsDefined(forma)) FormaSelecionada = forma;
+        if (!Processando && !_registrado && Enum.IsDefined(forma) && _formasPermitidas.Contains(forma)) FormaSelecionada = forma;
+    }
+    private HashSet<FormaPagamento> _formasPermitidas=Enum.GetValues<FormaPagamento>().ToHashSet();
+    public void DefinirFormasPermitidas(IEnumerable<FormaPagamento> formas)
+    {
+        var permitidas=formas.Where(Enum.IsDefined).ToHashSet();
+        if(permitidas.Count==0)throw new ArgumentException("Selecione pelo menos uma forma de pagamento.");
+        _formasPermitidas=permitidas;
+        if(FormaSelecionada is {} atual&&!permitidas.Contains(atual))FormaSelecionada=null;
     }
 
     [ObservableProperty]

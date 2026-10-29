@@ -7,6 +7,10 @@ namespace VarthexComanda.Desktop.Atendimento;
 
 public partial class EncerramentoView : Window
 {
+    public void AplicarFormasPermitidas(IReadOnlySet<FormaPagamento> formas)
+    {
+        FormaDinheiro.IsEnabled=formas.Contains(FormaPagamento.Dinheiro);FormaPix.IsEnabled=formas.Contains(FormaPagamento.Pix);FormaDebito.IsEnabled=formas.Contains(FormaPagamento.Debito);FormaCredito.IsEnabled=formas.Contains(FormaPagamento.Credito);
+    }
     private readonly Action<Window>? _imprimir;
     private readonly Action<EncerramentoViewModel>? _editarRecebimento;
     public bool ImprimirAposFinalizar { get; private set; }
@@ -99,7 +103,7 @@ public partial class EncerramentoView : Window
         if (opcao is not null)
         {
             e.Handled = true;
-            if (e.IsRepeat || vm.Processando) return;
+            if (e.IsRepeat || vm.Processando || !opcao.IsEnabled) return;
             opcao.IsChecked = true;
             opcao.Focus();
             AbrirRecebimento();

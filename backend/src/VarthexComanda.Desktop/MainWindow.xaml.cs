@@ -37,8 +37,9 @@ public partial class MainWindow : Window
     private readonly Registros.RegistrosView _registrosView;
 
 
-    public MainWindow(AtendimentoView atendimentoView, ProdutosView produtosView, HistoricoView historicoView, BackupView backupView, ConfiguracaoView configuracaoView, VarthexComanda.Infrastructure.Storage.AppPaths? paths = null, VarthexComanda.Application.Configuracao.IConfiguracaoRepository? configuracoes = null, HistoricoPedidosView? historicoPedidosView = null, VarthexComanda.Servidor.ServidorLocal? servidorLocal = null, VarthexComanda.Application.Atendimento.ConsultarFilaCozinha? filaCozinha = null, VarthexComanda.Application.Atendimento.AtualizarPreparo? atualizarPreparo = null, VarthexComanda.Application.Abstractions.RegistroEventos? registroEventos = null)
+    public MainWindow(AtendimentoView atendimentoView, ProdutosView produtosView, HistoricoView historicoView, BackupView backupView, ConfiguracaoView configuracaoView, VarthexComanda.Infrastructure.Storage.AppPaths? paths = null, VarthexComanda.Application.Configuracao.IConfiguracaoRepository? configuracoes = null, HistoricoPedidosView? historicoPedidosView = null, VarthexComanda.Servidor.ServidorLocal? servidorLocal = null, VarthexComanda.Application.Atendimento.ConsultarFilaCozinha? filaCozinha = null, VarthexComanda.Application.Atendimento.AtualizarPreparo? atualizarPreparo = null, VarthexComanda.Application.Abstractions.RegistroEventos? registroEventos = null, VarthexComanda.Desktop.Configuracao.PrimeiraConfiguracao.PrimeiraConfiguracaoService? primeiraConfiguracao = null)
     {
+        _primeiraConfiguracao=primeiraConfiguracao;
         InitializeComponent();
         Title = $"Comanda · Versão {VersaoDoAplicativo.Atual}";
         _acesso = new AcessoGestor(System.IO.Path.Combine((paths ?? new VarthexComanda.Infrastructure.Storage.AppPaths()).Root, "gestor.credencial"));
@@ -127,7 +128,13 @@ public partial class MainWindow : Window
         Closing += (_, e) => { if (_backupView.ViewModel.EmAndamento || (!_bloqueado && !PodeSairDasConfiguracoes())) e.Cancel=true; };
         Closed += (_,_) => _painelSenhas?.Dispose();
         _atendimentoView.ViewModel.AtendimentoConcluido += AoConcluirAtendimento;
-        Loaded += (_,_)=>SugerirConexaoDriveAposLogin();
+        Loaded += (_,_)=>Dispatcher.BeginInvoke(new Action(()=>
+        {
+            // Termine o assistente antes dos avisos de licença e conexão.
+            // Modais concorrentes podem bloquear a janela que ficou à frente.
+            if(_primeiraConfiguracao?.DeveAbrir()==true&&PodeGerir())AbrirPrimeirosPassos();
+            SugerirConexaoDriveAposLogin();
+        }));
         Loaded += (_,_)=>InicializarDicaMascote();
         Closed += (_,_)=>OcultarDicaMascote();
         InicializarServidor(servidorLocal);
@@ -524,6 +531,7 @@ public partial class MainWindow : Window
     private void AcaoConfiguracao(string acao)
     {
         if(!PodeGerir() || !PermiteColaborador(acao is "backups" or "criar-backup" ? "backup" : acao == "licenca" ? "assinatura" : "configuracoes")) return;
+        if(acao=="primeiros-passos"){if(_configuracoesModal?.TemAlteracoes==true){JanelaAviso.Mostrar("Primeiros passos","Salve ou descarte as alterações das configurações antes de abrir o assistente.");return;}_configuracoesModal?.Close();Dispatcher.BeginInvoke(new Action(AbrirPrimeirosPassos));return;}
         if(acao=="recuperacao" && (!_colaboradores.SessaoIndividualIniciada || _colaboradores.Pode("colaboradores")))
         {
             new JanelaRecuperacaoGestor(_acesso,false,_configuracoesModal??(Window)this).ShowDialog();
