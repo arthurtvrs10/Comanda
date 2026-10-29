@@ -287,3 +287,17 @@ Cartão com borda simples, cabeçalho tonal, local/mesa, referência real de com
 **Regra da atualização honesta.** Rodapé informa leitura e intervalo real de três segundos enquanto o painel está visível. Falha preserva a última fila e desabilita mudanças até nova consulta bem-sucedida; falha inicial mostra Cozinha indisponível, distinta de fila vazia válida. Som do Windows é preferência da sessão e só avisa novos IDs após a carga inicial, sem repetir ao filtrar ou reler; falha de áudio não interrompe consulta. Não apresentar WebSocket ou KDS web como entregues.
 
 Parecer independente final `ship`, sem achados materiais, restrito às fontes/contrato e às dez capturas nativas WPF finais de 800 × 600, 1280 × 780 e 1900 × 900 nos dois temas, mais vazio e erro claro/escuro. As imagens são RenderTargetBitmap com dados fictícios controlados, sem moldura nem sessão operacional real. TYPE/MATERIAL/GROUND permaneceram coerentes com o mundo Comanda. Regressão Debug: 822 testes distintos aprovados; testes focados já incluídos. Publicação local Release win-x64 autocontida em artifacts/kds-desktop/publish, sem novo instalador/release externa. Áudio físico, toque/leitor de tela, outras escalas e piloto no estabelecimento seguem pendentes. Detector HTML/CSS não se aplica ao WPF; nenhum ImageGen ou novo raster de produto foi usado. Formato legado e ausências preexistentes de PRODUCT.md e .impeccable/design.json permanecem preservados, sem reparação lateral.
+
+## Padrões de campos e ajuda — 29/10/2026
+
+Rótulos de formulários usam ajuda contextual azul acionada por clique, Enter ou Espaço. O painel fecha ao clicar fora ou pressionar Esc. AjudaCampos mantém um catálogo único de explicações e RotuloAjuda preserva os vínculos de dados dos rótulos. Asteriscos já declarados como obrigatórios ficam vermelhos; não acrescentar texto de legenda. Preservar Label.Target, nomes de automação e regras de validação de cada cadastro.
+
+CampoTelefonePadrao concentra país, bandeira e DDI, com Brasil (+55) por padrão. Número brasileiro: (61) 9 0000-0900 para celular e (61) 0000-0900 para fixo. País fica persistido para evitar ambiguidade entre DDIs compartilhados. Reutilizado em Geral, colaboradores e assistente inicial. CPF/CNPJ usam pontuação automática e seleção de tipo somente nos cadastros que admitem os dois documentos; colaboradores continuam usando CPF. CEP 00000-000 e seleção de UF no endereço. Usar Nome do estabelecimento em vez de Nome fantasia.
+
+A configuração inicial pendente é oferecida por faixa no shell, com lembretes alternados e botão Configurar fixo. A faixa desaparece após conclusão persistida do assistente; não abrir automaticamente o assistente ao iniciar.
+
+## Imagem do estabelecimento — 29/10/2026
+
+Configurações → Geral contém prévia, seleção, arrastar arquivo e remover foto. Aceita JPG/PNG/BMP até 10 MB e 4000×4000 pixels; incorpora uma cópia PNG de até 600 pixels no maior lado, mantendo proporções. A sugestão visual é 600×600. Arquivo original pode ser movido depois do salvamento.
+
+Imagem e dados gerais são salvos na mesma operação. A foto usa a configuração de logo já existente no layout do ticket, sem banco ou imagem duplicada. Selecionar uma foto em Geral habilita sua impressão; remover desabilita. Preservar outras opções de layout. Alterações não salvas são descartáveis e a navegação entre seções mantém o rascunho. Conta da mesa, pagamento, KDS e prévia de Ajustes de cupom compartilham a imagem. Impressão térmica física precisa ser conferida com o equipamento.
