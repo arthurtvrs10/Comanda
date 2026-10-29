@@ -19,7 +19,7 @@ public partial class MainWindow
         {
             var numeracao = _repositorioSistema is null ? null : new NumeracaoComandasService(_repositorioSistema).Carregar();
             var texto = ComprovanteConta.MontarTexto(LerPreferencias(), _configuracaoView.ViewModel.NomeEstabelecimento, comanda.Numero, vm.Itens, comanda.CodigoPedido, false, numeracao?.UsarComoSenhaAtendimento == true ? comanda.Numero : null);
-            var enviada = ComprovanteConta.Visualizar(owner, texto, impressora, criarDocumento:mm=>CupomTermico.Conta(LerPreferencias(),_configuracaoView.ViewModel.NomeEstabelecimento,comanda,vm.Itens,mm,numeracao?.UsarComoSenhaAtendimento==true?comanda.Numero:null));
+            var enviada = ComprovanteConta.Visualizar(owner, texto, impressora, criarDocumento:mm=>CupomTermico.Conta(LerPreferencias(),_configuracaoView.ViewModel.NomeEstabelecimento,comanda,vm.Itens,mm,numeracao?.UsarComoSenhaAtendimento==true?comanda.Numero:null,servico?.LayoutTicket.Carregar()));
             if (enviada && saida == SaidaPedido.ContaBloquear && !vm.DefinirBloqueio(true))
                 throw new InvalidOperationException("A conta foi enviada, mas não foi possível iniciar o fechamento. Ative Em fechamento antes de continuar.");
             return enviada;

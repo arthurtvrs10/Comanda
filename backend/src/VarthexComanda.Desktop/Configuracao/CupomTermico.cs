@@ -11,7 +11,7 @@ using VarthexComanda.Desktop.Atendimento;
 namespace VarthexComanda.Desktop.Configuracao;
 
 /// <summary>Documentos vetoriais de impressão não fiscal, dimensionados em milímetros.</summary>
-public static class CupomTermico
+public static partial class CupomTermico
 {
     public static double Largura(int mm) => mm is 58 or 80 ? mm*96d/25.4 : throw new ArgumentException("Selecione papel de 58 mm ou 80 mm.");
     private static readonly System.Globalization.CultureInfo Cultura=System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
@@ -45,14 +45,15 @@ public static class CupomTermico
         }
         Regua(d);
     }
-    private static void Identificar(FlowDocument d,Comanda c)
+    private static void Identificar(FlowDocument d,Comanda c,LayoutTicket? layout=null)
     {
-        Linha(d,c.NumeroMesa is int mesa?$"MESA {mesa:00}":"BALCÃO",true,18);
+        if(layout?.NumeroMesa!=false)Linha(d,c.NumeroMesa is int mesa?$"MESA {mesa:00}":"BALCÃO",true,18);
         var faixa=Linha(d,$"COMANDA {c.Numero:00}",true,22,true);
         faixa.Background=Brushes.Black;faixa.Foreground=Brushes.White;
         faixa.Padding=new Thickness(4,6,4,6);faixa.Margin=new Thickness(0,4,0,6);faixa.KeepWithNext=true;
-        if(c.CodigoPedido is long codigo)Linha(d,$"Pedido: {codigo}",true);
-        Linha(d,FusoBrasilia.ParaLocal(DateTime.UtcNow).ToString("dd/MM/yyyy HH:mm",Cultura),tamanho:9);
+        if(layout?.CodigoPedido!=false&&c.CodigoPedido is long codigo)Linha(d,$"Pedido: {codigo}",true);
+        if(layout?.NomeCliente==true&&!string.IsNullOrWhiteSpace(c.NomeCliente))Linha(d,"Cliente: "+c.NomeCliente);
+        if(layout?.DataHora!=false)Linha(d,FusoBrasilia.ParaLocal(DateTime.UtcNow).ToString("dd/MM/yyyy HH:mm",Cultura),tamanho:9);
     }
     private static void Marca(FlowDocument d)
     {
@@ -61,11 +62,18 @@ public static class CupomTermico
         d.Blocks.Add(new BlockUIContainer(logo) { Margin=new Thickness(0,3,0,2) });
         Linha(d,"SISTEMA DE GESTÃO",true,8,true);
     }
-    public static FlowDocument Conta(PreferenciasSistema p,string nome,Comanda comanda,IEnumerable<ItemComanda> itens,int mm,int? senha=null)
+    public static FlowDocument Conta(PreferenciasSistema p,string nome,Comanda comanda,IEnumerable<ItemComanda> itens,int mm,int? senha=null,LayoutTicket? layout=null)
     {
-        var lista=itens.ToArray();var d=Novo(mm);Cabecalho(d,p,nome);
+        var lista=itens.ToArray();var d=Novo(mm);
+        if(layout?.ImprimirLogo==true&&layout.LogoBase64.Length>0)
+        {
+            using var stream=new System.IO.MemoryStream(Convert.FromBase64String(layout.LogoBase64));var imagem=new BitmapImage();imagem.BeginInit();imagem.CacheOption=BitmapCacheOption.OnLoad;imagem.StreamSource=stream;imagem.EndInit();imagem.Freeze();
+            d.Blocks.Add(new BlockUIContainer(new Image {Source=imagem,Width=100,MaxHeight=80,Stretch=Stretch.Uniform,HorizontalAlignment=HorizontalAlignment.Center}));
+        }
+        Cabecalho(d,p,layout?.NomeEstabelecimento==false?"":nome);
         Linha(d,string.IsNullOrWhiteSpace(p.CabecalhoCupom)?"CONFERÊNCIA DA CONTA":p.CabecalhoCupom,true,12,true);
-        Regua(d);Identificar(d,comanda);Regua(d);
+        Regua(d);Identificar(d,comanda,layout);Regua(d);
+        if(layout?.ObservacoesPedido==true&&!string.IsNullOrWhiteSpace(comanda.Observacao))Linha(d,"Obs. pedido: "+comanda.Observacao);
         var grupos=p.AgruparItensCupom?lista.GroupBy(i=>new{i.ProdutoId,i.NomeProduto,i.PrecoUnitarioCentavos,i.Observacao,i.UnidadeVenda})
             .Select(g=>(Nome:g.Key.NomeProduto,Qtd:g.Sum(i=>i.Quantidade),Unit:g.Key.PrecoUnitarioCentavos,Total:g.Sum(i=>i.SubtotalCentavos),Obs:g.Key.Observacao,Unidade:g.Key.UnidadeVenda))
             :lista.Select(i=>(Nome:i.NomeProduto,Qtd:i.Quantidade,Unit:i.PrecoUnitarioCentavos,Total:i.SubtotalCentavos,Obs:i.Observacao,Unidade:i.UnidadeVenda));
@@ -79,7 +87,7 @@ public static class CupomTermico
             linha.Cells.Add(new TableCell(new Paragraph(new Run($"{MedidasVenda.FormatarQuantidade(item.Qtd,item.Unidade)} {item.Unidade.Simbolo()} × {CentavosParaMoedaConverter.Formatar(item.Unit)}")) { Margin=new Thickness(0) }));
             linha.Cells.Add(new TableCell(new Paragraph(new Run(CentavosParaMoedaConverter.Formatar(item.Total))) { TextAlignment=TextAlignment.Right,FontWeight=FontWeights.Bold,Margin=new Thickness(0) }));
             grupo.Rows.Add(linha);tabela.RowGroups.Add(grupo);d.Blocks.Add(tabela);
-            if(p.ExibirObservacoesCupom&&!string.IsNullOrWhiteSpace(item.Obs))Linha(d,"Obs.: "+item.Obs,tamanho:9);
+            if((layout?.ObservacoesItem??p.ExibirObservacoesCupom)&&!string.IsNullOrWhiteSpace(item.Obs))Linha(d,"Obs.: "+item.Obs,tamanho:9);
         }
         Regua(d);Linha(d,"TOTAL: "+CentavosParaMoedaConverter.Formatar(lista.Sum(i=>i.SubtotalCentavos)),true,17);
         var pagamentos=PagamentosConta.Ler(comanda.PagamentosJson).Where(x=>!x.Cancelado).ToArray();
@@ -98,8 +106,9 @@ public static class CupomTermico
         if(senha is int s){Regua(d);Linha(d,$"SENHA DE ATENDIMENTO: {s}",true,16,true);}
         Marca(d);return d;
     }
-    public static FlowDocument Producao(PreferenciasSistema p,string nome,Comanda c,IEnumerable<ItemComanda> itens,IReadOnlyDictionary<int,decimal> quantidades,bool reimpressao,int mm)
+    public static FlowDocument Producao(PreferenciasSistema p,string nome,Comanda c,IEnumerable<ItemComanda> itens,IReadOnlyDictionary<int,decimal> quantidades,bool reimpressao,int mm,LayoutTicket? layout=null)
     {
+        if(layout is not null)return TicketCozinha(nome,c,itens,quantidades,reimpressao,mm,layout);
         var d=Novo(mm);Cabecalho(d,p,nome);Linha(d,reimpressao?"REIMPRESSÃO · COZINHA":"COZINHA",true,17,true);Regua(d);Identificar(d,c);
         if(!string.IsNullOrWhiteSpace(c.Observacao))Linha(d,"OBSERVAÇÃO DO PEDIDO\n"+c.Observacao,true).BorderThickness=new Thickness(1);
         foreach(var i in itens.Where(i=>quantidades.TryGetValue(i.Id,out var q)&&q>0))

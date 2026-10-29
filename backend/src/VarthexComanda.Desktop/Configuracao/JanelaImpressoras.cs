@@ -17,6 +17,7 @@ public sealed record ImpressoraWindows(string Nome, string Caminho, bool Compart
 public sealed class JanelaImpressoras : Window
 {
     private const string Caixa = "Impressora do Caixa (Este PC)";
+    private const string Layout = "Layout do ticket";
     private readonly ConfiguracoesImpressaoService _service;
     private readonly PreferenciasImpressao _preferencias;
     private readonly Func<IReadOnlyList<ImpressoraWindows>> _consultar;
@@ -29,7 +30,11 @@ public sealed class JanelaImpressoras : Window
     private IReadOnlyList<ImpressoraWindows> _impressoras = [];
     private string _snapshot;
     private bool _mostrando;
-    public bool TemAlteracoes => _snapshot != JsonSerializer.Serialize(_preferencias);
+    private readonly ContentControl _areaEditor=new(){HorizontalContentAlignment=HorizontalAlignment.Stretch,VerticalContentAlignment=VerticalAlignment.Stretch};
+    private JanelaLayoutTicket? _layoutEditor;
+    private FrameworkElement? _layoutConteudo;
+    private ScrollViewer? _scrollFormulario;
+    public bool TemAlteracoes => _snapshot != JsonSerializer.Serialize(_preferencias)||_layoutEditor?.TemAlteracoes==true;
 
     public JanelaImpressoras(ConfiguracoesImpressaoService service, Action? salvo = null,
         Func<IReadOnlyList<ImpressoraWindows>>? consultar = null, Action<PreferenciaImpressora>? testar = null)
@@ -51,7 +56,7 @@ public sealed class JanelaImpressoras : Window
         var area = new Grid(); area.ColumnDefinitions.Add(new() { Width = new GridLength(235) }); area.ColumnDefinitions.Add(new() { Width = new GridLength(1, GridUnitType.Star) });
         var lateral = new DockPanel(); var legenda = new TextBlock { Text = "Locais", FontWeight = FontWeights.SemiBold, Margin = new Thickness(0, 0, 0, 6) }; DockPanel.SetDock(legenda, Dock.Top); lateral.Children.Add(legenda);
         lateral.Children.Add(_locais); area.Children.Add(lateral);
-        foreach (var nome in new[] { Caixa }.Concat(_service.CarregarLocais().Select(x => x.Nome)))
+        foreach (var nome in new[] { Caixa }.Concat(_service.CarregarLocais().Select(x => x.Nome)).Append(Layout))
         {
             var item = new ListBoxItem { Tag = nome, Padding = new Thickness(8), MinHeight = 44, HorizontalContentAlignment = HorizontalAlignment.Stretch };
             var linha = new DockPanel(); var icone = new Path { Data = Geometry.Parse("M3,8 L3,2 13,2 13,8 M3,12 L1,12 1,6 15,6 15,12 13,12 M3,10 L13,10 13,15 3,15 Z M11,8 L13,8"), Width = 18, Height = 18, Stretch = Stretch.Uniform, StrokeThickness = 1.2, Margin = new Thickness(0, 0, 10, 0),VerticalAlignment=VerticalAlignment.Center };
@@ -59,7 +64,7 @@ public sealed class JanelaImpressoras : Window
             linha.Children.Add(new TextBlock { Text = nome, VerticalAlignment = VerticalAlignment.Center, TextWrapping = TextWrapping.Wrap }); item.Content = linha;
             System.Windows.Automation.AutomationProperties.SetName(item, nome); _locais.Items.Add(item);
         }
-        var scroll = new ScrollViewer { Content = _form, VerticalScrollBarVisibility = ScrollBarVisibility.Auto }; Grid.SetColumn(scroll, 1); area.Children.Add(scroll);
+        var scroll = new ScrollViewer { Content = _form, VerticalScrollBarVisibility = ScrollBarVisibility.Auto };_scrollFormulario=scroll;_areaEditor.Content=scroll;Grid.SetColumn(_areaEditor, 1); area.Children.Add(_areaEditor);
         var moldura = new Border { Child = area, Padding = new Thickness(10), BorderThickness = new Thickness(1) }; moldura.SetResourceReference(Border.BorderBrushProperty, "Line"); raiz.Children.Add(moldura);
         var rodape = new DockPanel { Margin = new Thickness(0, 10, 0, 0) }; var botoes = new StackPanel { Orientation = Orientation.Horizontal };
         _teste.Click += (_, _) => Executar(Testar); botoes.Children.Add(_teste);
@@ -83,6 +88,13 @@ public sealed class JanelaImpressoras : Window
     private void Mostrar()
     {
         _mostrando = true; _form.Children.Clear();
+        if(LocalAtual==Layout)
+        {
+            if(_layoutEditor is null){_layoutEditor=new JanelaLayoutTicket(_service.LayoutTicket,true);_layoutConteudo=_layoutEditor.ExtrairEditor();}
+            _areaEditor.Content=_layoutConteudo;
+            _teste.IsEnabled=false;_mostrando=false;return;
+        }
+        _areaEditor.Content=_scrollFormulario;
         var saida = Atual;
         _form.Children.Add(new TextBlock { Text = LocalAtual, FontSize = 17, FontWeight = FontWeights.SemiBold, Margin = new Thickness(0, 0, 0, 14), TextWrapping = TextWrapping.Wrap });
         var modos = new WrapPanel { Margin = new Thickness(0, 0, 0, 12) };
@@ -141,6 +153,7 @@ public sealed class JanelaImpressoras : Window
     }
     private void Salvar()
     {
+        if(_layoutEditor?.TemAlteracoes==true)_layoutEditor.SalvarLayout();
         _service.Salvar(_preferencias, DateTime.UtcNow); _snapshot = JsonSerializer.Serialize(_preferencias); _salvo?.Invoke(); _mensagem.Text = "Configuração de impressoras salva.";
     }
 }

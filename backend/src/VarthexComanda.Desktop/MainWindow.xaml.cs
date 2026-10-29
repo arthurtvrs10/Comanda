@@ -64,7 +64,9 @@ public partial class MainWindow : Window
             var preferencias=LerPreferencias();
             var nome=configuracaoView.ViewModel.NomeEstabelecimento;
             var texto=Configuracao.ComprovanteConta.MontarTexto(preferencias,nome,pedido.Comanda.Numero,pedido.Itens,pedido.Comanda.CodigoPedido);
-            Configuracao.ComprovanteConta.Visualizar(this,texto,_repositorioSistema is null?null:new VarthexComanda.Application.Configuracao.ConfiguracoesImpressaoService(_repositorioSistema).ObterCaixaConfigurado(),criarDocumento:mm=>Configuracao.CupomTermico.Conta(preferencias,nome,pedido.Comanda,pedido.Itens,mm));
+            var impressao=_repositorioSistema is null?null:new VarthexComanda.Application.Configuracao.ConfiguracoesImpressaoService(_repositorioSistema);
+            var layout=impressao?.LayoutTicket.Carregar();
+            Configuracao.ComprovanteConta.Visualizar(this,texto,impressao?.ObterCaixaConfigurado(),criarDocumento:mm=>Configuracao.CupomTermico.Conta(preferencias,nome,pedido.Comanda,pedido.Itens,mm,layout:layout));
         };
         _balcaoView = new BalcaoView(new BalcaoViewModel(atendimentoView.ViewModel));
         _balcaoView.ViewModel.AbrirPedidoSolicitado += (pedido,novo) =>

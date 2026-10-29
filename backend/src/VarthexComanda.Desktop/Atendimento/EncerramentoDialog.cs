@@ -32,7 +32,7 @@ public class EncerramentoDialog : IEncerramentoDialog
             var nome=new ObterConfiguracao(_configuracoes).Executar().NomeEstabelecimento;
             var impressora=new ConfiguracoesImpressaoService(_configuracoes).Carregar().Caixa;
             var texto=ComprovanteConta.MontarTexto(prefs,nome,viewModel.NumeroComanda,viewModel.Itens,viewModel.ComandaAtual?.CodigoPedido);
-            ComprovanteConta.Visualizar(owner,texto,impressora,criarDocumento:mm=>CupomTermico.Conta(prefs,nome,viewModel.ComandaAtual!,viewModel.Itens,mm));
+            ComprovanteConta.Visualizar(owner,texto,impressora,criarDocumento:mm=>CupomTermico.Conta(prefs,nome,viewModel.ComandaAtual!,viewModel.Itens,mm,layout:new ConfiguracoesImpressaoService(_configuracoes).LayoutTicket.Carregar()));
         };
         var view = new EncerramentoView(viewModel,imprimir) { Owner = System.Windows.Application.Current.Windows.OfType<System.Windows.Window>().FirstOrDefault(w => w.IsActive)
             ?? System.Windows.Application.Current.MainWindow };

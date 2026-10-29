@@ -21,6 +21,7 @@ public sealed class PreferenciasImpressao
 /// <summary>Preferências de saída não fiscal. A ausência de configuração preserva a seleção manual anterior.</summary>
 public sealed class ConfiguracoesImpressaoService(IConfiguracaoRepository repositorio)
 {
+    public LayoutTicketService LayoutTicket=>new(repositorio);
     public const string Chave = "impressoras.preferencias.v1";
     public PreferenciasImpressao Carregar()
     {
