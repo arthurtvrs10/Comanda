@@ -48,7 +48,10 @@ public static class CupomTermico
     private static void Identificar(FlowDocument d,Comanda c)
     {
         Linha(d,c.NumeroMesa is int mesa?$"MESA {mesa:00}":"BALCÃO",true,18);
-        Linha(d,$"COMANDA {c.Numero:00}"+(c.CodigoPedido is long codigo?$" · Pedido: {codigo}":""),true);
+        var faixa=Linha(d,$"COMANDA {c.Numero:00}",true,22,true);
+        faixa.Background=Brushes.Black;faixa.Foreground=Brushes.White;
+        faixa.Padding=new Thickness(4,6,4,6);faixa.Margin=new Thickness(0,4,0,6);faixa.KeepWithNext=true;
+        if(c.CodigoPedido is long codigo)Linha(d,$"Pedido: {codigo}",true);
         Linha(d,FusoBrasilia.ParaLocal(DateTime.UtcNow).ToString("dd/MM/yyyy HH:mm",Cultura),tamanho:9);
     }
     private static void Marca(FlowDocument d)

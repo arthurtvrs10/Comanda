@@ -23,6 +23,17 @@ Instalação por usuário, sem administrador, em Windows x64. Feche o aplicativo
 
 A release é uma **pré-release**: instalação em Windows limpo e autorização/envio com uma conta Google real continuam pendentes. A [versão estável anterior 1.2.2](https://github.com/arthurtvrs10/Comanda/releases/tag/v1.2.2) permanece disponível.
 
+## Alterações posteriores à 1.4.3 — ainda sem nova release
+
+- **Prioridade na lateral do pedido:** botão acima de Vincular mesa e Vincular cliente, com as opções Normal, Mediana e Alta e indicação da prioridade atual. A opção foi retirada de Mais opções → Dados do pedido.
+- **Vincular mesa:** acesso direto logo abaixo de Prioridade para vincular, alterar ou remover a mesa do pedido. Deixar o campo vazio mantém o pedido como balcão. A opção foi retirada de Mais opções → Dados do pedido.
+- **Espaço na lateral:** campo de observação e espaçamentos ajustados para manter os novos botões e o controle Em fechamento visíveis em janelas menores.
+- **Número da comanda na impressão:** faixa preta com texto branco centralizado, em destaque, nos modelos de conta, cozinha, reimpressão e fichas de consumação, para papel de 58 e 80 mm. O código do pedido fica em linha separada; MESA/BALCÃO e a data/hora de geração da impressão, no horário de Brasília, permanecem identificados.
+
+Esses ajustes são do código-fonte e não alteram os instaladores já publicados da 1.4.3. O módulo de complementos e seu estoque continuam em desenvolvimento local, fora deste commit e da release.
+
+Validação: 14 testes de menus, catálogo e impressão aprovados em Release em uma cópia isolada da 1.4.3 com somente esses ajustes, sem o módulo de complementos.
+
 ## Novidades da 1.4.3
 
 - **Colaboradores:** e-mail, percentual de comissão cadastrado, múltiplas funções, login opcional, acesso liberado, administrador e habilitação de senha mestra. O percentual é um dado cadastral; esta versão não apura nem paga comissões.

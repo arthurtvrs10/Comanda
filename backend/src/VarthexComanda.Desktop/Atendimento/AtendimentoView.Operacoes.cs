@@ -109,11 +109,7 @@ public partial class AtendimentoView
         Acao(menu, "Recalcular pedido", () => ViewModel.RecalcularPedido());
         menu.Items.Add(new Separator());
         var dados = Acao(menu, "Dados do pedido", () => { });
-        Acao(dados, "Definir mesa", () => new EditarDadosComandaView(ViewModel, "mesa") { Owner = _janelaComanda ?? Window.GetWindow(this) }.ShowDialog());
         Acao(dados, "Alterar quantidade de pessoas", () => new EditarDadosComandaView(ViewModel, "pessoas") { Owner = _janelaComanda ?? Window.GetWindow(this) }.ShowDialog());
-        var prioridades = Acao(dados, "Prioridade", () => { });
-        foreach (var prioridade in Enum.GetValues<PrioridadeComanda>())
-            Acao(prioridades, AtendimentoViewModel.NomePrioridade(prioridade), () => ViewModel.AlterarPrioridadeCommand.Execute(prioridade));
         Acao(dados, "Origem do cliente", () => OrigemCliente_Click(botao, new RoutedEventArgs()));
         menu.Items.Add(new Separator());
         Acao(menu, "Excluir pedido…", () => ViewModel.CancelarComandaAtualCommand.Execute(null));
