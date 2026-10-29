@@ -135,8 +135,8 @@ public sealed class JanelaConfiguracao:Window
     private Button Botao(string texto,Action acao){var b=new Button {Content=texto,HorizontalAlignment=HorizontalAlignment.Left,MinHeight=34,Padding=new Thickness(12,6,12,6),Margin=new Thickness(0,8,0,8)};b.Click+=(_,_)=>acao();return b;}
     private TextBox Campo(Panel p,string titulo,string valor,Action<string> alterar,bool obrigatorio=false,bool multilinha=false,Func<string,string>? mascara=null)
     {
-        var bloco=new StackPanel { Margin=new Thickness(0,0,18,14) };var label=new TextBlock { Margin=new Thickness(0,0,0,6) };label.Inlines.Add(new Run(titulo));if(obrigatorio)label.Inlines.Add(new Run(" *"){Foreground=Brushes.Firebrick});bloco.Children.Add(label);
-        var caixa=new TextBox {Text=valor,MinHeight=34,Padding=new Thickness(8,6,8,6),AcceptsReturn=multilinha,TextWrapping=multilinha?TextWrapping.Wrap:TextWrapping.NoWrap,MaxLength=multilinha?300:120};if(multilinha)caixa.MinHeight=60;AutomationProperties.SetName(caixa,titulo);AutomationProperties.SetIsRequiredForForm(caixa,obrigatorio);VincularEdicao(caixa,alterar,mascara);bloco.Children.Add(caixa);p.Children.Add(bloco);return caixa;
+        var bloco=new StackPanel { Margin=new Thickness(0,0,18,14) };var label=new RotuloAjuda {Texto=titulo+(obrigatorio?" *":""),Margin=new Thickness(0,0,0,6)};bloco.Children.Add(label);
+        var caixa=new TextBox {Text=valor,MinHeight=34,Padding=new Thickness(8,6,8,6),AcceptsReturn=multilinha,TextWrapping=multilinha?TextWrapping.Wrap:TextWrapping.NoWrap,MaxLength=multilinha?300:120};if(multilinha)caixa.MinHeight=60;AutomationProperties.SetName(caixa,titulo);AutomationProperties.SetIsRequiredForForm(caixa,obrigatorio);VincularEdicao(caixa,alterar,mascara??(titulo=="CEP"?JanelaConfiguracoesSistema.FormatarCep:null));bloco.Children.Add(caixa);p.Children.Add(bloco);return caixa;
     }
     private void VincularEdicao(TextBox caixa,Action<string> alterar,Func<string,string>? mascara)
     {
@@ -171,7 +171,7 @@ public sealed class JanelaConfiguracao:Window
     private void Documento(Panel p)
     {
         var bloco=new StackPanel {Margin=new Thickness(0,0,18,14)};
-        var label=new TextBlock {Margin=new Thickness(0,0,0,6)};label.Inlines.Add(new Run("Documento"));if(_estado.Cupom.ExibirDocumentoCupom)label.Inlines.Add(new Run(" *"){Foreground=Brushes.Firebrick});bloco.Children.Add(label);
+        var label=new RotuloAjuda {Texto="Documento"+(_estado.Cupom.ExibirDocumentoCupom?" *":""),Margin=new Thickness(0,0,0,6)};bloco.Children.Add(label);
         var linha=new Grid();linha.ColumnDefinitions.Add(new(){Width=new GridLength(98)});linha.ColumnDefinitions.Add(new(){Width=new GridLength(1,GridUnitType.Star)});
         var tipo=new ComboBox {ItemsSource=new[]{"CNPJ","CPF"},SelectedItem=_estado.TipoDocumento,MinHeight=34,Margin=new Thickness(0,0,8,0)};AutomationProperties.SetName(tipo,"Tipo de documento");linha.Children.Add(tipo);
         var numero=new TextBox {Text=_estado.Cupom.Documento,MinHeight=34,Padding=new Thickness(8,6,8,6),ToolTip="Digite somente os números"};Grid.SetColumn(numero,1);linha.Children.Add(numero);AutomationProperties.SetName(numero,"Número do "+_estado.TipoDocumento);AutomationProperties.SetIsRequiredForForm(numero,_estado.Cupom.ExibirDocumentoCupom);
@@ -221,8 +221,11 @@ public sealed class JanelaConfiguracao:Window
     private FrameworkElement Estabelecimento()
     {
         var p=Painel();var campos=new UniformGridNativo {Columns=2};p.Children.Add(campos);var c=_estado.Cupom;
-        Campo(campos,"Nome fantasia",_estado.Nome,v=>_estado.Nome=v,true);Documento(campos);Campo(campos,"Razão social",c.RazaoSocial,v=>c.RazaoSocial=v);Campo(campos,"Inscrição estadual",c.InscricaoEstadual,v=>c.InscricaoEstadual=v);Campo(campos,"Telefone principal",c.Telefone,v=>c.Telefone=v,mascara:Mascaras.Telefone);
-        var endereco=new UniformGridNativo {Columns=2};Campo(endereco,"Endereço",c.Endereco,v=>c.Endereco=v,c.ExibirEnderecoCupom);Campo(endereco,"Número",c.Numero,v=>c.Numero=v);Campo(endereco,"Complemento",c.Complemento,v=>c.Complemento=v);Campo(endereco,"Bairro",c.Bairro,v=>c.Bairro=v);Campo(endereco,"CEP",c.Cep,v=>c.Cep=v);Campo(endereco,"Cidade",c.Cidade,v=>c.Cidade=v);Campo(endereco,"UF",c.Uf,v=>c.Uf=v);
+        Campo(campos,"Nome do estabelecimento",_estado.Nome,v=>_estado.Nome=v,true);Documento(campos);Campo(campos,"Razão social",c.RazaoSocial,v=>c.RazaoSocial=v);Campo(campos,"Inscrição estadual",c.InscricaoEstadual,v=>c.InscricaoEstadual=v);var telefone=new CampoTelefonePadrao(c.Telefone,c.PaisTelefone);
+        var blocoTelefone=new StackPanel {Margin=new Thickness(0,0,18,14)};blocoTelefone.Children.Add(new RotuloAjuda {Texto="Telefone principal",Margin=new Thickness(0,0,0,6)});blocoTelefone.Children.Add(telefone);campos.Children.Add(blocoTelefone);
+        telefone.Alterado+=(_,_)=>{c.Telefone=telefone.Telefone;c.PaisTelefone=telefone.CodigoPais;Alterado();};
+        var endereco=new UniformGridNativo {Columns=2};Campo(endereco,"Endereço",c.Endereco,v=>c.Endereco=v,c.ExibirEnderecoCupom);Campo(endereco,"Número",c.Numero,v=>c.Numero=v);Campo(endereco,"Complemento",c.Complemento,v=>c.Complemento=v);Campo(endereco,"Bairro",c.Bairro,v=>c.Bairro=v);Campo(endereco,"CEP",c.Cep,v=>c.Cep=v);Campo(endereco,"Cidade",c.Cidade,v=>c.Cidade=v);var estados=new ComboBox {ItemsSource=new[]{"","AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG","PA","PB","PR","PE","PI","RJ","RN","RS","RO","RR","SC","SP","SE","TO"},SelectedItem=c.Uf.Trim().ToUpperInvariant(),MinHeight=36};
+        var blocoEstado=new StackPanel {Margin=new Thickness(0,0,18,14)};blocoEstado.Children.Add(new RotuloAjuda {Texto="Estado (UF)",Margin=new Thickness(0,0,0,6)});blocoEstado.Children.Add(estados);endereco.Children.Add(blocoEstado);estados.SelectionChanged+=(_,_)=>{c.Uf=estados.SelectedItem as string??"";Alterado();};
         p.Children.Add(new Expander {Header="Endereço do estabelecimento",Content=endereco,Margin=new Thickness(0,10,0,0)});return Rolagem(p);
     }
     private FrameworkElement ComandaImpressa()

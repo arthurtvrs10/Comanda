@@ -144,17 +144,24 @@ public sealed partial class JanelaConfiguracoesSistema : Window
     private bool ExibirPrimeirosPassos {get;set;}
     private void Geral()
     {
+
         if(ExibirPrimeirosPassos)Botao("Primeiros passos",()=>_acao("primeiros-passos"));
         Subtitulo("Dados do estabelecimento");
         _camposGeral=new System.Windows.Controls.Primitives.UniformGrid { Columns=2 };_form.Children.Add(_camposGeral);
-        Campo("Nome fantasia",_nome,v=>_nome=v);Campo("Razão social",_prefs.RazaoSocial,v=>_prefs.RazaoSocial=v);
-        Campo("CNPJ / CPF",_prefs.Documento,v=>_prefs.Documento=v);Campo("Inscrição estadual",_prefs.InscricaoEstadual,v=>_prefs.InscricaoEstadual=v);
-        Campo("Telefone principal",_prefs.Telefone,v=>_prefs.Telefone=v);
+        DadoGeral("Nome do estabelecimento",_nome,v=>_nome=v,"Nome pelo qual seus clientes conhecem o estabelecimento. É usado na identificação e nos comprovantes.");
+        DadoGeral("Razão social",_prefs.RazaoSocial,v=>_prefs.RazaoSocial=v,"Nome oficial da empresa registrado no CNPJ. Pode ser diferente do nome do estabelecimento. Copie como aparece no cadastro da empresa.");
+        DocumentoGeral();DadoGeral("Inscrição estadual",_prefs.InscricaoEstadual,v=>_prefs.InscricaoEstadual=v,"Registro da empresa na Secretaria da Fazenda do estado. Não é o CNPJ. Informe o número do seu cadastro ou ISENTO, quando aplicável. Se tiver dúvida, consulte seu contador.");
+        _camposGeral=new System.Windows.Controls.Primitives.UniformGrid { Columns=1 };_form.Children.Add(_camposGeral);TelefoneGeral();
         _camposGeral=null;Subtitulo("Endereço do estabelecimento");
         _camposGeral=new System.Windows.Controls.Primitives.UniformGrid { Columns=2 };_form.Children.Add(_camposGeral);
-        Campo("Endereço",_prefs.Endereco,v=>_prefs.Endereco=v);
-        Campo("Número",_prefs.Numero,v=>_prefs.Numero=v);Campo("Complemento",_prefs.Complemento,v=>_prefs.Complemento=v);
-        Campo("Bairro",_prefs.Bairro,v=>_prefs.Bairro=v);Campo("CEP",_prefs.Cep,v=>_prefs.Cep=v);Campo("Cidade",_prefs.Cidade,v=>_prefs.Cidade=v);Campo("UF",_prefs.Uf,v=>_prefs.Uf=v);
+        DadoGeral("Endereço",_prefs.Endereco,v=>_prefs.Endereco=v,"Nome da rua, avenida ou outro logradouro do estabelecimento. Informe o número no campo ao lado.");
+        DadoGeral("Número",_prefs.Numero,v=>_prefs.Numero=v,"Número do imóvel. Caso não tenha número, informe S/N.",limite:20);
+        DadoGeral("Complemento",_prefs.Complemento,v=>_prefs.Complemento=v,"Informação que ajuda a localizar o imóvel, como loja, sala, bloco ou andar. Pode ficar vazio.");
+        DadoGeral("Bairro",_prefs.Bairro,v=>_prefs.Bairro=v,"Bairro onde o estabelecimento está localizado.");
+        DadoGeral("CEP",_prefs.Cep,v=>_prefs.Cep=v,"Código postal do endereço, com 8 números. Digite apenas os números, por exemplo: 70000-000.",FormatarCep,9);
+        DadoGeral("Cidade",_prefs.Cidade,v=>_prefs.Cidade=v,"Município onde fica o estabelecimento.");
+        var uf=new ComboBox {ItemsSource=new[]{"","AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG","PA","PB","PR","PE","PI","RJ","RN","RS","RO","RR","SC","SP","SE","TO"},SelectedItem=_prefs.Uf.Trim().ToUpperInvariant(),MinHeight=36};
+        System.Windows.Automation.AutomationProperties.SetName(uf,"Estado (UF)");BlocoGeral("Estado (UF)","Selecione a sigla do estado do endereço. Exemplo: DF para Distrito Federal e SP para São Paulo.",uf);uf.SelectionChanged+=(_,_)=>{_prefs.Uf=uf.SelectedItem as string??"";AtualizarEstado();};
         _camposGeral=null;
         Subtitulo("Dados da assinatura");
         try
@@ -361,6 +368,6 @@ public sealed partial class JanelaConfiguracoesSistema : Window
     {
         int? quantidade=null;if(!string.IsNullOrWhiteSpace(_quantidade)){if(!int.TryParse(_quantidade,out var n))throw new ArgumentException("Informe uma quantidade válida de comandas.");quantidade=n;}
         if(quantidade is int limite&&_maiorComanda()>(long)_inicioComandas+limite-1)throw new ArgumentException("Há comandas abertas acima desse limite. Encerre ou transfira antes de reduzir.");
-        _service.Salvar(_prefs,_nome,quantidade,DateTime.UtcNow);_snapshot=Estado();_mensagem.Text="Configurações salvas.";AtualizarEstado();_salvo();
+        NormalizarDadosEstabelecimento();_service.Salvar(_prefs,_nome,quantidade,DateTime.UtcNow);_snapshot=Estado();_mensagem.Text="Configurações salvas.";AtualizarEstado();_salvo();
     });
 }

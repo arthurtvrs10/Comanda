@@ -1,0 +1,1242 @@
+[
+  {
+    "Iso": "AF",
+    "Nome": "Afeganistão",
+    "Ddi": "+93"
+  },
+  {
+    "Iso": "ZA",
+    "Nome": "África do Sul",
+    "Ddi": "+27"
+  },
+  {
+    "Iso": "AX",
+    "Nome": "Alândia",
+    "Ddi": "+35818"
+  },
+  {
+    "Iso": "AL",
+    "Nome": "Albânia",
+    "Ddi": "+355"
+  },
+  {
+    "Iso": "DE",
+    "Nome": "Alemanha",
+    "Ddi": "+49"
+  },
+  {
+    "Iso": "AD",
+    "Nome": "Andorra",
+    "Ddi": "+376"
+  },
+  {
+    "Iso": "AO",
+    "Nome": "Angola",
+    "Ddi": "+244"
+  },
+  {
+    "Iso": "AI",
+    "Nome": "Anguilla",
+    "Ddi": "+1264"
+  },
+  {
+    "Iso": "AG",
+    "Nome": "Antígua e Barbuda",
+    "Ddi": "+1268"
+  },
+  {
+    "Iso": "SA",
+    "Nome": "Arábia Saudita",
+    "Ddi": "+966"
+  },
+  {
+    "Iso": "DZ",
+    "Nome": "Argélia",
+    "Ddi": "+213"
+  },
+  {
+    "Iso": "AR",
+    "Nome": "Argentina",
+    "Ddi": "+54"
+  },
+  {
+    "Iso": "AM",
+    "Nome": "Arménia",
+    "Ddi": "+374"
+  },
+  {
+    "Iso": "AW",
+    "Nome": "Aruba",
+    "Ddi": "+297"
+  },
+  {
+    "Iso": "AU",
+    "Nome": "Austrália",
+    "Ddi": "+61"
+  },
+  {
+    "Iso": "AT",
+    "Nome": "Áustria",
+    "Ddi": "+43"
+  },
+  {
+    "Iso": "AZ",
+    "Nome": "Azerbeijão",
+    "Ddi": "+994"
+  },
+  {
+    "Iso": "BS",
+    "Nome": "Bahamas",
+    "Ddi": "+1242"
+  },
+  {
+    "Iso": "BH",
+    "Nome": "Bahrein",
+    "Ddi": "+973"
+  },
+  {
+    "Iso": "BD",
+    "Nome": "Bangladesh",
+    "Ddi": "+880"
+  },
+  {
+    "Iso": "BB",
+    "Nome": "Barbados",
+    "Ddi": "+1246"
+  },
+  {
+    "Iso": "BE",
+    "Nome": "Bélgica",
+    "Ddi": "+32"
+  },
+  {
+    "Iso": "BZ",
+    "Nome": "Belize",
+    "Ddi": "+501"
+  },
+  {
+    "Iso": "BJ",
+    "Nome": "Benin",
+    "Ddi": "+229"
+  },
+  {
+    "Iso": "BM",
+    "Nome": "Bermudas",
+    "Ddi": "+1441"
+  },
+  {
+    "Iso": "BY",
+    "Nome": "Bielorússia",
+    "Ddi": "+375"
+  },
+  {
+    "Iso": "BO",
+    "Nome": "Bolívia",
+    "Ddi": "+591"
+  },
+  {
+    "Iso": "BA",
+    "Nome": "Bósnia e Herzegovina",
+    "Ddi": "+387"
+  },
+  {
+    "Iso": "BW",
+    "Nome": "Botswana",
+    "Ddi": "+267"
+  },
+  {
+    "Iso": "BR",
+    "Nome": "Brasil",
+    "Ddi": "+55"
+  },
+  {
+    "Iso": "BN",
+    "Nome": "Brunei",
+    "Ddi": "+673"
+  },
+  {
+    "Iso": "BG",
+    "Nome": "Bulgária",
+    "Ddi": "+359"
+  },
+  {
+    "Iso": "BF",
+    "Nome": "Burkina Faso",
+    "Ddi": "+226"
+  },
+  {
+    "Iso": "BI",
+    "Nome": "Burundi",
+    "Ddi": "+257"
+  },
+  {
+    "Iso": "BT",
+    "Nome": "Butão",
+    "Ddi": "+975"
+  },
+  {
+    "Iso": "CV",
+    "Nome": "Cabo Verde",
+    "Ddi": "+238"
+  },
+  {
+    "Iso": "CM",
+    "Nome": "Camarões",
+    "Ddi": "+237"
+  },
+  {
+    "Iso": "KH",
+    "Nome": "Camboja",
+    "Ddi": "+855"
+  },
+  {
+    "Iso": "CA",
+    "Nome": "Canadá",
+    "Ddi": "+1"
+  },
+  {
+    "Iso": "QA",
+    "Nome": "Catar",
+    "Ddi": "+974"
+  },
+  {
+    "Iso": "KZ",
+    "Nome": "Cazaquistão",
+    "Ddi": "+76"
+  },
+  {
+    "Iso": "TD",
+    "Nome": "Chade",
+    "Ddi": "+235"
+  },
+  {
+    "Iso": "CZ",
+    "Nome": "Chéquia",
+    "Ddi": "+420"
+  },
+  {
+    "Iso": "CL",
+    "Nome": "Chile",
+    "Ddi": "+56"
+  },
+  {
+    "Iso": "CN",
+    "Nome": "China",
+    "Ddi": "+86"
+  },
+  {
+    "Iso": "CY",
+    "Nome": "Chipre",
+    "Ddi": "+357"
+  },
+  {
+    "Iso": "VA",
+    "Nome": "Cidade do Vaticano",
+    "Ddi": "+3906698"
+  },
+  {
+    "Iso": "CO",
+    "Nome": "Colômbia",
+    "Ddi": "+57"
+  },
+  {
+    "Iso": "KM",
+    "Nome": "Comores",
+    "Ddi": "+269"
+  },
+  {
+    "Iso": "CG",
+    "Nome": "Congo",
+    "Ddi": "+242"
+  },
+  {
+    "Iso": "KP",
+    "Nome": "Coreia do Norte",
+    "Ddi": "+850"
+  },
+  {
+    "Iso": "KR",
+    "Nome": "Coreia do Sul",
+    "Ddi": "+82"
+  },
+  {
+    "Iso": "CI",
+    "Nome": "Costa do Marfim",
+    "Ddi": "+225"
+  },
+  {
+    "Iso": "CR",
+    "Nome": "Costa Rica",
+    "Ddi": "+506"
+  },
+  {
+    "Iso": "HR",
+    "Nome": "Croácia",
+    "Ddi": "+385"
+  },
+  {
+    "Iso": "CU",
+    "Nome": "Cuba",
+    "Ddi": "+53"
+  },
+  {
+    "Iso": "DK",
+    "Nome": "Dinamarca",
+    "Ddi": "+45"
+  },
+  {
+    "Iso": "DJ",
+    "Nome": "Djibouti",
+    "Ddi": "+253"
+  },
+  {
+    "Iso": "DM",
+    "Nome": "Dominica",
+    "Ddi": "+1767"
+  },
+  {
+    "Iso": "EG",
+    "Nome": "Egito",
+    "Ddi": "+20"
+  },
+  {
+    "Iso": "SV",
+    "Nome": "El Salvador",
+    "Ddi": "+503"
+  },
+  {
+    "Iso": "AE",
+    "Nome": "Emirados Árabes Unidos",
+    "Ddi": "+971"
+  },
+  {
+    "Iso": "EC",
+    "Nome": "Equador",
+    "Ddi": "+593"
+  },
+  {
+    "Iso": "ER",
+    "Nome": "Eritreia",
+    "Ddi": "+291"
+  },
+  {
+    "Iso": "SK",
+    "Nome": "Eslováquia",
+    "Ddi": "+421"
+  },
+  {
+    "Iso": "SI",
+    "Nome": "Eslovénia",
+    "Ddi": "+386"
+  },
+  {
+    "Iso": "ES",
+    "Nome": "Espanha",
+    "Ddi": "+34"
+  },
+  {
+    "Iso": "SZ",
+    "Nome": "Essuatíni",
+    "Ddi": "+268"
+  },
+  {
+    "Iso": "US",
+    "Nome": "Estados Unidos",
+    "Ddi": "+1"
+  },
+  {
+    "Iso": "EE",
+    "Nome": "Estónia",
+    "Ddi": "+372"
+  },
+  {
+    "Iso": "ET",
+    "Nome": "Etiópia",
+    "Ddi": "+251"
+  },
+  {
+    "Iso": "FJ",
+    "Nome": "Fiji",
+    "Ddi": "+679"
+  },
+  {
+    "Iso": "PH",
+    "Nome": "Filipinas",
+    "Ddi": "+63"
+  },
+  {
+    "Iso": "FI",
+    "Nome": "Finlândia",
+    "Ddi": "+358"
+  },
+  {
+    "Iso": "FR",
+    "Nome": "França",
+    "Ddi": "+33"
+  },
+  {
+    "Iso": "GA",
+    "Nome": "Gabão",
+    "Ddi": "+241"
+  },
+  {
+    "Iso": "GM",
+    "Nome": "Gâmbia",
+    "Ddi": "+220"
+  },
+  {
+    "Iso": "GH",
+    "Nome": "Gana",
+    "Ddi": "+233"
+  },
+  {
+    "Iso": "GE",
+    "Nome": "Geórgia",
+    "Ddi": "+995"
+  },
+  {
+    "Iso": "GI",
+    "Nome": "Gibraltar",
+    "Ddi": "+350"
+  },
+  {
+    "Iso": "GD",
+    "Nome": "Granada",
+    "Ddi": "+1473"
+  },
+  {
+    "Iso": "GR",
+    "Nome": "Grécia",
+    "Ddi": "+30"
+  },
+  {
+    "Iso": "GL",
+    "Nome": "Gronelândia",
+    "Ddi": "+299"
+  },
+  {
+    "Iso": "GP",
+    "Nome": "Guadalupe",
+    "Ddi": "+590"
+  },
+  {
+    "Iso": "GU",
+    "Nome": "Guam",
+    "Ddi": "+1671"
+  },
+  {
+    "Iso": "GT",
+    "Nome": "Guatemala",
+    "Ddi": "+502"
+  },
+  {
+    "Iso": "GG",
+    "Nome": "Guernsey",
+    "Ddi": "+44"
+  },
+  {
+    "Iso": "GY",
+    "Nome": "Guiana",
+    "Ddi": "+592"
+  },
+  {
+    "Iso": "GF",
+    "Nome": "Guiana Francesa",
+    "Ddi": "+594"
+  },
+  {
+    "Iso": "GN",
+    "Nome": "Guiné",
+    "Ddi": "+224"
+  },
+  {
+    "Iso": "GQ",
+    "Nome": "Guiné Equatorial",
+    "Ddi": "+240"
+  },
+  {
+    "Iso": "GW",
+    "Nome": "Guiné-Bissau",
+    "Ddi": "+245"
+  },
+  {
+    "Iso": "HT",
+    "Nome": "Haiti",
+    "Ddi": "+509"
+  },
+  {
+    "Iso": "NL",
+    "Nome": "Holanda",
+    "Ddi": "+31"
+  },
+  {
+    "Iso": "HN",
+    "Nome": "Honduras",
+    "Ddi": "+504"
+  },
+  {
+    "Iso": "HK",
+    "Nome": "Hong Kong",
+    "Ddi": "+852"
+  },
+  {
+    "Iso": "HU",
+    "Nome": "Hungria",
+    "Ddi": "+36"
+  },
+  {
+    "Iso": "YE",
+    "Nome": "Iémen",
+    "Ddi": "+967"
+  },
+  {
+    "Iso": "BV",
+    "Nome": "Ilha Bouvet",
+    "Ddi": "+47"
+  },
+  {
+    "Iso": "CW",
+    "Nome": "ilha da Curação",
+    "Ddi": "+599"
+  },
+  {
+    "Iso": "IM",
+    "Nome": "Ilha de Man",
+    "Ddi": "+44"
+  },
+  {
+    "Iso": "CX",
+    "Nome": "Ilha do Natal",
+    "Ddi": "+61"
+  },
+  {
+    "Iso": "TW",
+    "Nome": "Ilha Formosa",
+    "Ddi": "+886"
+  },
+  {
+    "Iso": "NF",
+    "Nome": "Ilha Norfolk",
+    "Ddi": "+672"
+  },
+  {
+    "Iso": "KY",
+    "Nome": "Ilhas Caimão",
+    "Ddi": "+1345"
+  },
+  {
+    "Iso": "CC",
+    "Nome": "Ilhas Cocos (Keeling)",
+    "Ddi": "+61"
+  },
+  {
+    "Iso": "CK",
+    "Nome": "Ilhas Cook",
+    "Ddi": "+682"
+  },
+  {
+    "Iso": "FO",
+    "Nome": "Ilhas Faroé",
+    "Ddi": "+298"
+  },
+  {
+    "Iso": "GS",
+    "Nome": "Ilhas Geórgia do Sul e Sandwich do Sul",
+    "Ddi": "+500"
+  },
+  {
+    "Iso": "FK",
+    "Nome": "Ilhas Malvinas",
+    "Ddi": "+500"
+  },
+  {
+    "Iso": "MH",
+    "Nome": "Ilhas Marshall",
+    "Ddi": "+692"
+  },
+  {
+    "Iso": "UM",
+    "Nome": "Ilhas Menores Distantes dos Estados Unidos",
+    "Ddi": "+268"
+  },
+  {
+    "Iso": "PN",
+    "Nome": "Ilhas Pitcairn",
+    "Ddi": "+64"
+  },
+  {
+    "Iso": "SB",
+    "Nome": "Ilhas Salomão",
+    "Ddi": "+677"
+  },
+  {
+    "Iso": "SJ",
+    "Nome": "Ilhas Svalbard e Jan Mayen",
+    "Ddi": "+4779"
+  },
+  {
+    "Iso": "TC",
+    "Nome": "Ilhas Turks e Caicos",
+    "Ddi": "+1649"
+  },
+  {
+    "Iso": "VG",
+    "Nome": "Ilhas Virgens",
+    "Ddi": "+1284"
+  },
+  {
+    "Iso": "VI",
+    "Nome": "Ilhas Virgens dos Estados Unidos",
+    "Ddi": "+1340"
+  },
+  {
+    "Iso": "IN",
+    "Nome": "Índia",
+    "Ddi": "+91"
+  },
+  {
+    "Iso": "ID",
+    "Nome": "Indonésia",
+    "Ddi": "+62"
+  },
+  {
+    "Iso": "IR",
+    "Nome": "Irão",
+    "Ddi": "+98"
+  },
+  {
+    "Iso": "IQ",
+    "Nome": "Iraque",
+    "Ddi": "+964"
+  },
+  {
+    "Iso": "IE",
+    "Nome": "Irlanda",
+    "Ddi": "+353"
+  },
+  {
+    "Iso": "IS",
+    "Nome": "Islândia",
+    "Ddi": "+354"
+  },
+  {
+    "Iso": "IL",
+    "Nome": "Israel",
+    "Ddi": "+972"
+  },
+  {
+    "Iso": "IT",
+    "Nome": "Itália",
+    "Ddi": "+39"
+  },
+  {
+    "Iso": "JM",
+    "Nome": "Jamaica",
+    "Ddi": "+1876"
+  },
+  {
+    "Iso": "JP",
+    "Nome": "Japão",
+    "Ddi": "+81"
+  },
+  {
+    "Iso": "JE",
+    "Nome": "Jersey",
+    "Ddi": "+44"
+  },
+  {
+    "Iso": "JO",
+    "Nome": "Jordânia",
+    "Ddi": "+962"
+  },
+  {
+    "Iso": "KI",
+    "Nome": "Kiribati",
+    "Ddi": "+686"
+  },
+  {
+    "Iso": "XK",
+    "Nome": "Kosovo",
+    "Ddi": "+383"
+  },
+  {
+    "Iso": "KW",
+    "Nome": "Kuwait",
+    "Ddi": "+965"
+  },
+  {
+    "Iso": "LA",
+    "Nome": "Laos",
+    "Ddi": "+856"
+  },
+  {
+    "Iso": "LS",
+    "Nome": "Lesoto",
+    "Ddi": "+266"
+  },
+  {
+    "Iso": "LV",
+    "Nome": "Letónia",
+    "Ddi": "+371"
+  },
+  {
+    "Iso": "LB",
+    "Nome": "Líbano",
+    "Ddi": "+961"
+  },
+  {
+    "Iso": "LR",
+    "Nome": "Libéria",
+    "Ddi": "+231"
+  },
+  {
+    "Iso": "LY",
+    "Nome": "Líbia",
+    "Ddi": "+218"
+  },
+  {
+    "Iso": "LI",
+    "Nome": "Liechtenstein",
+    "Ddi": "+423"
+  },
+  {
+    "Iso": "LT",
+    "Nome": "Lituânia",
+    "Ddi": "+370"
+  },
+  {
+    "Iso": "LU",
+    "Nome": "Luxemburgo",
+    "Ddi": "+352"
+  },
+  {
+    "Iso": "MO",
+    "Nome": "Macau",
+    "Ddi": "+853"
+  },
+  {
+    "Iso": "MK",
+    "Nome": "Macedónia do Norte",
+    "Ddi": "+389"
+  },
+  {
+    "Iso": "MG",
+    "Nome": "Madagáscar",
+    "Ddi": "+261"
+  },
+  {
+    "Iso": "MY",
+    "Nome": "Malásia",
+    "Ddi": "+60"
+  },
+  {
+    "Iso": "MW",
+    "Nome": "Malawi",
+    "Ddi": "+265"
+  },
+  {
+    "Iso": "MV",
+    "Nome": "Maldivas",
+    "Ddi": "+960"
+  },
+  {
+    "Iso": "ML",
+    "Nome": "Mali",
+    "Ddi": "+223"
+  },
+  {
+    "Iso": "MT",
+    "Nome": "Malta",
+    "Ddi": "+356"
+  },
+  {
+    "Iso": "MP",
+    "Nome": "Marianas Setentrionais",
+    "Ddi": "+1670"
+  },
+  {
+    "Iso": "MA",
+    "Nome": "Marrocos",
+    "Ddi": "+212"
+  },
+  {
+    "Iso": "MQ",
+    "Nome": "Martinica",
+    "Ddi": "+596"
+  },
+  {
+    "Iso": "MU",
+    "Nome": "Maurício",
+    "Ddi": "+230"
+  },
+  {
+    "Iso": "MR",
+    "Nome": "Mauritânia",
+    "Ddi": "+222"
+  },
+  {
+    "Iso": "YT",
+    "Nome": "Mayotte",
+    "Ddi": "+262"
+  },
+  {
+    "Iso": "MX",
+    "Nome": "México",
+    "Ddi": "+52"
+  },
+  {
+    "Iso": "FM",
+    "Nome": "Micronésia",
+    "Ddi": "+691"
+  },
+  {
+    "Iso": "MZ",
+    "Nome": "Moçambique",
+    "Ddi": "+258"
+  },
+  {
+    "Iso": "MD",
+    "Nome": "Moldávia",
+    "Ddi": "+373"
+  },
+  {
+    "Iso": "MC",
+    "Nome": "Mónaco",
+    "Ddi": "+377"
+  },
+  {
+    "Iso": "MN",
+    "Nome": "Mongólia",
+    "Ddi": "+976"
+  },
+  {
+    "Iso": "ME",
+    "Nome": "Montenegro",
+    "Ddi": "+382"
+  },
+  {
+    "Iso": "MS",
+    "Nome": "Montserrat",
+    "Ddi": "+1664"
+  },
+  {
+    "Iso": "MM",
+    "Nome": "Myanmar",
+    "Ddi": "+95"
+  },
+  {
+    "Iso": "NA",
+    "Nome": "Namíbia",
+    "Ddi": "+264"
+  },
+  {
+    "Iso": "NR",
+    "Nome": "Nauru",
+    "Ddi": "+674"
+  },
+  {
+    "Iso": "NP",
+    "Nome": "Nepal",
+    "Ddi": "+977"
+  },
+  {
+    "Iso": "NI",
+    "Nome": "Nicarágua",
+    "Ddi": "+505"
+  },
+  {
+    "Iso": "NE",
+    "Nome": "Níger",
+    "Ddi": "+227"
+  },
+  {
+    "Iso": "NG",
+    "Nome": "Nigéria",
+    "Ddi": "+234"
+  },
+  {
+    "Iso": "NU",
+    "Nome": "Niue",
+    "Ddi": "+683"
+  },
+  {
+    "Iso": "NO",
+    "Nome": "Noruega",
+    "Ddi": "+47"
+  },
+  {
+    "Iso": "NC",
+    "Nome": "Nova Caledónia",
+    "Ddi": "+687"
+  },
+  {
+    "Iso": "NZ",
+    "Nome": "Nova Zelândia",
+    "Ddi": "+64"
+  },
+  {
+    "Iso": "OM",
+    "Nome": "Omã",
+    "Ddi": "+968"
+  },
+  {
+    "Iso": "BQ",
+    "Nome": "Países Baixos Caribenhos",
+    "Ddi": "+599"
+  },
+  {
+    "Iso": "PW",
+    "Nome": "Palau",
+    "Ddi": "+680"
+  },
+  {
+    "Iso": "PS",
+    "Nome": "Palestina",
+    "Ddi": "+970"
+  },
+  {
+    "Iso": "PA",
+    "Nome": "Panamá",
+    "Ddi": "+507"
+  },
+  {
+    "Iso": "PG",
+    "Nome": "Papua Nova Guiné",
+    "Ddi": "+675"
+  },
+  {
+    "Iso": "PK",
+    "Nome": "Paquistão",
+    "Ddi": "+92"
+  },
+  {
+    "Iso": "PY",
+    "Nome": "Paraguai",
+    "Ddi": "+595"
+  },
+  {
+    "Iso": "PE",
+    "Nome": "Perú",
+    "Ddi": "+51"
+  },
+  {
+    "Iso": "PF",
+    "Nome": "Polinésia Francesa",
+    "Ddi": "+689"
+  },
+  {
+    "Iso": "PL",
+    "Nome": "Polónia",
+    "Ddi": "+48"
+  },
+  {
+    "Iso": "PR",
+    "Nome": "Porto Rico",
+    "Ddi": "+1787"
+  },
+  {
+    "Iso": "PT",
+    "Nome": "Portugal",
+    "Ddi": "+351"
+  },
+  {
+    "Iso": "KE",
+    "Nome": "Quénia",
+    "Ddi": "+254"
+  },
+  {
+    "Iso": "KG",
+    "Nome": "Quirguistão",
+    "Ddi": "+996"
+  },
+  {
+    "Iso": "GB",
+    "Nome": "Reino Unido",
+    "Ddi": "+44"
+  },
+  {
+    "Iso": "CF",
+    "Nome": "República Centro-Africana",
+    "Ddi": "+236"
+  },
+  {
+    "Iso": "CD",
+    "Nome": "República Democrática do Congo",
+    "Ddi": "+243"
+  },
+  {
+    "Iso": "DO",
+    "Nome": "República Dominicana",
+    "Ddi": "+1809"
+  },
+  {
+    "Iso": "RE",
+    "Nome": "Reunião",
+    "Ddi": "+262"
+  },
+  {
+    "Iso": "RO",
+    "Nome": "Roménia",
+    "Ddi": "+40"
+  },
+  {
+    "Iso": "RW",
+    "Nome": "Ruanda",
+    "Ddi": "+250"
+  },
+  {
+    "Iso": "RU",
+    "Nome": "Rússia",
+    "Ddi": "+73"
+  },
+  {
+    "Iso": "EH",
+    "Nome": "Saara Ocidental",
+    "Ddi": "+2125288"
+  },
+  {
+    "Iso": "PM",
+    "Nome": "Saint-Pierre e Miquelon",
+    "Ddi": "+508"
+  },
+  {
+    "Iso": "WS",
+    "Nome": "Samoa",
+    "Ddi": "+685"
+  },
+  {
+    "Iso": "AS",
+    "Nome": "Samoa Americana",
+    "Ddi": "+1684"
+  },
+  {
+    "Iso": "SM",
+    "Nome": "San Marino",
+    "Ddi": "+378"
+  },
+  {
+    "Iso": "SH",
+    "Nome": "Santa Helena, Ascensão e Tristão da Cunha",
+    "Ddi": "+290"
+  },
+  {
+    "Iso": "LC",
+    "Nome": "Santa Lúcia",
+    "Ddi": "+1758"
+  },
+  {
+    "Iso": "BL",
+    "Nome": "São Bartolomeu",
+    "Ddi": "+590"
+  },
+  {
+    "Iso": "KN",
+    "Nome": "São Cristóvão e Nevis",
+    "Ddi": "+1869"
+  },
+  {
+    "Iso": "MF",
+    "Nome": "São Martinho",
+    "Ddi": "+590"
+  },
+  {
+    "Iso": "SX",
+    "Nome": "São Martinho",
+    "Ddi": "+1721"
+  },
+  {
+    "Iso": "ST",
+    "Nome": "São Tomé e Príncipe",
+    "Ddi": "+239"
+  },
+  {
+    "Iso": "VC",
+    "Nome": "São Vincente e Granadinas",
+    "Ddi": "+1784"
+  },
+  {
+    "Iso": "SC",
+    "Nome": "Seicheles",
+    "Ddi": "+248"
+  },
+  {
+    "Iso": "SN",
+    "Nome": "Senegal",
+    "Ddi": "+221"
+  },
+  {
+    "Iso": "SL",
+    "Nome": "Serra Leoa",
+    "Ddi": "+232"
+  },
+  {
+    "Iso": "RS",
+    "Nome": "Sérvia",
+    "Ddi": "+381"
+  },
+  {
+    "Iso": "SG",
+    "Nome": "Singapura",
+    "Ddi": "+65"
+  },
+  {
+    "Iso": "SY",
+    "Nome": "Síria",
+    "Ddi": "+963"
+  },
+  {
+    "Iso": "SO",
+    "Nome": "Somália",
+    "Ddi": "+252"
+  },
+  {
+    "Iso": "LK",
+    "Nome": "Sri Lanka",
+    "Ddi": "+94"
+  },
+  {
+    "Iso": "SD",
+    "Nome": "Sudão",
+    "Ddi": "+249"
+  },
+  {
+    "Iso": "SS",
+    "Nome": "Sudão do Sul",
+    "Ddi": "+211"
+  },
+  {
+    "Iso": "SE",
+    "Nome": "Suécia",
+    "Ddi": "+46"
+  },
+  {
+    "Iso": "CH",
+    "Nome": "Suíça",
+    "Ddi": "+41"
+  },
+  {
+    "Iso": "SR",
+    "Nome": "Suriname",
+    "Ddi": "+597"
+  },
+  {
+    "Iso": "TH",
+    "Nome": "Tailândia",
+    "Ddi": "+66"
+  },
+  {
+    "Iso": "TJ",
+    "Nome": "Tajiquistão",
+    "Ddi": "+992"
+  },
+  {
+    "Iso": "TZ",
+    "Nome": "Tanzânia",
+    "Ddi": "+255"
+  },
+  {
+    "Iso": "TF",
+    "Nome": "Terras Austrais e Antárticas Francesas",
+    "Ddi": "+262"
+  },
+  {
+    "Iso": "IO",
+    "Nome": "Território Britânico do Oceano Índico",
+    "Ddi": "+246"
+  },
+  {
+    "Iso": "TL",
+    "Nome": "Timor-Leste",
+    "Ddi": "+670"
+  },
+  {
+    "Iso": "TG",
+    "Nome": "Togo",
+    "Ddi": "+228"
+  },
+  {
+    "Iso": "TK",
+    "Nome": "Tokelau",
+    "Ddi": "+690"
+  },
+  {
+    "Iso": "TO",
+    "Nome": "Tonga",
+    "Ddi": "+676"
+  },
+  {
+    "Iso": "TT",
+    "Nome": "Trinidade e Tobago",
+    "Ddi": "+1868"
+  },
+  {
+    "Iso": "TN",
+    "Nome": "Tunísia",
+    "Ddi": "+216"
+  },
+  {
+    "Iso": "TM",
+    "Nome": "Turquemenistão",
+    "Ddi": "+993"
+  },
+  {
+    "Iso": "TR",
+    "Nome": "Turquia",
+    "Ddi": "+90"
+  },
+  {
+    "Iso": "TV",
+    "Nome": "Tuvalu",
+    "Ddi": "+688"
+  },
+  {
+    "Iso": "UA",
+    "Nome": "Ucrânia",
+    "Ddi": "+380"
+  },
+  {
+    "Iso": "UG",
+    "Nome": "Uganda",
+    "Ddi": "+256"
+  },
+  {
+    "Iso": "UY",
+    "Nome": "Uruguai",
+    "Ddi": "+598"
+  },
+  {
+    "Iso": "UZ",
+    "Nome": "Uzbequistão",
+    "Ddi": "+998"
+  },
+  {
+    "Iso": "VU",
+    "Nome": "Vanuatu",
+    "Ddi": "+678"
+  },
+  {
+    "Iso": "VE",
+    "Nome": "Venezuela",
+    "Ddi": "+58"
+  },
+  {
+    "Iso": "VN",
+    "Nome": "Vietname",
+    "Ddi": "+84"
+  },
+  {
+    "Iso": "WF",
+    "Nome": "Wallis e Futuna",
+    "Ddi": "+681"
+  },
+  {
+    "Iso": "ZM",
+    "Nome": "Zâmbia",
+    "Ddi": "+260"
+  },
+  {
+    "Iso": "ZW",
+    "Nome": "Zimbabwe",
+    "Ddi": "+263"
+  }
+]

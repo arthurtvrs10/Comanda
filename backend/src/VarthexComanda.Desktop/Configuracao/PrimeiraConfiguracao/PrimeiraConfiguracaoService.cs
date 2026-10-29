@@ -44,7 +44,7 @@ public sealed class PrimeiraConfiguracaoService(IDbContextFactory<VarthexComanda
         // O assistente edita somente estabelecimento e cupom. Um rascunho antigo
         // não pode sobrescrever segurança, cozinha ou aparência alteradas depois.
         var preferencias=new ConfiguracoesSistemaService(configuracoes).Carregar();var editadas=estado.Cupom;
-        preferencias.RazaoSocial=editadas.RazaoSocial;preferencias.Documento=editadas.Documento;preferencias.InscricaoEstadual=editadas.InscricaoEstadual;preferencias.Telefone=editadas.Telefone;
+        preferencias.TipoDocumento=estado.TipoDocumento;preferencias.PaisTelefone=editadas.PaisTelefone;preferencias.RazaoSocial=editadas.RazaoSocial;preferencias.Documento=editadas.Documento;preferencias.InscricaoEstadual=editadas.InscricaoEstadual;preferencias.Telefone=editadas.Telefone;
         preferencias.Endereco=editadas.Endereco;preferencias.Numero=editadas.Numero;preferencias.Complemento=editadas.Complemento;preferencias.Bairro=editadas.Bairro;preferencias.Cep=editadas.Cep;preferencias.Cidade=editadas.Cidade;preferencias.Uf=editadas.Uf;
         preferencias.ExibirDocumentoCupom=editadas.ExibirDocumentoCupom;preferencias.ExibirEnderecoCupom=editadas.ExibirEnderecoCupom;preferencias.ExibirObservacoesCupom=editadas.ExibirObservacoesCupom;preferencias.AgruparItensCupom=editadas.AgruparItensCupom;preferencias.CabecalhoCupom=editadas.CabecalhoCupom;preferencias.RodapeCupom=editadas.RodapeCupom;
         var inicio=new NumeracaoComandasService(configuracoes).Carregar().PrimeiroNumero;NumeracaoComandasService.ValidarFaixa(inicio,estado.QuantidadeComandas);

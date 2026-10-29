@@ -7,6 +7,8 @@ public sealed class PreferenciasSistema
     public bool SolicitarSenha { get; set; }
     public string RazaoSocial { get; set; } = "";
     public string Documento { get; set; } = "";
+    public string TipoDocumento { get; set; } = "";
+    public string PaisTelefone { get; set; } = "BR";
     public string InscricaoEstadual { get; set; } = "";
     public string Telefone { get; set; } = "";
     public string Endereco { get; set; } = "";

@@ -11,6 +11,7 @@ public sealed record Colaborador
     public string Cpf { get; init; } = "";
     public string Funcao { get; init; } = "";
     public string Telefone { get; init; } = "";
+    public string PaisTelefone { get; init; } = "BR";
     public string Email { get; init; } = "";
     public decimal ComissaoPercentual { get; init; }
     public string[] Funcoes { get; init; } = [];

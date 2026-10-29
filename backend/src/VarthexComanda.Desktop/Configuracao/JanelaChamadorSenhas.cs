@@ -48,7 +48,7 @@ public sealed class JanelaChamadorSenhas : Window
     {
         var grade=new Grid { Margin=new Thickness(10) };grade.ColumnDefinitions.Add(new(){Width=new GridLength(272)});grade.ColumnDefinitions.Add(new(){Width=new GridLength(1,GridUnitType.Star)});
         var esquerda=new StackPanel { Margin=new Thickness(0,0,24,0) };grade.Children.Add(esquerda);
-        esquerda.Children.Add(new Label { Content="Senha:",Target=_senha,Padding=new Thickness(0) });esquerda.Children.Add(_senha);
+        esquerda.Children.Add(new Label { Content="Senha de atendimento",Target=_senha,Padding=new Thickness(0) });esquerda.Children.Add(_senha);
         System.Windows.Automation.AutomationProperties.SetName(_senha,"Senha para chamar");
         _senha.PreviewTextInput+=(_,e)=>e.Handled=!e.Text.All(char.IsAsciiDigit);
         DataObject.AddPastingHandler(_senha,(_,e)=>{if(e.DataObject.GetData(DataFormats.UnicodeText) is not string texto||!texto.All(char.IsAsciiDigit))e.CancelCommand();});

@@ -1,6 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <Resource Include="Assets\Bandeiras\*.png" />
+    <EmbeddedResource Include="Assets\PaisesTelefone.json" />
+    <Content Include="Assets\PaisesTelefone.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="Assets\PaisesTelefone-README.md" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="Assets\PaisesTelefone-LICENSE.txt" CopyToOutputDirectory="PreserveNewest" />
     <EmbeddedResource Include="Assets\KdsCampainhaDupla.wav" LogicalName="VComanda.KdsCampainhaDupla.wav" />
     <EmbeddedResource Include="Assets\KdsPedidoPronto.wav" LogicalName="VComanda.KdsPedidoPronto.wav" />
     <ProjectReference Include="..\VarthexComanda.Application\VarthexComanda.Application.csproj" />

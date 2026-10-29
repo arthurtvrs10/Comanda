@@ -34,6 +34,10 @@ public partial class App : System.Windows.Application
     internal App(bool iniciarSistema)
     {
         _iniciarSistema=iniciarSistema;
+        EventManager.RegisterClassHandler(typeof(System.Windows.Controls.Label),FrameworkElement.LoadedEvent,new RoutedEventHandler((sender,e)=>
+        {
+            if(sender is System.Windows.Controls.Label label&&ReferenceEquals(e.OriginalSource,label))AjudaCampos.Padronizar(label);
+        }));
         EventManager.RegisterClassHandler(typeof(Window), FrameworkElement.LoadedEvent, new RoutedEventHandler((sender, e) =>
         {
             if (sender is Window janela && ReferenceEquals(e.OriginalSource, janela))

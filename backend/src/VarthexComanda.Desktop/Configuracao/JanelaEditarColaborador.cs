@@ -50,8 +50,14 @@ public sealed class JanelaEditarColaborador : Window
         Secao("Dados pessoais");
         destinoCampos = new System.Windows.Controls.Primitives.UniformGrid { Columns = 3 }; geral.Children.Add(destinoCampos);
         var nome = Campo("Nome *", atual.Nome, 120);
-        var cpf = Campo("CPF (opcional)", atual.Cpf, 14);
-        var telefone = Campo("Telefone", atual.Telefone, 30);
+        var cpf = Campo("CPF (opcional)", PrimeiraConfiguracao.Mascaras.Documento(atual.Cpf,"CPF"), 14);
+        var telefone=new CampoTelefonePadrao(atual.Telefone,atual.PaisTelefone);
+        System.Windows.Automation.AutomationProperties.SetName(telefone.Numero,"Telefone");
+        var grupoTelefone=new StackPanel {Margin=new Thickness(0,0,10,5)};
+        grupoTelefone.Children.Add(new Label {Content="Telefone",Target=telefone.Numero,Padding=new Thickness(0,0,0,3)});grupoTelefone.Children.Add(telefone);
+        destinoCampos.Children.Add(grupoTelefone);telefone.Alterado+=(_,_)=>alterou=true;
+
+        JanelaConfiguracoesSistema.VincularEntrada(cpf,_=>{},v=>PrimeiraConfiguracao.Mascaras.Documento(v,"CPF"));
         var email = Campo("E-mail", atual.Email, 254);
         var comissao = Campo("Comissão por atendimento (%)", atual.ComissaoPercentual.ToString(CultureInfo.CurrentCulture), 8);
         destinoCampos = geral;
@@ -136,7 +142,7 @@ public sealed class JanelaEditarColaborador : Window
                     throw new InvalidOperationException("Entre com outro administrador para alterar seu próprio acesso e suas permissões.");
                 var selecionadas = marcadas.Where(p=>p.Value.IsChecked==true).Select(p=>p.Key).ToArray();
                 var perfil = admin.IsChecked == true ? "gestor" : permissoes["cozinha"].IsChecked == true && permissoes.Where(p=>p.Value.IsChecked==true).All(p=>p.Key=="cozinha") ? "cozinha" : "garcom";
-                servico.Salvar(atual with { Nome = nome.Text, Cpf = cpf.Text, Telefone = telefone.Text, Email = email.Text, ComissaoPercentual = percentual,
+                servico.Salvar(atual with { Nome = nome.Text, Cpf = cpf.Text, Telefone = telefone.Telefone, PaisTelefone=telefone.CodigoPais, Email = email.Text, ComissaoPercentual = percentual,
                     Funcoes = selecionadas, Funcao = string.Join(", ", selecionadas.Append(funcao.Text.Trim()).Where(f=>f.Length>0).Distinct()), Login = login.Text, Perfil = perfil,
                     Ativo = ativo.IsChecked == true, CriarUsuario = criar.IsChecked == true, AcessoLiberado = liberado.IsChecked == true, SenhaMestra = mestra.IsChecked == true,
                     Permissoes = permissoes.Where(p=>p.Value.IsChecked==true).Select(p=>p.Key).ToArray() }, string.IsNullOrEmpty(senha.Password) ? null : senha.Password);
