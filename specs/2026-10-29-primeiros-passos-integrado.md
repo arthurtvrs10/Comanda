@@ -23,3 +23,13 @@ O atendimento usa as formas de pagamento selecionadas, mantendo pagamentos parci
 - Abertura automática observada no aplicativo real, em base isolada; formulário Estabelecimento aberto e campos conferidos. Validação humana das sete etapas permanece como objetivo desta versão de teste.
 
 O projeto `backend/tools/VarthexComanda.ConfiguracaoPrototipo` reutiliza agora a janela do aplicativo em modo isolado para máscaras, fluxo e capturas. Não é necessário para usar o assistente integrado.
+
+## Sincronização com Geral — 30/10/2026
+
+Os campos compartilhados do estabelecimento usam os dados de Configurações do sistema → Geral: nome, razão social, CPF/CNPJ e tipo, inscrição estadual, país do telefone, telefone e endereço completo.
+
+Ao continuar a etapa Estabelecimento, os dados válidos são salvos em Geral, mesmo que as demais etapas ainda estejam em andamento. Ao reabrir o assistente, alterações salvas em Geral atualizam os campos correspondentes do rascunho, inclusive campos apagados. Edições pendentes nos demais campos e etapas são preservadas. Antes da conclusão, os dados compartilhados são conferidos novamente para evitar restaurar valores antigos.
+
+Rascunhos antigos sem referência de sincronização passam a usar o cadastro existente em Geral. Segurança, aparência, cozinha e imagem do estabelecimento são preservadas. Os demais ajustes do assistente continuam sendo aplicados na conclusão.
+
+Validação: 14 testes direcionados aprovados, incluindo quatro cenários novos com banco real para salvamento parcial do assistente, atualização em Geral, rascunho legado e dados inválidos.
