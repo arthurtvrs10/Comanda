@@ -66,6 +66,7 @@ public sealed class PrimeiraConfiguracaoService(IDbContextFactory<VarthexComanda
         }
         void Definir(string chave,string valor){var atual=db.Configuracoes.SingleOrDefault(c=>c.Chave==chave);if(atual is null)db.Configuracoes.Add(new Domain.Configuracao {Chave=chave,Valor=valor,AtualizadoEm=agora});else{atual.Valor=valor;atual.AtualizadoEm=agora;}}
         Definir(ConfiguracoesSistemaService.Chave,JsonSerializer.Serialize(preferencias));Definir("estabelecimento.nome",estado.Nome.Trim());Definir("comandas.quantidade_maxima",estado.QuantidadeComandas.ToString());Definir(ChavePagamentos,JsonSerializer.Serialize(estado.Pagamentos.Distinct()));Definir("primeira-configuracao.responsavel",estado.Responsavel.Trim());Definir(ChaveConclusao,"1");
+        if(estado.Mesas)Definir(QrMesasService.ChaveQuantidade,estado.QuantidadeMesas.ToString());
         db.SaveChanges();tx.Commit();
         try{if(File.Exists(ArquivoRascunho))File.Delete(ArquivoRascunho);}catch(IOException){}catch(UnauthorizedAccessException){}
     }

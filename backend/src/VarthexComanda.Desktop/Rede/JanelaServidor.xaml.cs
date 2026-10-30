@@ -51,4 +51,8 @@ public partial class JanelaServidor : Window
     }
     private void ComoHabilitar_Click(object sender,RoutedEventArgs e) => new JanelaGuiaServidor { Owner=this }.ShowDialog();
     private void Fechar_Click(object sender,RoutedEventArgs e)=>Close();
+    private void QrMesas_Click(object sender,RoutedEventArgs e)
+    {
+        try{ViewModel.AbrirQrMesas(this);}catch(Exception ex){ViewModel.Mensagem=ex.Message;}
+    }
 }

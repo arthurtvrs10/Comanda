@@ -133,4 +133,10 @@ public partial class ServidorViewModel : ObservableObject
         finally{Ocupada=false;Atualizar();}
     }
     public void Encerrar(){_encerrado=true;_servidor.Dispose();}
+    public void AbrirQrMesas(System.Windows.Window owner)
+    {
+        if(!PodeCopiar||EnderecoSelecionado is null)throw new InvalidOperationException("Inicie o servidor e selecione o IP da rede.");
+        if(new Uri(EnderecoSelecionado).Host=="127.0.0.1")throw new InvalidOperationException("Selecione o endereço da rede Wi-Fi; localhost funciona apenas neste computador.");
+        new JanelaQrMesas(_servidor,EnderecoSelecionado){Owner=owner}.ShowDialog();
+    }
 }
