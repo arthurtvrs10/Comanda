@@ -4,9 +4,9 @@ A identidade **Comanda · por Varthex** aparece na abertura, área de trabalho, 
 
 Sistema Windows para organizar mesas, comandas e consumo em pequenos estabelecimentos de alimentação. Produtos, atendimento, fechamento e histórico funcionam localmente, sem depender da internet.
 
-**Em desenvolvimento, fora da 1.4.8:** chamadas das mesas e QR Codes, alterações recentes do KDS, complementos/estoque, tipo de pedido e recuperação por e-mail.
+**Em desenvolvimento, fora da 1.4.9:** chamadas das mesas e QR Codes, alterações recentes do KDS, complementos/estoque, recuperação por e-mail e transferência de licença por código curto.
 
-**Release 1.4.8 · 30/10/2026 · pré-release em testes.** Correção do endereço de rede para celular e link de acesso visível, mantendo Restaurante, OneDrive e impressão da 1.4.7. Windows x64 com runtime .NET e ativação offline.
+**Release 1.4.9 · 30/10/2026 · pré-release em testes.** Recupera cliente, tipo de pedido e observações na comanda; remove o responsável manual e Vincular cliente. Preserva QR/link da rede, Restaurante, OneDrive e impressão. Windows x64 com runtime .NET e ativação offline.
 
 ## Baixar para Windows
 
@@ -14,13 +14,26 @@ O repositório é privado: o download pelo GitHub exige uma conta com acesso.
 
 | Edição | Catálogo em uma base nova | Download |
 | --- | --- | --- |
-| Normal | Vazio, para produtos reais | [Instalador](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.8/VarthexComanda-1.4.8-Setup-win-x64.exe) · [SHA-256](downloads/windows/VarthexComanda-1.4.8-Setup-win-x64.exe.sha256) |
-| Demonstração Lanchonete | 12 produtos fictícios com fotos | [Instalador](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.8/VarthexComanda-Demo-1.4.8-Setup-win-x64.exe) · [SHA-256](downloads/demo/VarthexComanda-Demo-1.4.8-Setup-win-x64.exe.sha256) |
-| Demonstração Restaurante | 16 produtos, com marmitas UN/KG e fotos reais de referência | [Instalador](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.8/VarthexComanda-Demo-Restaurante-1.4.8-Setup-win-x64.exe) · [SHA-256](downloads/demo-restaurante/VarthexComanda-Demo-Restaurante-1.4.8-Setup-win-x64.exe.sha256) |
+| Normal | Vazio, para produtos reais | [Instalador](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.9/VarthexComanda-1.4.9-Setup-win-x64.exe) · [SHA-256](downloads/windows/VarthexComanda-1.4.9-Setup-win-x64.exe.sha256) |
+| Demonstração Lanchonete | 12 produtos fictícios com fotos | [Instalador](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.9/VarthexComanda-Demo-1.4.9-Setup-win-x64.exe) · [SHA-256](downloads/demo/VarthexComanda-Demo-1.4.9-Setup-win-x64.exe.sha256) |
+| Demonstração Restaurante | 16 produtos, com marmitas UN/KG e fotos reais de referência | [Instalador](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.9/VarthexComanda-Demo-Restaurante-1.4.9-Setup-win-x64.exe) · [SHA-256](downloads/demo-restaurante/VarthexComanda-Demo-Restaurante-1.4.9-Setup-win-x64.exe.sha256) |
 
 As três edições usam instalações e bases separadas. Atualizar preserva os dados; os catálogos não são repostos em bases existentes. Sem vendas/comandas de exemplo. Preços de demonstração ilustrativos. Faça backup e feche o sistema antes de atualizar.
 
-**Validação desta correção:** testes de seleção de redes e HTTP local, tela do servidor e versão. Veja os resultados e limites nas [notas da 1.4.8](downloads/RELEASE-1.4.8.md). A conexão no celular depende da rede e do firewall do estabelecimento.
+**Validação:** migração de dados antigos, persistência dos cinco tipos, salvamento dos campos e operador automático testados. [Notas, resultados e limites da 1.4.9](downloads/RELEASE-1.4.9.md).
+
+## Novidades da 1.4.9
+
+- Removidos o seletor **Responsável** e o botão **Vincular cliente**. O operador continua identificado pela conta conectada.
+- **Cliente (opcional)** no próprio formulário, com indicação “Nome do cliente”.
+- **Tipo de pedido** obrigatório: Local (Mesa), Salão, Balcão, Para levar e Delivery.
+- **Observações (opcional)** em campo multilinha, com indicação “Ponto da carne, alergias...”, seguido de **Em fechamento**.
+- Cliente, tipo e observações salvos juntos; mudar o tipo, sair ou abrir produtos preserva o preenchimento válido. Comandas bloqueadas não permitem alterações.
+- Nova migração apenas de tipo de pedido: comandas antigas mantêm os dados e recebem Local (Mesa) quando vinculadas a mesa, ou Balcão nos demais casos. Faça backup antes de atualizar.
+
+![Comanda com os campos restaurados](docs/design/release-1.4.9/comanda-formulario-claro.png)
+
+Captura WPF real com base e operador de teste. As mudanças recentes do KDS e complementos/estoque continuam fora do instalador.
 
 ## Novidades da 1.4.8
 
@@ -281,9 +294,9 @@ Distribua somente os pacotes preparados. A pasta `artifacts` pode conter materia
 
 ## Documentação e validação
 
-As imagens deste README foram atualizadas em 30/10/2026. Os instaladores 1.4.8 incluem os ajustes de configuração, impressão, início e pagamento. Chamadas/QR Codes e alterações recentes do KDS continuam fora desta publicação. Os arquivos e as evidências das versões anteriores permanecem disponíveis.
+As imagens deste README foram atualizadas em 30/10/2026. Os instaladores 1.4.9 incluem os ajustes de configuração, impressão, início e pagamento. Chamadas/QR Codes e alterações recentes do KDS continuam fora desta publicação. Os arquivos e as evidências das versões anteriores permanecem disponíveis.
 
-Validação desta correção: **23 testes do servidor e 13 testes direcionados Desktop aprovados**. Na suíte Desktop completa, 461 passaram e o teste da versão detectou um metadado antigo, corrigido e aprovado na execução direcionada. Os 941 testes .NET e 7 JavaScript documentados na 1.4.7 são a validação histórica da base, não uma nova execução integral nesta correção. As capturas e testes não certificam impressão física, instalação em Windows limpo ou hardware. [Notas da 1.4.8](downloads/RELEASE-1.4.8.md).
+Resultados desta correção e limites de homologação: [notas da 1.4.9](downloads/RELEASE-1.4.9.md). Capturas e testes locais não certificam hardware ou instalação em Windows limpo.
 
 - [Índice completo](docs/README.md)
 - [Notas e evidências da 1.4.0](specs/2026-10-22-release-1.4.0.md)

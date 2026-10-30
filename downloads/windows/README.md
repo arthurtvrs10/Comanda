@@ -1,6 +1,6 @@
-# Comanda 1.4.8 — Normal
+# Comanda 1.4.9 — Normal
 
-[Baixar instalador](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.8/VarthexComanda-1.4.8-Setup-win-x64.exe) · [SHA-256](VarthexComanda-1.4.8-Setup-win-x64.exe.sha256)
+[Baixar instalador](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.9/VarthexComanda-1.4.9-Setup-win-x64.exe) · [SHA-256](VarthexComanda-1.4.9-Setup-win-x64.exe.sha256)
 
 Catálogo vazio em base nova, para os produtos reais do estabelecimento.
 
@@ -8,6 +8,8 @@ Windows x64, runtime incluso, ativação offline obrigatória. Atualizações pr
 
 OneDrive padrão, prévia de impressão corrigida e remoção do atalho Alterar senha. Chamadas/KDS recentes e complementos/estoque continuam fora.
 
-Pré-release, sem assinatura de código. [Notas, testes, limites e hashes](../RELEASE-1.4.8.md).
+Pré-release, sem assinatura de código. [Notas, testes, limites e hashes](../RELEASE-1.4.9.md).
 
 QR Code com seleção da rede real e link completo visível no servidor. Use o link gerado no estabelecimento; a chave muda a cada início do servidor.
+
+Formulário da comanda com cliente opcional, tipo de pedido e observações. Responsável manual e Vincular cliente removidos. Nova migração de tipo; faça backup antes de atualizar.
