@@ -9,10 +9,10 @@ namespace VarthexComanda.Desktop.Tests;
 public class VersaoDoAplicativoTests
 {
     [Fact]
-    public void Atual_E1Ponto4Ponto8_SemSufixoDeRevisao()
+    public void Atual_E1Ponto4Ponto9_SemSufixoDeRevisao()
     {
         // Constante intencional: ao mudar <Version> no csproj, atualize aqui de proposito.
-        Assert.Equal("1.4.8", VersaoDoAplicativo.Atual);
+        Assert.Equal("1.4.9", VersaoDoAplicativo.Atual);
     }
 
     [Fact]

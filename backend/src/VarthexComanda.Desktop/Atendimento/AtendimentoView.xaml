@@ -4,6 +4,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:local="clr-namespace:VarthexComanda.Desktop.Atendimento"
+             xmlns:ui="clr-namespace:VarthexComanda.Desktop"
              xmlns:catalogo="clr-namespace:VarthexComanda.Desktop.Catalogo"
              mc:Ignorable="d"
              Background="{DynamicResource AjudaCanvas}">
@@ -244,7 +245,6 @@
                         <StackPanel DockPanel.Dock="Bottom">
                             <Button x:Name="BotaoDefinirPrioridade" Click="PrioridadePedido_Click" Style="{StaticResource BotaoPedido}" HorizontalContentAlignment="Left" Margin="0,0,0,4" ToolTip="{Binding DescricaoPrioridadePedido}" AutomationProperties.Name="Definir prioridade do pedido"><StackPanel Orientation="Horizontal"><Path Data="M5 22V3 M5 3H20L16 8L20 13H5" Style="{StaticResource IconePedido}"/><TextBlock Text="Prioridade" VerticalAlignment="Center"/></StackPanel></Button>
                             <Button x:Name="BotaoVincularMesa" Tag="mesa" Click="EditarDados_Click" Style="{StaticResource BotaoPedido}" HorizontalContentAlignment="Left" Margin="0,0,0,4" ToolTip="Vincular ou alterar a mesa deste pedido" AutomationProperties.Name="Vincular mesa"><StackPanel Orientation="Horizontal"><Path Data="M3 7H21V12H3Z M5 12V21 M19 12V21 M8 12V17 M16 12V17" Style="{StaticResource IconePedido}"/><TextBlock Text="Vincular mesa" VerticalAlignment="Center"/></StackPanel></Button>
-                            <Button Tag="cliente" Click="EditarDados_Click" Style="{StaticResource BotaoPedido}" HorizontalContentAlignment="Left" Margin="0,0,0,4"><StackPanel Orientation="Horizontal"><Path Data="M12 3 A4 4 0 1 0 12 11 A4 4 0 1 0 12 3 M4 22V18 C4 12 20 12 20 18V22" Style="{StaticResource IconePedido}"/><TextBlock Text="{Binding ClientePedido}" TextTrimming="CharacterEllipsis" MaxWidth="140" VerticalAlignment="Center"/></StackPanel></Button>
                             <Button x:Name="BotaoMaisOpcoes" Click="MaisOpcoesPedido_Click" Style="{StaticResource BotaoPedido}" HorizontalContentAlignment="Left" Margin="0,0,0,4"><StackPanel Orientation="Horizontal"><Path Data="M3 5H21 M3 12H21 M3 19H21" Style="{StaticResource IconePedido}"/><TextBlock Text="Mais opções" VerticalAlignment="Center"/></StackPanel></Button>
                             <Button Content="Voltar às comandas" Command="{Binding FecharEdicaoCommand}" Style="{StaticResource BotaoPedido}" HorizontalContentAlignment="Left" ToolTip="Voltar e bloquear o acesso ao atendimento (Esc). O pedido permanece aberto."/>
                         </StackPanel>
@@ -252,10 +252,18 @@
                             <StackPanel>
                                 <TextBlock Foreground="{DynamicResource AjudaMuted}" Margin="0,0,0,6"><Run Text="Iniciado em "/><Run Text="{Binding AberturaPedido, Mode=OneWay}"/></TextBlock>
                                 <TextBlock Foreground="{DynamicResource AjudaMuted}" TextWrapping="Wrap" Margin="0,0,0,8"><Run Text="Criado por: "/><Run Text="{Binding AutorPedido, Mode=OneWay}"/></TextBlock>
-                                <TextBlock Text="Responsável" Margin="0,0,0,4"/>
-                                <ComboBox x:Name="ResponsavelPedido" Background="{DynamicResource AjudaSurface}" Foreground="{DynamicResource AjudaInk}" BorderBrush="{DynamicResource AjudaLine}" MinHeight="32" FontSize="13" SelectionChanged="ResponsavelPedido_SelectionChanged" AutomationProperties.Name="Responsável pelo pedido" IsEnabled="{Binding PodeAlterarPedido}"/>
-                                <TextBlock Text="Observação do pedido" Margin="0,6,0,4"/>
-                                <TextBox x:Name="ObservacaoPedido" Background="{DynamicResource AjudaSurface}" Foreground="{DynamicResource AjudaInk}" BorderBrush="{DynamicResource AjudaLine}" FontSize="13" Padding="6" Text="{Binding ComandaAtual.Observacao, Mode=OneWay}" AcceptsReturn="True" TextWrapping="Wrap" Height="40" MinHeight="32" MaxLength="1000" VerticalScrollBarVisibility="Auto" LostKeyboardFocus="ObservacaoPedido_LostKeyboardFocus" AutomationProperties.Name="Observação do pedido" IsEnabled="{Binding PodeAlterarPedido}"/>
+                                <ui:RotuloAjuda Texto="Cliente (opcional)" Margin="0,6,0,4"/>
+                                <Grid>
+                                    <TextBox x:Name="ClientePedidoTexto" Text="{Binding ComandaAtual.NomeCliente,Mode=OneWay}" Tag="{Binding ComandaAtual.Id}" MinHeight="32" FontSize="13" Padding="6" MaxLength="80" LostKeyboardFocus="DadosPedido_LostKeyboardFocus" AutomationProperties.Name="Nome do cliente" IsEnabled="{Binding PodeAlterarPedido}"/>
+                                    <TextBlock Text="Nome do cliente" Foreground="{DynamicResource AjudaMuted}" FontSize="12" Margin="7,0" VerticalAlignment="Center" IsHitTestVisible="False"><TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding Text,ElementName=ClientePedidoTexto}" Value=""><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock>
+                                </Grid>
+                                <ui:RotuloAjuda Texto="Tipo de pedido *" Margin="0,6,0,4"/>
+                                <ComboBox x:Name="TipoPedidoSelecionado" ItemsSource="{Binding TiposDePedido}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding ComandaAtual.TipoPedido,Mode=OneWay}" MinHeight="32" FontSize="13" SelectionChanged="TipoPedido_SelectionChanged" AutomationProperties.Name="Tipo de pedido" AutomationProperties.IsRequiredForForm="True" IsEnabled="{Binding PodeAlterarPedido}"/>
+                                <ui:RotuloAjuda Texto="Observações (opcional)" Margin="0,6,0,4"/>
+                                <Grid>
+                                    <TextBox x:Name="ObservacaoPedido" Background="{DynamicResource AjudaSurface}" Foreground="{DynamicResource AjudaInk}" BorderBrush="{DynamicResource AjudaLine}" FontSize="13" Padding="6" Text="{Binding ComandaAtual.Observacao, Mode=OneWay}" AcceptsReturn="True" TextWrapping="Wrap" Height="64" MinHeight="32" MaxLength="1000" VerticalScrollBarVisibility="Auto" LostKeyboardFocus="ObservacaoPedido_LostKeyboardFocus" AutomationProperties.Name="Observação do pedido" IsEnabled="{Binding PodeAlterarPedido}"/>
+                                    <TextBlock Text="Ponto da carne, alergias..." Foreground="{DynamicResource AjudaMuted}" FontSize="12" Margin="7,7" TextWrapping="Wrap" VerticalAlignment="Top" IsHitTestVisible="False"><TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding Text,ElementName=ObservacaoPedido}" Value=""><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock>
+                                </Grid>
                                 <CheckBox x:Name="BloqueioPedido" Style="{StaticResource AlternanciaCompacta}" Content="Em fechamento" FontSize="13" Margin="0,6,0,8" IsChecked="{Binding ComandaAtual.Bloqueada, Mode=OneWay}" Click="BloqueioPedido_Click" ToolTip="Inicia o fechamento e impede alterações nos itens. Permite pagar e imprimir. Desative para voltar a alterar."/>
                             </StackPanel>
                         </ScrollViewer>

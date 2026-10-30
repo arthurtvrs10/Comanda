@@ -23,30 +23,43 @@ public partial class AtendimentoView
     private void AtualizarDadosLaterais()
     {
         if (ViewModel.ComandaAtual is not { } c) return;
-        if (_comandaLateralId == c.Id && Equals(ResponsavelPedido.SelectedItem, c.Responsavel ?? "Não informado")) return;
+        if (_comandaLateralId == c.Id&&Equals(TipoPedidoSelecionado.SelectedValue,c.TipoPedido)) return;
         _atualizandoLateral = true;
         try
         {
-            ResponsavelPedido.ItemsSource = (ViewModel.ObterResponsaveis?.Invoke() ?? [])
-                .Append(c.Responsavel ?? "Não informado").Distinct().ToArray();
-            ResponsavelPedido.SelectedItem = c.Responsavel ?? "Não informado";
+            TipoPedidoSelecionado.SetCurrentValue(ItemsControl.ItemsSourceProperty,ViewModel.TiposDePedido);
+            TipoPedidoSelecionado.SetCurrentValue(Selector.SelectedValueProperty,c.TipoPedido);
+            if(_comandaLateralId!=c.Id)
+            {
+                ClientePedidoTexto.SetCurrentValue(TextBox.TextProperty,c.NomeCliente??"");
+                ClientePedidoTexto.SetCurrentValue(FrameworkElement.TagProperty,c.Id);
+                ObservacaoPedido.SetCurrentValue(TextBox.TextProperty,c.Observacao??"");
+            }
             _comandaLateralId = c.Id;
         }
         finally { _atualizandoLateral = false; }
-    }
-    private void ResponsavelPedido_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        if (!_atualizandoLateral && ViewModel.ComandaAtual is not null && ResponsavelPedido.SelectedItem is string nome
-            && !ViewModel.SalvarAtendimento(nome == "Não informado" ? null : nome, ObservacaoPedido.Text))
-            AtualizarDadosLaterais();
     }
     private void ObservacaoPedido_LostKeyboardFocus(object sender, System.Windows.Input.KeyboardFocusChangedEventArgs e)
     {
         SalvarObservacaoPendente();
     }
-    private bool SalvarObservacaoPendente() => !ViewModel.SalvandoFechamento && (ViewModel.ComandaAtual is not { } c
-        || c.Observacao == ObservacaoPedido.Text || (string.IsNullOrEmpty(c.Observacao) && ObservacaoPedido.Text.Length == 0)
-        || ViewModel.SalvarAtendimento(c.Responsavel, ObservacaoPedido.Text));
+    private void DadosPedido_LostKeyboardFocus(object sender,System.Windows.Input.KeyboardFocusChangedEventArgs e)=>SalvarObservacaoPendente();
+    private void TipoPedido_SelectionChanged(object sender,SelectionChangedEventArgs e)
+    {
+        if(_atualizandoLateral||ViewModel.ComandaAtual is not {} c||TipoPedidoSelecionado.SelectedValue is not TipoPedido tipo||tipo==c.TipoPedido)return;
+        if(!SalvarObservacaoPendente())TipoPedidoSelecionado.SelectedValue=c.TipoPedido;
+    }
+    private bool SalvarObservacaoPendente()
+    {
+        if(_atualizandoLateral||ViewModel.ComandaAtual is not {} c)return true;
+        if(ViewModel.SalvandoFechamento)return false;
+        if(ClientePedidoTexto.Tag is int id&&id!=c.Id)return true;
+        var cliente=string.IsNullOrWhiteSpace(ClientePedidoTexto.Text)?null:ClientePedidoTexto.Text.Trim();
+        var observacao=string.IsNullOrWhiteSpace(ObservacaoPedido.Text)?null:ObservacaoPedido.Text.Trim();
+        var tipo=TipoPedidoSelecionado.SelectedValue as TipoPedido?;
+        if((string.IsNullOrWhiteSpace(c.NomeCliente)?null:c.NomeCliente.Trim())==cliente&&(string.IsNullOrWhiteSpace(c.Observacao)?null:c.Observacao.Trim())==observacao&&c.TipoPedido==tipo)return true;
+        return ViewModel.SalvarDadosPedido(c.Responsavel,cliente,tipo,observacao);
+    }
     private async void BloqueioPedido_Click(object sender, RoutedEventArgs e)
     {
         if (!SalvarObservacaoPendente()) { BloqueioPedido.IsChecked=ViewModel.ComandaAtual?.Bloqueada; return; }

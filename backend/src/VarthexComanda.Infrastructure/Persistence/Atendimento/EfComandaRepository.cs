@@ -150,6 +150,8 @@ public partial class EfComandaRepository : IComandaRepository
         var comanda = contexto.Comandas.SingleOrDefault(c => c.Id == comandaId)
             ?? throw new InvalidOperationException("Comanda não encontrada.");
         if (comanda.Status != StatusComanda.Aberta) throw new ComandaNaoAbertaException();
+        if(comanda.NumeroMesa is null&&numeroMesa is not null&&comanda.TipoPedido==TipoPedido.Balcao)comanda.TipoPedido=TipoPedido.LocalMesa;
+        else if(comanda.NumeroMesa is not null&&numeroMesa is null&&comanda.TipoPedido==TipoPedido.LocalMesa)comanda.TipoPedido=TipoPedido.Balcao;
         comanda.NumeroMesa = numeroMesa;
         contexto.SaveChanges();
         return comanda;

@@ -9,6 +9,7 @@ public interface IComandaRepository
     ComandaComItens? BuscarComItens(int comandaId);
     Comanda AbrirComanda(int numero, DateTime agora);
     Comanda DefinirNomeCliente(int comandaId, string? nome);
+    Comanda DefinirDadosPedido(int comandaId,string? responsavel,string? cliente,TipoPedido tipo,string? observacao)=>throw new NotSupportedException();
     Comanda DefinirMesa(int comandaId, int? numeroMesa);
     Comanda DefinirOrigemCliente(int comandaId, string? origem);
     ComandaComItens JuntarComandas(int origemId, int destinoId, DateTime agora);

@@ -38,10 +38,10 @@
     <UseWPF>true</UseWPF>
     <AssemblyName>VarthexComanda</AssemblyName>
     <RootNamespace>VarthexComanda.Desktop</RootNamespace>
-    <Version>1.4.8</Version>
-    <AssemblyVersion>1.4.8.0</AssemblyVersion>
-    <FileVersion>1.4.8.0</FileVersion>
-    <InformationalVersion>1.4.8</InformationalVersion>
+    <Version>1.4.9</Version>
+    <AssemblyVersion>1.4.9.0</AssemblyVersion>
+    <FileVersion>1.4.9.0</FileVersion>
+    <InformationalVersion>1.4.9</InformationalVersion>
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     <AssemblyTitle>Comanda</AssemblyTitle>
     <Product>Comanda</Product>
