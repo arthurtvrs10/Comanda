@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -32,7 +32,6 @@ public partial class MainWindow
             new("Configurações", "Configurações", "Numeração de pedidos", IconeVarthex.Numeracao, PodeGerir, AbrirNumeracaoPedidos),
             new("Configurações", "Configurações", "Impressoras", IconeVarthex.Impressoras, PodeGerir, AbrirImpressoras),
             new("Configurações", "Configurações", "Colaboradores", IconeVarthex.Colaboradores, PodeGerir, AbrirColaboradores),
-            new("Configurações", "Configurações", "Alterar senha", IconeVarthex.Senha, PodeAlterarSenha, () => AbrirAlteracaoAcesso(false)),
             new("Configurações", "Configurações", "Backup e restauração", IconeVarthex.Backup, () => PodeGerir() || (!_bloqueado && _restauracao && _acesso.Autenticado), IrParaBackup),
             new("Configurações", "Rede local", "Servidor / acesso pelo celular", IconeVarthex.Diagnostico, PodeGerir, AbrirServidorLocal),
             new("Configurações", "Verificações", "Logs e fila de eventos", IconeVarthex.Historico, PodeGerir, () => { if (PodeGerir()) MostrarConteudo(_registrosView); }),
