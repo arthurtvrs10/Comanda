@@ -1,0 +1,102 @@
+[
+  {
+    "arquivo": "principal-claro.png",
+    "origem": "fundo-padrao-claro.png",
+    "sha256": "9607d633068e8007be338ada10bfadb59e56d3606a36c4dee8b64b29424a7eb3"
+  },
+  {
+    "arquivo": "principal-escuro.png",
+    "origem": "fundo-padrao-escuro.png",
+    "sha256": "7332a0076196e25867fe5db99dcb1669f460968ad726650ebdd366b669565124"
+  },
+  {
+    "arquivo": "pagamento.png",
+    "origem": "pagamento-False-1120.png",
+    "sha256": "f6be846486b901cd3af8b6cc0ce9e53c2ff221b60fac75d3998aa2f3b9bbc6b3"
+  },
+  {
+    "arquivo": "aviso-renovacao.png",
+    "origem": "aviso-vencimento-False.png",
+    "sha256": "8e3ff7d36ce88d4d9f69f7a48cc28b2ecd6e325fc0b0f789e6f26d8cd772f307"
+  },
+  {
+    "arquivo": "estabelecimento.png",
+    "origem": "dados-claro-1180.png",
+    "sha256": "0b410a1884eaae455209ba38fd087ea390b71166621c6cbdd064c97b0a4b090d"
+  },
+  {
+    "arquivo": "bloqueio.png",
+    "origem": "bloqueio-sistema-claro.png",
+    "sha256": "3cdc4d3fdd7bcc86d8d71138fea0097b6cdd03b76e139ef27e58b1381955cea3"
+  },
+  {
+    "arquivo": "janelas-claro.png",
+    "origem": "area-trabalho-organizada-claro.png",
+    "sha256": "1d3c72fbb3f7f00ebe99730bb1269554dfa4ffbea5316ebe4bec35ba1b00f429"
+  },
+  {
+    "arquivo": "balcao.png",
+    "origem": "balcao-claro-1280.png",
+    "sha256": "bdd21485bf20896c2c024e766bce1db4fb193d509358de2e500b92635d10b098"
+  },
+  {
+    "arquivo": "abertura.png",
+    "origem": "abertura-1366.png",
+    "sha256": "d7a1e745862e23c6348a980f82cb97dd49986b4b40acc649e02416c65368a94e"
+  },
+  {
+    "arquivo": "atendimento-grade.png",
+    "origem": "grade-comandas-claro-1180.png",
+    "sha256": "5edf9d3a289187798b1427c6c911f4c4af84568469f3066a2f8d49c14efd1ef6"
+  },
+  {
+    "arquivo": "atendimento-comanda.png",
+    "origem": "comanda-claro-1180.png",
+    "sha256": "2ba5529c96bea64bde5f1bf74d53de8ccd857317d8405489bcf5148383b63d26"
+  },
+  {
+    "arquivo": "produtos.png",
+    "origem": "produtos-lista.png",
+    "sha256": "f26bdaffb292b67db6e579fdcda11db390412506e78bbfc0e472e6f41e059243"
+  },
+  {
+    "arquivo": "historico.png",
+    "origem": "historico-vendas-claro-1180.png",
+    "sha256": "6fd97bc6dad52e9c467052cfed113eb86e1785b9a17ef7878fbb73be99f56039"
+  },
+  {
+    "arquivo": "historico-pedidos.png",
+    "origem": "historico-False-1180.png",
+    "sha256": "81f921ab45b86151db116b197ece3f3381e786be195a801cd704d04b4807bea1"
+  },
+  {
+    "arquivo": "catalogo-fotos.png",
+    "origem": "localizador-False-1100-fotos.png",
+    "sha256": "6e61290126e34664225e57be92792d106128e0783cdde565a913a71d7bcd5f1e"
+  },
+  {
+    "arquivo": "logs-eventos.png",
+    "origem": "registros-claro-1040-1.png",
+    "sha256": "51413ebfbd8c72b34dc7e39e05f45b71e8dd8a1d550a24313c4bdd5949d295d5"
+  },
+  {
+    "arquivo": "cozinha-kds.png",
+    "origem": "kds-tipos-claro.png",
+    "sha256": "57a06c87d267adb7591ee0ad328c18ec25aee06ab0a40b3574ff9a287dc0b965"
+  },
+  {
+    "arquivo": "layout-ticket.png",
+    "origem": "ticket-layout-claro.png",
+    "sha256": "70514cfffd161adf67f94a6c5618de96a13b10736b5d27bbb0f4cfed7d45d240"
+  },
+  {
+    "arquivo": "servidor.png",
+    "origem": "servidor-ativo-claro.png",
+    "sha256": "c8584a44122640c1ad2608e9af920568ed01c7d1d6a7d83ab3524a81874a7a59"
+  },
+  {
+    "arquivo": "primeiros-passos.png",
+    "origem": "backend/artifacts/faixa-verificacao/faixa-1600.png",
+    "sha256": "53b9d64e14b9644d73115e2d31494091dcd3d084df61d1859f392f72d18ee364"
+  }
+]
