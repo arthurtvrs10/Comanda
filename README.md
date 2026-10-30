@@ -20,7 +20,7 @@ O repositório é privado: o download pelo GitHub exige uma conta com acesso.
 
 As três edições usam instalações e bases separadas. Atualizar preserva os dados; os catálogos não são repostos em bases existentes. Sem vendas/comandas de exemplo. Preços de demonstração ilustrativos. Faça backup e feche o sistema antes de atualizar.
 
-**Validação:** migração de dados antigos, persistência dos cinco tipos, salvamento dos campos e operador automático testados. [Notas, resultados e limites da 1.4.10](downloads/RELEASE-1.4.10.md).
+**Validação da 1.4.10:** nove verificações do processo e 15 testes críticos Desktop aprovados. Instalação, dados e funcionalidades da 1.4.9 preservados; nenhuma migração nova. [Notas, resultados e limites da 1.4.10](downloads/RELEASE-1.4.10.md).
 
 ## Novidades da 1.4.10
 
@@ -28,7 +28,7 @@ As três edições usam instalações e bases separadas. Atualizar preserva os d
 - Preparação em uma única pasta gerada: **artifacts/release-atual**. Cópias antigas de fonte ou executáveis não são fontes de publicação.
 - Os scripts bloqueiam fonte sem identificação, commit desatualizado, arquivos alterados após a preparação, metadados divergentes e reaproveitamento de binários de outro pacote.
 - Cada aplicativo distribuído inclui **publicacao.json**, com versão, commit e hashes dos binários, para rastrear exatamente o que foi instalado. É rastreabilidade local, não uma assinatura de código.
-- Limpeza das cópias antigas com inventário e preservação de dados/credenciais. Fontes antigas elegíveis são arquivadas em ZIP antes da remoção das pastas.
+- Limpeza das cópias antigas com inventário e preservação de dados/credenciais: 268 pastas e 53 instaladores antigos removidos. Seis fontes foram arquivadas em ZIP. Uma fonte com links especiais foi preservada e não participa da publicação.
 
 ## Novidades da 1.4.9
 
