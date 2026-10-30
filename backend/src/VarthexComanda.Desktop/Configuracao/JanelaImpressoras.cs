@@ -90,7 +90,7 @@ public sealed class JanelaImpressoras : Window
         _mostrando = true; _form.Children.Clear();
         if(LocalAtual==Layout)
         {
-            if(_layoutEditor is null){_layoutEditor=new JanelaLayoutTicket(_service.LayoutTicket,true);_layoutEditor.DefinirPapel(_preferencias.Caixa.LarguraPapelMm);_layoutConteudo=_layoutEditor.ExtrairEditor();}
+            if(_layoutEditor is null){_layoutEditor=new JanelaLayoutTicket(_service.LayoutTicket,true);_layoutEditor.DefinirPapel(_preferencias.Caixa.LarguraPapelMm);_layoutConteudo=new ScrollViewer {Content=_layoutEditor.ExtrairEditor(),VerticalScrollBarVisibility=ScrollBarVisibility.Auto,HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled};}
             _areaEditor.Content=_layoutConteudo;
             _teste.IsEnabled=false;_mostrando=false;return;
         }

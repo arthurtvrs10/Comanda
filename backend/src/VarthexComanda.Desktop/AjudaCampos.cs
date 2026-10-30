@@ -26,6 +26,7 @@ public static class AjudaCampos
     public static string? Explicacao(string titulo)
     {
         var t=titulo.Replace("*","").Replace(":","").Trim().ToLowerInvariant();
+        if(t=="pasta do onedrive")return "Pasta sincronizada pelo OneDrive neste Windows. O VComanda grava cópias em Varthex\\Backups. Confira a conta escolhida e o estado da sincronização no aplicativo OneDrive.";
         if(t=="imagem do estabelecimento")return "Foto ou logo que identifica o estabelecimento. A mesma imagem é usada no ticket da comanda. Prefira uma imagem nítida e com bom contraste para a impressão térmica.";
         if(t=="senha de atendimento")return "Número usado para chamar o cliente quando o pedido estiver pronto.";
         if(t.Contains("copiar permissões"))return "Escolha um colaborador para usar as permissões dele como ponto de partida. Confira antes de salvar.";

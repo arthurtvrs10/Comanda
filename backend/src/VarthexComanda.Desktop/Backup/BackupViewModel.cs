@@ -90,7 +90,8 @@ public partial class BackupViewModel : ObservableObject
     {
         foreach (var p in new[] { nameof(PastaGoogleDrive), nameof(StatusGoogleDrive), nameof(GoogleDriveConfigurado) }) OnPropertyChanged(p);
     }
-    public string StatusOneDrive => StatusPasta(_pastas.OneDrive);
+    public bool DeveSugerirOneDrive=>!OneDriveConfigurado&&!GoogleDriveConfigurado;
+    public string StatusOneDrive => OneDriveConfigurado?StatusPasta(_pastas.OneDrive)+" Confira a sincronização no OneDrive do Windows.":"Opção padrão. Escolha a pasta sincronizada pelo OneDrive neste computador.";
     public string ResumoPastas => "Backups automáticos ao abrir o sistema (uma vez ao dia) e ao encerrar. As configurações são salvas neste computador.";
 
     private static string StatusPasta(string? pasta)

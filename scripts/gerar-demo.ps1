@@ -1,6 +1,6 @@
 <# Gera a edição com catálogo fictício (RF03, RNF09, CT21). #>
 [CmdletBinding()]
-param([string]$Compilador, [string]$Saida, [string]$PublicacaoExistente)
+param([string]$Compilador, [string]$Saida, [string]$PublicacaoExistente,[ValidateSet("Lanchonete","Restaurante")][string]$Perfil="Lanchonete")
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 $raiz = Split-Path -Parent $PSScriptRoot
@@ -25,9 +25,10 @@ $indevidos = Get-ChildItem -LiteralPath $publicacao -File -Recurse | Where-Objec
 }
 if ($indevidos) { throw 'Publicação contém dados locais ou marcador de edição. Gere uma publicação limpa.' }
 [void](New-Item -ItemType Directory -Force -Path $saida)
-& $Compilador "/DAppVersion=$versao" "/DPublishPath=$publicacao" "/DOutputPath=$saida" (Join-Path $PSScriptRoot 'instalador-demo.iss')
+& $Compilador "/DAppVersion=$versao" "/DPublishPath=$publicacao" "/DOutputPath=$saida" (Join-Path $PSScriptRoot $(if($Perfil -eq "Restaurante"){"instalador-demo-restaurante.iss"}else{"instalador-demo.iss"}))
 if ($LASTEXITCODE -ne 0) { throw 'Compilação do instalador demo falhou.' }
-$instalador = Join-Path $saida "VarthexComanda-Demo-$versao-Setup-win-x64.exe"
+$prefixo = if($Perfil -eq "Restaurante"){"VarthexComanda-Demo-Restaurante"}else{"VarthexComanda-Demo"}
+$instalador = Join-Path $saida "$prefixo-$versao-Setup-win-x64.exe"
 & (Join-Path $PSScriptRoot 'verificar-antivirus.ps1') -Caminho $instalador
 $hash = (Get-FileHash -LiteralPath $instalador -Algorithm SHA256).Hash
 "$hash  $([IO.Path]::GetFileName($instalador))" | Set-Content -LiteralPath "$instalador.sha256" -Encoding ascii

@@ -1,5 +1,13 @@
 # Histórico de alterações
 
+## 1.4.7 — 30/10/2026 — pré-release
+
+- Demonstração Restaurante com 16 produtos e fotos reais, incluindo marmitas UN/KG. Lanchonete preservada, instalações e bases separadas.
+- Backup padrão pelo OneDrive com confirmação da pasta, cópia local preservada e indicação correta da responsabilidade da sincronização. Google Drive como alternativa.
+- Prévia da comanda visível nas impressoras e remoção do atalho Alterar senha.
+- 941 testes .NET distintos e 7 JavaScript aprovados; três instaladores verificados localmente pelo Defender. [Notas, downloads e limites](../downloads/RELEASE-1.4.7.md).
+
+
 ## 1.4.6 — 30/10/2026 — pré-release
 
 - Impressão e ticket com editor compartilhado nas configurações do sistema e impressoras, mensagens e observações sincronizadas, papel do caixa consistente e seleção manual preservada.

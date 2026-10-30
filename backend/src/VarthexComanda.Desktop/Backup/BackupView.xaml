@@ -30,10 +30,20 @@
       </Grid>
       <TextBlock Text="{Binding ResumoPastas}" Style="{StaticResource Nota}" Margin="0,0,0,26"/>
       <TextBlock Text="Backups na nuvem" FontWeight="SemiBold" Margin="0,0,0,5"/>
-      <TextBlock Text="Conecte sua conta Google ou escolha uma pasta sincronizada pelo OneDrive." Style="{StaticResource Nota}" Margin="0,0,0,12"/>
+      <TextBlock Text="Use o OneDrive como opção padrão. O Google Drive continua disponível como alternativa." Style="{StaticResource Nota}" Margin="0,0,0,12"/>
       <Grid IsEnabled="{Binding PodeCriarBackup}">
        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="12"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-       <Border BorderBrush="{DynamicResource AjudaLine}" BorderThickness="1" Padding="14">
+       <Border Grid.Column="0" BorderBrush="{DynamicResource AjudaLine}" BorderThickness="1" Padding="14">
+        <StackPanel>
+         <ContentControl x:Name="IconeOneDrive" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+         <TextBlock Text="OneDrive · padrão" FontWeight="SemiBold" TextAlignment="Center" Margin="0,0,0,8"/>
+         <TextBlock Text="{Binding PastaOneDrive}" ToolTip="{Binding PastaOneDrive}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" Style="{StaticResource Nota}" Margin="0,0,0,6"/>
+         <TextBlock Text="{Binding StatusOneDrive}" Style="{StaticResource Nota}" MinHeight="34" Margin="0,0,0,12"/>
+         <Button Content="Configurar OneDrive" Click="ConfigurarOneDrive_Click" AutomationProperties.Name="Configurar OneDrive"/>
+         <Button Content="Desconectar pasta" Tag="onedrive" Click="DesconectarPasta_Click" Margin="0,6,0,0" MinHeight="28"><Button.Style><Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding OneDriveConfigurado}" Value="True"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></Button.Style></Button>
+        </StackPanel>
+       </Border>
+       <Border Grid.Column="2" BorderBrush="{DynamicResource AjudaLine}" BorderThickness="1" Padding="14">
         <StackPanel>
          <ContentControl x:Name="IconeDrive" HorizontalAlignment="Center" Margin="0,0,0,8"/>
          <TextBlock Text="Google Drive" FontWeight="SemiBold" TextAlignment="Center" Margin="0,0,0,8"/>
@@ -41,16 +51,6 @@
          <TextBlock Text="{Binding StatusGoogleDrive}" Style="{StaticResource Nota}" MinHeight="34" Margin="0,0,0,12"/>
          <Button Content="Conectar com o Google" Click="ConectarGoogle_Click" AutomationProperties.Name="Conectar Google Drive"/>
          <Button Content="Desconectar conta" Click="DesconectarGoogle_Click" Margin="0,6,0,0" MinHeight="28"><Button.Style><Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding GoogleDriveConfigurado}" Value="True"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></Button.Style></Button>
-        </StackPanel>
-       </Border>
-       <Border Grid.Column="2" BorderBrush="{DynamicResource AjudaLine}" BorderThickness="1" Padding="14">
-        <StackPanel>
-         <ContentControl x:Name="IconeOneDrive" HorizontalAlignment="Center" Margin="0,0,0,8"/>
-         <TextBlock Text="OneDrive" FontWeight="SemiBold" TextAlignment="Center" Margin="0,0,0,8"/>
-         <TextBlock Text="{Binding PastaOneDrive}" ToolTip="{Binding PastaOneDrive}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" Style="{StaticResource Nota}" Margin="0,0,0,6"/>
-         <TextBlock Text="{Binding StatusOneDrive}" Style="{StaticResource Nota}" MinHeight="34" Margin="0,0,0,12"/>
-         <Button Content="Configurar" Tag="onedrive" Click="ConfigurarPasta_Click" AutomationProperties.Name="Configurar OneDrive"/>
-         <Button Content="Desconectar pasta" Tag="onedrive" Click="DesconectarPasta_Click" Margin="0,6,0,0" MinHeight="28"><Button.Style><Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding OneDriveConfigurado}" Value="True"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></Button.Style></Button>
         </StackPanel>
        </Border>
       </Grid>

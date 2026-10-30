@@ -35,7 +35,7 @@ public sealed class JanelaLayoutTicket:Window
         Title="Layout da conta da mesa";Width=1040;Height=750;MinWidth=800;MinHeight=570;WindowStartupLocation=WindowStartupLocation.CenterOwner;FontSize=12;
         SetResourceReference(BackgroundProperty,"Canvas");SetResourceReference(ForegroundProperty,"Ink");
         var raiz=new Grid {Margin=new Thickness(embutido?12:20)};raiz.SetResourceReference(Panel.BackgroundProperty,"Canvas");raiz.SetResourceReference(TextElement.ForegroundProperty,"Ink");raiz.RowDefinitions.Add(new(){Height=new GridLength(1,GridUnitType.Star)});raiz.RowDefinitions.Add(new(){Height=GridLength.Auto});
-        var corpo=new Grid();corpo.ColumnDefinitions.Add(new(){Width=new GridLength(1,GridUnitType.Star)});corpo.ColumnDefinitions.Add(new(){Width=new GridLength(350)});raiz.Children.Add(corpo);
+        var corpo=new Grid();corpo.ColumnDefinitions.Add(new(){Width=new GridLength(1,GridUnitType.Star)});corpo.ColumnDefinitions.Add(new(){Width=new GridLength(320)});raiz.Children.Add(corpo);
         var opcoes=new StackPanel {Margin=new Thickness(0,0,24,0)};
         opcoes.Children.Add(new TextBlock {Text="Elementos do ticket",FontSize=21,FontWeight=FontWeights.SemiBold});
         var papel=new ComboBox {ItemsSource=new[]{58,80},SelectedItem=_layout.PapelMm,MinHeight=34,Width=130,HorizontalAlignment=HorizontalAlignment.Left};
@@ -66,8 +66,8 @@ public sealed class JanelaLayoutTicket:Window
         corpo.RowDefinitions.Add(new(){Height=new GridLength(1,GridUnitType.Star)});corpo.RowDefinitions.Add(new(){Height=new GridLength(0)});
         corpo.SizeChanged+=(_,e)=>
         {
-            var compacto=e.NewSize.Width<740;
-            corpo.ColumnDefinitions[1].Width=compacto?new GridLength(0):new GridLength(350);
+            var compacto=e.NewSize.Width<600;
+            corpo.ColumnDefinitions[1].Width=compacto?new GridLength(0):new GridLength(320);
             corpo.RowDefinitions[0].Height=compacto?new GridLength(480):new GridLength(1,GridUnitType.Star);
             corpo.RowDefinitions[1].Height=compacto?new GridLength(540):new GridLength(0);
             Grid.SetColumn(painelPrevia,compacto?0:1);Grid.SetRow(painelPrevia,compacto?1:0);

@@ -1,0 +1,114 @@
+[
+  {
+    "Categoria": "Refeições",
+    "Nome": "Marmita por unidade",
+    "PrecoCentavos": 2200,
+    "Unidade": "UN",
+    "Foto": "marmita.png"
+  },
+  {
+    "Categoria": "Refeições",
+    "Nome": "Marmita por quilo",
+    "PrecoCentavos": 5490,
+    "Unidade": "KG",
+    "Foto": "marmita.png"
+  },
+  {
+    "Categoria": "Porções",
+    "Nome": "Batata frita — porção",
+    "PrecoCentavos": 1800,
+    "Unidade": "UN",
+    "Foto": "batata.png"
+  },
+  {
+    "Categoria": "Doces",
+    "Nome": "Pudim — fatia",
+    "PrecoCentavos": 800,
+    "Unidade": "UN",
+    "Foto": "pudim.png"
+  },
+  {
+    "Categoria": "Bebidas",
+    "Nome": "Coca-Cola 2 L",
+    "PrecoCentavos": 1400,
+    "Unidade": "UN",
+    "Foto": "coca2.png"
+  },
+  {
+    "Categoria": "Bebidas",
+    "Nome": "Coca-Cola 1,5 L",
+    "PrecoCentavos": 1100,
+    "Unidade": "UN",
+    "Foto": "coca15.png"
+  },
+  {
+    "Categoria": "Bebidas",
+    "Nome": "Fanta Laranja 2 L",
+    "PrecoCentavos": 1200,
+    "Unidade": "UN",
+    "Foto": "fanta.png"
+  },
+  {
+    "Categoria": "Bebidas",
+    "Nome": "Guaraná Antarctica 2 L",
+    "PrecoCentavos": 1200,
+    "Unidade": "UN",
+    "Foto": "guarana.png"
+  },
+  {
+    "Categoria": "Bebidas",
+    "Nome": "Coca-Cola KS 290 ml",
+    "PrecoCentavos": 500,
+    "Unidade": "UN",
+    "Foto": "ks.png"
+  },
+  {
+    "Categoria": "Bebidas",
+    "Nome": "Coca-Cola lata 350 ml",
+    "PrecoCentavos": 600,
+    "Unidade": "UN",
+    "Foto": "lata.png"
+  },
+  {
+    "Categoria": "Bebidas",
+    "Nome": "Monster Original 473 ml",
+    "PrecoCentavos": 1400,
+    "Unidade": "UN",
+    "Foto": "monster.png"
+  },
+  {
+    "Categoria": "Bebidas",
+    "Nome": "Água sem gás 500 ml",
+    "PrecoCentavos": 400,
+    "Unidade": "UN",
+    "Foto": "agua.png"
+  },
+  {
+    "Categoria": "Bebidas",
+    "Nome": "Suco de laranja na hora 300 ml",
+    "PrecoCentavos": 800,
+    "Unidade": "UN",
+    "Foto": "suco.png"
+  },
+  {
+    "Categoria": "Bebidas",
+    "Nome": "Suco de laranja na hora 500 ml",
+    "PrecoCentavos": 1200,
+    "Unidade": "UN",
+    "Foto": "suco.png"
+  },
+  {
+    "Categoria": "Doces",
+    "Nome": "Balinha de iogurte — unidade",
+    "PrecoCentavos": 50,
+    "Unidade": "UN",
+    "Foto": "bala.png"
+  },
+  {
+    "Categoria": "Doces",
+    "Nome": "Paçoca rolha — pacote 55 g",
+    "PrecoCentavos": 300,
+    "Unidade": "UN",
+    "Foto": "pacoca.png"
+  }
+]

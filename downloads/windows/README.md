@@ -1,11 +1,11 @@
-# Comanda 1.4.6 — Normal
+# Comanda 1.4.7 — Normal
 
-[Baixar instalador](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.6/VarthexComanda-1.4.6-Setup-win-x64.exe) · [SHA-256](VarthexComanda-1.4.6-Setup-win-x64.exe.sha256)
+[Baixar instalador](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.7/VarthexComanda-1.4.7-Setup-win-x64.exe) · [SHA-256](VarthexComanda-1.4.7-Setup-win-x64.exe.sha256)
 
-Base nova com catálogo vazio para cadastrar os produtos reais.
+Catálogo vazio em base nova, para os produtos reais do estabelecimento.
 
-Atualizações preservam os dados e a licença existentes. Windows x64, runtime incluso e ativação offline obrigatória. Feche o programa e faça backup antes de atualizar. Instalador sem assinatura de código.
+Windows x64, runtime incluso, ativação offline obrigatória. Atualizações preservam dados e licença; catálogos de demonstração só são criados em uma base vazia. Edições com instalações e bases separadas, sem comandas ou vendas de exemplo. Feche o programa e faça backup antes de atualizar.
 
-Configuração, impressão, cadastros, início e pagamento atualizados. Chamadas das mesas, alterações recentes do KDS, complementos e estoque ficam fora desta publicação.
+OneDrive padrão, prévia de impressão corrigida e remoção do atalho Alterar senha. Chamadas/KDS recentes e complementos/estoque continuam fora.
 
-Pré-release. [Mudanças, validação e limites](../RELEASE-1.4.6.md).
+Pré-release, sem assinatura de código. [Notas, testes, limites e hashes](../RELEASE-1.4.7.md).
