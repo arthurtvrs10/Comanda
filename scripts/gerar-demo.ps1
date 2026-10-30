@@ -4,6 +4,8 @@ param([string]$Compilador, [string]$Saida, [string]$PublicacaoExistente,[Validat
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 $raiz = Split-Path -Parent $PSScriptRoot
+. (Join-Path $PSScriptRoot 'Publicacao-Guardas.ps1')
+$fonteConfirmada=Assert-FontePublicacao $raiz
 $versao = (Select-Xml -Path "$raiz/backend/src/VarthexComanda.Desktop/VarthexComanda.Desktop.csproj" -XPath '//Version').Node.InnerText.Trim()
 $saida = if ($Saida) { $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Saida) } else { Join-Path $raiz "artifacts/demo-$versao" }
 $publicacao = Join-Path $saida 'publish/win-x64'
@@ -19,6 +21,7 @@ if ($PublicacaoExistente) {
     & (Join-Path $PSScriptRoot 'publicar.ps1') -Saida $saida
     if ($LASTEXITCODE -ne 0) { throw 'Publicação falhou.' }
 }
+Assert-PublicacaoPronta $publicacao $fonteConfirmada
 # O instalador demo adiciona apenas o catálogo e o marcador da edição. Nunca inclui dados locais.
 $indevidos = Get-ChildItem -LiteralPath $publicacao -File -Recurse | Where-Object {
     $_.Extension -in '.db','.sqlite','.sqlite3','.credencial' -or $_.Name -match 'google-oauth-client|google-drive-token|estado\.dat|colaboradores\.json|edicao-demonstracao\.txt'
