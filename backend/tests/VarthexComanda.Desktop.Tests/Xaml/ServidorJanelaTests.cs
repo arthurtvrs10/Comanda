@@ -86,6 +86,11 @@ public class ServidorJanelaTests
                             Assert.Equal(ativa,((Image)janela.FindName("Qr")).Source is not null);
                             Assert.Equal(!ativa,((TextBox)janela.FindName("Porta")).IsEnabled);
                             Assert.Equal(ativa,((Button)janela.FindName("Copiar")).IsEnabled);
+                            var link=(TextBox)janela.FindName("LinkCompleto");
+                            Assert.True(link.IsReadOnly);
+                            Assert.Equal(janela.ViewModel.LinkAcesso??"",link.Text);
+                            if(ativa){Assert.Equal(servidor.LinkAcesso(janela.ViewModel.EnderecoSelecionado!),link.Text);Assert.Contains("/#chave=",link.Text);}
+
                             Capturar(janela,$"servidor-{(ativa?"ativo":"parado")}-{(escuro?"escuro":"claro")}");
                         }
                         finally {janela.Close();}

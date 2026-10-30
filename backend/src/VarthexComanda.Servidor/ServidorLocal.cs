@@ -227,9 +227,5 @@ public sealed class ServidorLocal(AtendimentoRemoto atendimento, Func<bool>? pod
         var b=endereco.GetAddressBytes();
         return b.Length==4 && (b[0]==10 || b[0]==192&&b[1]==168 || b[0]==172&&b[1] is >=16 and <=31 || b[0]==169&&b[1]==254);
     }
-    private static IEnumerable<string> ObterEnderecos() => NetworkInterface.GetAllNetworkInterfaces()
-        .Where(n=>n.OperationalStatus==OperationalStatus.Up)
-        .OrderBy(n=>n.NetworkInterfaceType==NetworkInterfaceType.Wireless80211?0:1).SelectMany(n=>n.GetIPProperties().UnicastAddresses)
-        .Select(u=>u.Address).Where(a=>a.AddressFamily==System.Net.Sockets.AddressFamily.InterNetwork && !IPAddress.IsLoopback(a) && EnderecoLocal(a))
-        .Select(a=>a.ToString()).Distinct().Append("127.0.0.1");
+    private static IEnumerable<string> ObterEnderecos() => EnderecosServidor.Ler();
 }
