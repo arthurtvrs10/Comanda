@@ -100,7 +100,7 @@ public sealed partial class CozinhaViewModel : ObservableObject
     private DateTime? _ultimaAtualizacao;
     public string UltimaAtualizacao=>Falha?"Falha ao atualizar":_ultimaAtualizacao is DateTime ultima?$"Última atualização: {Math.Max(0,(int)(Agora()-ultima).TotalSeconds)}s atrás":"Aguardando atualização";
     public bool AtualizacaoOk=>_ultimaAtualizacao is not null&&!Falha;
-    public void AtualizarContagem(){OnPropertyChanged(nameof(UltimaAtualizacao));OnPropertyChanged(nameof(AtualizacaoOk));}
+    public void AtualizarContagem(){foreach(var chamada in Colunas[0].Chamadas)chamada.AtualizarTempo(Agora());OnPropertyChanged(nameof(UltimaAtualizacao));OnPropertyChanged(nameof(AtualizacaoOk));}
     public bool Vazio=>Pedidos.Count==0;
     public string TituloVazio=>Falha?"Cozinha indisponível":"Nenhum item nesta fila";
     public string DescricaoVazio=>Falha?"Aguardando a próxima tentativa automática de atualização.":"Novos lançamentos aparecem automaticamente.\nConfira os filtros de local e situação.";

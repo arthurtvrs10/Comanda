@@ -5,8 +5,12 @@ using VarthexComanda.Application.Configuracao;
 
 namespace VarthexComanda.Desktop.Atendimento;
 
-public sealed record ChamadaMesa(Guid Id,int Mesa,string Solicitacao,DateTime CriadaEm)
+public sealed record ChamadaMesa(Guid Id,int Mesa,string Solicitacao,DateTime CriadaEm) : System.ComponentModel.INotifyPropertyChanged
 {
+    public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
+    private DateTime _agora=DateTime.UtcNow;
+    public string Tempo=>$"há {Math.Max(0,(int)(_agora-CriadaEm).TotalMinutes)} min";
+    public void AtualizarTempo(DateTime agora){_agora=agora;PropertyChanged?.Invoke(this,new(nameof(Tempo)));}
     public string Local=>$"Mesa {Mesa:00}";
     public string Horario=>$"{Application.Atendimento.FusoBrasilia.ParaLocal(CriadaEm):HH:mm} · Brasília";
 }
@@ -39,7 +43,13 @@ public sealed class PreferenciasQuadroCozinha(IConfiguracaoRepository repositori
     public Dictionary<int,long> EntreguesOcultos()=>Ler<Dictionary<int,long>>("cozinha.kanban.ocultos.v1")??[];
     public void SalvarOcultos(Dictionary<int,long> itens)=>repositorio.Definir("cozinha.kanban.ocultos.v1",JsonSerializer.Serialize(itens),DateTime.UtcNow);
     public Dictionary<string,string> Titulos()=>Ler<Dictionary<string,string>>(ChaveTitulos)??[];
-    public IReadOnlyList<ChamadaMesa> Chamadas()=>Ler<List<ChamadaMesa>>(ChaveChamadas)??[];
+    public IReadOnlyList<ChamadaMesa> Chamadas()=>new ChamadasMesasService(repositorio).Listar().Select(c=>new ChamadaMesa(c.Id,c.Mesa,c.Solicitacao,c.CriadaEm)).ToArray();
+    public ChamadaMesa RegistrarChamada(int mesa,string solicitacao)
+    {
+        var c=new ChamadasMesasService(repositorio).Registrar(0,mesa,solicitacao,Guid.NewGuid()).Chamada!;
+        return new(c.Id,c.Mesa,c.Solicitacao,c.CriadaEm);
+    }
+    public void AtenderChamada(Guid id)=>new ChamadasMesasService(repositorio).Atender(id);
     private T? Ler<T>(string chave){var json=repositorio.ObterValor(chave);return json is null?default:JsonSerializer.Deserialize<T>(json);}
     public void SalvarTitulos(IReadOnlyDictionary<string,string> titulos)=>repositorio.Definir(ChaveTitulos,JsonSerializer.Serialize(titulos),DateTime.UtcNow);
     public void SalvarChamadas(IEnumerable<ChamadaMesa> chamadas)=>repositorio.Definir(ChaveChamadas,JsonSerializer.Serialize(chamadas),DateTime.UtcNow);

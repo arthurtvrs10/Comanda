@@ -55,7 +55,13 @@ public sealed partial class CozinhaViewModel
             cartao.DefinirTotal(itens.Sum(i=>i.SubtotalCentavos));lista.Add(cartao);
         }
         Sincronizar(entregues.Pedidos,lista);
-        if(PreferenciasQuadro is not null){var chamadas=PreferenciasQuadro.Chamadas();Colunas[0].Chamadas.Clear();foreach(var chamada in chamadas.OrderBy(c=>c.CriadaEm))Colunas[0].Chamadas.Add(chamada);}
+        if(PreferenciasQuadro is not null)
+        {
+            var chamadas=PreferenciasQuadro.Chamadas();
+            var nova=chamadas.Any(c=>!Colunas[0].Chamadas.Any(a=>a.Id==c.Id));
+            Colunas[0].Chamadas.Clear();foreach(var chamada in chamadas.OrderBy(c=>c.CriadaEm)){chamada.AtualizarTempo(Agora());Colunas[0].Chamadas.Add(chamada);}
+            if(nova&&SomAtivo)try{NotificarNovoItem?.Invoke();}catch{}
+        }
         foreach(var c in Colunas)c.AtualizarResumo();
     }
     private static void Sincronizar(ObservableCollection<PedidoKds> destino,IReadOnlyList<PedidoKds> novos)
@@ -78,14 +84,14 @@ public sealed partial class CozinhaViewModel
         var chamadas=Colunas[0].Chamadas;
         if(chamadas.Any(c=>c.Mesa==mesa))throw new InvalidOperationException("Esta mesa já tem uma chamada pendente.");
         if(chamadas.Count>=300)throw new InvalidOperationException("Atenda as chamadas pendentes antes de registrar novas.");
-        var nova=new ChamadaMesa(Guid.NewGuid(),mesa,string.IsNullOrWhiteSpace(solicitacao)?"Solicita atendimento":solicitacao,Agora());
-        PreferenciasQuadro?.SalvarChamadas(chamadas.Append(nova));chamadas.Add(nova);Colunas[0].AtualizarResumo();
+        var nova=PreferenciasQuadro?.RegistrarChamada(mesa,solicitacao)??new ChamadaMesa(Guid.NewGuid(),mesa,string.IsNullOrWhiteSpace(solicitacao)?"Solicita atendimento":solicitacao,Agora());
+        chamadas.Add(nova);Colunas[0].AtualizarResumo();
         if(SomAtivo)try{NotificarNovoItem?.Invoke();}catch{}
     }
     public void AtenderChamada(ChamadaMesa chamada)
     {
         if(Autorizar?.Invoke()==false)return;
-        PreferenciasQuadro?.SalvarChamadas(Colunas[0].Chamadas.Where(c=>c.Id!=chamada.Id));Colunas[0].Chamadas.Remove(chamada);Colunas[0].AtualizarResumo();
+        PreferenciasQuadro?.AtenderChamada(chamada.Id);Colunas[0].Chamadas.Remove(chamada);Colunas[0].AtualizarResumo();
     }
     public Task IniciarAsync(PedidoKds pedido)=>AlterarAsync(pedido.Id,pedido.Itens.Where(i=>i.Status==StatusPreparo.Pendente).Select(i=>i.AlterarPara(StatusPreparo.EmPreparo)).ToArray());
     public bool PodeMover(PedidoKds pedido,ColunaCozinha destino)
