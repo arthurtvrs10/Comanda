@@ -18,7 +18,6 @@ public sealed class JanelaLayoutTicket:Window
     private readonly LayoutTicket _layout;
     private readonly FlowDocumentScrollViewer _previa=new(){IsToolBarVisible=false,VerticalScrollBarVisibility=ScrollBarVisibility.Auto,Background=Brushes.White,Foreground=Brushes.Black};
     private readonly TextBlock _erro=new(){TextWrapping=TextWrapping.Wrap};
-    private readonly TextBlock _logoEstado=new(){TextWrapping=TextWrapping.Wrap,Margin=new Thickness(0,6,0,12)};
     private string _snapshot;
     public bool TemAlteracoes=>_snapshot!=JsonSerializer.Serialize(_layout);
     public void SalvarLayout(){_servico.Salvar(_layout);_snapshot=JsonSerializer.Serialize(_layout);}
@@ -33,12 +32,15 @@ public sealed class JanelaLayoutTicket:Window
         var opcoes=new StackPanel {Margin=new Thickness(0,0,24,0)};
         opcoes.Children.Add(new TextBlock {Text="Elementos do ticket",FontSize=21,FontWeight=FontWeights.SemiBold});
         var papel=new ComboBox {ItemsSource=new[]{58,80},SelectedItem=_layout.PapelMm,MinHeight=34,Width=130,HorizontalAlignment=HorizontalAlignment.Left};
-        var linhaOpcoes=new StackPanel {Orientation=Orientation.Horizontal};
+        var linhaOpcoes=new StackPanel {Orientation=Orientation.Horizontal,Margin=new Thickness(0,0,0,12)};
         var campoPapel=new StackPanel();campoPapel.Children.Add(new TextBlock {Text="Papel (mm)",Margin=new Thickness(0,0,0,6)});campoPapel.Children.Add(papel);linhaOpcoes.Children.Add(campoPapel);
         papel.SelectionChanged+=(_,_)=>{if(papel.SelectedItem is int mm){_layout.PapelMm=mm;Atualizar();}};
-        var logo=new Button {Content="Selecionar logo…",HorizontalAlignment=HorizontalAlignment.Left,VerticalAlignment=VerticalAlignment.Bottom,Margin=new Thickness(12,0,0,0),MinHeight=34};logo.Click+=(_,_)=>SelecionarLogo();linhaOpcoes.Children.Add(logo);opcoes.Children.Add(linhaOpcoes);opcoes.Children.Add(_logoEstado);
+        opcoes.Children.Add(linhaOpcoes);
         var grade=new UniformGrid {Columns=2};opcoes.Children.Add(grade);
-        Opcao(grade,"Imprimir logo",_layout.ImprimirLogo,v=>_layout.ImprimirLogo=v);
+        var logo=Opcao(grade,"Imprimir logo",_layout.ImprimirLogo,v=>_layout.ImprimirLogo=v);
+        logo.IsEnabled=!string.IsNullOrWhiteSpace(_layout.LogoBase64);
+        logo.ToolTip="Cadastre a imagem em Configurações do sistema > Geral e salve as alterações.";
+        if(!logo.IsEnabled)opcoes.Children.Add(new TextBlock {Text="Para imprimir a logo, cadastre a imagem em Configurações do sistema > Geral.",TextWrapping=TextWrapping.Wrap,Margin=new Thickness(0,0,0,12)});
         Opcao(grade,"Nome do estabelecimento",_layout.NomeEstabelecimento,v=>_layout.NomeEstabelecimento=v);
         Opcao(grade,"Número da mesa / comanda",_layout.NumeroMesa,v=>_layout.NumeroMesa=v);
         Opcao(grade,"Nome do cliente",_layout.NomeCliente,v=>_layout.NomeCliente=v);
@@ -58,20 +60,16 @@ public sealed class JanelaLayoutTicket:Window
         var salvar=new Button {Content="Salvar layout",MinHeight=38,MinWidth=120};salvar.Click+=(_,_)=>{try{_servico.Salvar(_layout);_snapshot=JsonSerializer.Serialize(_layout);_erro.Text="Layout salvo.";}catch(Exception ex){_erro.Text=ex.Message;}};botoes.Children.Add(salvar);rodape.Children.Add(_erro);
         Content=raiz;Atualizar();Loaded+=(_,_)=>Atualizar();Closing+=(_,e)=>{if(_snapshot!=JsonSerializer.Serialize(_layout)&&!new Atendimento.JanelaConfirmador().Confirmar("Descartar alterações?","O layout do ticket não foi salvo. Deseja descartar as alterações?"))e.Cancel=true;};
     }
-    private void Opcao(Panel grade,string titulo,bool ativo,Action<bool> alterar)
+    private CheckBox Opcao(Panel grade,string titulo,bool ativo,Action<bool> alterar)
     {
         var alternancia=new CheckBox {Content=new TextBlock {Text=titulo,TextWrapping=TextWrapping.Wrap,MaxWidth=140},IsChecked=ativo,MinHeight=42,VerticalContentAlignment=VerticalAlignment.Center};
         alternancia.SetResourceReference(StyleProperty,"AlternanciaCompacta");alternancia.Click+=(_,_)=>{alterar(alternancia.IsChecked==true);Atualizar();};
         var moldura=new Border {Child=alternancia,Padding=new Thickness(10),BorderThickness=new Thickness(1),Margin=new Thickness(0,0,10,12)};moldura.SetResourceReference(Border.BorderBrushProperty,"Line");moldura.SetResourceReference(Border.BackgroundProperty,"Surface");grade.Children.Add(moldura);
-    }
-    private void SelecionarLogo()
-    {
-        var escolher=new OpenFileDialog {Filter="Imagem PNG ou JPEG|*.png;*.jpg;*.jpeg",Title="Logo do estabelecimento"};if(escolher.ShowDialog(this)!=true)return;
-        try{var bytes=File.ReadAllBytes(escolher.FileName);if(bytes.Length>2*1024*1024)throw new ArgumentException("Use uma imagem de até 2 MB.");using var stream=new MemoryStream(bytes);var imagem=new BitmapImage();imagem.BeginInit();imagem.CacheOption=BitmapCacheOption.OnLoad;imagem.StreamSource=stream;imagem.EndInit();if(imagem.PixelWidth>4000||imagem.PixelHeight>4000)throw new ArgumentException("Use uma imagem de até 4000 × 4000 pixels.");_layout.LogoBase64=Convert.ToBase64String(bytes);_erro.Text="";Atualizar();}catch(Exception ex){_erro.Text=ex.Message;}
+        System.Windows.Automation.AutomationProperties.SetName(alternancia,titulo);
+        return alternancia;
     }
     private void Atualizar()
     {
-        _logoEstado.Text=_layout.LogoBase64.Length>0?"Logo selecionada. Ative Imprimir logo para exibi-la.":"Nenhuma logo selecionada. PNG/JPEG de até 2 MB.";
         try
         {
             var c=new Comanda {Id=1,Numero=12,NumeroMesa=12,NomeCliente="João Silva",CodigoPedido=102,Status=StatusComanda.Aberta,AbertaEm=new DateTime(2026,10,29,20,19,0),TotalCentavos=0,Observacao="Enviar os itens juntos"};

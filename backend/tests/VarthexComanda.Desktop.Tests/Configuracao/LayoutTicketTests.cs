@@ -46,6 +46,10 @@ public class LayoutTicketTests
                 TemaInterface.Aplicar(escuro,false);var janela=new JanelaLayoutTicket(new(new FakeConfiguracaoRepository()));var raiz=(FrameworkElement)janela.Content;
                 raiz.Measure(new Size(1000,700));raiz.Arrange(new Rect(0,0,1000,700));raiz.UpdateLayout();
                 Assert.Equal(8,AlinhamentoInterfaceTests.Filhos(raiz).OfType<CheckBox>().Count());Assert.Single(AlinhamentoInterfaceTests.Filhos(raiz).OfType<FlowDocumentScrollViewer>());
+                var logo=AlinhamentoInterfaceTests.Filhos(raiz).OfType<CheckBox>().Single(c=>System.Windows.Automation.AutomationProperties.GetName(c)=="Imprimir logo");
+                Assert.False(logo.IsEnabled);
+                Assert.Contains("Geral",logo.ToolTip.ToString());
+                Assert.DoesNotContain(AlinhamentoInterfaceTests.Filhos(raiz).OfType<Button>(),b=>b.Content?.ToString()?.StartsWith("Selecionar logo")==true);
                 var pasta=Environment.GetEnvironmentVariable("VARTHEX_PREVIAS_TESTE");if(pasta is not null){Directory.CreateDirectory(pasta);var bitmap=new RenderTargetBitmap(1000,700,96,96,PixelFormats.Pbgra32);bitmap.Render(raiz);var png=new PngBitmapEncoder();png.Frames.Add(BitmapFrame.Create(bitmap));using var saida=File.Create(Path.Combine(pasta,$"ticket-layout-{(escuro?"escuro":"claro")}.png"));png.Save(saida);}
             }}finally{TemaInterface.Aplicar(false,false);}
         });
