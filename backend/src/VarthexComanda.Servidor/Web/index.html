@@ -21,6 +21,7 @@
    <section id="pedido" aria-labelledby="tituloPedido" hidden>
     <button id="voltar" class="voltar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 6-6 6 6 6"/></svg>Comandas</button>
     <div class="cabecalho-pedido"><div><h1 id="tituloPedido" tabindex="-1"></h1><p id="contextoPedido" class="muted"></p></div><span id="situacao" class="situacao"></span></div>
+    <form id="chamadaMesa" class="nota"><label for="solicitacaoMesa">Solicitação ao atendente (opcional)</label><input id="solicitacaoMesa" maxlength="120" placeholder="Ex.: trazer guardanapos"><button id="chamarAtendente" type="submit" class="secundario">Chamar atendente</button><p id="estadoChamada" role="status" aria-live="polite"></p></form>
     <div class="titulo titulo-itens"><h2 id="tituloItens">Itens da comanda</h2><button id="abrirProdutos"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Produtos</button></div>
     <div class="painel-itens"><ul id="itens" aria-labelledby="tituloItens"></ul><div id="semItens" class="vazio" hidden><h3>Esta comanda ainda está vazia</h3><p>Toque em <strong>+ Produtos</strong> para lançar o primeiro item.</p></div></div>
     <div class="resumo-pedido"><div><span>Total da comanda</span><strong id="total"></strong></div><p id="quantidadeItens" class="muted"></p></div>

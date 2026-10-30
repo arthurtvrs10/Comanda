@@ -56,6 +56,8 @@ function controles() {
  document.querySelectorAll('button').forEach(b => b.disabled = ocupada || navegando);
  const indisponivel = ocupada || navegando || !!atual?.emFechamento || !!pendente;
  $('abrirProdutos').disabled = indisponivel;
+ $('chamarAtendente').disabled = ocupada || navegando || !atual?.mesa;
+ $('solicitacaoMesa').disabled = ocupada || navegando || !atual?.mesa;
  document.querySelectorAll('.produto').forEach(b => b.disabled = indisponivel);
  $('adicionar').disabled = indisponivel;
  $('numero').disabled = ocupada || navegando || !!pendente;
@@ -117,6 +119,10 @@ async function listarComandas() {
  $('vazio').hidden = !!r.comandas.length; controles();
 }
 function renderizarPedido() {
+ if ($('estadoChamada').dataset.comanda !== String(atual.id) + ':' + String(atual.mesa)) {
+  $('estadoChamada').dataset.comanda = String(atual.id) + ':' + String(atual.mesa);
+  $('estadoChamada').textContent = atual.mesa ? 'Solicita atendimento para a mesa ' + atual.mesa + '.' : 'Vincule uma mesa à comanda no computador para chamar o atendente.';
+ }
  $('tituloPedido').textContent = 'Comanda ' + numeroComanda(atual.numero);
  $('contextoPedido').textContent = [atual.mesa ? 'Mesa ' + atual.mesa : 'Balcão', atual.cliente].filter(Boolean).join(' · ');
  $('total').textContent = moeda(atual.totalCentavos);
@@ -295,3 +301,25 @@ async function sincronizar() {
  }
 }
 iniciar(); setInterval(sincronizar, 4000);
+
+$('chamadaMesa').onsubmit = async e => {
+ e.preventDefault();
+ if (ocupada || navegando || !atual?.mesa) return;
+ const id = atual.id, solicitacao = $('solicitacaoMesa').value.trim();
+ const storage = 'comanda-chamada-' + id;
+ let pedido;
+ try { pedido = JSON.parse(sessionStorage.getItem(storage) || 'null'); } catch {}
+ pedido = pedido || { solicitacao, identificacao: gerarId() };
+ sessionStorage.setItem(storage, JSON.stringify(pedido));
+ ocupada = true; controles();
+ $('estadoChamada').textContent = 'Enviando solicitação…';
+ try {
+  const resposta = await api('/api/comandas/' + id + '/chamadas', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(pedido) });
+  sessionStorage.removeItem(storage);
+  $('estadoChamada').textContent = resposta.jaAtendida ? 'Esta solicitação já foi atendida.' : 'Solicitação enviada. Aguarde o atendente; a mesa já aparece no KDS.';
+  $('solicitacaoMesa').value = '';
+ } catch (erro) {
+  if (erro.definitivo) sessionStorage.removeItem(storage);
+  $('estadoChamada').textContent = erro.message + ' Toque novamente para confirmar sem duplicar.';
+ } finally { ocupada = false; controles(); }
+};

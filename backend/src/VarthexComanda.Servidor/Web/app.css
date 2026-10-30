@@ -50,3 +50,5 @@ footer{text-align:center;font-size:.75rem;color:var(--muted);padding:12px 24px 2
  .localizador{grid-template-columns:minmax(0,1fr);gap:14px}#categorias{flex-direction:row;flex-wrap:nowrap;overflow-x:auto;padding:3px 3px 8px;scrollbar-width:thin}#categorias button{flex-shrink:0;white-space:nowrap}
  .produtos{grid-template-columns:repeat(2,minmax(0,1fr))}.cabecalho-pedido{padding-bottom:18px}.cabecalho-pedido h1{font-size:1.5rem}.item{padding:14px 12px;gap:12px}.resumo-pedido{padding:16px 12px}.busca-produto{padding:12px}dialog{padding:18px}.acoes-modal button{flex:1}
 }
+#chamadaMesa{margin:18px 0;padding:14px;border:1px solid var(--linha);background:var(--superficie)}
+#chamadaMesa label{margin-top:0}#chamarAtendente{margin-top:10px;width:100%}#estadoChamada{margin-bottom:0;font-size:.875rem;color:var(--muted)}

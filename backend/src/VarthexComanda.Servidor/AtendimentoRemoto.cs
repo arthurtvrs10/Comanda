@@ -15,8 +15,18 @@ public sealed record RespostaRemota(int Status, object Dados);
 
 /// <summary>Reutiliza os casos de uso existentes. Não expõe entidades, pagamentos ou administração.</summary>
 public sealed class AtendimentoRemoto(IComandaRepository comandas, IProdutoRepository produtos,
-    ICategoriaRepository categorias, AbrirComanda abrir, AdicionarItem adicionar, ObterConfiguracao configuracao, FotosProdutos? fotos = null)
+    ICategoriaRepository categorias, AbrirComanda abrir, AdicionarItem adicionar, ObterConfiguracao configuracao, FotosProdutos? fotos = null,IConfiguracaoRepository? configuracoes=null)
 {
+    public RespostaRemota ChamarAtendente(int id,string? solicitacao,Guid identificacao)
+    {
+        if(configuracoes is null)return Erro(503,"Chamadas indisponíveis neste computador.");
+        var pedido=comandas.BuscarComItens(id)?.Comanda;
+        if(pedido is null||pedido.Status!=StatusComanda.Aberta)return Erro(404,"Comanda não encontrada ou já encerrada.");
+        if(pedido.NumeroMesa is not int mesa)return Erro(409,"Vincule uma mesa à comanda no computador para chamar o atendente.");
+        try{return new(200,new ChamadasMesasService(configuracoes).Registrar(id,mesa,solicitacao,identificacao));}
+        catch(ArgumentException ex){return Erro(400,ex.Message);}
+        catch(InvalidOperationException ex){return Erro(409,ex.Message);}
+    }
     public object Catalogo()
     {
         var ativas = categorias.ListarAtivas();
@@ -63,3 +73,5 @@ public sealed class AtendimentoRemoto(IComandaRepository comandas, IProdutoRepos
         itens.Select(i => new ItemRemoto(i.Id,i.NomeProduto,i.QuantidadeFormatada,i.Medida,i.Observacao,i.SubtotalCentavos)).ToArray());
     internal static RespostaRemota Erro(int status, string mensagem) => new(status,new { Erro = mensagem });
 }
+
+public sealed record PedidoChamada(string? Solicitacao,Guid Identificacao);

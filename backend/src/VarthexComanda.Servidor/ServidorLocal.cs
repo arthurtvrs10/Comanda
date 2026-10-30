@@ -98,6 +98,7 @@ public sealed class ServidorLocal(AtendimentoRemoto atendimento, Func<bool>? pod
                 ? Results.Bytes(foto.Conteudo,foto.Tipo) : Results.NotFound());
             app.MapGet("/api/comandas",() => Results.Json(atendimento.Comandas()));
             app.MapGet("/api/comandas/{id:int}",(int id) => Resultado(atendimento.Consultar(id)));
+            app.MapPost("/api/comandas/{id:int}/chamadas",(int id,PedidoChamada pedido)=>Resultado(atendimento.ChamarAtendente(id,pedido.Solicitacao,pedido.Identificacao)));
             app.MapPost("/api/comandas",(Func<HttpContext,Task<IResult>>)(c => Escrever(c,null)));
             app.MapPost("/api/comandas/{id:int}/itens",async (HttpContext c,int id) => await Escrever(c,id));
             try
