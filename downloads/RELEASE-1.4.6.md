@@ -1,0 +1,30 @@
+# Comanda 1.4.6 — Configuração, impressão e pagamento
+
+Pré-release Windows x64, normal e demonstração, de 30/10/2026.
+
+## Alterações
+
+- Layout da conta com prévia integrada nas configurações do sistema e das impressoras. As duas telas compartilham opções, mensagens, observações e largura do papel do caixa. Impressoras de cozinha com largura própria são preservadas; a escolha manual de impressora continua disponível quando não há saída cadastrada.
+- Imagem do estabelecimento cadastrada em Geral e compartilhada com o ticket. Removido o seletor de logo duplicado.
+- Dados de primeiros passos sincronizados com Geral. Cadastro salvo ao continuar a etapa; alterações mais recentes em Geral são reconhecidas ao retomar o assistente, preservando os demais rascunhos e a segurança.
+- Ajuda azul nos campos e controles compartilhados para CPF/CNPJ, telefone com país, CEP e endereço nos cadastros aplicáveis. Nome obrigatório identificado somente por asterisco vermelho e erro junto ao campo.
+- Abertura maximizada, faixa compacta de primeiros passos com progresso e balão de ajuda do mascote em cada abertura.
+- Pagamento sem o controle Conferir e rachar a conta, mantendo recebimentos parciais e mistos; resumo adaptado e rodapé sem sobreposição.
+- README, capturas e documentação atualizados.
+
+## Fora desta release
+
+As atualizações recentes de chamadas das mesas, QR Codes e integração das chamadas no KDS não estão incluídas. O KDS existente na 1.4.5 foi preservado. Complementos, estoque, código automático de alimento, inclusão direta, tipo de pedido e recuperação por e-mail continuam em desenvolvimento e não acompanham os instaladores. Nenhuma migração nova foi adicionada.
+
+## Validação e limites
+
+931 testes .NET distintos aprovados em fonte isolada: 452 Desktop (451 na suíte e um novo teste integrado, com repetições direcionadas após os ajustes), 313 Infrastructure, 148 Application, 14 Servidor e 4 Domain. Mais 7 testes JavaScript do atendimento aprovados. Capturas do editor nos temas claro/escuro e larguras de 800/1180 px.
+
+Runtime .NET incluso, ativação offline obrigatória, dados e licença existentes preservados. Faça backup e feche o sistema antes de atualizar. Instaladores sem assinatura de código. Impressora física de 58/80 mm, instalação em Windows limpo, áudio no equipamento e OAuth com conta Google real permanecem pendentes; esta publicação continua como pré-release.
+
+## Instaladores
+
+Gerados com Inno Setup 7.1.0 e verificados localmente pelo Microsoft Defender, definições 1.463.36.0, sem detecção nesta análise.
+
+- [VarthexComanda-1.4.6-Setup-win-x64.exe](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.6/VarthexComanda-1.4.6-Setup-win-x64.exe) — SHA-256: `64873E7040A847F4C7D9B04121521C526F005A968CE0C7994A86B182DFFEAD3E`
+- [VarthexComanda-Demo-1.4.6-Setup-win-x64.exe](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.6/VarthexComanda-Demo-1.4.6-Setup-win-x64.exe) — SHA-256: `D5F801C6CEF756A7B5CF2B2975D8EE14D48A15674BE22CA41E58704438BEE982`

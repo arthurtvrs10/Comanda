@@ -1,5 +1,13 @@
 # Histórico de alterações
 
+## 1.4.6 — 30/10/2026 — pré-release
+
+- Impressão e ticket com editor compartilhado nas configurações do sistema e impressoras, mensagens e observações sincronizadas, papel do caixa consistente e seleção manual preservada.
+- Imagem do estabelecimento compartilhada com o ticket, ajuda e máscaras nos cadastros, nome obrigatório sinalizado e primeiros passos sincronizados com Geral.
+- Abertura maximizada, faixa compacta com progresso, retorno do balão do mascote e ajustes no fluxo e resumo do pagamento.
+- 931 testes .NET distintos e 7 JavaScript aprovados em fonte isolada. Chamadas/QR Codes, alterações recentes do KDS, complementos/estoque e recuperação por e-mail fora dos instaladores. [Notas e limites](../downloads/RELEASE-1.4.6.md).
+
+
 ## 1.4.2 — 24/10/2026 — pré-release
 
 - Arraste compartilhado pelas nove janelas internas passa a acompanhar o mouse em uma referência fixa e a aplicar somente a posição mais recente por quadro. Evita trabalho repetido em movimentos rápidos, sem refazer a medição do conteúdo.

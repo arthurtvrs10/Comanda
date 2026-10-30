@@ -4,9 +4,9 @@ A identidade **Comanda · por Varthex** aparece na abertura, área de trabalho, 
 
 Sistema Windows para organizar mesas, comandas e consumo em pequenos estabelecimentos de alimentação. Produtos, atendimento, fechamento e histórico funcionam localmente, sem depender da internet.
 
-**Em desenvolvimento — recuperação do gestor por e-mail:** integração local com Resend e API publicada no plano gratuito Cloudflare Workers + D1, com cadastro de e-mail verificado em Configurações → Segurança e código em “Esqueci minha senha”. Recuperação offline preservada. O envio real permanece desativado até configurar domínio verificado, Resend e chaves de assinatura. [Implementação, limites gratuitos e publicação](services/recuperacao/README.md).
+**Em desenvolvimento, fora da 1.4.6:** chamadas das mesas e QR Codes, alterações recentes do KDS, complementos/estoque, tipo de pedido e recuperação por e-mail.
 
-**Release 1.4.5 · 29/10/2026 · pré-release em testes.** KDS Kanban e assistente de primeira configuração. Windows x64 com runtime .NET e ativação offline.
+**Release 1.4.6 · 30/10/2026 · pré-release em testes.** Configurações e impressão sincronizadas, cadastros, início e pagamento. Windows x64 com runtime .NET e ativação offline.
 
 <img src="docs/design/atual-2026-10-30/principal-claro.png" alt="Área de trabalho Comanda com fundo cinza, logo centralizado e alternância de modo escuro" width="1000">
 
@@ -14,27 +14,27 @@ Sistema Windows para organizar mesas, comandas e consumo em pequenos estabelecim
 
 Os links abaixo apontam para os arquivos da release no GitHub. Enquanto o repositório estiver privado, o download exige uma conta com acesso; não há download público direto configurado.
 
-| Edição 1.4.5 | Para quem | Download |
+| Edição 1.4.6 | Para quem | Download |
 | --- | --- | --- |
-| **Normal — sem demonstração** | Cadastrar os produtos reais do estabelecimento; catálogo vazio em uma instalação nova | [![Baixar edição normal para Windows](docs/design/download-windows.svg)](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.5/VarthexComanda-1.4.5-Setup-win-x64.exe) · [SHA-256](downloads/windows/VarthexComanda-1.4.5-Setup-win-x64.exe.sha256) |
-| **Demonstração** | Conhecer o sistema com 12 produtos fictícios e fotos; sem comandas abertas em uma base nova | [![Baixar demonstração para Windows](docs/design/download-windows.svg)](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.5/VarthexComanda-Demo-1.4.5-Setup-win-x64.exe) · [SHA-256](downloads/demo/VarthexComanda-Demo-1.4.5-Setup-win-x64.exe.sha256) |
+| **Normal — sem demonstração** | Cadastrar os produtos reais do estabelecimento; catálogo vazio em uma instalação nova | [![Baixar edição normal para Windows](docs/design/download-windows.svg)](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.6/VarthexComanda-1.4.6-Setup-win-x64.exe) · [SHA-256](downloads/windows/VarthexComanda-1.4.6-Setup-win-x64.exe.sha256) |
+| **Demonstração** | Conhecer o sistema com 12 produtos fictícios e fotos; sem comandas abertas em uma base nova | [![Baixar demonstração para Windows](docs/design/download-windows.svg)](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.6/VarthexComanda-Demo-1.4.6-Setup-win-x64.exe) · [SHA-256](downloads/demo/VarthexComanda-Demo-1.4.6-Setup-win-x64.exe.sha256) |
 
-**Validação 1.4.5:** 914 testes .NET, 7 testes do atendimento web e 9 do protótipo aprovados em fonte isolada sem complementos/estoque. Instaladores normal e demonstração verificados localmente pelo Defender, sem detecção. Consulte as notas para hashes e limites.
+**Validação 1.4.6:** 931 testes .NET distintos e 7 testes do atendimento web aprovados em fonte isolada, com verificações direcionadas após os ajustes. [Mudanças e limites](downloads/RELEASE-1.4.6.md).
 
-[Notas da release 1.4.5](https://github.com/arthurtvrs10/Comanda/releases/tag/v1.4.5) · [Instalação normal](downloads/windows/README.md) · [Instalação da demonstração](downloads/demo/README.md)
+[Notas da release 1.4.6](https://github.com/arthurtvrs10/Comanda/releases/tag/v1.4.6) · [Instalação normal](downloads/windows/README.md) · [Instalação da demonstração](downloads/demo/README.md)
 
 Instalação por usuário, sem administrador, em Windows x64. Feche o aplicativo antes de atualizar. Reinstalar ou atualizar preserva os dados e a licença existentes. Os instaladores não possuem assinatura de código.
 
 A release é uma **pré-release**: instalação em Windows limpo e autorização/envio com uma conta Google real continuam pendentes. A [versão estável anterior 1.2.2](https://github.com/arthurtvrs10/Comanda/releases/tag/v1.2.2) permanece disponível.
 
-## Ajustes recentes do código — ainda não publicados
+## Atualizações da 1.4.6
 
-- **QR Codes por mesa para chamar garçom:** em Configurações → Servidor / acesso pelo celular → QR Codes das mesas, defina a quantidade e imprima ou salve um código por mesa. O cliente acessa somente Chamar garçom, sem abrir ou vincular uma comanda. A solicitação aparece no KDS e Atendida encerra somente a chamada. [Configuração e limites](specs/2026-10-30-qrcodes-mesas-chamar-garcom.md).
-- **Fonte de publicação sem complementos:** 448 testes desktop, 17 do servidor e 8 web aprovados. O fluxo integrado confere lançamento pelo celular, preparo/entrega, pagamento parcial/misto, histórico e documentos de 58/80 mm. Celular físico aguarda confirmação; impressora e áudio de cozinha não homologados.
+- Dados de primeiros passos e Geral sincronizados, com preservação dos rascunhos.
+- Mesmo editor de ticket nas configurações e impressoras, com salvamento compartilhado.
+- Balão de ajuda do mascote disponível em cada abertura.
 
 - Faixa de primeiros passos com 52 px, progresso real das sete etapas e opção de ocultar na sessão.
 - Pagamento sem o controle “Conferir e rachar a conta”, com resumo adaptado a janelas menores e rodapé sem sobreposição.
-- Tipo de pedido, cliente e observações salvos na comanda e identificados no KDS.
 - Imagem do estabelecimento cadastrada em **Configurações → Configurações do sistema → Geral**, compartilhada com o ticket. Nome obrigatório identificado por asterisco vermelho; CPF/CNPJ, telefone e CEP formatados.
 - Layout em **Configurações → Impressoras → Layout do ticket**, com prévia da conta de mesa e opções de conteúdo. O botão “Selecionar logo” foi retirado; a imagem é cadastrada em Geral.
 - Abertura maximizada e retirada de controles redundantes do atendimento. Complementos, estoque e recuperação por e-mail permanecem em desenvolvimento.
@@ -269,9 +269,9 @@ Distribua somente os pacotes preparados. A pasta `artifacts` pode conter materia
 
 ## Documentação e validação
 
-As imagens deste README foram atualizadas em 30/10/2026. Os instaladores continuam na 1.4.5; os ajustes recentes do código ainda precisam de uma nova publicação. Os arquivos e as evidências das versões anteriores permanecem disponíveis.
+As imagens deste README foram atualizadas em 30/10/2026. Os instaladores 1.4.6 incluem os ajustes de configuração, impressão, início e pagamento. Chamadas/QR Codes e alterações recentes do KDS continuam fora desta publicação. Os arquivos e as evidências das versões anteriores permanecem disponíveis.
 
-Validação atual: **483 testes desktop aprovados** na geração das capturas. A auditoria anterior reuniu 984 testes .NET e 16 da API de recuperação, com repetições dirigidas após correções. [Relatório de integração](specs/2026-10-30-auditoria-integracao-interface.md). As contagens não certificam impressão física, entrega real de e-mail ou hardware. Histórico: [notas de distribuição 1.4.2](specs/2026-10-24-release-1.4.2.md). Instalação em Windows limpo, impressão física, fluidez com mouse físico e OAuth com conta Google real permanecem pendentes.
+Validação da release: **931 testes .NET distintos e 7 testes JavaScript aprovados**. As capturas e testes não certificam impressão física, instalação em Windows limpo ou hardware. [Notas da 1.4.6](downloads/RELEASE-1.4.6.md).
 
 - [Índice completo](docs/README.md)
 - [Notas e evidências da 1.4.0](specs/2026-10-22-release-1.4.0.md)
@@ -287,3 +287,7 @@ Testes automatizados e capturas locais não substituem homologação no estabele
 ## Licença do código
 
 Nenhuma licença de uso do código foi definida. A licença comercial de ativação do aplicativo é um assunto separado.
+
+### Impressão sincronizada
+
+![Editor do cupom em Configurações](docs/design/release-1.4.6/cupom-integrado-escuro-1180.png)
