@@ -8,7 +8,22 @@ public partial class MainWindow
     private JanelaConfiguracao? _janelaPrimeirosPassos;
     private void AtualizarFaixaConfiguracao()
     {
-        FaixaConfiguracao.Visibility=_primeiraConfiguracao?.ConfiguracaoPendente==true&&_acesso.Autenticado&&!_bloqueado&&!_restauracao&&PermiteColaborador("configuracoes")&&PermiteColaborador("produtos")?Visibility.Visible:Visibility.Collapsed;
+        var exibir=_primeiraConfiguracao?.ConfiguracaoPendente==true&&!FaixaConfiguracao.OcultadaNestaSessao&&_acesso.Autenticado&&!_bloqueado&&!_restauracao&&PermiteColaborador("configuracoes")&&PermiteColaborador("produtos");
+        FaixaConfiguracao.Visibility=exibir?Visibility.Visible:Visibility.Collapsed;
+        if(exibir)
+        {
+            try
+            {
+                var estado=_primeiraConfiguracao!.Carregar();
+                FaixaConfiguracao.AtualizarProgresso(estado.Finalizado?7:estado.Concluidas.Count(i=>i is >=0 and <6&&estado.Erro(i)==""));
+                FaixaConfiguracao.ToolTip=null;
+            }
+            catch(Exception ex) when(ex is System.IO.IOException or System.UnauthorizedAccessException or System.Text.Json.JsonException or InvalidOperationException)
+            {
+                FaixaConfiguracao.AtualizarProgresso(0);
+                FaixaConfiguracao.ToolTip="Não foi possível ler o progresso salvo. Abra a configuração para conferir.";
+            }
+        }
     }
     private void ConfigurarFaixa_Click(object? sender,EventArgs e)=>AbrirPrimeirosPassos();
     private void AbrirPrimeirosPassos()
