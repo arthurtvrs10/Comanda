@@ -129,17 +129,6 @@ test('nova comanda começa na conferência vazia; sem atendente não abre lança
  assert.notEqual(t.ids.personalizar.open, true); assert.match(t.ids.aviso.textContent, /nome do atendente/); assert.equal(t.nos.focado, t.ids.operador);
 });
 
-test('chamada da mesa usa autenticação e reaproveita identificação após perda da resposta', async () => {
- const t=await montar({perderChamada:true});await t.abrir();
- assert.equal(t.ids.chamarAtendente.disabled,false);
- t.ids.solicitacaoMesa.value='Trazer guardanapos';
- await t.ids.chamadaMesa.onsubmit({preventDefault(){}});
- assert.match(t.ids.estadoChamada.textContent,/Toque novamente/);
- await t.ids.chamadaMesa.onsubmit({preventDefault(){}});
- const envios=t.chamadas.filter(c=>c.url.endsWith('/chamadas'));
- assert.equal(envios.length,2);assert.equal(envios[0].body,envios[1].body);
- assert.equal(JSON.parse(envios[1].body).solicitacao,'Trazer guardanapos');
- assert.match(t.ids.estadoChamada.textContent,/Solicitação enviada/);
- await t.eventos.poll();assert.match(t.ids.estadoChamada.textContent,/Solicitação enviada/);
- t.pedido().mesa=null;await t.eventos.poll();assert.equal(t.ids.chamarAtendente.disabled,true);
+test('atendimento da equipe não oferece chamada de garçom',()=>{
+ assert.ok(!html.includes('chamarAtendente'));assert.ok(!html.includes('chamadaMesa'));assert.ok(!js.includes('/chamadas'));
 });

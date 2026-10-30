@@ -33,6 +33,12 @@ public sealed class ServidorLocal(AtendimentoRemoto atendimento, Func<bool>? pod
     public Func<bool>? InicioPermitido { get; set; }
     public int Porta { get; private set; }
     public event Action<int>? ComandaAlterada;
+    private readonly object _travaChamadasMesa=new();
+    private readonly Dictionary<int,Queue<DateTime>> _limitesChamadasMesa=[];
+    public int QuantidadeMesas=>atendimento.QuantidadeMesas;
+    public void DefinirQuantidadeMesas(int quantidade)=>atendimento.DefinirQuantidadeMesas(quantidade);
+    public string LinkMesa(string endereco,int mesa)=>Ativo&&Enderecos.Contains(endereco)
+        ?endereco+"/mesa#mesa="+mesa+"&chave="+atendimento.TokenMesa(mesa):throw new InvalidOperationException("Inicie o servidor e selecione o endereço da rede.");
     public IReadOnlyList<string> Enderecos
     {
         get
@@ -71,9 +77,12 @@ public sealed class ServidorLocal(AtendimentoRemoto atendimento, Func<bool>? pod
                 if (contexto.Request.Path.StartsWithSegments("/api"))
                 {
                     if(Parando){contexto.Response.StatusCode=503;return;}
-                    var esperado = Encoding.UTF8.GetBytes("Bearer "+chave);
+                    var publico=contexto.Request.Path.StartsWithSegments("/api/mesa-publica");
                     var recebido = Encoding.UTF8.GetBytes(contexto.Request.Headers.Authorization.ToString());
-                    if (!CryptographicOperations.FixedTimeEquals(esperado,recebido)) { contexto.Response.StatusCode=401; return; }
+                    var autorizado=publico
+                        ?int.TryParse(contexto.Request.Headers["X-Mesa"],out var mesa)&&atendimento.AutorizarMesa(mesa,contexto.Request.Headers.Authorization.ToString().Replace("Bearer ","",StringComparison.Ordinal))
+                        :CryptographicOperations.FixedTimeEquals(Encoding.UTF8.GetBytes("Bearer "+chave),recebido);
+                    if (!autorizado) { contexto.Response.StatusCode=401; return; }
                     if (podeOperar?.Invoke() == false) { contexto.Response.StatusCode=403; await contexto.Response.WriteAsJsonAsync(new { Erro="Acesso interrompido. Confira a licença no computador." }); return; }
                     if (contexto.Request.Headers.Origin.Count > 0 && contexto.Request.Headers.Origin.ToString() != $"http://{contexto.Request.Host}") { contexto.Response.StatusCode=403; return; }
                 }
@@ -93,6 +102,21 @@ public sealed class ServidorLocal(AtendimentoRemoto atendimento, Func<bool>? pod
             app.MapGet("/app.css",() => Arquivo("app.css","text/css; charset=utf-8"));
             app.MapGet("/app.js",() => Arquivo("app.js","text/javascript; charset=utf-8"));
             app.MapGet("/logo.svg",() => Arquivo("logo.svg","image/svg+xml"));
+            app.MapGet("/mesa",()=>Arquivo("mesa.html","text/html; charset=utf-8"));
+            app.MapGet("/mesa.js",()=>Arquivo("mesa.js","text/javascript; charset=utf-8"));
+            app.MapGet("/api/mesa-publica",(HttpContext c)=>Results.Json(atendimento.SituacaoMesa(int.Parse(c.Request.Headers["X-Mesa"]!))));
+            app.MapPost("/api/mesa-publica",(HttpContext c,PedidoChamada pedido)=>
+            {
+                var mesa=int.Parse(c.Request.Headers["X-Mesa"]!);
+                lock(_travaChamadasMesa)
+                {
+                    if(!_limitesChamadasMesa.TryGetValue(mesa,out var fila))_limitesChamadasMesa[mesa]=fila=new();
+                    while(fila.TryPeek(out var quando)&&quando<DateTime.UtcNow.AddMinutes(-1))fila.Dequeue();
+                    if(fila.Count>=6)return Results.Json(new {Erro="Aguarde um minuto antes de tentar novamente."},statusCode:429);
+                    fila.Enqueue(DateTime.UtcNow);
+                }
+                return Resultado(atendimento.ChamarMesa(mesa,pedido));
+            });
             app.MapGet("/api/catalogo",() => Results.Json(atendimento.Catalogo()));
             app.MapGet("/api/produtos/{id:int}/foto",(int id) => atendimento.Foto(id) is { } foto
                 ? Results.Bytes(foto.Conteudo,foto.Tipo) : Results.NotFound());

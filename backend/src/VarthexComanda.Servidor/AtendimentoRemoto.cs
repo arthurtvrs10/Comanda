@@ -17,6 +17,18 @@ public sealed record RespostaRemota(int Status, object Dados);
 public sealed class AtendimentoRemoto(IComandaRepository comandas, IProdutoRepository produtos,
     ICategoriaRepository categorias, AbrirComanda abrir, AdicionarItem adicionar, ObterConfiguracao configuracao, FotosProdutos? fotos = null,IConfiguracaoRepository? configuracoes=null)
 {
+    public int QuantidadeMesas=>configuracoes is null?20:new QrMesasService(configuracoes).Quantidade;
+    public void DefinirQuantidadeMesas(int quantidade)=>(configuracoes is null?throw new InvalidOperationException("Configurações indisponíveis."):new QrMesasService(configuracoes)).DefinirQuantidade(quantidade);
+    public string TokenMesa(int mesa)=>(configuracoes is null?throw new InvalidOperationException("Configurações indisponíveis."):new QrMesasService(configuracoes)).Token(mesa);
+    public bool AutorizarMesa(int mesa,string? token)=>configuracoes is not null&&new QrMesasService(configuracoes).Autorizar(mesa,token);
+    public RespostaRemota ChamarMesa(int mesa,PedidoChamada pedido)
+    {
+        if(configuracoes is null)return Erro(503,"Chamadas indisponíveis.");
+        try{return new(200,new ChamadasMesasService(configuracoes).Registrar(-mesa,mesa,pedido.Solicitacao,pedido.Identificacao));}
+        catch(ArgumentException ex){return Erro(400,ex.Message);}
+        catch(InvalidOperationException ex){return Erro(409,ex.Message);}
+    }
+    public object SituacaoMesa(int mesa)=>new {Mesa=mesa,Chamada=configuracoes is null?null:new ChamadasMesasService(configuracoes).Listar().FirstOrDefault(c=>c.Mesa==mesa)};
     public RespostaRemota ChamarAtendente(int id,string? solicitacao,Guid identificacao)
     {
         if(configuracoes is null)return Erro(503,"Chamadas indisponíveis neste computador.");

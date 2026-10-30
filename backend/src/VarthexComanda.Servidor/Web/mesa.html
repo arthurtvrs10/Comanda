@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="pt-BR">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light dark"><title>Chamar garçom · Comanda</title><link rel="stylesheet" href="/app.css"><script src="/mesa.js" defer></script></head>
+<body>
+<header class="barra"><img src="/logo.svg" width="160" height="34" alt="Comanda, por Varthex"><span>Atendimento da mesa</span></header>
+<main class="pagina-chamada">
+ <section aria-labelledby="tituloMesa">
+  <svg class="sino-mesa" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 17V10a6 6 0 0 1 12 0v7l2 2H4l2-2M10 22h4M3 7l2-2M19 5l2 2"/></svg>
+  <h1 id="tituloMesa">Chamar garçom</h1>
+  <p class="muted">Precisa de ajuda? Avise a equipe sem sair da sua mesa.</p>
+  <form id="formChamada">
+   <label for="solicitacao">O que você precisa? <span class="muted">(opcional)</span></label>
+   <textarea id="solicitacao" maxlength="120" rows="3" placeholder="Ex.: trazer guardanapos" disabled></textarea>
+   <button id="chamar" type="submit" disabled>Chamar garçom</button>
+  </form>
+  <p id="estado" role="status" aria-live="polite">Conectando ao estabelecimento…</p>
+  <p class="muted">Mantenha o celular conectado ao Wi-Fi do estabelecimento.</p>
+ </section>
+</main>
+</body></html>
