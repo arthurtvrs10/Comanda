@@ -44,6 +44,10 @@ async function montar(opcoes = {}) {
   }
   if (url === '/api/produtos/1/foto') return new Response(new Uint8Array([137, 80, 78, 71]), { headers: { 'Content-Type': opcoes.fotoInvalida ? 'text/html' : 'image/png' } });
   if (req.method === 'POST') {
+   if(url.endsWith('/chamadas')) {
+    if(opcoes.perderChamada && !perdeu){perdeu=true;throw Error('resposta perdida');}
+    return json({chamada:{id:'chamada-teste'},jaAtendida:false});
+   }
    const chave = req.headers['Idempotency-Key'];
    if (!confirmadas.has(chave)) {
     confirmadas.set(chave, req.body);
@@ -123,4 +127,19 @@ test('nova comanda começa na conferência vazia; sem atendente não abre lança
  assert.equal(t.ids.pedido.hidden, false); assert.equal(t.ids.semItens.hidden, false); assert.match(t.ids.total.textContent, /0,00/);
  await t.clicar('abrirProdutos'); t.ids.operador.value = ''; await t.escolher();
  assert.notEqual(t.ids.personalizar.open, true); assert.match(t.ids.aviso.textContent, /nome do atendente/); assert.equal(t.nos.focado, t.ids.operador);
+});
+
+test('chamada da mesa usa autenticação e reaproveita identificação após perda da resposta', async () => {
+ const t=await montar({perderChamada:true});await t.abrir();
+ assert.equal(t.ids.chamarAtendente.disabled,false);
+ t.ids.solicitacaoMesa.value='Trazer guardanapos';
+ await t.ids.chamadaMesa.onsubmit({preventDefault(){}});
+ assert.match(t.ids.estadoChamada.textContent,/Toque novamente/);
+ await t.ids.chamadaMesa.onsubmit({preventDefault(){}});
+ const envios=t.chamadas.filter(c=>c.url.endsWith('/chamadas'));
+ assert.equal(envios.length,2);assert.equal(envios[0].body,envios[1].body);
+ assert.equal(JSON.parse(envios[1].body).solicitacao,'Trazer guardanapos');
+ assert.match(t.ids.estadoChamada.textContent,/Solicitação enviada/);
+ await t.eventos.poll();assert.match(t.ids.estadoChamada.textContent,/Solicitação enviada/);
+ t.pedido().mesa=null;await t.eventos.poll();assert.equal(t.ids.chamarAtendente.disabled,true);
 });
