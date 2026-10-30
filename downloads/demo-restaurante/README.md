@@ -1,6 +1,6 @@
-# Comanda 1.4.7 — Demonstração Restaurante
+# Comanda 1.4.8 — Demonstração Restaurante
 
-[Baixar instalador](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.7/VarthexComanda-Demo-Restaurante-1.4.7-Setup-win-x64.exe) · [SHA-256](VarthexComanda-Demo-Restaurante-1.4.7-Setup-win-x64.exe.sha256)
+[Baixar instalador](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.8/VarthexComanda-Demo-Restaurante-1.4.8-Setup-win-x64.exe) · [SHA-256](VarthexComanda-Demo-Restaurante-1.4.8-Setup-win-x64.exe.sha256)
 
 16 produtos com fotos reais de referência: marmitas UN/KG, bebidas, sucos, porção e doces. Preços ilustrativos.
 
@@ -8,4 +8,6 @@ Windows x64, runtime incluso, ativação offline obrigatória. Atualizações pr
 
 OneDrive padrão, prévia de impressão corrigida e remoção do atalho Alterar senha. Chamadas/KDS recentes e complementos/estoque continuam fora.
 
-Pré-release, sem assinatura de código. [Notas, testes, limites e hashes](../RELEASE-1.4.7.md).
+Pré-release, sem assinatura de código. [Notas, testes, limites e hashes](../RELEASE-1.4.8.md).
+
+QR Code com seleção da rede real e link completo visível no servidor. Use o link gerado no estabelecimento; a chave muda a cada início do servidor.

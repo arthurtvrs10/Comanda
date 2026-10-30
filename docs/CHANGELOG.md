@@ -1,5 +1,12 @@
 # Histórico de alterações
 
+## 1.4.8 — 30/10/2026 — pré-release
+
+- Endereço da rede real priorizado para QR Code de atendimento; adaptadores virtuais não são anunciados.
+- Link completo visível e sincronizado com o QR Code e o botão de copiar.
+- Preserva o escopo da 1.4.7, sem migrações. [Notas, testes e downloads](../downloads/RELEASE-1.4.8.md).
+
+
 ## 1.4.7 — 30/10/2026 — pré-release
 
 - Demonstração Restaurante com 16 produtos e fotos reais, incluindo marmitas UN/KG. Lanchonete preservada, instalações e bases separadas.
