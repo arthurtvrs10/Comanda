@@ -4,7 +4,7 @@ export const site = {
   whatsapp: 'https://wa.me/5561985532004',
   whatsappLabel: '(61) 98553-2004',
   repository: 'https://github.com/arthurtvrs10/Comanda',
-  release: 'https://github.com/arthurtvrs10/Comanda/releases/tag/v1.4.9',
+  release: 'https://github.com/arthurtvrs10/Comanda/releases/tag/v1.4.10',
 } as const;
 
 export const questions = [

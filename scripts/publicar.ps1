@@ -25,6 +25,8 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
 $raiz = Split-Path -Parent $PSScriptRoot
+. (Join-Path $PSScriptRoot 'Publicacao-Guardas.ps1')
+$fonteConfirmada=Assert-FontePublicacao $raiz
 if (-not $Saida) { $Saida = Join-Path $raiz 'artifacts' }
 $Saida = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath([Environment]::ExpandEnvironmentVariables($Saida.Trim().Trim('"')))
 
@@ -71,6 +73,9 @@ $indevidos = Get-ChildItem -LiteralPath $pastaPublicacao -File -Recurse | Where-
     $_.Extension -in '.db','.sqlite','.sqlite3','.credencial' -or $_.Name -match 'google-oauth-client|google-drive-token|estado\.dat|colaboradores\.json|edicao-demonstracao\.txt'
 }
 if ($indevidos) { throw 'Publicação contém dados locais ou marcador de edição. Pacote não gerado.' }
+
+Write-ProvenienciaPublicacao $pastaPublicacao $fonteConfirmada
+Assert-PublicacaoPronta $pastaPublicacao $fonteConfirmada
 
 # Monta o zip.
 Add-Type -AssemblyName System.IO.Compression
