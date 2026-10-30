@@ -4,9 +4,9 @@ A identidade **Comanda · por Varthex** aparece na abertura, área de trabalho, 
 
 Sistema Windows para organizar mesas, comandas e consumo em pequenos estabelecimentos de alimentação. Produtos, atendimento, fechamento e histórico funcionam localmente, sem depender da internet.
 
-**Em desenvolvimento, fora da 1.4.7:** chamadas das mesas e QR Codes, alterações recentes do KDS, complementos/estoque, tipo de pedido e recuperação por e-mail.
+**Em desenvolvimento, fora da 1.4.8:** chamadas das mesas e QR Codes, alterações recentes do KDS, complementos/estoque, tipo de pedido e recuperação por e-mail.
 
-**Release 1.4.7 · 30/10/2026 · pré-release em testes.** Demonstração Restaurante, OneDrive padrão e correções de impressão. Windows x64 com runtime .NET e ativação offline.
+**Release 1.4.8 · 30/10/2026 · pré-release em testes.** Correção do endereço de rede para celular e link de acesso visível, mantendo Restaurante, OneDrive e impressão da 1.4.7. Windows x64 com runtime .NET e ativação offline.
 
 ## Baixar para Windows
 
@@ -14,13 +14,20 @@ O repositório é privado: o download pelo GitHub exige uma conta com acesso.
 
 | Edição | Catálogo em uma base nova | Download |
 | --- | --- | --- |
-| Normal | Vazio, para produtos reais | [Instalador](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.7/VarthexComanda-1.4.7-Setup-win-x64.exe) · [SHA-256](downloads/windows/VarthexComanda-1.4.7-Setup-win-x64.exe.sha256) |
-| Demonstração Lanchonete | 12 produtos fictícios com fotos | [Instalador](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.7/VarthexComanda-Demo-1.4.7-Setup-win-x64.exe) · [SHA-256](downloads/demo/VarthexComanda-Demo-1.4.7-Setup-win-x64.exe.sha256) |
-| Demonstração Restaurante | 16 produtos, com marmitas UN/KG e fotos reais de referência | [Instalador](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.7/VarthexComanda-Demo-Restaurante-1.4.7-Setup-win-x64.exe) · [SHA-256](downloads/demo-restaurante/VarthexComanda-Demo-Restaurante-1.4.7-Setup-win-x64.exe.sha256) |
+| Normal | Vazio, para produtos reais | [Instalador](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.8/VarthexComanda-1.4.8-Setup-win-x64.exe) · [SHA-256](downloads/windows/VarthexComanda-1.4.8-Setup-win-x64.exe.sha256) |
+| Demonstração Lanchonete | 12 produtos fictícios com fotos | [Instalador](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.8/VarthexComanda-Demo-1.4.8-Setup-win-x64.exe) · [SHA-256](downloads/demo/VarthexComanda-Demo-1.4.8-Setup-win-x64.exe.sha256) |
+| Demonstração Restaurante | 16 produtos, com marmitas UN/KG e fotos reais de referência | [Instalador](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.8/VarthexComanda-Demo-Restaurante-1.4.8-Setup-win-x64.exe) · [SHA-256](downloads/demo-restaurante/VarthexComanda-Demo-Restaurante-1.4.8-Setup-win-x64.exe.sha256) |
 
 As três edições usam instalações e bases separadas. Atualizar preserva os dados; os catálogos não são repostos em bases existentes. Sem vendas/comandas de exemplo. Preços de demonstração ilustrativos. Faça backup e feche o sistema antes de atualizar.
 
-**Validação:** 941 testes .NET distintos e 7 JavaScript aprovados, com repetições direcionadas após atualizar dois testes antigos. Instaladores verificados localmente pelo Defender, sem detecção nesta análise. [Notas e limites da 1.4.7](downloads/RELEASE-1.4.7.md).
+**Validação desta correção:** testes de seleção de redes e HTTP local, tela do servidor e versão. Veja os resultados e limites nas [notas da 1.4.8](downloads/RELEASE-1.4.8.md). A conexão no celular depende da rede e do firewall do estabelecimento.
+
+## Novidades da 1.4.8
+
+- QR Code e link de acesso priorizam redes reais com gateway, em vez dos adaptadores de Hyper-V, WSL, VirtualBox e VPN.
+- Link completo visível abaixo do QR Code em **Configurações → Servidor / acesso pelo celular**. O campo, o QR e o botão **Copiar link de acesso** usam a mesma chave de sessão.
+- Sem uma rede local adequada, aparece somente `127.0.0.1`, que funciona apenas no próprio PC. Conecte à rede e clique em **Atualizar informações**.
+- Não há IP fixo universal: o endereço é detectado em cada instalação. Nunca copie links ou chaves de capturas/documentação para operação.
 
 ## Novidades da 1.4.7
 
@@ -90,7 +97,7 @@ A release 1.4.1 integra esses recursos aos dois instaladores. HTTP local verific
 
 ## Celular e firewall
 
-O servidor inicia automaticamente no desktop, na porta padrão **3001**. Confira em **Configurações → Servidor / acesso pelo celular**; se o início automático estiver desativado, clique em **Iniciar servidor**. Selecione o IP da rede e leia o QR Code atualizado no celular conectado ao mesmo Wi-Fi. O link contém a chave da sessão; abrir apenas o endereço não autoriza operações. Fechar o aplicativo ou parar o servidor encerra o acesso; reiniciar exige um novo link.
+O servidor inicia automaticamente no desktop, na porta padrão **3001**. Confira em **Configurações → Servidor / acesso pelo celular**; se o início automático estiver desativado, clique em **Iniciar servidor**. Selecione o IP da rede e leia o QR Code atualizado no celular conectado ao mesmo Wi-Fi. O link completo aparece abaixo do QR Code e pode ser copiado. Ele contém a chave da sessão; abrir apenas o endereço não autoriza operações. Wi-Fi e Ethernet com gateway têm prioridade; redes virtuais não são anunciadas. Não use o IP de Hyper-V/WSL nem o localhost no celular. Fechar o aplicativo ou parar o servidor encerra o acesso; reiniciar exige um novo link.
 
 O instalador não altera o firewall. Se houver bloqueio, permita o executável instalado no perfil da rede, somente entrada TCP na porta escolhida e sub-rede local. Regras de bloqueio prevalecem sobre permissões. Não desligue o firewall nem encaminhe portas no roteador. A permissão de um executável em artifacts não cobre necessariamente o caminho instalado. A demonstração oferece o mesmo servidor com base separada.
 
@@ -274,9 +281,9 @@ Distribua somente os pacotes preparados. A pasta `artifacts` pode conter materia
 
 ## Documentação e validação
 
-As imagens deste README foram atualizadas em 30/10/2026. Os instaladores 1.4.7 incluem os ajustes de configuração, impressão, início e pagamento. Chamadas/QR Codes e alterações recentes do KDS continuam fora desta publicação. Os arquivos e as evidências das versões anteriores permanecem disponíveis.
+As imagens deste README foram atualizadas em 30/10/2026. Os instaladores 1.4.8 incluem os ajustes de configuração, impressão, início e pagamento. Chamadas/QR Codes e alterações recentes do KDS continuam fora desta publicação. Os arquivos e as evidências das versões anteriores permanecem disponíveis.
 
-Validação da release: **941 testes .NET distintos e 7 testes JavaScript aprovados**. As capturas e testes não certificam impressão física, instalação em Windows limpo ou hardware. [Notas da 1.4.7](downloads/RELEASE-1.4.7.md).
+Validação desta correção: **23 testes do servidor e 13 testes direcionados Desktop aprovados**. Na suíte Desktop completa, 461 passaram e o teste da versão detectou um metadado antigo, corrigido e aprovado na execução direcionada. Os 941 testes .NET e 7 JavaScript documentados na 1.4.7 são a validação histórica da base, não uma nova execução integral nesta correção. As capturas e testes não certificam impressão física, instalação em Windows limpo ou hardware. [Notas da 1.4.8](downloads/RELEASE-1.4.8.md).
 
 - [Índice completo](docs/README.md)
 - [Notas e evidências da 1.4.0](specs/2026-10-22-release-1.4.0.md)
@@ -296,3 +303,17 @@ Nenhuma licença de uso do código foi definida. A licença comercial de ativaç
 ### Impressão sincronizada
 
 ![Editor do cupom em Configurações](docs/design/release-1.4.6/cupom-integrado-escuro-1180.png)
+
+## Conectar o celular: QR Code e link de acesso
+
+1. Mantenha o Comanda aberto no PC e conecte o celular ao Wi-Fi do mesmo roteador. O PC pode estar no cabo Ethernet.
+2. Abra **Configurações → Servidor / acesso pelo celular**. Inicie o servidor se estiver parado.
+3. Confira o endereço selecionado e use **Copiar link de acesso**, o campo abaixo do QR ou leia o QR com o celular. Todos representam o mesmo acesso desta sessão.
+4. Se não abrir, confira a rede de convidados/isolamento entre aparelhos e a permissão de entrada TCP da porta do servidor no Firewall para o executável instalado. Não é preciso desligar o firewall.
+5. Ao reiniciar o servidor ou mudar de rede/IP, volte à tela e obtenha o novo link. Um favorito antigo pode ficar inválido.
+
+Formato ilustrativo: `http://IP_DA_REDE:3001/#chave=CHAVE_DA_SESSAO`. O endereço e a chave são gerados no PC; não há um link único que sirva em todos os estabelecimentos. Compartilhe o link apenas com a equipe autorizada.
+
+![Servidor com QR e link completo](docs/design/release-1.4.8/servidor-ativo-claro.png)
+
+Captura de teste local com porta e chave temporárias; não é um endereço de produção.
