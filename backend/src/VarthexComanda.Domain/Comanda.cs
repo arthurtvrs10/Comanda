@@ -15,6 +15,7 @@ public class Comanda
     public string? CriadoPor { get; set; }
     public string? Responsavel { get; set; }
     public string? NomeCliente { get; set; }
+    public TipoPedido TipoPedido { get; set; } = TipoPedido.Balcao;
     public int? NumeroMesa { get; set; }
     public string? OrigemCliente { get; set; }
     public PrioridadeComanda Prioridade { get; set; }

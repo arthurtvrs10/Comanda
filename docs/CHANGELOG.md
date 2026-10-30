@@ -1,5 +1,11 @@
 # Histórico de alterações
 
+## 1.4.9 — 30/10/2026 — pré-release
+
+- Recuperados os campos Cliente, Tipo de pedido e Observações da comanda; retirados Responsável manual e Vincular cliente.
+- Operador automático preservado; migração isolada de tipo de pedido, sem complementos/estoque.
+- [Notas, testes, downloads e limites](../downloads/RELEASE-1.4.9.md).
+
 ## 1.4.8 — 30/10/2026 — pré-release
 
 - Endereço da rede real priorizado para QR Code de atendimento; adaptadores virtuais não são anunciados.

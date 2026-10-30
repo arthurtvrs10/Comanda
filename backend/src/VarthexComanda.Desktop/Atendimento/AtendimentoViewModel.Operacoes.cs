@@ -27,6 +27,16 @@ public partial class AtendimentoViewModel
     public string AberturaPedido => ComandaAtual is null ? "" : FusoBrasilia.ParaLocal(ComandaAtual.AbertaEm).ToString("dd/MM HH:mm");
     public string AutorPedido => ComandaAtual?.CriadoPor ?? "Não informado";
     public string ClientePedido => string.IsNullOrWhiteSpace(ComandaAtual?.NomeCliente) ? "Vincular cliente" : ComandaAtual.NomeCliente;
+    public IReadOnlyList<KeyValuePair<TipoPedido,string>> TiposDePedido {get;}=Enum.GetValues<TipoPedido>().Select(t=>new KeyValuePair<TipoPedido,string>(t,t.Descricao())).ToArray();
+    public bool SalvarDadosPedido(string? responsavel,string? cliente,TipoPedido? tipo,string? observacao)
+    {
+        if(tipo is null||!Enum.IsDefined(tipo.Value)){Mensagem="Selecione o tipo de pedido.";return false;}
+        return ComandaAtual is not null&&ExecutarOperacaoPedido(()=>
+        {
+            var comanda=_comandas.DefinirDadosPedido(ComandaAtual.Id,responsavel,cliente,tipo.Value,observacao);
+            return new(){Comanda=comanda,Itens=_comandas.BuscarComItens(comanda.Id)!.Itens};
+        },"Dados do pedido salvos.");
+    }
     public string TotalPedido => CentavosParaMoedaConverter.Formatar(ComandaAtual?.TotalCentavos ?? 0);
     public string CabecalhoItens => $"Itens do pedido ({Itens.Count})";
 

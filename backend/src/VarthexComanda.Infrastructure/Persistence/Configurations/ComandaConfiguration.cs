@@ -40,6 +40,7 @@ public class ComandaConfiguration : IEntityTypeConfiguration<Comanda>
         builder.Property(c => c.CriadoPor).HasColumnName("criado_por").HasMaxLength(120);
         builder.Property(c => c.Responsavel).HasColumnName("responsavel").HasMaxLength(120);
         builder.Property(c => c.NomeCliente).HasColumnName("nome_cliente").HasMaxLength(80);
+        builder.Property(c => c.TipoPedido).HasColumnName("tipo_pedido").HasDefaultValue(TipoPedido.Balcao).HasSentinel(TipoPedido.Balcao).IsRequired();
         builder.Property(c => c.NumeroMesa).HasColumnName("numero_mesa");
         builder.Property(c => c.OrigemCliente).HasColumnName("origem_cliente").HasMaxLength(80);
         builder.Property(c => c.Prioridade).HasColumnName("prioridade").HasDefaultValue(PrioridadeComanda.Normal);
