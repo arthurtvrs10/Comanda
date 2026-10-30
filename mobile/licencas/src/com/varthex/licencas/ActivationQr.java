@@ -4,6 +4,13 @@ package com.varthex.licencas;
 public final class ActivationQr {
     private static final String PREFIX = "varthex://ativacao?v=1&maquina=";
     private ActivationQr() {}
+    public static String machine(String value) {
+        if(value==null || value.length()>256)throw new IllegalArgumentException("Cole o código do computador ou o conteúdo do QR Code.");
+        String normalized=value.trim();
+        if(normalized.startsWith("varthex:"))return parse(normalized);
+        if(!normalized.matches("[0-9A-Fa-f]{64}"))throw new IllegalArgumentException("O código deve ter 64 caracteres, de 0 a 9 e A a F.");
+        return normalized.toUpperCase(java.util.Locale.ROOT);
+    }
     public static String parse(String value) {
         if (value == null || !value.startsWith(PREFIX))
             throw new IllegalArgumentException("Este QR Code não é uma ativação do VComanda compatível.");

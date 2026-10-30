@@ -11,3 +11,6 @@ if ($LASTEXITCODE -ne 0) { throw 'Falha ao compilar testes Java' }
 if ($LASTEXITCODE -ne 0) { throw 'Falha nos testes Java' }
 & dotnet run --project "$PSScriptRoot/tests/Interop.csproj" -- "$out/fixtures"
 if ($LASTEXITCODE -ne 0) { throw 'Falha na interoperabilidade com o Windows' }
+
+& "$Java/bin/java.exe" -cp "$out;$dependency" IssuerTest --verify-windows "$out/fixtures"
+if ($LASTEXITCODE -ne 0) { throw 'Falha ao verificar licenças Windows em Java' }

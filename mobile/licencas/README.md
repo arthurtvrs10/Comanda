@@ -1,15 +1,15 @@
 # Varthex Licenças — Android
 
-Emissor offline para uso do responsável pelo Varthex Comanda. Android 8.0 ou superior, sem permissão de internet. A versão 1.1.0 está em desenvolvimento/testes; os downloads públicos anteriores permanecem inalterados.
+Emissor offline para uso do responsável pelo Varthex Comanda. Android 8.0 ou superior, sem permissão de internet. A versão 1.2.0 foi atualizada e compilada para instalação manual e homologação no aparelho; o APK está disponível como anexo da release 1.4.7; os instaladores Windows existentes permanecem inalterados.
 
 ## Ativar um computador
 
-1. Instale o APK gerado em `artifacts/android-licencas/Varthex-Licencas-1.1.0.apk` no celular do responsável.
+1. Instale o APK gerado em `artifacts/android-licencas/Varthex-Licencas-1.2.0.apk` no celular do responsável.
 2. Configure PIN, senha ou padrão de bloqueio no Android. O aplicativo usa a confirmação de credencial do sistema para proteger a emissão.
-3. Toque em **Importar chave privada (.pem)** ou **Colar chave privada**, informe o PEM original e confirme o desbloqueio do aparelho. A correspondência com a chave pública do Windows é verificada antes de salvar. O PEM não acompanha o APK.
-4. No Windows, abra a tela de ativação. No celular, use **Escanear QR Code** e autorize a câmera. O código da máquina será preenchido; também é possível colá-lo manualmente.
+3. Abra **Chave** e toque em **Importar chave privada (.pem)** ou **Colar chave privada**, informe o PEM original e confirme o desbloqueio do aparelho. A correspondência com a chave pública do Windows é verificada antes de salvar. O PEM não acompanha o APK.
+4. No Windows, abra a tela de ativação. No celular, use **Escanear QR Code** e autorize a câmera. O código da máquina será preenchido; também é possível colar manualmente os 64 caracteres ou o conteúdo completo do QR de ativação.
 5. Informe o cliente e escolha 1, 2, 3 meses, Vitalícia, **Personalizado: quantidade de dias** ou **Personalizado: data de vencimento**.
-6. Confira a data exata apresentada, marque a autorização, toque em **Gerar chave de ativação**, confira o resumo e confirme a credencial do aparelho.
+6. Avance de **Cliente** para **Validade** e depois **Revisão**. Confira o resumo, marque a autorização e toque em **Confirmar e gerar**. Confirme a credencial do aparelho. Voltar preserva os campos; cancelar o desbloqueio mantém a revisão.
 7. Use **Copiar chave** ou **Compartilhar chave** e cole o código no Windows. O QR transfere apenas a identificação do computador; não ativa automaticamente nem transfere a licença de volta.
 
 ## Validade e renovação
@@ -64,3 +64,11 @@ APK compilado e assinatura verificada. Câmera e Android Keystore ainda precisam
 - Confirmar que a tela de conferência, datas, teclado, cópia e compartilhamento funcionam no aparelho.
 
 Não usar chave privada de produção em testes automatizados nem incluí-la em capturas ou logs.
+
+## Atualização local de 30/10/2026
+
+- APK 1.2.0 recompilado e assinatura conferida: mesma assinatura do APK 1.0.1, permitindo atualizar sem desinstalar.
+- Campos obrigatórios com asterisco vermelho, indicação da versão e suporte a colar o conteúdo do QR no campo do computador.
+- Mesmos períodos do emissor Windows 1.2.0: meses, vitalícia, dias, data escolhida e renovação antecipada. As regras de limite de data foram alinhadas.
+- O teste cruzado agora verifica sete licenças Java no Windows e seis licenças Windows em Java, usando exclusivamente chaves sintéticas; o QR PNG real de teste do Windows foi decodificado pelo ZXing.
+- A instalação no celular será manual, conforme solicitado. Câmera, autenticação do Android e persistência no Keystore ainda precisam ser conferidas no aparelho. Nenhum segredo de produção foi usado nesses testes.

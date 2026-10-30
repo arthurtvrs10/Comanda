@@ -12,6 +12,7 @@ import java.util.Base64;
 
 public class IssuerTest {
     public static void main(String[] args) throws Exception {
+        if(args[0].equals("--verify-windows")){verifyWindows(Paths.get(args[1]));return;}
         Path out=Paths.get(args[0]); Files.createDirectories(out);
         KeyPairGenerator generator=KeyPairGenerator.getInstance("RSA"); generator.initialize(2048);
         KeyPair pair=generator.generateKeyPair();
@@ -24,7 +25,11 @@ public class IssuerTest {
         expectFailure(()->LicenseIssuer.importKey("",publicPem));
         expectFailure(()->LicenseIssuer.importKey(null,publicPem));
         String pc=new String(new char[64]).replace('\0','A');
+        if(!ActivationQr.machine(pc.toLowerCase()).equals(pc))throw new AssertionError("Código manual normalizado");
         String qr="varthex://ativacao?v=1&maquina="+pc;
+        if(!ActivationQr.machine(" "+qr+" ").equals(pc))throw new AssertionError("QR colado");
+        expectFailure(()->ActivationQr.machine(qr+"&extra=1"));
+        expectFailure(()->ActivationQr.machine(qr.toLowerCase()));
         if(!ActivationQr.parse(qr).equals(pc))throw new AssertionError("QR incompatível");
         expectFailure(()->ActivationQr.parse(null));
         expectFailure(()->ActivationQr.parse(qr+"&extra=true"));
@@ -64,8 +69,23 @@ public class IssuerTest {
         expectFailure(()->LicenseIssuer.issue(key,pc,"Teste",4,LocalDate.now()));
         expectFailure(()->LicenseIssuer.issue(null,pc,"Teste",1,LocalDate.now()));
         expectFailure(()->LicenseIssuer.importKey(privatePem,pem("PUBLIC KEY",generator.generateKeyPair().getPublic().getEncoded())));
+        Files.write(out.resolve("private-synthetic.pem"),privatePem.getBytes(StandardCharsets.UTF_8));
         Files.write(out.resolve("public.pem"),publicPem.getBytes(StandardCharsets.UTF_8));
         System.out.println("Java: planos antigos e personalizados, renovação, QR, datas e entradas inválidas verificados; apenas chaves sintéticas.");
+    }
+    static void verifyWindows(Path folder)throws Exception{
+        byte[] encoded=Base64.getDecoder().decode(new String(Files.readAllBytes(folder.resolve("public.pem")),StandardCharsets.UTF_8).replace("-----BEGIN PUBLIC KEY-----","").replace("-----END PUBLIC KEY-----","").replaceAll("\\s",""));
+        PublicKey key=KeyFactory.getInstance("RSA").generatePublic(new java.security.spec.X509EncodedKeySpec(encoded));
+        LocalDate today=LocalDate.of(2028,2,28);
+        for(int i=0;i<=5;i++){
+            String[] parts=new String(Files.readAllBytes(folder.resolve("windows-"+i+".txt")),StandardCharsets.UTF_8).split("\\.");
+            byte[] payload=Base64.getDecoder().decode(parts[0]);Signature sig=Signature.getInstance("RSASSA-PSS");sig.setParameter(new java.security.spec.PSSParameterSpec("SHA-256","MGF1",java.security.spec.MGF1ParameterSpec.SHA256,32,1));sig.initVerify(key);sig.update(payload);
+            if(!sig.verify(Base64.getDecoder().decode(parts[1])))throw new AssertionError("Assinatura Windows incompatível");
+            String json=new String(payload,StandardCharsets.UTF_8);int plan=i==0?3:i<=3?i-1:i;
+            LocalDate end=LicensePeriod.end(plan,today,i==4?LocalDate.of(2028,3,10):null,15,LocalDate.of(2028,3,15));
+            if(!json.contains(today+"T00:00:00-03:00") || (end!=null&&!json.contains(end+"T00:00:00-03:00")) || (end==null&&!json.contains("\"Vencimento\":null")))throw new AssertionError("Datas Windows incompatíveis");
+        }
+        System.out.println("Java: 6 licenças Windows verificadas, com períodos equivalentes e assinaturas compatíveis.");
     }
     interface Action {void run() throws Exception;}
     static void expectFailure(Action f)throws Exception{try{f.run();}catch(IllegalArgumentException|GeneralSecurityException e){return;}throw new AssertionError("Entrada inválida aceita");}

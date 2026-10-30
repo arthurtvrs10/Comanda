@@ -25,3 +25,13 @@ for(var i=0;i<ends.Length;i++) {
     try {LicencaOffline.Validar(token,publicKey,new string('B',64),customStart);throw new Exception("Outra máquina aceita");}catch(InvalidOperationException){}
 }
 Console.WriteLine(".NET: 3 licenças personalizadas aceitas, renovação já utilizável, limites de vencimento e outra máquina verificados.");
+
+var syntheticPrivate=File.ReadAllText(Path.Combine(folder,"private-synthetic.pem"));
+EmissaoLicenca.ConferirChave(syntheticPrivate,publicKey);
+for(var plano=0;plano<=5;plano++){
+    var p=EmissaoLicenca.Calcular((PlanoLicenca)plano,new(2028,2,28),15,new(2028,3,15),plano==4?new DateOnly(2028,3,10):null);
+    var dados=new DadosLicenca(1,"windows-sintetica-"+plano,new string('A',64),"Cliente de teste Windows",p.Inicio,p.Vencimento);
+    var token=LicencaOffline.Emitir(dados,syntheticPrivate);LicencaOffline.Validar(token,publicKey,dados.Computador,p.Inicio);
+    File.WriteAllText(Path.Combine(folder,"windows-"+plano+".txt"),token);
+}
+Console.WriteLine(".NET: 6 planos do emissor Windows emitidos e aceitos com chave sintética.");
