@@ -1,0 +1,27 @@
+# Comanda 1.4.7 — Restaurante, OneDrive e correções de impressão
+
+Pré-release Windows x64 de 30/10/2026, com runtime .NET incluso e ativação offline obrigatória.
+
+## Mudanças
+
+- Nova Demonstração Restaurante: 16 produtos com fotos reais de referência, em Refeições, Bebidas, Porções e Doces. Marmita por unidade (R$ 22,00) e por quilo (R$ 54,90/kg); Coca-Cola 2 L/1,5 L/KS/lata, Fanta 2 L, Guaraná 2 L, Monster, água, sucos de laranja feitos na hora, balinha, paçoca, batata e pudim. Preços fictícios para avaliação. Fontes das fotos acompanham o catálogo.
+- Demonstração Lanchonete preservada com seus 12 produtos. Normal, Lanchonete e Restaurante têm instalações, atalhos e bases separados. O catálogo de exemplo não é reposto ao atualizar e não sobrescreve produtos, preços ou vendas existentes.
+- OneDrive como opção padrão no aviso inicial e na tela Backup. Localiza pastas existentes, exige confirmação para salvar e permite escolher outra pasta ou configurar depois, sem contagem regressiva. Google Drive continua como alternativa; destinos já configurados são preservados.
+- O VComanda gera a cópia local dos dados/fotos e a grava em Varthex\Backups dentro da pasta escolhida. O aplicativo OneDrive do Windows realiza a sincronização; a existência do arquivo local não é apresentada como confirmação de envio à nuvem.
+- Corrigida a prévia do ticket na janela de impressoras: aparece à direita na janela padrão e fica acessível pela rolagem em janelas menores.
+- Removido o atalho redundante Alterar senha da categoria Configurações.
+- Mantidas as configurações de impressão compartilhadas, dados de primeiros passos sincronizados com Geral e ajustes de pagamento da 1.4.6.
+
+## Validação e limites
+
+941 testes .NET distintos aprovados: 462 Desktop, 313 Infrastructure, 148 Application, 14 Servidor e 4 Domain. Na suíte Desktop inicial, dois testes ainda esperavam versão e menu antigos; foram atualizados e aprovados em nova execução direcionada. Mais 7 testes JavaScript do atendimento aprovados. Testes do restaurante incluem 450 g a R$ 54,90/kg = R$ 24,71, separação dos dados e preservação do catálogo editado. Fotos verificadas e armazenadas localmente para uso sem internet.
+
+Fonte isolada sem chamadas das mesas/QR Codes, alterações recentes do KDS, complementos/estoque, tipo de pedido e recuperação por e-mail. O KDS anterior permanece. Nenhuma migração de banco nova foi adicionada.
+
+Instaladores gerados com Inno Setup 7.1.0 e verificados localmente pelo Microsoft Defender, definições 1.463.36.0, sem detecção nesta análise. Sem assinatura de código. A homologação em Windows limpo, impressão física de 58/80 mm e sincronização real de uma conta OneDrive permanecem pendentes; por isso a publicação continua como pré-release. Faça backup e feche o programa antes de atualizar.
+
+## Downloads e SHA-256
+
+- [VarthexComanda-1.4.7-Setup-win-x64.exe](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.7/VarthexComanda-1.4.7-Setup-win-x64.exe) — `34B53BD20D188B2A28B2C17F323714D3E851D9B18BBE5F152FC042C1F2DEFC3F`
+- [VarthexComanda-Demo-1.4.7-Setup-win-x64.exe](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.7/VarthexComanda-Demo-1.4.7-Setup-win-x64.exe) — `783A34D501F1BE1DF1DDD02E35BB81C4B783EC1A9AFB63802F19BBF1B1A58000`
+- [VarthexComanda-Demo-Restaurante-1.4.7-Setup-win-x64.exe](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.7/VarthexComanda-Demo-Restaurante-1.4.7-Setup-win-x64.exe) — `954EF24926BD72A541241A9B65794AC18FEC038D2DD44693A1FCE3A8009C97D9`

@@ -4,30 +4,35 @@ A identidade **Comanda · por Varthex** aparece na abertura, área de trabalho, 
 
 Sistema Windows para organizar mesas, comandas e consumo em pequenos estabelecimentos de alimentação. Produtos, atendimento, fechamento e histórico funcionam localmente, sem depender da internet.
 
-**Em desenvolvimento, fora da 1.4.6:** chamadas das mesas e QR Codes, alterações recentes do KDS, complementos/estoque, tipo de pedido e recuperação por e-mail.
+**Em desenvolvimento, fora da 1.4.7:** chamadas das mesas e QR Codes, alterações recentes do KDS, complementos/estoque, tipo de pedido e recuperação por e-mail.
 
-**Release 1.4.6 · 30/10/2026 · pré-release em testes.** Configurações e impressão sincronizadas, cadastros, início e pagamento. Windows x64 com runtime .NET e ativação offline.
-
-<img src="docs/design/atual-2026-10-30/principal-claro.png" alt="Área de trabalho Comanda com fundo cinza, logo centralizado e alternância de modo escuro" width="1000">
+**Release 1.4.7 · 30/10/2026 · pré-release em testes.** Demonstração Restaurante, OneDrive padrão e correções de impressão. Windows x64 com runtime .NET e ativação offline.
 
 ## Baixar para Windows
 
-Os links abaixo apontam para os arquivos da release no GitHub. Enquanto o repositório estiver privado, o download exige uma conta com acesso; não há download público direto configurado.
+O repositório é privado: o download pelo GitHub exige uma conta com acesso.
 
-| Edição 1.4.6 | Para quem | Download |
+| Edição | Catálogo em uma base nova | Download |
 | --- | --- | --- |
-| **Normal — sem demonstração** | Cadastrar os produtos reais do estabelecimento; catálogo vazio em uma instalação nova | [![Baixar edição normal para Windows](docs/design/download-windows.svg)](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.6/VarthexComanda-1.4.6-Setup-win-x64.exe) · [SHA-256](downloads/windows/VarthexComanda-1.4.6-Setup-win-x64.exe.sha256) |
-| **Demonstração** | Conhecer o sistema com 12 produtos fictícios e fotos; sem comandas abertas em uma base nova | [![Baixar demonstração para Windows](docs/design/download-windows.svg)](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.6/VarthexComanda-Demo-1.4.6-Setup-win-x64.exe) · [SHA-256](downloads/demo/VarthexComanda-Demo-1.4.6-Setup-win-x64.exe.sha256) |
+| Normal | Vazio, para produtos reais | [Instalador](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.7/VarthexComanda-1.4.7-Setup-win-x64.exe) · [SHA-256](downloads/windows/VarthexComanda-1.4.7-Setup-win-x64.exe.sha256) |
+| Demonstração Lanchonete | 12 produtos fictícios com fotos | [Instalador](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.7/VarthexComanda-Demo-1.4.7-Setup-win-x64.exe) · [SHA-256](downloads/demo/VarthexComanda-Demo-1.4.7-Setup-win-x64.exe.sha256) |
+| Demonstração Restaurante | 16 produtos, com marmitas UN/KG e fotos reais de referência | [Instalador](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.7/VarthexComanda-Demo-Restaurante-1.4.7-Setup-win-x64.exe) · [SHA-256](downloads/demo-restaurante/VarthexComanda-Demo-Restaurante-1.4.7-Setup-win-x64.exe.sha256) |
 
-**Validação 1.4.6:** 931 testes .NET distintos e 7 testes do atendimento web aprovados em fonte isolada, com verificações direcionadas após os ajustes. [Mudanças e limites](downloads/RELEASE-1.4.6.md).
+As três edições usam instalações e bases separadas. Atualizar preserva os dados; os catálogos não são repostos em bases existentes. Sem vendas/comandas de exemplo. Preços de demonstração ilustrativos. Faça backup e feche o sistema antes de atualizar.
 
-[Notas da release 1.4.6](https://github.com/arthurtvrs10/Comanda/releases/tag/v1.4.6) · [Instalação normal](downloads/windows/README.md) · [Instalação da demonstração](downloads/demo/README.md)
+**Validação:** 941 testes .NET distintos e 7 JavaScript aprovados, com repetições direcionadas após atualizar dois testes antigos. Instaladores verificados localmente pelo Defender, sem detecção nesta análise. [Notas e limites da 1.4.7](downloads/RELEASE-1.4.7.md).
 
-Instalação por usuário, sem administrador, em Windows x64. Feche o aplicativo antes de atualizar. Reinstalar ou atualizar preserva os dados e a licença existentes. Os instaladores não possuem assinatura de código.
+## Novidades da 1.4.7
 
-A release é uma **pré-release**: instalação em Windows limpo e autorização/envio com uma conta Google real continuam pendentes. A [versão estável anterior 1.2.2](https://github.com/arthurtvrs10/Comanda/releases/tag/v1.2.2) permanece disponível.
+- Demonstração Restaurante: marmitas por unidade e por quilo, refrigerantes 2 L e 1,5 L, Fanta, Monster, Coca KS, sucos feitos na hora, balinhas, paçoca, batata e pudim. [Catálogo e fontes das fotos](demo-restaurante/README.md).
+- OneDrive como opção padrão de backup, com confirmação da pasta e cópia local preservada. O aplicativo OneDrive realiza a sincronização. [Fluxo e validação](specs/2026-10-30-backup-onedrive-padrao.md).
+- Corrigidos o corte da prévia nas impressoras e a presença do atalho Alterar senha no menu.
+- Chamadas/QR Codes, KDS recente, complementos/estoque, tipo de pedido e recuperação por e-mail permanecem fora dos instaladores.
 
-## Atualizações da 1.4.6
+![Catálogo de demonstração Restaurante](docs/design/release-1.4.7/catalogo-restaurante.png)
+
+## Recursos mantidos da 1.4.6
+
 
 - Dados de primeiros passos e Geral sincronizados, com preservação dos rascunhos.
 - Mesmo editor de ticket nas configurações e impressoras, com salvamento compartilhado.
@@ -269,9 +274,9 @@ Distribua somente os pacotes preparados. A pasta `artifacts` pode conter materia
 
 ## Documentação e validação
 
-As imagens deste README foram atualizadas em 30/10/2026. Os instaladores 1.4.6 incluem os ajustes de configuração, impressão, início e pagamento. Chamadas/QR Codes e alterações recentes do KDS continuam fora desta publicação. Os arquivos e as evidências das versões anteriores permanecem disponíveis.
+As imagens deste README foram atualizadas em 30/10/2026. Os instaladores 1.4.7 incluem os ajustes de configuração, impressão, início e pagamento. Chamadas/QR Codes e alterações recentes do KDS continuam fora desta publicação. Os arquivos e as evidências das versões anteriores permanecem disponíveis.
 
-Validação da release: **931 testes .NET distintos e 7 testes JavaScript aprovados**. As capturas e testes não certificam impressão física, instalação em Windows limpo ou hardware. [Notas da 1.4.6](downloads/RELEASE-1.4.6.md).
+Validação da release: **941 testes .NET distintos e 7 testes JavaScript aprovados**. As capturas e testes não certificam impressão física, instalação em Windows limpo ou hardware. [Notas da 1.4.7](downloads/RELEASE-1.4.7.md).
 
 - [Índice completo](docs/README.md)
 - [Notas e evidências da 1.4.0](specs/2026-10-22-release-1.4.0.md)
