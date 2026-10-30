@@ -25,7 +25,7 @@ foreach($pasta in $candidatos){
     if(@($selecionados|Where-Object {Dentro $pasta $_}).Count){continue}
     try{$alvo=Seguro $pasta}catch{$planejados.Add([pscustomobject]@{Pasta=$pasta;Acao='Preservada';Motivo=$_.Exception.Message});continue}
     $arquivos=@(Get-ChildItem -LiteralPath $alvo -Recurse -File -Force)
-    $protegido=$arquivos|Where-Object {$_.Extension -in '.db','.sqlite','.sqlite3','.credencial','.p12','.keystore','.dat' -or $_.Name -match '^\.env($|\.(local|production|development)$)|^\.dev\.vars$|privada|private.*\.pem|password|google-oauth-client|google-drive-token|colaboradores\.json|recuperacao-email\.json' -or ($_.Extension -notin '.cs','.xaml','.csproj','.md','.ps1','.py' -and $_.FullName -match '[\\/](segredos|backups?|dados|data)[\\/]')}|Select-Object -First 1
+    $protegido=$arquivos|Where-Object {$_.Extension -in '.db','.sqlite','.sqlite3','.credencial','.p12','.keystore','.dat' -or $_.Name -match '^\.env($|\.(local|production|development)$)|^\.dev\.vars$|privada|private.*\.pem|password|google-oauth-client|google-drive-token|colaboradores\.json|recuperacao-email\.json' -or ($_.Extension -notin '.cs','.xaml','.csproj','.md','.ps1','.py','.baml' -and $_.FullName -match '[\\/](segredos|backups?|dados|data)[\\/]')}|Select-Object -First 1
     if($protegido -or @($processos|Where-Object {Dentro $_ $alvo}).Count){$planejados.Add([pscustomobject]@{Pasta=$alvo;Acao='Preservada';Motivo='Contém dados, credenciais ou processo em uso'});continue}
     $tipo=if($fontes -contains $alvo){'Fonte antiga arquivada'}else{'Build descartável'}
     $planejados.Add([pscustomobject]@{Pasta=$alvo;Acao=$tipo;Motivo='Cópia antiga fora da fonte única'});$selecionados.Add($alvo)
