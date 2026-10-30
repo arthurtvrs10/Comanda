@@ -8,7 +8,7 @@ using VarthexComanda.Infrastructure.Storage;
 
 namespace VarthexComanda.Desktop.Configuracao.PrimeiraConfiguracao;
 
-public sealed class PrimeiraConfiguracaoService(IDbContextFactory<VarthexComandaDbContext> fabrica,IConfiguracaoRepository configuracoes,AppPaths paths)
+public sealed partial class PrimeiraConfiguracaoService(IDbContextFactory<VarthexComandaDbContext> fabrica,IConfiguracaoRepository configuracoes,AppPaths paths)
 {
     public const string ChaveConclusao="primeira-configuracao.concluida.v1";
     public const string ChavePagamentos="primeira-configuracao.pagamentos.v1";
@@ -23,13 +23,21 @@ public sealed class PrimeiraConfiguracaoService(IDbContextFactory<VarthexComanda
     }
     public EstadoConfiguracao Carregar()
     {
-        if(configuracoes.ObterValor(ChaveConclusao)!="1"&&File.Exists(ArquivoRascunho))return JsonSerializer.Deserialize<EstadoConfiguracao>(File.ReadAllText(ArquivoRascunho))??throw new InvalidOperationException("Não foi possível ler o rascunho da configuração inicial.");
+        if(configuracoes.ObterValor(ChaveConclusao)!="1"&&File.Exists(ArquivoRascunho))
+        {
+            var rascunho=JsonSerializer.Deserialize<EstadoConfiguracao>(File.ReadAllText(ArquivoRascunho))??throw new InvalidOperationException("Não foi possível ler o rascunho da configuração inicial.");
+            SincronizarEstabelecimento(rascunho);
+            return rascunho;
+        }
         var existente=new ObterConfiguracao(configuracoes).Executar();
         var prefs=new ConfiguracoesSistemaService(configuracoes).Carregar();
         if(string.IsNullOrWhiteSpace(prefs.Documento))prefs.ExibirDocumentoCupom=false;
         if(string.IsNullOrWhiteSpace(prefs.Endereco))prefs.ExibirEnderecoCupom=false;
         var pagamentos=configuracoes.ObterValor(ChavePagamentos);
-        return new EstadoConfiguracao {Nome=existente.NomeEstabelecimento,Cupom=prefs,TipoDocumento=Mascaras.Digitos(prefs.Documento).Length==11?"CPF":"CNPJ",QuantidadeComandas=existente.QuantidadeMaximaComandas??30,Pagamentos=pagamentos is null?["Dinheiro","Pix","Débito","Crédito"]:JsonSerializer.Deserialize<List<string>>(pagamentos)??[]};
+        var estado=new EstadoConfiguracao {Nome=existente.NomeEstabelecimento,Cupom=prefs,TipoDocumento=TipoDocumento(prefs),QuantidadeComandas=existente.QuantidadeMaximaComandas??30,Pagamentos=pagamentos is null?["Dinheiro","Pix","Débito","Crédito"]:JsonSerializer.Deserialize<List<string>>(pagamentos)??[]};
+        estado.Papel=new LayoutTicketService(configuracoes).Carregar()?.PapelMm??80;
+        estado.BaseEstabelecimento=DadosEstabelecimento(LerEstabelecimentoAtual());
+        return estado;
     }
     public void SalvarRascunho(EstadoConfiguracao estado)
     {
@@ -37,6 +45,7 @@ public sealed class PrimeiraConfiguracaoService(IDbContextFactory<VarthexComanda
     }
     public void Concluir(EstadoConfiguracao estado)
     {
+        if(estado.BaseEstabelecimento is not null)SincronizarEstabelecimento(estado);
         for(var i=0;i<6;i++)if(estado.Erro(i) is {Length:>0} erro)throw new ArgumentException(erro);
         if(estado.Nome.Trim().Length>120)throw new ArgumentException("O nome do estabelecimento deve ter até 120 caracteres.");
         ConfiguracoesSistemaService.Validar(estado.Cupom);
@@ -66,6 +75,9 @@ public sealed class PrimeiraConfiguracaoService(IDbContextFactory<VarthexComanda
         }
         void Definir(string chave,string valor){var atual=db.Configuracoes.SingleOrDefault(c=>c.Chave==chave);if(atual is null)db.Configuracoes.Add(new Domain.Configuracao {Chave=chave,Valor=valor,AtualizadoEm=agora});else{atual.Valor=valor;atual.AtualizadoEm=agora;}}
         Definir(ConfiguracoesSistemaService.Chave,JsonSerializer.Serialize(preferencias));Definir("estabelecimento.nome",estado.Nome.Trim());Definir("comandas.quantidade_maxima",estado.QuantidadeComandas.ToString());Definir(ChavePagamentos,JsonSerializer.Serialize(estado.Pagamentos.Distinct()));Definir("primeira-configuracao.responsavel",estado.Responsavel.Trim());Definir(ChaveConclusao,"1");
+        var layout=new LayoutTicketService(configuracoes).Carregar()??new();layout.ObservacoesItem=preferencias.ExibirObservacoesCupom;layout.PapelMm=estado.Papel;
+        LayoutTicketService.Validar(layout);Definir(LayoutTicketService.Chave,JsonSerializer.Serialize(layout));
+        var impressoras=new ConfiguracoesImpressaoService(configuracoes).Carregar();impressoras.Caixa.LarguraPapelMm=estado.Papel;if(configuracoes.ObterValor(ConfiguracoesImpressaoService.Chave) is not null)Definir(ConfiguracoesImpressaoService.Chave,JsonSerializer.Serialize(impressoras));
         db.SaveChanges();tx.Commit();
         try{if(File.Exists(ArquivoRascunho))File.Delete(ArquivoRascunho);}catch(IOException){}catch(UnauthorizedAccessException){}
     }

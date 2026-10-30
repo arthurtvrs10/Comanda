@@ -27,6 +27,7 @@ public sealed class ConfiguracoesImpressaoService(IConfiguracaoRepository reposi
     {
         var json = repositorio.ObterValor(Chave);
         var p = string.IsNullOrWhiteSpace(json) ? new PreferenciasImpressao() : JsonSerializer.Deserialize<PreferenciasImpressao>(json) ?? new();
+        if(string.IsNullOrWhiteSpace(json))p.Caixa.LarguraPapelMm=LayoutTicket.Carregar()?.PapelMm??80;
         p.Cozinhas = new(p.Cozinhas ?? [], StringComparer.OrdinalIgnoreCase);
         foreach (var local in CarregarLocais())
         {
@@ -44,7 +45,7 @@ public sealed class ConfiguracoesImpressaoService(IConfiguracaoRepository reposi
     }
     public IReadOnlyList<LocalCozinha> CarregarLocais() => new ConfiguracoesSistemaService(repositorio).Carregar().Cozinhas;
     public PreferenciaImpressora? ObterCaixaConfigurado() => string.IsNullOrWhiteSpace(repositorio.ObterValor(Chave)) ? null : Carregar().Caixa;
-    public void Salvar(PreferenciasImpressao p, DateTime agora)
+    public void Salvar(PreferenciasImpressao p, DateTime agora,LayoutTicket? layout=null,PreferenciasSistema? cupom=null)
     {
         Validar(p.Caixa, false);
         var sistema = new ConfiguracoesSistemaService(repositorio).Carregar();
@@ -55,12 +56,17 @@ public sealed class ConfiguracoesImpressaoService(IConfiguracaoRepository reposi
             local.Imprimir = saida.Habilitada;
             local.Impressora = saida.Modo == ModoImpressora.MesmaDoCaixa ? "Mesma do caixa" : saida.Caminho;
         }
+        if(cupom is not null)LayoutTicketService.CopiarCupom(cupom,sistema);
+        layout??=LayoutTicket.Carregar();
+        if(layout is not null){layout.PapelMm=p.Caixa.LarguraPapelMm;layout.ObservacoesItem=sistema.ExibirObservacoesCupom;LayoutTicketService.Validar(layout);}
         ConfiguracoesSistemaService.Validar(sistema);
-        repositorio.DefinirValores(new Dictionary<string, string>
+        var valores=new Dictionary<string, string>
         {
             [Chave] = JsonSerializer.Serialize(p),
             [ConfiguracoesSistemaService.Chave] = JsonSerializer.Serialize(sistema)
-        }, agora);
+        };
+        if(layout is not null)valores[LayoutTicketService.Chave]=JsonSerializer.Serialize(layout);
+        repositorio.DefinirValores(valores,agora);
     }
     public static void Validar(PreferenciaImpressora p, bool cozinha)
     {

@@ -10,34 +10,15 @@ namespace VarthexComanda.Desktop;
 public partial class MainWindow
 {
     private System.Windows.Threading.DispatcherTimer? _timerDicaMascote;
-    private DateTimeOffset? _dicaMascoteAte;
-    private bool _dicaMascoteApresentada;
 
     private void InicializarDicaMascote()
     {
         _timerDicaMascote = new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromMilliseconds(500) };
         _timerDicaMascote.Tick += (_, _) =>
         {
-            if (_dicaMascoteApresentada)
-            {
-                if (DateTimeOffset.UtcNow >= _dicaMascoteAte || !IsActive || _bloqueado || !AreaSistema.IsEnabled || !BotaoAjudaFlutuante.IsVisible)
-                    OcultarDicaMascote();
-                return;
-            }
-            if (!IsActive || _bloqueado || _restauracao || !AreaSistema.IsEnabled || !BotaoAjudaFlutuante.IsVisible
-                || _janelaSuporte is { IsVisible: true } || OwnedWindows.OfType<Window>().Any(w => w.IsVisible)) return;
-            var marcador = System.IO.Path.Combine(_pathsSistema!.Root, "mascote-dica-v2-vista.txt");
-            if (System.IO.File.Exists(marcador)) { _timerDicaMascote.Stop(); return; }
-            BalaoAjudaMascote.Visibility = Visibility.Visible;
-            _dicaMascoteApresentada = true;
-            _dicaMascoteAte = DateTimeOffset.UtcNow.AddSeconds(8);
-            try
-            {
-                System.IO.Directory.CreateDirectory(_pathsSistema.Root);
-                System.IO.File.WriteAllText(marcador, "Dica de ajuda apresentada.");
-            }
-            catch (System.IO.IOException) { /* A dica não deve impedir o atendimento. */ }
-            catch (UnauthorizedAccessException) { /* Sem persistência, ainda aparece só uma vez nesta sessão. */ }
+            var exibir=IsActive&&!_bloqueado&&!_restauracao&&AreaSistema.IsEnabled&&BotaoAjudaFlutuante.IsVisible
+                &&_janelaSuporte is not { IsVisible: true }&&!OwnedWindows.OfType<Window>().Any(w=>w.IsVisible);
+            BalaoAjudaMascote.Visibility=exibir?Visibility.Visible:Visibility.Collapsed;
         };
         _timerDicaMascote.Start();
     }
