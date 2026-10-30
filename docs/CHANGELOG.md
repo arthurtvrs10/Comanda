@@ -1,5 +1,11 @@
 # Histórico de alterações
 
+## 1.4.10 — 30/10/2026 — pré-release
+
+- Fonte única codex/release-atual, manifesto de commit e bloqueios de publicação desatualizada.
+- Rastreabilidade de binários e limpeza com inventário, preservando dados e credenciais. Mantém os recursos da 1.4.9, sem migrações novas.
+- [Processo, validação e downloads](../downloads/RELEASE-1.4.10.md).
+
 ## 1.4.9 — 30/10/2026 — pré-release
 
 - Recuperados os campos Cliente, Tipo de pedido e Observações da comanda; retirados Responsável manual e Vincular cliente.

@@ -4,9 +4,9 @@ A identidade **Comanda · por Varthex** aparece na abertura, área de trabalho, 
 
 Sistema Windows para organizar mesas, comandas e consumo em pequenos estabelecimentos de alimentação. Produtos, atendimento, fechamento e histórico funcionam localmente, sem depender da internet.
 
-**Em desenvolvimento, fora da 1.4.9:** chamadas das mesas e QR Codes, alterações recentes do KDS, complementos/estoque, recuperação por e-mail e transferência de licença por código curto.
+**Em desenvolvimento, fora da 1.4.10:** chamadas das mesas e QR Codes, alterações recentes do KDS, complementos/estoque, recuperação por e-mail e transferência de licença por código curto.
 
-**Release 1.4.9 · 30/10/2026 · pré-release em testes.** Recupera cliente, tipo de pedido e observações na comanda; remove o responsável manual e Vincular cliente. Preserva QR/link da rede, Restaurante, OneDrive e impressão. Windows x64 com runtime .NET e ativação offline.
+**Release 1.4.10 · 30/10/2026 · pré-release em testes.** Centraliza a fonte de publicação e bloqueia pacotes desatualizados, mantendo os campos da comanda, QR/link, OneDrive e impressão já aprovados. Windows x64 com runtime .NET e ativação offline.
 
 ## Baixar para Windows
 
@@ -14,13 +14,21 @@ O repositório é privado: o download pelo GitHub exige uma conta com acesso.
 
 | Edição | Catálogo em uma base nova | Download |
 | --- | --- | --- |
-| Normal | Vazio, para produtos reais | [Instalador](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.9/VarthexComanda-1.4.9-Setup-win-x64.exe) · [SHA-256](downloads/windows/VarthexComanda-1.4.9-Setup-win-x64.exe.sha256) |
-| Demonstração Lanchonete | 12 produtos fictícios com fotos | [Instalador](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.9/VarthexComanda-Demo-1.4.9-Setup-win-x64.exe) · [SHA-256](downloads/demo/VarthexComanda-Demo-1.4.9-Setup-win-x64.exe.sha256) |
-| Demonstração Restaurante | 16 produtos, com marmitas UN/KG e fotos reais de referência | [Instalador](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.9/VarthexComanda-Demo-Restaurante-1.4.9-Setup-win-x64.exe) · [SHA-256](downloads/demo-restaurante/VarthexComanda-Demo-Restaurante-1.4.9-Setup-win-x64.exe.sha256) |
+| Normal | Vazio, para produtos reais | [Instalador](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.10/VarthexComanda-1.4.10-Setup-win-x64.exe) · [SHA-256](downloads/windows/VarthexComanda-1.4.10-Setup-win-x64.exe.sha256) |
+| Demonstração Lanchonete | 12 produtos fictícios com fotos | [Instalador](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.10/VarthexComanda-Demo-1.4.10-Setup-win-x64.exe) · [SHA-256](downloads/demo/VarthexComanda-Demo-1.4.10-Setup-win-x64.exe.sha256) |
+| Demonstração Restaurante | 16 produtos, com marmitas UN/KG e fotos reais de referência | [Instalador](https://github.com/arthurtvrs10/Comanda/releases/download/v1.4.10/VarthexComanda-Demo-Restaurante-1.4.10-Setup-win-x64.exe) · [SHA-256](downloads/demo-restaurante/VarthexComanda-Demo-Restaurante-1.4.10-Setup-win-x64.exe.sha256) |
 
 As três edições usam instalações e bases separadas. Atualizar preserva os dados; os catálogos não são repostos em bases existentes. Sem vendas/comandas de exemplo. Preços de demonstração ilustrativos. Faça backup e feche o sistema antes de atualizar.
 
-**Validação:** migração de dados antigos, persistência dos cinco tipos, salvamento dos campos e operador automático testados. [Notas, resultados e limites da 1.4.9](downloads/RELEASE-1.4.9.md).
+**Validação:** migração de dados antigos, persistência dos cinco tipos, salvamento dos campos e operador automático testados. [Notas, resultados e limites da 1.4.10](downloads/RELEASE-1.4.10.md).
+
+## Novidades da 1.4.10
+
+- Fonte de publicação única: **codex/release-atual**, sempre descendente da última release publicada.
+- Preparação em uma única pasta gerada: **artifacts/release-atual**. Cópias antigas de fonte ou executáveis não são fontes de publicação.
+- Os scripts bloqueiam fonte sem identificação, commit desatualizado, arquivos alterados após a preparação, metadados divergentes e reaproveitamento de binários de outro pacote.
+- Cada aplicativo distribuído inclui **publicacao.json**, com versão, commit e hashes dos binários, para rastrear exatamente o que foi instalado. É rastreabilidade local, não uma assinatura de código.
+- Limpeza das cópias antigas com inventário e preservação de dados/credenciais. Fontes antigas elegíveis são arquivadas em ZIP antes da remoção das pastas.
 
 ## Novidades da 1.4.9
 
@@ -288,15 +296,19 @@ dotnet test backend/VarthexComanda.slnx --configuration Release
 dotnet run --project backend/src/VarthexComanda.Desktop
 ```
 
-Instalador normal: `scripts/gerar-instalador.ps1`. Demonstração: `scripts/gerar-demo.ps1`. Preferem Inno Setup 7 e verificam os instaladores com Defender antes de gerar os hashes. ZIP alternativo: `scripts/publicar.ps1`.
+Publicação oficial: `pwsh -File scripts/Preparar-Publicacao.ps1`. Use a branch local `codex/release-atual`, atualizada a partir de `origin/codex/release-atual`, e integre nela somente os commits aprovados. O comando exporta esse commit, verifica os recursos já publicados e gera as três edições em `artifacts/release-atual/pacotes`. `-SomentePreparar` prepara a fonte sem compilar. Depois de preparar, não edite a cópia: altere o código no Git, commite na fonte de publicação e prepare novamente.
+
+Os geradores individuais e `publicar.ps1` agora exigem a fonte preparada. `gerar-demo.ps1 -PublicacaoExistente` também confere commit, versão e hashes. Não use mais scripts temporários de `artifacts` para montar uma release. A pasta gerada não deve ser usada como projeto de desenvolvimento.
+
+Validação das proteções: `pwsh -File scripts/Testar-Publicacao.ps1 -PastaPublicacaoValida artifacts/release-atual/pacotes/publish/win-x64`. Limpeza com prévia: `pwsh -File scripts/Limpar-CopiasAntigas.ps1`; aplique com `-Aplicar` após conferir o inventário em `artifacts/limpeza-publicacao`. O código atual, dados, segredos, ferramentas e diretórios em uso são preservados.
 
 Distribua somente os pacotes preparados. A pasta `artifacts` pode conter material privado do emissor e não deve ser publicada inteira. JSON OAuth, tokens Google e chaves privadas ficam fora do Git e dos instaladores.
 
 ## Documentação e validação
 
-As imagens deste README foram atualizadas em 30/10/2026. Os instaladores 1.4.9 incluem os ajustes de configuração, impressão, início e pagamento. Chamadas/QR Codes e alterações recentes do KDS continuam fora desta publicação. Os arquivos e as evidências das versões anteriores permanecem disponíveis.
+As imagens deste README foram atualizadas em 30/10/2026. Os instaladores 1.4.10 incluem os ajustes de configuração, impressão, início e pagamento. Chamadas/QR Codes e alterações recentes do KDS continuam fora desta publicação. Os arquivos e as evidências das versões anteriores permanecem disponíveis.
 
-Resultados desta correção e limites de homologação: [notas da 1.4.9](downloads/RELEASE-1.4.9.md). Capturas e testes locais não certificam hardware ou instalação em Windows limpo.
+Resultados desta correção e limites de homologação: [notas da 1.4.10](downloads/RELEASE-1.4.10.md). Capturas e testes locais não certificam hardware ou instalação em Windows limpo.
 
 - [Índice completo](docs/README.md)
 - [Notas e evidências da 1.4.0](specs/2026-10-22-release-1.4.0.md)
