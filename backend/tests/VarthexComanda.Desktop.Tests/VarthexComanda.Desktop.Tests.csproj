@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0-windows</TargetFramework>
@@ -16,6 +16,8 @@
 
   <ItemGroup>
     <Using Include="Xunit" />
+    <Content Include="..\..\..\demo-restaurante\catalogo.json" Link="demo-restaurante\catalogo.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\..\demo-restaurante\fotos\*.png" Link="demo-restaurante\fotos\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="..\..\..\demo\catalogo.json" Link="demo\catalogo.json" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="..\..\..\demo\fotos\*.png" Link="demo\fotos\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>

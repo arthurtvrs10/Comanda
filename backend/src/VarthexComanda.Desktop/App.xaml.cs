@@ -110,10 +110,11 @@ public partial class App : System.Windows.Application
         await MostrarAberturaAsync();
         if (_cancelouInicializacao) return;
         _abertura?.AtualizarEtapa("Preparando os dados…");
+        var restaurante=ModoExecucao.Restaurante(e.Args,AppContext.BaseDirectory);
         var demonstracao = ModoExecucao.Demonstracao(e.Args, AppContext.BaseDirectory);
         var raizDados = ModoExecucao.RaizDados(demonstracao,
             Environment.GetEnvironmentVariable("VARTHEX_COMANDA_DADOS"),
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData));
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),restaurante);
         var paths = new AppPaths(string.IsNullOrWhiteSpace(raizDados) ? null : raizDados);
         paths.EnsureCreated();
         VarthexComanda.Desktop.Catalogo.FotoArquivoParaImagemConverter.DiretorioFotos = paths.FotosDirectory;
@@ -258,7 +259,7 @@ public partial class App : System.Windows.Application
                 dbContext.Database.Migrate();
 
                 if (demonstracao)
-                    CatalogoDemonstracao.Inicializar(dbContext, paths, Path.Combine(AppContext.BaseDirectory, "demo"));
+                    CatalogoDemonstracao.Inicializar(dbContext, paths, Path.Combine(AppContext.BaseDirectory, restaurante?"demo-restaurante":"demo"));
 
                 _logger.Information("Banco pronto");
 

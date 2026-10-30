@@ -8,7 +8,7 @@ namespace VarthexComanda.Infrastructure.Storage;
 /// <summary>RF03/RNF09: catálogo fictício exclusivo da edição de demonstração.</summary>
 public static class CatalogoDemonstracao
 {
-    public sealed record Item(string Categoria, string Nome, long PrecoCentavos, string Foto);
+    public sealed record Item(string Categoria, string Nome, long PrecoCentavos, string Foto, string Unidade="UN");
     public const string Marcador = "demo.catalogo.v1";
 
     public static bool Inicializar(VarthexComandaDbContext db, AppPaths paths, string origem)
@@ -21,6 +21,7 @@ public static class CatalogoDemonstracao
             ?? throw new InvalidDataException("Catálogo de demonstração inválido.");
         if (itens.Length == 0 || itens.Any(i => string.IsNullOrWhiteSpace(i.Nome)
             || string.IsNullOrWhiteSpace(i.Categoria) || i.PrecoCentavos <= 0
+            || i.Unidade is not ("UN" or "KG")
             || string.IsNullOrWhiteSpace(i.Foto) || i.Foto != Path.GetFileName(i.Foto)
             || i.Foto.Contains('/') || i.Foto.Contains('\\') || i.Foto.Contains(':')
             || !i.Foto.EndsWith(".png", StringComparison.OrdinalIgnoreCase)))
@@ -44,6 +45,7 @@ public static class CatalogoDemonstracao
                 var nomeFoto = "demo-" + item.Foto;
                 File.Copy(Path.Combine(origem, "fotos", item.Foto), Path.Combine(paths.FotosDirectory, nomeFoto), true);
                 db.Produtos.Add(new Produto { Id = 0, CategoriaId = categoria.Id, Nome = item.Nome,
+                    UnidadeVenda=item.Unidade=="KG"?UnidadeVenda.Quilo:UnidadeVenda.Unidade,
                     PrecoCentavos = item.PrecoCentavos, FotoArquivo = nomeFoto, Ativo = true,
                     CriadoEm = agora, AtualizadoEm = agora });
             }
