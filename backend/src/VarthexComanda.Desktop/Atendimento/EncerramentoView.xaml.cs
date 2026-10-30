@@ -38,46 +38,32 @@ public partial class EncerramentoView : Window
     {
         if(DataContext is EncerramentoViewModel vm&&sender is FrameworkElement { DataContext: PagamentoRegistrado registro }&&new JanelaConfirmador().Confirmar("Remover registro?","O registro será desconsiderado na conta. Isso não devolve dinheiro nem estorna pagamentos externos. Continuar?"))vm.RemoverRegistro(registro);
     }
-    private void Conferir_Click(object sender,RoutedEventArgs e)
-    {
-        if(ConferirItens?.IsChecked!=true&&DataContext is EncerramentoViewModel vm)vm.SelecionarParaDividir=false;
-        AtualizarLayoutPagamento();
-    }
     private void AoRedimensionar(object sender,SizeChangedEventArgs e)=>AtualizarLayoutPagamento();
     private bool _atualizandoLayout;
     private int _ultimoModo=-1;
-    private bool? _ultimaConferencia;
+
     private void AtualizarLayoutPagamento()
     {
-        if(PainelItens is null||ConferirItens is null||_atualizandoLayout)return;
+        if(PainelItens is null||_atualizandoLayout)return;
         _atualizandoLayout=true;
         try
         {
         var largura=Content is FrameworkElement raiz&&raiz.ActualWidth>0?raiz.ActualWidth:Width;
         var modo=largura<700?0:largura<900?1:2;
-        if(_ultimoModo==modo&&_ultimaConferencia==ConferirItens.IsChecked)return;
-        _ultimoModo=modo;_ultimaConferencia=ConferirItens.IsChecked;
+        if(_ultimoModo==modo)return;
+        _ultimoModo=modo;
         var compacto=largura<700;
-        var medio=largura>=700&&largura<900;
-        var conferir=ConferirItens.IsChecked==true;
+        const bool conferir=false;
         PainelItens.Visibility=conferir?Visibility.Visible:Visibility.Collapsed;
-        ColunaItens.Width=medio?new GridLength(210):compacto||!conferir?new GridLength(0):new GridLength(1,GridUnitType.Star);
-        ColunaFormas.Width=compacto||medio?new GridLength(1,GridUnitType.Star):new GridLength(210);
-        ColunaResumo.Width=compacto||medio?new GridLength(0):new GridLength(1,GridUnitType.Star);
+        ColunaItens.Width=new GridLength(0);
+        ColunaFormas.Width=compacto?new GridLength(1,GridUnitType.Star):new GridLength(210);
+        ColunaResumo.Width=compacto?new GridLength(0):new GridLength(1,GridUnitType.Star);
         Grid.SetColumn(PainelItens,compacto?1:0);Grid.SetRow(PainelItens,0);
         Grid.SetColumn(PainelFormas,1);Grid.SetRow(PainelFormas,compacto?1:0);
         Grid.SetColumn(PainelResumo,compacto?1:2);Grid.SetRow(PainelResumo,compacto?2:0);
         PainelItens.Margin=compacto?new Thickness(0,0,0,16):new Thickness(0,0,16,0);
         PainelFormas.Margin=compacto?new Thickness(0,0,0,16):new Thickness(0,0,16,0);
         Grid.SetColumnSpan(PainelItens,1);
-        if(medio)
-        {
-            ColunaItens.Width=new GridLength(210);ColunaFormas.Width=new GridLength(1,GridUnitType.Star);ColunaResumo.Width=new GridLength(0);
-            Grid.SetColumn(PainelItens,0);Grid.SetColumnSpan(PainelItens,2);Grid.SetRow(PainelItens,0);
-            Grid.SetColumn(PainelFormas,0);Grid.SetRow(PainelFormas,1);
-            Grid.SetColumn(PainelResumo,1);Grid.SetRow(PainelResumo,1);
-            PainelItens.Margin=new Thickness(0,0,0,16);PainelFormas.Margin=new Thickness(0,0,16,0);
-        }
         }
         finally { _atualizandoLayout=false; }
     }

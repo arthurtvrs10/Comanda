@@ -27,12 +27,15 @@ public sealed class PagamentoFluxoTests
             {
                 var raiz=(FrameworkElement)janela.Content;
                 foreach(var escuro in new[]{false,true})
-                foreach(var largura in new[]{1120,800})
+                foreach(var largura in new[]{1120,800,600})
                 {
                     TemaInterface.Aplicar(escuro,false);
                     raiz.Measure(new Size(largura,700));raiz.Arrange(new Rect(0,0,largura,700));raiz.UpdateLayout();
                     System.Windows.Threading.Dispatcher.CurrentDispatcher.Invoke(()=>{},System.Windows.Threading.DispatcherPriority.ContextIdle);
                     raiz.UpdateLayout();
+                    var resumo=(FrameworkElement)janela.FindName("PainelResumo");
+                    Assert.True(resumo.ActualWidth>250,$"Resumo sem espaço na largura {largura}: {resumo.ActualWidth}");
+                    Assert.Equal(largura<700?2:0,Grid.GetRow(resumo));
                     var destino=Environment.GetEnvironmentVariable("VARTHEX_PREVIAS_TESTE");
                     if(destino is not null)
                     {
@@ -42,23 +45,8 @@ public sealed class PagamentoFluxoTests
                         using var arquivo=System.IO.File.Create(System.IO.Path.Combine(destino,$"pagamento-{escuro}-{largura}.png"));png.Save(arquivo);
                     }
                 }
-                var conferir=(CheckBox)janela.FindName("ConferirItens");
-                Assert.False(conferir.IsChecked);
-                conferir.IsChecked=false;Assert.Equal(Visibility.Collapsed,((FrameworkElement)janela.FindName("PainelItens")).Visibility);
-                conferir.IsChecked=true;Assert.Equal(Visibility.Visible,((FrameworkElement)janela.FindName("PainelItens")).Visibility);
-                ((CheckBox)janela.FindName("SelecionarItens")).IsChecked=true;
-                vm.ItensParaDividir[0].Selecionado=true;
-                Assert.Equal(5000,vm.TotalSelecionadoCentavos);
-                raiz.Measure(new Size(1120,700));raiz.Arrange(new Rect(0,0,1120,700));raiz.UpdateLayout();
-                var previa=Environment.GetEnvironmentVariable("VARTHEX_PREVIAS_TESTE");
-                if(previa is not null)
-                {
-                    var bitmap=new RenderTargetBitmap(1120,700,96,96,PixelFormats.Pbgra32);bitmap.Render(raiz);
-                    var png=new PngBitmapEncoder();png.Frames.Add(BitmapFrame.Create(bitmap));
-                    using var arquivo=System.IO.File.Create(System.IO.Path.Combine(previa,"pagamento-selecao-itens.png"));png.Save(arquivo);
-                }
-                conferir.IsChecked=false;Assert.False(vm.SelecionarParaDividir);
-                Assert.Equal(0,vm.TotalSelecionadoCentavos);
+                Assert.Null(janela.FindName("ConferirItens"));
+                Assert.Equal(Visibility.Collapsed,((FrameworkElement)janela.FindName("PainelItens")).Visibility);
                 ((Button)janela.FindName("BotaoImprimir")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));Assert.Equal(1,impressos);
                 vm.QuantidadePessoasTexto="3";Assert.Contains("16,67",vm.DivisaoDescricao);Assert.Contains("16,66",vm.DivisaoDescricao);
                 Assert.False(vm.ConfirmarEncerrarCommand.CanExecute(null));
