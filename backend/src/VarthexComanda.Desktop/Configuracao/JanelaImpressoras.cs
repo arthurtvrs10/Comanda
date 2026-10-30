@@ -90,7 +90,7 @@ public sealed class JanelaImpressoras : Window
         _mostrando = true; _form.Children.Clear();
         if(LocalAtual==Layout)
         {
-            if(_layoutEditor is null){_layoutEditor=new JanelaLayoutTicket(_service.LayoutTicket,true);_layoutConteudo=_layoutEditor.ExtrairEditor();}
+            if(_layoutEditor is null){_layoutEditor=new JanelaLayoutTicket(_service.LayoutTicket,true);_layoutEditor.DefinirPapel(_preferencias.Caixa.LarguraPapelMm);_layoutConteudo=_layoutEditor.ExtrairEditor();}
             _areaEditor.Content=_layoutConteudo;
             _teste.IsEnabled=false;_mostrando=false;return;
         }
@@ -111,7 +111,7 @@ public sealed class JanelaImpressoras : Window
             _form.Children.Add(new TextBlock { Text="Largura do papel térmico",Margin=new Thickness(0,0,0,4) });
             var papel=new ComboBox { ItemsSource=new[]{58,80},SelectedItem=saida.LarguraPapelMm,Width=110,HorizontalAlignment=HorizontalAlignment.Left,Margin=new Thickness(0,0,0,12) };
             System.Windows.Automation.AutomationProperties.SetName(papel,"Largura do papel em milímetros");
-            papel.SelectionChanged+=(_,_)=>{if(!_mostrando&&papel.SelectedItem is int mm)saida.LarguraPapelMm=mm;};_form.Children.Add(papel);
+            papel.SelectionChanged+=(_,_)=>{if(!_mostrando&&papel.SelectedItem is int mm){saida.LarguraPapelMm=mm;if(LocalAtual==Caixa)_layoutEditor?.DefinirPapel(mm);}};_form.Children.Add(papel);
             Texto("Medidas em mm. A prévia permite comparar 58 e 80 mm antes de imprimir.");
         }
         if (saida.Modo == ModoImpressora.Desativada)
@@ -153,8 +153,8 @@ public sealed class JanelaImpressoras : Window
     }
     private void Salvar()
     {
-        if(_layoutEditor?.TemAlteracoes==true)_layoutEditor.SalvarLayout();
-        _service.Salvar(_preferencias, DateTime.UtcNow); _snapshot = JsonSerializer.Serialize(_preferencias); _salvo?.Invoke(); _mensagem.Text = "Configuração de impressoras salva.";
+        if(_layoutEditor?.TemAlteracoes==true)_preferencias.Caixa.LarguraPapelMm=_layoutEditor.LayoutAtual.PapelMm;
+        _service.Salvar(_preferencias, DateTime.UtcNow,_layoutEditor?.LayoutAtual,_layoutEditor?.PreferenciasAtuais);_layoutEditor?.ConfirmarSalvo(); _snapshot = JsonSerializer.Serialize(_preferencias); _salvo?.Invoke(); _mensagem.Text = "Configuração de impressoras salva.";
     }
 }
 

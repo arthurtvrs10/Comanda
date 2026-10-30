@@ -56,7 +56,7 @@ public sealed class ConfiguracoesSistemaService(IConfiguracaoRepository reposito
         Validar(valor);
         return valor;
     }
-    public void Salvar(PreferenciasSistema preferencias, string nome, int? quantidade, DateTime agora,string? imagemEstabelecimento=null)
+    public void Salvar(PreferenciasSistema preferencias, string nome, int? quantidade, DateTime agora,string? imagemEstabelecimento=null,LayoutTicket? layoutTicket=null)
     {
         Validar(preferencias);
         if (string.IsNullOrWhiteSpace(nome) || nome.Trim().Length > 120) throw new ArgumentException("Informe o nome do estabelecimento com até 120 caracteres.");
@@ -68,10 +68,13 @@ public sealed class ConfiguracoesSistemaService(IConfiguracaoRepository reposito
             ["estabelecimento.nome"]=nome.Trim(),
             ["comandas.quantidade_maxima"]=quantidade?.ToString() ?? ""
         };
-        if(imagemEstabelecimento is not null)
+        var layout=layoutTicket??LayoutTicket.Carregar();
+        if(layout is not null||imagemEstabelecimento is not null)
         {
-            var layout=LayoutTicket.Carregar()??new();layout.LogoBase64=imagemEstabelecimento;layout.ImprimirLogo=imagemEstabelecimento.Length>0;
+            layout??=new();layout.ObservacoesItem=preferencias.ExibirObservacoesCupom;
+            if(imagemEstabelecimento is not null){layout.LogoBase64=imagemEstabelecimento;layout.ImprimirLogo=imagemEstabelecimento.Length>0;}
             LayoutTicketService.Validar(layout);valores[LayoutTicketService.Chave]=JsonSerializer.Serialize(layout);
+            if(layoutTicket is not null&&repositorio.ObterValor(ConfiguracoesImpressaoService.Chave) is not null){var imp=new ConfiguracoesImpressaoService(repositorio).Carregar();imp.Caixa.LarguraPapelMm=layout.PapelMm;valores[ConfiguracoesImpressaoService.Chave]=JsonSerializer.Serialize(imp);}
         }
         repositorio.DefinirValores(valores,agora);
     }

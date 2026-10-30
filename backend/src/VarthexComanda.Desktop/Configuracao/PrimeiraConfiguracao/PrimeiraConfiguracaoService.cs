@@ -35,7 +35,8 @@ public sealed partial class PrimeiraConfiguracaoService(IDbContextFactory<Varthe
         if(string.IsNullOrWhiteSpace(prefs.Endereco))prefs.ExibirEnderecoCupom=false;
         var pagamentos=configuracoes.ObterValor(ChavePagamentos);
         var estado=new EstadoConfiguracao {Nome=existente.NomeEstabelecimento,Cupom=prefs,TipoDocumento=TipoDocumento(prefs),QuantidadeComandas=existente.QuantidadeMaximaComandas??30,Pagamentos=pagamentos is null?["Dinheiro","Pix","Débito","Crédito"]:JsonSerializer.Deserialize<List<string>>(pagamentos)??[]};
-        estado.BaseEstabelecimento=DadosEstabelecimento(estado);
+        estado.Papel=new LayoutTicketService(configuracoes).Carregar()?.PapelMm??80;
+        estado.BaseEstabelecimento=DadosEstabelecimento(LerEstabelecimentoAtual());
         return estado;
     }
     public void SalvarRascunho(EstadoConfiguracao estado)
@@ -75,6 +76,9 @@ public sealed partial class PrimeiraConfiguracaoService(IDbContextFactory<Varthe
         void Definir(string chave,string valor){var atual=db.Configuracoes.SingleOrDefault(c=>c.Chave==chave);if(atual is null)db.Configuracoes.Add(new Domain.Configuracao {Chave=chave,Valor=valor,AtualizadoEm=agora});else{atual.Valor=valor;atual.AtualizadoEm=agora;}}
         Definir(ConfiguracoesSistemaService.Chave,JsonSerializer.Serialize(preferencias));Definir("estabelecimento.nome",estado.Nome.Trim());Definir("comandas.quantidade_maxima",estado.QuantidadeComandas.ToString());Definir(ChavePagamentos,JsonSerializer.Serialize(estado.Pagamentos.Distinct()));Definir("primeira-configuracao.responsavel",estado.Responsavel.Trim());Definir(ChaveConclusao,"1");
         if(estado.Mesas)Definir(QrMesasService.ChaveQuantidade,estado.QuantidadeMesas.ToString());
+        var layout=new LayoutTicketService(configuracoes).Carregar()??new();layout.ObservacoesItem=preferencias.ExibirObservacoesCupom;layout.PapelMm=estado.Papel;
+        LayoutTicketService.Validar(layout);Definir(LayoutTicketService.Chave,JsonSerializer.Serialize(layout));
+        var impressoras=new ConfiguracoesImpressaoService(configuracoes).Carregar();impressoras.Caixa.LarguraPapelMm=estado.Papel;if(configuracoes.ObterValor(ConfiguracoesImpressaoService.Chave) is not null)Definir(ConfiguracoesImpressaoService.Chave,JsonSerializer.Serialize(impressoras));
         db.SaveChanges();tx.Commit();
         try{if(File.Exists(ArquivoRascunho))File.Delete(ArquivoRascunho);}catch(IOException){}catch(UnauthorizedAccessException){}
     }

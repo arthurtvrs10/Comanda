@@ -175,6 +175,7 @@ public sealed class JanelaConfiguracao:Window
     }
     private void Documento(Panel p)
     {
+        if(_estado.TipoDocumento=="CPF")_estado.DocumentoCpf=_estado.Cupom.Documento;else _estado.DocumentoCnpj=_estado.Cupom.Documento;
         var bloco=new StackPanel {Margin=new Thickness(0,0,18,14)};
         var label=new RotuloAjuda {Texto="Documento"+(_estado.Cupom.ExibirDocumentoCupom?" *":""),Margin=new Thickness(0,0,0,6)};bloco.Children.Add(label);
         var linha=new Grid();linha.ColumnDefinitions.Add(new(){Width=new GridLength(98)});linha.ColumnDefinitions.Add(new(){Width=new GridLength(1,GridUnitType.Star)});

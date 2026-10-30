@@ -20,7 +20,13 @@ public sealed partial class PrimeiraConfiguracaoService
         ("Bairro",e=>e.Cupom.Bairro,(e,v)=>e.Cupom.Bairro=v),
         ("Cep",e=>e.Cupom.Cep,(e,v)=>e.Cupom.Cep=v),
         ("Cidade",e=>e.Cupom.Cidade,(e,v)=>e.Cupom.Cidade=v),
-        ("Uf",e=>e.Cupom.Uf,(e,v)=>e.Cupom.Uf=v)
+        ("Uf",e=>e.Cupom.Uf,(e,v)=>e.Cupom.Uf=v),
+      ("AgruparItensCupom",e=>e.Cupom.AgruparItensCupom.ToString(),(e,v)=>e.Cupom.AgruparItensCupom=bool.Parse(v)),
+      ("ExibirObservacoesCupom",e=>e.Cupom.ExibirObservacoesCupom.ToString(),(e,v)=>e.Cupom.ExibirObservacoesCupom=bool.Parse(v)),
+      ("ExibirDocumentoCupom",e=>e.Cupom.ExibirDocumentoCupom.ToString(),(e,v)=>e.Cupom.ExibirDocumentoCupom=bool.Parse(v)),
+      ("ExibirEnderecoCupom",e=>e.Cupom.ExibirEnderecoCupom.ToString(),(e,v)=>e.Cupom.ExibirEnderecoCupom=bool.Parse(v)),
+      ("CabecalhoCupom",e=>e.Cupom.CabecalhoCupom,(e,v)=>e.Cupom.CabecalhoCupom=v),
+      ("RodapeCupom",e=>e.Cupom.RodapeCupom,(e,v)=>e.Cupom.RodapeCupom=v)
     ];
     private static Dictionary<string,string> DadosEstabelecimento(EstadoConfiguracao estado)=>CamposGerais.ToDictionary(c=>c.Chave,c=>c.Ler(estado)??"");
     private EstadoConfiguracao LerEstabelecimentoAtual()

@@ -19,13 +19,32 @@ public sealed class LayoutTicket
 public sealed class LayoutTicketService(IConfiguracaoRepository repositorio)
 {
     public const string Chave="impressoras.layout-ticket.v1";
-    public LayoutTicket? Carregar()=>repositorio.ObterValor(Chave) is string json?JsonSerializer.Deserialize<LayoutTicket>(json):null;
+    public LayoutTicket? Carregar()
+    {
+        if(repositorio.ObterValor(Chave) is not string json)return null;
+        var layout=JsonSerializer.Deserialize<LayoutTicket>(json);
+        if(layout is not null)layout.ObservacoesItem=Preferencias.ExibirObservacoesCupom;
+        return layout;
+    }
     public string NomeEstabelecimento=>repositorio.ObterValor("estabelecimento.nome")??"";
     public PreferenciasSistema Preferencias=>new ConfiguracoesSistemaService(repositorio).Carregar();
-    public void Salvar(LayoutTicket layout)
+    public void Salvar(LayoutTicket layout,PreferenciasSistema? cupom=null)
     {
         Validar(layout);
-        repositorio.Definir(Chave,JsonSerializer.Serialize(layout),DateTime.UtcNow);
+        var prefs=Preferencias;
+        if(cupom is not null)CopiarCupom(cupom,prefs);
+        prefs.ExibirObservacoesCupom=layout.ObservacoesItem;
+        ConfiguracoesSistemaService.Validar(prefs);
+        var impressoras=new ConfiguracoesImpressaoService(repositorio).Carregar();impressoras.Caixa.LarguraPapelMm=layout.PapelMm;
+        var valores=new Dictionary<string,string> {[Chave]=JsonSerializer.Serialize(layout),[ConfiguracoesSistemaService.Chave]=JsonSerializer.Serialize(prefs)};
+        if(repositorio.ObterValor(ConfiguracoesImpressaoService.Chave) is not null)valores[ConfiguracoesImpressaoService.Chave]=JsonSerializer.Serialize(impressoras);
+        repositorio.DefinirValores(valores,DateTime.UtcNow);
+    }
+    public static void CopiarCupom(PreferenciasSistema origem,PreferenciasSistema destino)
+    {
+        destino.AgruparItensCupom=origem.AgruparItensCupom;destino.ExibirObservacoesCupom=origem.ExibirObservacoesCupom;
+        destino.ExibirDocumentoCupom=origem.ExibirDocumentoCupom;destino.ExibirEnderecoCupom=origem.ExibirEnderecoCupom;
+        destino.CabecalhoCupom=origem.CabecalhoCupom;destino.RodapeCupom=origem.RodapeCupom;
     }
     public static void Validar(LayoutTicket layout)
     {

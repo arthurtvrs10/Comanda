@@ -13,10 +13,10 @@ using VarthexComanda.Domain;
 namespace VarthexComanda.Desktop.Tests.Configuracao;
 public class LayoutTicketTests
 {
-    [Fact] public void LayoutPersisteSeparadoSemAlterarPreferenciasDaImpressora()
+    [Fact] public void LayoutSincronizaPapelSemAlterarDestinoDaImpressora()
     {
-        var repo=new FakeConfiguracaoRepository();repo.Definir(ConfiguracoesImpressaoService.Chave,"original",DateTime.UtcNow);var servico=new LayoutTicketService(repo);
-        Assert.Null(servico.Carregar());servico.Salvar(new(){NomeCliente=false,PapelMm=58});Assert.False(servico.Carregar()!.NomeCliente);Assert.Equal(58,servico.Carregar()!.PapelMm);Assert.Equal("original",repo.ObterValor(ConfiguracoesImpressaoService.Chave));
+        var repo=new FakeConfiguracaoRepository();new ConfiguracoesImpressaoService(repo).Salvar(new(){Caixa=new(){Modo=ModoImpressora.Instalada,Caminho="Impressora USB"}},DateTime.UtcNow);var servico=new LayoutTicketService(repo);
+        Assert.Null(servico.Carregar());servico.Salvar(new(){NomeCliente=false,PapelMm=58});Assert.False(servico.Carregar()!.NomeCliente);Assert.Equal(58,servico.Carregar()!.PapelMm);Assert.Equal("Impressora USB",new ConfiguracoesImpressaoService(repo).Carregar().Caixa.Caminho);Assert.Equal(58,new ConfiguracoesImpressaoService(repo).Carregar().Caixa.LarguraPapelMm);
         Assert.Throws<ArgumentException>(()=>servico.Salvar(new(){ImprimirLogo=true}));Assert.Throws<ArgumentException>(()=>servico.Salvar(new(){PapelMm=72}));
     }
     [Fact] public void ContaExistenteRespeitaElementosEValoresNosDoisPapeis()
@@ -45,7 +45,7 @@ public class LayoutTicketTests
             {
                 TemaInterface.Aplicar(escuro,false);var janela=new JanelaLayoutTicket(new(new FakeConfiguracaoRepository()));var raiz=(FrameworkElement)janela.Content;
                 raiz.Measure(new Size(1000,700));raiz.Arrange(new Rect(0,0,1000,700));raiz.UpdateLayout();
-                Assert.Equal(8,AlinhamentoInterfaceTests.Filhos(raiz).OfType<CheckBox>().Count());Assert.Single(AlinhamentoInterfaceTests.Filhos(raiz).OfType<FlowDocumentScrollViewer>());
+                Assert.Equal(11,AlinhamentoInterfaceTests.Filhos(raiz).OfType<CheckBox>().Count());Assert.Single(AlinhamentoInterfaceTests.Filhos(raiz).OfType<FlowDocumentScrollViewer>());
                 var logo=AlinhamentoInterfaceTests.Filhos(raiz).OfType<CheckBox>().Single(c=>System.Windows.Automation.AutomationProperties.GetName(c)=="Imprimir logo");
                 Assert.False(logo.IsEnabled);
                 Assert.Contains("Geral",logo.ToolTip.ToString());

@@ -31,9 +31,10 @@ public sealed partial class JanelaConfiguracoesSistema : Window
     private readonly StackPanel _form=new() { Margin=new Thickness(28,24,28,28) };
     private readonly TextBlock _mensagem=new() { TextWrapping=TextWrapping.Wrap,Margin=new Thickness(12) };
     private readonly TextBlock _titulo=new() { FontSize=25,FontWeight=FontWeights.SemiBold,Margin=new Thickness(0,0,0,8) };
+    private JanelaLayoutTicket? _editorTicket;
     private string _secao="Geral";
     private Panel? _camposGeral;
-    public bool TemAlteracoes => _snapshot != Estado()||_imagemEstabelecimento!=_imagemSalva;
+    public bool TemAlteracoes => _snapshot != Estado()||_imagemEstabelecimento!=_imagemSalva||_editorTicket?.TemAlteracoes==true;
     private int _inicioComandas = 1;
     private string Estado()=>JsonSerializer.Serialize(new { Preferencias=_prefs,Nome=_nome,Quantidade=_quantidade });
 
@@ -206,16 +207,13 @@ public sealed partial class JanelaConfiguracoesSistema : Window
     }
     private void Cupom()
     {
-        Subtitulo("Conteúdo do comprovante");
-        Marcar("Agrupar itens iguais",_prefs.AgruparItensCupom,v=>_prefs.AgruparItensCupom=v,"Soma as quantidades quando produto, preço e observação forem iguais.");
-        Marcar("Exibir observações dos itens",_prefs.ExibirObservacoesCupom,v=>_prefs.ExibirObservacoesCupom=v);
-        Marcar("Exibir CNPJ / CPF",_prefs.ExibirDocumentoCupom,v=>_prefs.ExibirDocumentoCupom=v,"Impresso somente quando preenchido em Geral.");
-        Marcar("Exibir endereço do estabelecimento",_prefs.ExibirEnderecoCupom,v=>_prefs.ExibirEnderecoCupom=v,"Usa o endereço cadastrado em Geral, sem imprimir campos vazios.");
-        Subtitulo("Mensagens impressas");
-        Campo("Mensagem do cabeçalho",_prefs.CabecalhoCupom,v=>_prefs.CabecalhoCupom=v,true);Campo("Mensagem do rodapé",_prefs.RodapeCupom,v=>_prefs.RodapeCupom=v,true);
-        Botao("Visualizar exemplo do cupom",()=>{var layout=_service.LayoutTicket.Carregar()??new();if(_imagemEstabelecimento!=_imagemSalva){layout.LogoBase64=_imagemEstabelecimento;layout.ImprimirLogo=_imagemEstabelecimento.Length>0;}ComprovanteConta.VisualizarExemplo(this,_prefs,_nome,layout);});
-        Texto("Impressão automática, impressão fiscal, etiquetas e integração com entregador não estão habilitadas no Varthex.");
+        if(_editorTicket is null)_editorTicket=new JanelaLayoutTicket(_service.LayoutTicket,true,_prefs,()=>_nome);
+        if(_imagemEstabelecimento!=_imagemSalva){_editorTicket.LayoutAtual.LogoBase64=_imagemEstabelecimento;_editorTicket.LayoutAtual.ImprimirLogo=_imagemEstabelecimento.Length>0;}
+        if(_editorTicket.Content is not null)_conteudoTicket=_editorTicket.ExtrairEditor();
+        _form.Children.Add(_conteudoTicket!);
     }
+    private FrameworkElement? _conteudoTicket;
+
     private void Fundo()
     {
         // Visiting this section must not modify saved preferences.
@@ -372,6 +370,6 @@ public sealed partial class JanelaConfiguracoesSistema : Window
         if(!ValidarNomeEstabelecimento())return;
         int? quantidade=null;if(!string.IsNullOrWhiteSpace(_quantidade)){if(!int.TryParse(_quantidade,out var n))throw new ArgumentException("Informe uma quantidade válida de comandas.");quantidade=n;}
         if(quantidade is int limite&&_maiorComanda()>(long)_inicioComandas+limite-1)throw new ArgumentException("Há comandas abertas acima desse limite. Encerre ou transfira antes de reduzir.");
-        NormalizarDadosEstabelecimento();_service.Salvar(_prefs,_nome,quantidade,DateTime.UtcNow,_imagemEstabelecimento!=_imagemSalva?_imagemEstabelecimento:null);_imagemSalva=_imagemEstabelecimento;_snapshot=Estado();_mensagem.Text="Configurações salvas.";AtualizarEstado();_salvo();
+        NormalizarDadosEstabelecimento();_service.Salvar(_prefs,_nome,quantidade,DateTime.UtcNow,_imagemEstabelecimento!=_imagemSalva?_imagemEstabelecimento:null,_editorTicket?.LayoutAtual);_editorTicket?.ConfirmarSalvo();_imagemSalva=_imagemEstabelecimento;_snapshot=Estado();_mensagem.Text="Configurações salvas.";AtualizarEstado();_salvo();
     });
 }
