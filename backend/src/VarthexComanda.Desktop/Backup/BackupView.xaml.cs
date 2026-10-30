@@ -30,6 +30,12 @@ public partial class BackupView : UserControl
     }
 
     private async void CriarBackup_Click(object sender, RoutedEventArgs e) => await CriarBackupComProgressoAsync();
+    public void AbrirConexaoOneDrive()
+    {
+        if(!ViewModel.PodeCriarBackup)return;
+        new ConfigurarOneDriveView(ViewModel){Owner=Window.GetWindow(this)}.ShowDialog();
+    }
+    private void ConfigurarOneDrive_Click(object sender,RoutedEventArgs e)=>AbrirConexaoOneDrive();
     public void AbrirConexaoGoogle()
     {
         if (!ViewModel.PodeCriarBackup || ViewModel.GoogleDrive is not { } conexao) return;

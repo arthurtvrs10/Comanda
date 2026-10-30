@@ -496,9 +496,8 @@ public partial class MainWindow : Window
             }
             catch { /* A ativação e a validade continuam sob responsabilidade do fluxo de licença. */ }
             if(!_acesso.Autenticado||_bloqueado||!IsVisible||_restauracao)return;
-            if(_backupView.ViewModel.GoogleDrive is not { } drive||drive.Conectada)return;
-            new ConectarGoogleDriveView(drive){Owner=this}.ShowDialog();
-            _backupView.ViewModel.AtualizarGoogleDrive();
+            if(!_backupView.ViewModel.DeveSugerirOneDrive)return;
+            _backupView.AbrirConexaoOneDrive();
         }));
     }
 
