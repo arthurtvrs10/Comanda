@@ -12,6 +12,7 @@ public sealed record ColaboradorInicial(string Nome,string Funcao);
 public sealed class EstadoConfiguracao
 {
     public string Nome { get;set; }="";
+    public Dictionary<string,string>? BaseEstabelecimento { get;set; }
     public string TipoDocumento { get;set; }="CNPJ";
     public string DocumentoCpf { get;set; }="";
     public string DocumentoCnpj { get;set; }="";

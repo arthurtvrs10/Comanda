@@ -65,7 +65,7 @@ public sealed class JanelaConfiguracao:Window
     private void Salvar()
     {
         if(_renderizando||_somenteVerificacao)return;
-        try{if(_servico is not null){_servico.SalvarRascunho(_estado);_situacao.Text="Rascunho salvo · As configurações serão aplicadas ao concluir";}else{File.WriteAllText(_arquivo,_estado.Json());_situacao.Text="Protótipo · Rascunho separado dos dados reais";}}catch{_situacao.Text="Não foi possível salvar o rascunho. Confira a pasta de dados.";}
+        try{if(_servico is not null){_servico.SalvarRascunho(_estado);_situacao.Text="Rascunho salvo";}else{File.WriteAllText(_arquivo,_estado.Json());_situacao.Text="Protótipo · Rascunho separado dos dados reais";}}catch{_situacao.Text="Não foi possível salvar o rascunho. Confira a pasta de dados.";}
         AtualizarProgresso();
     }
     private void AtualizarProgresso(){_progresso.Value=_estado.Progresso;_percentual.Text=$"{(_estado.Finalizado?7:_estado.Concluidas.Count(i=>i<6&&_estado.Erro(i)==""))} de 7 etapas concluídas";var indice=0;foreach(var botao in _navegacao.Children.OfType<Button>()){var liberar=_estado.PodeAcessar(indice++);botao.IsEnabled=liberar;botao.Opacity=liberar?1:0.62;}}
@@ -73,6 +73,11 @@ public sealed class JanelaConfiguracao:Window
     private void Navegar(int etapa,bool validar)
     {
         if(validar&&_estado.Erro(_estado.Etapa) is {Length:>0} erro){Erro(erro);return;}
+        if(validar&&_estado.Etapa==0&&_servico is not null)
+        {
+            try{_servico.SalvarEstabelecimento(_estado);}
+            catch(Exception ex){Erro(ex.Message);return;}
+        }
         if(validar)_estado.Concluidas.Add(_estado.Etapa);
         if(!_estado.PodeAcessar(etapa))return;
         _estado.Etapa=Math.Clamp(etapa,0,6);_estado.Finalizado=false;_emEdicao=false;Mostrar();Salvar();
@@ -89,13 +94,13 @@ public sealed class JanelaConfiguracao:Window
     private void Mostrar()
     {
         _renderizando=true;_cupom=null;_erro.Visibility=Visibility.Collapsed;_navegacao.Children.Clear();
-        string[] descricoes=["Informe os dados do seu estabelecimento. Você poderá atualizá-los depois.","Escolha o conteúdo e confira a prévia real de impressão do VComanda.","Defina a quantidade inicial de comandas e o atendimento em mesas.","Adicione os primeiros produtos ou configure o catálogo depois.","Selecione as formas de pagamento utilizadas no estabelecimento.","Informe o responsável e adicione colaboradores, se desejar.","Revise as escolhas antes de concluir."];
+        string[] descricoes=["Ao continuar, estes dados serão salvos também em Configurações do sistema → Geral. Você poderá atualizá-los depois.","Escolha o conteúdo e confira a prévia real de impressão do VComanda.","Defina a quantidade inicial de comandas e o atendimento em mesas.","Adicione os primeiros produtos ou configure o catálogo depois.","Selecione as formas de pagamento utilizadas no estabelecimento.","Informe o responsável e adicione colaboradores, se desejar.","Revise as escolhas antes de concluir."];
         _titulo.Text=Etapas[_estado.Etapa];_descricao.Text=descricoes[_estado.Etapa];_descricao.SetResourceReference(TextBlock.ForegroundProperty,"AjudaMuted");
         _voltar.Visibility=_emEdicao&&!_estado.Finalizado?Visibility.Visible:Visibility.Collapsed;_voltar.Content="Voltar aos passos";_adiar.Visibility=_emEdicao&&_estado.Etapa is 3 or 5&&!_estado.Finalizado?Visibility.Visible:Visibility.Collapsed;_continuar.Visibility=_emEdicao||_estado.Finalizado?Visibility.Visible:Visibility.Collapsed;_continuar.Content=_estado.Finalizado?"Revisar simulação":_estado.Etapa==6?(_servico is null?"Concluir simulação":"Salvar e começar"):"Continuar";
         if(_estado.Finalizado){var fim=Painel();Titulo(fim,"Configuração simulada concluída");Texto(fim,"O exemplo está preparado para validação. Nenhum cadastro real, senha ou impressão foi alterado.");Texto(fim,"Próximos passos no aplicativo: completar o catálogo, configurar a impressora, habilitar o servidor se necessário e validar um primeiro atendimento.");var exportar=Botao("Salvar exemplo em arquivo",()=>{var arquivo=Path.Combine(AppContext.BaseDirectory,"configuracao-exemplo.json");File.WriteAllText(arquivo,_estado.Json());_situacao.Text="Exemplo salvo na pasta do protótipo.";});fim.Children.Add(exportar);_conteudo.Content=fim;}
         else if(!_emEdicao){_titulo.Text="Primeiros passos";_descricao.Text="Siga a sequência para preparar seu estabelecimento e começar a atender.";_conteudo.Content=ListaEtapas();}
         else _conteudo.Content=_estado.Etapa switch {0=>Estabelecimento(),1=>ComandaImpressa(),2=>Atendimento(),3=>Produtos(),4=>Pagamentos(),5=>Equipe(),_=>Revisao()};
-        AtualizarProgresso();_renderizando=false;_situacao.Text=_servico is null?"Protótipo · Dados de avaliação":"As alterações serão aplicadas ao concluir";
+        AtualizarProgresso();_renderizando=false;_situacao.Text=_servico is null?"Protótipo · Dados de avaliação":"Cadastro salvo ao continuar; demais ajustes ao concluir";
     }
     private FrameworkElement ListaEtapas()
     {
