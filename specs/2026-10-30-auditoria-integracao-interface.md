@@ -48,3 +48,7 @@ Nenhum dado operacional do cliente foi alterado pelos testes. Bancos de teste s�
 
 Próximas validações: conectar a origem das chamadas; homologar o percurso em celular e impressora reais; concluir configuração de e-mail quando houver domínio; executar revisão visual final com Impeccable polish após essas integrações.
 
+
+## Complemento da revisão
+
+A conexão das chamadas indicada como P1 foi implementada posteriormente nesta mesma data. Consulte [Chamadas das mesas e homologação](2026-10-30-chamadas-mesas-homologacao.md). O ensaio físico no celular continua aguardando confirmação do usuário; não há impressora disponível para homologação.

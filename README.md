@@ -29,6 +29,9 @@ A release é uma **pré-release**: instalação em Windows limpo e autorização
 
 ## Ajustes recentes do código — ainda não publicados
 
+- **Chamadas das mesas conectadas:** no atendimento pelo celular, abra uma comanda vinculada a uma mesa e toque em Chamar atendente. O KDS exibe a solicitação e o tempo; Atendida encerra somente a chamada. Reenvios não duplicam uma solicitação pendente. [Ensaio no celular e limites](specs/2026-10-30-chamadas-mesas-homologacao.md).
+- **Fonte de publicação sem complementos:** 448 testes desktop, 17 do servidor e 8 web aprovados. O fluxo integrado confere lançamento pelo celular, preparo/entrega, pagamento parcial/misto, histórico e documentos de 58/80 mm. Celular físico aguarda confirmação; impressora e áudio de cozinha não homologados.
+
 - Faixa de primeiros passos com 52 px, progresso real das sete etapas e opção de ocultar na sessão.
 - Pagamento sem o controle “Conferir e rachar a conta”, com resumo adaptado a janelas menores e rodapé sem sobreposição.
 - Tipo de pedido, cliente e observações salvos na comanda e identificados no KDS.
