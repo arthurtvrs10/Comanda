@@ -1,0 +1,359 @@
+using VarthexComanda.Application.Catalogo;
+using VarthexComanda.Application.Tests.Catalogo;
+using VarthexComanda.Desktop.Catalogo;
+using VarthexComanda.Domain;
+using Xunit;
+
+namespace VarthexComanda.Desktop.Tests.Catalogo;
+
+public class ProdutosViewModelTests
+{
+    [Fact]
+    public void ComplementoNaoExigeCategoriaEValidaQuantidadeDeEstoque()
+    {
+        var categorias=new FakeCategoriaRepository();var produtos=new FakeProdutoRepository();
+        var vm=CriarViewModel(categorias,produtos).CriarCatalogoComplementos();vm.NovoCommand.Execute(null);
+        vm.NomeProduto="Queijo";vm.PrecoProdutoReais="2,00";vm.QuantidadeEstoqueComplemento="10";vm.SalvarCommand.Execute(null);
+        Assert.Empty(vm.Mensagem);var salvo=Assert.Single(vm.Produtos);
+        Assert.Null(salvo.CategoriaId);Assert.True(salvo.ControlarEstoque);Assert.Equal(10,salvo.QuantidadeEstoque);
+        vm.ProdutoSelecionado=salvo;vm.QuantidadeEstoqueComplemento="-1";vm.SalvarCommand.Execute(null);
+        Assert.Contains("quantidade inteira",vm.Mensagem);Assert.Equal(10,salvo.QuantidadeEstoque);
+    }
+
+    [Fact]
+    public void ComplementosUsamMesmoCadastroSeparadoAceitamGratisEPreservamProdutos()
+    {
+        var categorias=new FakeCategoriaRepository();var relogio=new FakeClock();
+        var categoria=new CadastrarCategoria(categorias,relogio).Executar("Lanches").Valor!;
+        var produtos=new FakeProdutoRepository();
+        new CadastrarProduto(produtos,categorias,relogio).Executar("Hambúrguer",categoria.Id,1500);
+        var principal=CriarViewModel(categorias,produtos);var complementos=principal.CriarCatalogoComplementos();
+        complementos.PesquisarCommand.Execute(null);Assert.Empty(complementos.Produtos);
+        complementos.NovoCommand.Execute(null);complementos.NomeProduto="Molho";complementos.CategoriaProduto=categoria;complementos.PrecoProdutoReais="0,00";
+        complementos.SalvarCommand.Execute(null);Assert.Empty(complementos.Mensagem);
+        Assert.True(Assert.Single(complementos.Produtos).EhComplemento);
+        principal.PesquisarCommand.Execute(null);Assert.Equal("Hambúrguer",Assert.Single(principal.Produtos).Nome);
+        Assert.False(complementos.PermiteMedidaVariavel);
+    }
+
+    [Fact]
+    public void NovoEEdicaoSalvamDetalhesEVoltarNaoAlteraRegistro()
+    {
+        var categorias=new FakeCategoriaRepository();var categoria=new CadastrarCategoria(categorias,new FakeClock()).Executar("Refeições").Valor!;
+        var produtos=new FakeProdutoRepository();var vm=CriarViewModel(categorias,produtos);
+        vm.NomeProduto="Prato";vm.CategoriaProduto=categoria;vm.PrecoProdutoReais="25,00";vm.CustoProdutoReais="12,50";vm.DescricaoProduto="Prato do dia";vm.CodigoPersonalizadoProduto="REF-01";
+        vm.SalvarCommand.Execute(null);var criado=Assert.Single(vm.Produtos);Assert.Equal(1250,criado.CustoCentavos);Assert.Equal("REF-01",criado.CodigoPersonalizado);Assert.Empty(vm.Mensagem);
+        vm.ProdutoSelecionado=criado;Assert.Equal("12,50",vm.CustoProdutoReais);Assert.Equal("Prato do dia",vm.DescricaoProduto);
+        vm.DescricaoProduto="Descartar";vm.NovoCommand.Execute(null);Assert.Equal("Prato do dia",criado.Descricao);Assert.Empty(vm.DescricaoProduto);Assert.Empty(vm.CodigoPersonalizadoProduto);
+        vm.ProdutoSelecionado=criado;vm.CustoProdutoReais="13,00";vm.DescricaoProduto="Atualizado";vm.SalvarCommand.Execute(null);
+        Assert.Equal(1300,Assert.Single(vm.Produtos).CustoCentavos);Assert.Equal("Atualizado",Assert.Single(vm.Produtos).Descricao);
+    }
+    private static ProdutosViewModel CriarViewModel(FakeCategoriaRepository categorias, FakeProdutoRepository produtos, IFotoStorage? fotos = null)
+    {
+        var relogio = new FakeClock();
+        fotos ??= new FakeFotoStorage();
+        return new ProdutosViewModel(
+            new ListarCategoriasAtivas(categorias),
+            new CadastrarCategoria(categorias, relogio),
+            new PesquisarProdutos(produtos),
+            new CadastrarProduto(produtos, categorias, relogio),
+            new AlterarProduto(produtos, categorias, relogio),
+            new DesativarProduto(produtos, relogio),
+            new DefinirFotoProduto(produtos, fotos, relogio),
+            new RemoverFotoProduto(produtos, fotos, relogio));
+    }
+
+    [Fact]
+    public void PerderSelecao_LimpaFormulario_NaoDuplicaAoSalvarDeNovo()
+    {
+        var categorias = new FakeCategoriaRepository();
+        var categoria = new CadastrarCategoria(categorias, new FakeClock()).Executar("Bebidas").Valor!;
+        var produtos = new FakeProdutoRepository();
+        var viewModel = CriarViewModel(categorias, produtos);
+        viewModel.CategoriaProduto = categoria;
+        viewModel.NomeProduto = "Refrigerante";
+        viewModel.PrecoProdutoReais = "5,00";
+        viewModel.SalvarCommand.Execute(null);
+
+        viewModel.ProdutoSelecionado = viewModel.Produtos[0];
+        viewModel.ProdutoSelecionado = null;
+        viewModel.SalvarCommand.Execute(null);
+
+        Assert.Single(produtos.Pesquisar(null, null));
+    }
+
+    [Fact]
+    public void PrecoComPonto_NaoEhInterpretadoComoMilhar()
+    {
+        var categorias = new FakeCategoriaRepository();
+        var categoria = new CadastrarCategoria(categorias, new FakeClock()).Executar("Bebidas").Valor!;
+        var produtos = new FakeProdutoRepository();
+        var viewModel = CriarViewModel(categorias, produtos);
+        viewModel.CategoriaProduto = categoria;
+        viewModel.NomeProduto = "Refrigerante";
+        viewModel.PrecoProdutoReais = "10.50";
+
+        viewModel.SalvarCommand.Execute(null);
+
+        Assert.Empty(produtos.Pesquisar(null, null));
+        Assert.Equal("Informe um preço válido.", viewModel.Mensagem);
+    }
+
+    private static (ProdutosViewModel ViewModel, FakeFotoStorage Fotos, Produto Produto) CriarComProdutoSelecionado()
+    {
+        var categorias = new FakeCategoriaRepository();
+        var produtos = new FakeProdutoRepository();
+        var relogio = new FakeClock();
+        var categoria = new CadastrarCategoria(categorias, relogio).Executar("Bebidas").Valor!;
+        var criado = new CadastrarProduto(produtos, categorias, relogio).Executar("Refrigerante", categoria.Id, 500).Valor!;
+        var fotos = new FakeFotoStorage();
+        var viewModel = CriarViewModel(categorias, produtos, fotos);
+        var selecionado = viewModel.Produtos.Single(p => p.Id == criado.Id);
+        viewModel.ProdutoSelecionado = selecionado;
+        return (viewModel, fotos, selecionado);
+    }
+
+    [Fact]
+    public void DefinirFoto_SemProdutoSelecionado_GuardaCaminhoPendente()
+    {
+        var viewModel = CriarViewModel(new FakeCategoriaRepository(), new FakeProdutoRepository());
+
+        viewModel.DefinirFoto("C:\\foto.jpg");
+
+        Assert.Equal("C:\\foto.jpg", viewModel.FotoPendenteCaminho);
+        Assert.Equal(string.Empty, viewModel.Mensagem);
+        Assert.Null(viewModel.FotoArquivoAtual);
+    }
+
+    [Fact]
+    public void DefinirFoto_ProdutoSelecionado_AtualizaAFotoAtual()
+    {
+        var (viewModel, _, produto) = CriarComProdutoSelecionado();
+
+        viewModel.DefinirFoto("C:\\foto.jpg");
+
+        Assert.Equal("foto1.jpg", viewModel.FotoArquivoAtual);
+        Assert.Equal("foto1.jpg", produto.FotoArquivo);
+        Assert.Equal(string.Empty, viewModel.Mensagem);
+    }
+
+    [Fact]
+    public void DefinirFoto_StorageRejeita_MostraAMensagemDoStorage()
+    {
+        var (viewModel, fotos, _) = CriarComProdutoSelecionado();
+        fotos.MensagemRejeicao = "Formato não suportado. Use JPG, PNG ou BMP.";
+
+        viewModel.DefinirFoto("C:\\documento.pdf");
+
+        Assert.Equal("Formato não suportado. Use JPG, PNG ou BMP.", viewModel.Mensagem);
+        Assert.Null(viewModel.FotoArquivoAtual);
+    }
+
+    [Fact]
+    public void RemoverFoto_ComFoto_LimpaAFotoAtual()
+    {
+        var (viewModel, _, produto) = CriarComProdutoSelecionado();
+        viewModel.DefinirFoto("C:\\foto.jpg");
+
+        viewModel.RemoverFotoCommand.Execute(null);
+
+        Assert.Null(viewModel.FotoArquivoAtual);
+        Assert.Null(produto.FotoArquivo);
+    }
+
+    [Fact]
+    public void RemoverFotoCommand_SemFoto_FicaDesabilitado()
+    {
+        var (viewModel, _, _) = CriarComProdutoSelecionado();
+
+        Assert.False(viewModel.RemoverFotoCommand.CanExecute(null));
+    }
+
+    [Fact]
+    public void SelecionarProduto_CarregaAFotoDoProdutoEPerdeSelecaoLimpa()
+    {
+        var (viewModel, _, _) = CriarComProdutoSelecionado();
+        viewModel.DefinirFoto("C:\\foto.jpg");
+        Assert.True(viewModel.RemoverFotoCommand.CanExecute(null));
+        Assert.True(viewModel.TemProdutoSelecionado);
+
+        viewModel.ProdutoSelecionado = null;
+
+        Assert.Null(viewModel.FotoArquivoAtual);
+        Assert.False(viewModel.TemProdutoSelecionado);
+    }
+
+    private static (ProdutosViewModel ViewModel, FakeProdutoRepository Produtos, FakeFotoStorage Fotos) CriarComFormularioNovoPreenchido()
+    {
+        var categorias = new FakeCategoriaRepository();
+        new CadastrarCategoria(categorias, new FakeClock()).Executar("Bebidas");
+        var produtos = new FakeProdutoRepository();
+        var fotos = new FakeFotoStorage();
+        var viewModel = CriarViewModel(categorias, produtos, fotos);
+        viewModel.NomeProduto = "Refrigerante";
+        viewModel.CategoriaProduto = viewModel.Categorias[0];
+        viewModel.PrecoProdutoReais = "5,00";
+        return (viewModel, produtos, fotos);
+    }
+
+    [Fact]
+    public void Cadastrar_ComFotoPendente_GravaAFotoNoProdutoCriadoELimpaOFormulario()
+    {
+        var (viewModel, produtos, _) = CriarComFormularioNovoPreenchido();
+        viewModel.DefinirFoto("C:\\foto.jpg");
+
+        viewModel.SalvarCommand.Execute(null);
+
+        var criado = Assert.Single(produtos.Pesquisar(null, null));
+        Assert.Equal("foto1.jpg", criado.FotoArquivo);
+        Assert.Null(viewModel.ProdutoSelecionado);
+        Assert.Null(viewModel.FotoPendenteCaminho);
+    }
+
+    [Fact]
+    public void Cadastrar_FotoRejeitada_ProdutoFicaCadastradoESelecionadoComMensagem()
+    {
+        var (viewModel, produtos, fotos) = CriarComFormularioNovoPreenchido();
+        fotos.MensagemRejeicao = "Formato não suportado. Use JPG, PNG ou BMP.";
+        viewModel.DefinirFoto("C:\\documento.pdf");
+
+        viewModel.SalvarCommand.Execute(null);
+
+        var criado = Assert.Single(produtos.Pesquisar(null, null));
+        Assert.NotNull(viewModel.ProdutoSelecionado);
+        Assert.Equal(criado.Id, viewModel.ProdutoSelecionado!.Id);
+        Assert.Equal("EDITAR PRODUTO", viewModel.TituloFormulario);
+        Assert.Contains("Produto cadastrado, mas a foto não foi adicionada", viewModel.Mensagem);
+        Assert.Contains("Formato não suportado. Use JPG, PNG ou BMP.", viewModel.Mensagem);
+    }
+
+    private sealed class FotoStorageQueLancaExcecao : IFotoStorage
+    {
+        public string Importar(string caminhoOrigem) => throw new InvalidOperationException("falha de IO");
+
+        public void Excluir(string nomeArquivo)
+        {
+        }
+    }
+
+    private static (ProdutosViewModel ViewModel, FakeProdutoRepository Produtos, FakeFotoStorage Fotos) CriarComDuasCategoriasEFotoRejeitada()
+    {
+        var categorias = new FakeCategoriaRepository();
+        var relogio = new FakeClock();
+        new CadastrarCategoria(categorias, relogio).Executar("Bebidas");
+        new CadastrarCategoria(categorias, relogio).Executar("Lanches");
+        var produtos = new FakeProdutoRepository();
+        var fotos = new FakeFotoStorage { MensagemRejeicao = "Formato não suportado. Use JPG, PNG ou BMP." };
+        var viewModel = CriarViewModel(categorias, produtos, fotos);
+        viewModel.NomeProduto = "Refrigerante";
+        viewModel.CategoriaProduto = viewModel.Categorias.Single(c => c.Nome == "Bebidas");
+        viewModel.PrecoProdutoReais = "5,00";
+        viewModel.DefinirFoto("C:\\documento.pdf");
+        return (viewModel, produtos, fotos);
+    }
+
+    [Fact]
+    public void Cadastrar_FotoRejeitadaComFiltroAtivo_ProdutoFicaSelecionadoEFiltroELimpo()
+    {
+        var (viewModel, produtos, _) = CriarComDuasCategoriasEFotoRejeitada();
+        viewModel.CategoriaFiltro = viewModel.Categorias.Single(c => c.Nome == "Lanches");
+
+        viewModel.SalvarCommand.Execute(null);
+
+        var criado = Assert.Single(produtos.Pesquisar(null, null));
+        Assert.NotNull(viewModel.ProdutoSelecionado);
+        Assert.Equal(criado.Id, viewModel.ProdutoSelecionado!.Id);
+        Assert.Null(viewModel.CategoriaFiltro);
+        Assert.Contains("Produto cadastrado, mas a foto não foi adicionada", viewModel.Mensagem);
+
+        viewModel.SalvarCommand.Execute(null);
+
+        Assert.Single(produtos.Pesquisar(null, null));
+    }
+
+    [Fact]
+    public void Cadastrar_FotoRejeitadaComBuscaAtiva_ProdutoFicaSelecionadoEBuscaELimpa()
+    {
+        var (viewModel, produtos, _) = CriarComDuasCategoriasEFotoRejeitada();
+        viewModel.TextoBusca = "Hamburguer";
+
+        viewModel.SalvarCommand.Execute(null);
+
+        var criado = Assert.Single(produtos.Pesquisar(null, null));
+        Assert.NotNull(viewModel.ProdutoSelecionado);
+        Assert.Equal(criado.Id, viewModel.ProdutoSelecionado!.Id);
+        Assert.Equal(string.Empty, viewModel.TextoBusca);
+        Assert.Contains("Produto cadastrado, mas a foto não foi adicionada", viewModel.Mensagem);
+
+        viewModel.SalvarCommand.Execute(null);
+
+        Assert.Single(produtos.Pesquisar(null, null));
+    }
+
+    [Fact]
+    public void Cadastrar_FotoLancaExcecao_ProdutoFicaCadastradoESelecionadoComMensagemGenerica()
+    {
+        var categorias = new FakeCategoriaRepository();
+        new CadastrarCategoria(categorias, new FakeClock()).Executar("Bebidas");
+        var produtos = new FakeProdutoRepository();
+        var viewModel = CriarViewModel(categorias, produtos, new FotoStorageQueLancaExcecao());
+        viewModel.NomeProduto = "Refrigerante";
+        viewModel.CategoriaProduto = viewModel.Categorias[0];
+        viewModel.PrecoProdutoReais = "5,00";
+        viewModel.DefinirFoto("C:\\foto.jpg");
+
+        viewModel.SalvarCommand.Execute(null);
+
+        var criado = Assert.Single(produtos.Pesquisar(null, null));
+        Assert.NotNull(viewModel.ProdutoSelecionado);
+        Assert.Equal(criado.Id, viewModel.ProdutoSelecionado!.Id);
+        Assert.Equal("Produto cadastrado, mas não foi possível salvar a foto. Tente novamente.", viewModel.Mensagem);
+    }
+
+    [Fact]
+    public void RemoverFoto_ComFotoPendente_LimpaOPendente()
+    {
+        var viewModel = CriarViewModel(new FakeCategoriaRepository(), new FakeProdutoRepository());
+        viewModel.DefinirFoto("C:\\foto.jpg");
+
+        viewModel.RemoverFotoCommand.Execute(null);
+
+        Assert.Null(viewModel.FotoPendenteCaminho);
+    }
+
+    [Fact]
+    public void RemoverFotoCommand_ComFotoPendente_FicaHabilitado()
+    {
+        var viewModel = CriarViewModel(new FakeCategoriaRepository(), new FakeProdutoRepository());
+        Assert.False(viewModel.RemoverFotoCommand.CanExecute(null));
+
+        viewModel.DefinirFoto("C:\\foto.jpg");
+
+        Assert.True(viewModel.RemoverFotoCommand.CanExecute(null));
+    }
+
+    [Fact]
+    public void SelecionarProduto_DescartaFotoPendente()
+    {
+        var (viewModel, _, produto) = CriarComProdutoSelecionado();
+        viewModel.ProdutoSelecionado = null;
+        viewModel.DefinirFoto("C:\\foto.jpg");
+        Assert.NotNull(viewModel.FotoPendenteCaminho);
+
+        viewModel.ProdutoSelecionado = produto;
+
+        Assert.Null(viewModel.FotoPendenteCaminho);
+    }
+
+    [Fact]
+    public void TituloFormulario_AcompanhaOModo()
+    {
+        var (viewModel, _, produto) = CriarComProdutoSelecionado();
+        viewModel.ProdutoSelecionado = null;
+        Assert.Equal("NOVO PRODUTO", viewModel.TituloFormulario);
+
+        viewModel.ProdutoSelecionado = produto;
+
+        Assert.Equal("EDITAR PRODUTO", viewModel.TituloFormulario);
+    }
+}

@@ -1,0 +1,804 @@
+﻿using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Serilog;
+using VarthexComanda.Application.Abstractions;
+using VarthexComanda.Application.Atendimento;
+using VarthexComanda.Application.Catalogo;
+using VarthexComanda.Application.Configuracao;
+using VarthexComanda.Domain;
+
+namespace VarthexComanda.Desktop.Atendimento;
+
+public partial class AtendimentoViewModel : ObservableObject
+{
+    private Func<string, bool>? _autorizar;
+    public Func<string, bool>? Autorizar
+    {
+        get => _autorizar;
+        set { _autorizar = value; if (_encerramentoDialog is EncerramentoDialog dialogo) dialogo.Autorizar = value; }
+    }
+    private bool Exigir(string permissao)
+    {
+        if (Autorizar?.Invoke(permissao) != false) return true;
+        Mensagem = "Operação não autorizada. Peça a autorização de um responsável.";
+        return false;
+    }
+    public long ConsultarMaiorCodigoPedido() => _comandas.ObterMaiorCodigoPedido();
+    private readonly AbrirComanda _abrirComanda;
+    private readonly AdicionarItem _adicionarItem;
+    private readonly AlterarQuantidade _alterarQuantidade;
+    private readonly RemoverItem _removerItem;
+    private readonly CancelarComanda _cancelarComanda;
+    private readonly IComandaRepository _comandas;
+    private readonly ListarCategoriasAtivas _listarCategoriasAtivas;
+    private readonly PesquisarProdutos _pesquisarProdutos;
+    private readonly IConfirmador _confirmador;
+    private readonly IEncerramentoDialog _encerramentoDialog;
+    private readonly ObterConfiguracao _obterConfiguracao;
+    private readonly IClock _relogio;
+    private readonly ILogger? _logger;
+
+    public AtendimentoViewModel(
+        AbrirComanda abrirComanda,
+        AdicionarItem adicionarItem,
+        AlterarQuantidade alterarQuantidade,
+        RemoverItem removerItem,
+        CancelarComanda cancelarComanda,
+        IComandaRepository comandas,
+        ListarCategoriasAtivas listarCategoriasAtivas,
+        PesquisarProdutos pesquisarProdutos,
+        IConfirmador confirmador,
+        IEncerramentoDialog encerramentoDialog,
+        ObterConfiguracao obterConfiguracao,
+        IClock relogio,
+        ILogger? logger = null)
+    {
+        _abrirComanda = abrirComanda;
+        _adicionarItem = adicionarItem;
+        _alterarQuantidade = alterarQuantidade;
+        _removerItem = removerItem;
+        _cancelarComanda = cancelarComanda;
+        _comandas = comandas;
+        _listarCategoriasAtivas = listarCategoriasAtivas;
+        _pesquisarProdutos = pesquisarProdutos;
+        _confirmador = confirmador;
+        _encerramentoDialog = encerramentoDialog;
+        _obterConfiguracao = obterConfiguracao;
+        _relogio = relogio;
+        _logger = logger;
+
+        ComandasAbertas = new ObservableCollection<Comanda>();
+        Categorias = new ObservableCollection<Categoria>();
+        Itens = new ObservableCollection<ItemComanda>();
+        ProdutosCatalogo = new ObservableCollection<Produto>();
+        Slots = new ObservableCollection<ComandaSlotItem>();
+
+        // Com o banco corrompido (modo de restauração) estas leituras lançam; a construção
+        // não pode falhar, senão a MainWindow nem abre. Segue com listas vazias.
+        try
+        {
+            AtualizarComandasAbertas();
+        }
+        catch (Exception ex)
+        {
+            _logger?.Error(ex, "Falha em {Operacao}", "CarregarComandasAbertas");
+            ComandasAbertas.Clear();
+            Slots.Clear();
+        }
+
+        try
+        {
+            CarregarCategorias();
+        }
+        catch (Exception ex)
+        {
+            _logger?.Error(ex, "Falha em {Operacao}", "CarregarCategorias");
+            Categorias.Clear();
+            ProdutosCatalogo.Clear();
+        }
+    }
+
+    public event Action? AtendimentoConcluido;
+
+    public IReadOnlyList<ComandaComItens> ConsultarCozinha() => _comandas.ListarAbertas()
+        .OrderByDescending(c => c.Prioridade).ThenBy(c => c.AbertaEm)
+        .Select(c => _comandas.BuscarComItens(c.Id)).OfType<ComandaComItens>().ToList();
+
+    public ObservableCollection<Comanda> ComandasAbertas { get; }
+    public ObservableCollection<Categoria> Categorias { get; }
+    public ObservableCollection<ItemComanda> Itens { get; }
+    public ObservableCollection<Produto> ProdutosCatalogo { get; }
+    public ObservableCollection<ComandaSlotItem> Slots { get; }
+
+    public bool JuntarComandas(int origemId, int destinoId)
+    {
+        if (!Exigir("transferir")) return false;
+        try
+        {
+            _comandas.JuntarComandas(origemId, destinoId, _relogio.UtcNow);
+            AtualizarComandasAbertas();
+            Mensagem = "Pedidos reunidos na comanda de destino. Comanda de origem liberada.";
+            return true;
+        }
+        catch (Exception ex) when (ex is InvalidOperationException or ComandaNaoAbertaException) { Mensagem = ex.Message; return false; }
+        catch (Exception ex)
+        {
+            _logger?.Error(ex, "Falha ao juntar comandas");
+            Mensagem = "Não foi possível juntar os pedidos. Atualize as comandas antes de tentar novamente.";
+            return false;
+        }
+    }
+
+    public IReadOnlyList<Produto> PesquisarProdutosGlobais(string texto) =>
+        _pesquisarProdutos.Executar(null, texto).Where(p => p.Ativo).ToList();
+
+    [ObservableProperty]
+    private string novoNumero = string.Empty;
+
+    [ObservableProperty]
+    private string nomeCliente = string.Empty;
+
+    [ObservableProperty]
+    private string observacaoNovoItem = string.Empty;
+
+    [RelayCommand]
+    private void SalvarNomeCliente()
+    {
+        if (!Exigir("editar-pedido")) return;
+        if (ComandaAtual is null) return;
+        try
+        {
+            var resultado = new DefinirNomeCliente(_comandas).Executar(ComandaAtual.Id, NomeCliente);
+            if (!resultado.Sucesso) { Mensagem = string.Join(" ", resultado.Erros); return; }
+            ComandaAtual = resultado.Valor!;
+            NomeCliente = ComandaAtual.NomeCliente ?? string.Empty;
+            AtualizarComandasAbertas();
+            Mensagem = "Nome salvo.";
+        }
+        catch (Exception ex)
+        {
+            _logger?.Error(ex, "Falha em {Operacao}", "SalvarNomeCliente");
+            Mensagem = "Não foi possível salvar o nome. Tente novamente.";
+        }
+    }
+
+    [ObservableProperty]
+    private Comanda? comandaAtual;
+
+    [ObservableProperty]
+    private Categoria? categoriaCatalogo;
+
+    [ObservableProperty]
+    private string textoBuscaCatalogo = string.Empty;
+
+    [ObservableProperty]
+    private string mensagem = string.Empty;
+
+    /// <summary>Item da comanda destacado para operar por teclado (Up/Down, +, -, Delete).</summary>
+    [ObservableProperty]
+    private int? itemSelecionadoId;
+
+    partial void OnCategoriaCatalogoChanged(Categoria? value) => PesquisarCatalogo();
+
+    partial void OnTextoBuscaCatalogoChanged(string value) => PesquisarCatalogo();
+
+    [RelayCommand]
+    private void PesquisarCatalogo()
+    {
+        var resultado = _pesquisarProdutos.Executar(CategoriaCatalogo?.Id, TextoBuscaCatalogo);
+        ProdutosCatalogo.Clear();
+        foreach (var produto in resultado.Where(p => p.Ativo))
+        {
+            ProdutosCatalogo.Add(produto);
+        }
+    }
+
+    [RelayCommand]
+    private void LimparFiltro()
+    {
+        CategoriaCatalogo = null;
+    }
+
+    [RelayCommand]
+    private void SelecionarCategoria(Categoria categoria) => CategoriaCatalogo = categoria;
+
+    [RelayCommand]
+    private void Abrir()
+    {
+        if (!Exigir("editar-pedido")) return;
+        if (!int.TryParse(NovoNumero, out var numero))
+        {
+            Mensagem = "Informe um número de comanda válido.";
+            return;
+        }
+
+        var jaAberta = ComandasAbertas.FirstOrDefault(c => c.Numero == numero);
+        if (jaAberta is not null)
+        {
+            NovoNumero = string.Empty;
+            Mensagem = string.Empty;
+            AbrirParaEdicao(jaAberta.Id);
+            return;
+        }
+
+        try
+        {
+            var resultado = _abrirComanda.Executar(numero);
+            if (!resultado.Sucesso)
+            {
+                Mensagem = string.Join(" ", resultado.Erros);
+                return;
+            }
+
+            NovoNumero = string.Empty;
+            Mensagem = string.Empty;
+            AtualizarComandasAbertas();
+            AbrirParaEdicao(resultado.Valor!.Id, nova: true);
+        }
+        catch (Exception ex)
+        {
+            _logger?.Error(ex, "Falha em {Operacao}", "AbrirComanda");
+            Mensagem = "Não foi possível abrir a comanda. Tente novamente.";
+        }
+    }
+
+    [RelayCommand]
+    private void SelecionarComanda(Comanda comanda) => AbrirParaEdicao(comanda.Id);
+
+    public Comanda? CriarPedidoBalcao()
+    {
+        if (!Exigir("editar-pedido")) return null;
+        try
+        {
+            var resultado=_abrirComanda.ExecutarBalcao();
+            if(!resultado.Sucesso){Mensagem=string.Join(" ",resultado.Erros);return null;}
+            AtualizarComandasAbertas();Mensagem="";return resultado.Valor;
+        }
+        catch(Exception ex)
+        {
+            _logger?.Error(ex,"Falha ao abrir pedido de balcão");
+            Mensagem="Não foi possível abrir o pedido. Atualize a lista antes de tentar novamente.";return null;
+        }
+    }
+
+    public void PrepararPedidoBalcao(int id,bool novo)=>AbrirParaEdicao(id,novo);
+
+    [RelayCommand]
+    private void AbrirOuSelecionarSlot(ComandaSlotItem slot)
+    {
+        if (slot.Aberta)
+        {
+            if (slot.ComandaId is int comandaId)
+            {
+                AbrirParaEdicao(comandaId);
+            }
+            return;
+        }
+
+        NovoNumero = slot.Numero.ToString();
+        Abrir();
+    }
+
+    private void AbrirParaEdicao(int comandaId, bool nova = false)
+    {
+        var detalhe = _comandas.BuscarComItens(comandaId);
+        if (detalhe is null)
+        {
+            Mensagem = "Comanda não encontrada.";
+            return;
+        }
+
+        Mensagem = string.Empty;
+        ComandaAtual = detalhe.Comanda;
+        NomeCliente = ComandaAtual.NomeCliente ?? string.Empty;
+        ItemSelecionadoId = null;
+        ObservacaoNovoItem = string.Empty;
+        SubstituirItens(detalhe.Itens, null);
+        if (nova) RegistrarAberturaPedido();
+        VerTotalCommand.NotifyCanExecuteChanged();
+    }
+
+    [RelayCommand]
+    private void FecharEdicao()
+    {
+        if (SalvandoFechamento) return;
+        if (ComandaAtual is not null && PrepararSaidaPedido?.Invoke() == false) return;
+        LimparEdicao();
+    }
+
+    private void LimparEdicao()
+    {
+        var estavaEmAtendimento = ComandaAtual is not null;
+        Mensagem = string.Empty;
+        ComandaAtual = null;
+        NomeCliente = string.Empty;
+        ItemSelecionadoId = null;
+        TextoBuscaCatalogo = string.Empty;
+        Itens.Clear();
+        VerTotalCommand.NotifyCanExecuteChanged();
+        if (estavaEmAtendimento) AtendimentoConcluido?.Invoke();
+    }
+
+    [RelayCommand(CanExecute = nameof(PodeVerTotal))]
+    private void VerTotal()
+    {
+        if (SalvandoFechamento) return;
+        if (ComandaAtual is null)
+        {
+            return;
+        }
+
+        if (PrepararSaidaPedido?.Invoke() == false) return;
+        var comandaId = ComandaAtual.Id;
+        if (_encerramentoDialog.Abrir(comandaId))
+        {
+            LimparEdicao();
+            AtualizarComandasAbertas();
+        }
+    }
+
+    private bool PodeVerTotal() => !SalvandoFechamento && ComandaAtual is not null && Itens.Count > 0;
+
+    [RelayCommand]
+    private void AdicionarProdutoAoItem(Produto produto)
+    {
+        AdicionarProduto(produto,1,ObservacaoNovoItem);
+    }
+
+    public Produto? ConsultarProdutoAtual(int id) => _pesquisarProdutos.BuscarAtivo(id);
+    public bool AdicionarProduto(Produto produto, decimal quantidade, string? observacao, IReadOnlyList<Guid>? complementos = null)
+    {
+        if (!PermitirAlteracao() || ComandaAtual is null) return false;
+        try
+        {
+            var resultado = _adicionarItem.Executar(ComandaAtual.Id, produto.Id, quantidade, observacao, ObterOperador?.Invoke(), complementos);
+            AplicarResultado(resultado, produto.Id);
+            if (!resultado.Sucesso) return false;
+            var texto = string.IsNullOrWhiteSpace(observacao) ? null : observacao.Trim();
+            ItemSelecionadoId = resultado.Valor!.ItemAlteradoId ?? resultado.Valor.Itens.First(i => i.ProdutoId == produto.Id
+                && i.PrecoUnitarioCentavos == produto.PrecoCentavos && i.Observacao == texto).Id;
+            ObservacaoNovoItem = string.Empty;
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger?.Error(ex, "Falha em {Operacao}", "AdicionarItem");
+            Mensagem = "Não foi possível adicionar o produto à comanda. Tente novamente.";
+            return false;
+        }
+    }
+    [RelayCommand]
+    private void AumentarQuantidade(ItemComanda item)
+    {
+        if (!PermitirAlteracao()) return;
+        try
+        {
+            AplicarResultado(_alterarQuantidade.Executar(item.Id, item.Quantidade + (item.UnidadeVenda == UnidadeVenda.Unidade ? 1m : 0.100m)));
+        }
+        catch (Exception ex)
+        {
+            _logger?.Error(ex, "Falha em {Operacao}", "AumentarQuantidade");
+            Mensagem = "Não foi possível atualizar a quantidade do item. Tente novamente.";
+        }
+    }
+
+    [RelayCommand]
+    private void DiminuirQuantidade(ItemComanda item)
+    {
+        if (!PermitirAlteracao("remover-item")) return;
+        try
+        {
+            var passo = item.UnidadeVenda == UnidadeVenda.Unidade ? 1m : 0.100m;
+            if (item.Quantidade <= passo)
+            {
+                if (!_confirmador.Confirmar("Remover item", MensagemRemocao(item)))
+                {
+                    return;
+                }
+
+                AplicarResultado(_removerItem.Executar(item.Id));
+                return;
+            }
+
+            AplicarResultado(_alterarQuantidade.Executar(item.Id, item.Quantidade - passo));
+        }
+        catch (Exception ex)
+        {
+            _logger?.Error(ex, "Falha em {Operacao}", "DiminuirQuantidade");
+            Mensagem = "Não foi possível atualizar a quantidade do item. Tente novamente.";
+        }
+    }
+
+    [RelayCommand]
+    private void Remover(ItemComanda item)
+    {
+        if (!PermitirAlteracao("remover-item")) return;
+        if (!_confirmador.Confirmar("Remover item", MensagemRemocao(item)))
+        {
+            return;
+        }
+
+        try
+        {
+            AplicarResultado(_removerItem.Executar(item.Id));
+        }
+        catch (Exception ex)
+        {
+            _logger?.Error(ex, "Falha em {Operacao}", "RemoverItem");
+            Mensagem = "Não foi possível remover o item. Tente novamente.";
+        }
+    }
+
+    private static string MensagemRemocao(ItemComanda item) =>
+        $"Deseja remover o item \"{item.NomeProduto}\" da comanda?";
+
+    [RelayCommand]
+    private void CancelarComandaAtual()
+    {
+        if (!Exigir("cancelar-pedido")) return;
+        if (ComandaAtual is null)
+        {
+            return;
+        }
+
+        var numero = ComandaAtual.Numero;
+        var resumo = Itens.Count == 0 ? "Esta comanda está sem itens."
+            : $"Esta comanda possui {Itens.Sum(i => i.Quantidade)} produto(s), totalizando {CentavosParaMoedaConverter.Formatar(ComandaAtual.TotalCentavos)}.";
+        var mensagem = $"Cancelar a comanda {numero}?\n\n{resumo}\nO número ficará livre e nenhum pagamento será registrado. Para continuar depois, use Voltar às comandas.";
+        if (!_confirmador.Confirmar("Cancelar comanda", mensagem)) return;
+
+        try
+        {
+            var resultado = _cancelarComanda.Executar(ComandaAtual.Id);
+            if (!resultado.Sucesso)
+            {
+                Mensagem = string.Join(" ", resultado.Erros);
+                return;
+            }
+
+            Mensagem = string.Empty;
+            LimparEdicao();
+            AtualizarComandasAbertas();
+            Mensagem = $"Comanda {numero} cancelada. O número está disponível novamente.";
+        }
+        catch (Exception ex)
+        {
+            _logger?.Error(ex, "Falha em {Operacao}", "CancelarComanda");
+            Mensagem = "Não foi possível cancelar a comanda. Tente novamente.";
+        }
+    }
+
+    /// <summary>
+    /// Enter na busca: adiciona o primeiro produto listado (respeita categoria e filtro atuais).
+    /// O texto da busca permanece; a view o seleciona para o proximo item.
+    /// </summary>
+    [RelayCommand]
+    private void AdicionarPrimeiroDaBusca()
+    {
+        // Enter com a busca vazia (ou so espacos) nao adiciona o "primeiro do catalogo" por acidente
+        if (string.IsNullOrWhiteSpace(TextoBuscaCatalogo))
+        {
+            return;
+        }
+
+        var primeiro = ProdutosCatalogo.FirstOrDefault();
+        if (primeiro is null)
+        {
+            Mensagem = "Nenhum produto encontrado.";
+            return;
+        }
+
+        AdicionarProdutoAoItem(primeiro);
+    }
+
+    [RelayCommand]
+    private void SelecionarProximoItem()
+    {
+        if (Itens.Count == 0)
+        {
+            return;
+        }
+
+        var indice = IndiceDoSelecionado();
+        ItemSelecionadoId = Itens[indice < 0 ? 0 : Math.Min(indice + 1, Itens.Count - 1)].Id;
+    }
+
+    [RelayCommand]
+    private void SelecionarItemAnterior()
+    {
+        if (Itens.Count == 0)
+        {
+            return;
+        }
+
+        var indice = IndiceDoSelecionado();
+        ItemSelecionadoId = Itens[indice < 0 ? Itens.Count - 1 : Math.Max(indice - 1, 0)].Id;
+    }
+
+    [RelayCommand]
+    private void AumentarSelecionado()
+    {
+        if (ObterSelecionado() is { } item)
+        {
+            AumentarQuantidade(item);
+        }
+    }
+
+    [RelayCommand]
+    private void DiminuirSelecionado()
+    {
+        if (ObterSelecionado() is { } item)
+        {
+            DiminuirQuantidade(item);
+        }
+    }
+
+    [RelayCommand]
+    private void RemoverSelecionado()
+    {
+        if (ObterSelecionado() is { } item)
+        {
+            Remover(item);
+        }
+    }
+
+    private ItemComanda? ObterSelecionado() =>
+        ItemSelecionadoId is int id ? Itens.FirstOrDefault(i => i.Id == id) : null;
+
+    private int IndiceDoSelecionado()
+    {
+        if (ItemSelecionadoId is not int id)
+        {
+            return -1;
+        }
+
+        for (var i = 0; i < Itens.Count; i++)
+        {
+            if (Itens[i].Id == id)
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    // Recarrega a lista mantendo a selecao coerente: o item pedido (se existir), senao o mesmo item,
+    // senao o vizinho na posicao em que o selecionado estava (ou nada, se a lista esvaziou).
+    private void SubstituirItens(IEnumerable<ItemComanda> novos, int? selecionar)
+    {
+        var indiceAnterior = IndiceDoSelecionado();
+        var idAtual = ItemSelecionadoId;
+
+        Itens.Clear();
+        foreach (var item in novos)
+        {
+            Itens.Add(item);
+        }
+
+        if (selecionar is int pedido && Itens.Any(i => i.Id == pedido))
+        {
+            ItemSelecionadoId = pedido;
+        }
+        else if (idAtual is int atual && Itens.Any(i => i.Id == atual))
+        {
+            ItemSelecionadoId = atual;
+        }
+        else if (indiceAnterior < 0 || Itens.Count == 0)
+        {
+            ItemSelecionadoId = null;
+        }
+        else
+        {
+            ItemSelecionadoId = Itens[Math.Min(indiceAnterior, Itens.Count - 1)].Id;
+        }
+    }
+
+    private void AplicarResultado(Resultado<ComandaComItens> resultado, int? produtoIdASelecionar = null)
+    {
+        if (!resultado.Sucesso)
+        {
+            Mensagem = string.Join(" ", resultado.Erros);
+            return;
+        }
+
+        Mensagem = string.Empty;
+        ComandaAtual = resultado.Valor!.Comanda;
+        var selecionar = produtoIdASelecionar is int produtoId
+            ? resultado.Valor.Itens.FirstOrDefault(i => i.ProdutoId == produtoId)?.Id
+            : null;
+        SubstituirItens(resultado.Valor.Itens, selecionar);
+        AtualizarComandasAbertas();
+        VerTotalCommand.NotifyCanExecuteChanged();
+    }
+
+    public void AtualizarLancamentoRemoto(int comandaId)
+    {
+        AtualizarComandasAbertas();
+        if (ComandaAtual?.Id != comandaId || SalvandoFechamento) return;
+        var estado = _comandas.BuscarComItens(comandaId);
+        if (estado is null) return;
+        ComandaAtual = estado.Comanda;
+        SubstituirItens(estado.Itens, ItemSelecionadoId);
+        VerTotalCommand.NotifyCanExecuteChanged();
+    }
+
+    public void AtualizarComandasAbertas()
+    {
+        ComandasAbertas.Clear();
+        foreach (var comanda in _comandas.ListarAbertas())
+        {
+            ComandasAbertas.Add(comanda);
+        }
+        AtualizarSlots();
+    }
+
+    private void AtualizarSlots()
+    {
+        var configuracao = _obterConfiguracao.Executar();
+        var tamanho = configuracao.QuantidadeMaximaComandas ?? 20;
+        var agora = _relogio.UtcNow;
+
+        Slots.Clear();
+        var inicio = configuracao.NumeroInicialComandas;
+        var final = inicio + tamanho - 1;
+        for (var numero = inicio; numero <= final; numero++)
+        {
+            var comanda = ComandasAbertas.FirstOrDefault(c => c.Numero == numero);
+            if (comanda is not null)
+            {
+                Slots.Add(new ComandaSlotItem
+                {
+                    Numero = numero,
+                    Aberta = true,
+                    ComandaId = comanda.Id,
+                    NomeCliente = comanda.NomeCliente,
+                    NumeroMesa = comanda.NumeroMesa,
+                    TotalFormatado = CentavosParaMoedaConverter.Formatar(comanda.TotalCentavos),
+                    AbertaEm = comanda.AbertaEm, Prioridade = comanda.Prioridade, Bloqueada = comanda.Bloqueada, TempoFormatado = ComandaSlotItem.FormatarTempo(comanda.AbertaEm, agora)
+                });
+            }
+            else
+            {
+                Slots.Add(new ComandaSlotItem
+                {
+                    Numero = numero,
+                    Aberta = false,
+                    ComandaId = null,
+                    TotalFormatado = string.Empty,
+                    TempoFormatado = string.Empty
+                });
+            }
+        }
+
+        foreach (var comanda in ComandasAbertas.Where(c => c.Numero < inicio || c.Numero > final))
+        {
+            Slots.Add(new ComandaSlotItem
+            {
+                Numero = comanda.Numero,
+                Aberta = true,
+                ComandaId = comanda.Id,
+                NomeCliente = comanda.NomeCliente,
+                NumeroMesa = comanda.NumeroMesa,
+                TotalFormatado = CentavosParaMoedaConverter.Formatar(comanda.TotalCentavos),
+                AbertaEm = comanda.AbertaEm, Prioridade = comanda.Prioridade, Bloqueada = comanda.Bloqueada, TempoFormatado = ComandaSlotItem.FormatarTempo(comanda.AbertaEm, agora)
+            });
+        }
+    }
+
+    public string TempoComandaAtual => ComandaAtual is null ? string.Empty
+        : ComandaSlotItem.FormatarTempo(ComandaAtual.AbertaEm, _relogio.UtcNow);
+    public bool SalvarDadosComanda(string campo, string valor)
+    {
+        if (!Exigir("editar-pedido")) return false;
+        if (ComandaAtual is null) return false;
+        try
+        {
+            Comanda atualizada;
+            switch (campo)
+            {
+                case "origem":
+                    if(valor.Length>80){Mensagem="A origem deve ter até 80 caracteres.";return false;}
+                    atualizada=_comandas.DefinirOrigemCliente(ComandaAtual.Id,valor);
+                    break;
+                case "mesa":
+                    int? mesa = null;
+                    if (!string.IsNullOrWhiteSpace(valor))
+                    {
+                        if (!int.TryParse(valor, out var numeroMesa) || numeroMesa is < 1 or > 999)
+                        { Mensagem = "Informe uma mesa entre 1 e 999 ou deixe vazio para balcão."; return false; }
+                        mesa = numeroMesa;
+                    }
+                    atualizada = _comandas.DefinirMesa(ComandaAtual.Id, mesa);
+                    break;
+                case "mover":
+                    if (!int.TryParse(valor, out var numero) || numero <= 0)
+                    { Mensagem = "Informe o número de uma comanda livre."; return false; }
+                    var faixa = _obterConfiguracao.Executar();
+                    if(numero < faixa.NumeroInicialComandas){Mensagem=$"O número da comanda deve ser no mínimo {faixa.NumeroInicialComandas}.";return false;}
+                    var maximo = (int)Math.Min(999_999_999L, (long)faixa.NumeroInicialComandas + (faixa.QuantidadeMaximaComandas ?? NumeracaoComandasService.LimiteQuantidade) - 1);
+                    if (maximo is int limite && numero > limite)
+                    { Mensagem = $"O número da comanda deve ser no máximo {limite}."; return false; }
+                    atualizada = _comandas.MoverPara(ComandaAtual.Id, numero);
+                    break;
+                case "pessoas":
+                    if (!int.TryParse(valor, out var quantidade) || quantidade is < 1 or > 999)
+                    { Mensagem = "Informe uma quantidade de pessoas entre 1 e 999."; return false; }
+                    atualizada = _comandas.DefinirQuantidadePessoas(ComandaAtual.Id, quantidade);
+                    break;
+                case "cliente":
+                    var resultado = new DefinirNomeCliente(_comandas).Executar(ComandaAtual.Id, valor);
+                    if (!resultado.Sucesso) { Mensagem = string.Join(" ", resultado.Erros); return false; }
+                    atualizada = resultado.Valor!;
+                    break;
+                default: return false;
+            }
+            ComandaAtual = atualizada;
+            NomeCliente = atualizada.NomeCliente ?? string.Empty;
+            OnPropertyChanged(nameof(ComandaAtual));
+            AtualizarComandasAbertas();
+            Mensagem = "Comanda atualizada.";
+            return true;
+        }
+        catch (Exception ex) when (ex is NumeroComandaOcupadoException or ComandaNaoAbertaException)
+        { Mensagem = ex.Message; return false; }
+        catch (Exception ex)
+        {
+            _logger?.Error(ex, "Falha ao atualizar dados da comanda");
+            Mensagem = "Não foi possível atualizar a comanda. Tente novamente.";
+            return false;
+        }
+    }
+    public string CorPrioridadeAtual => ComandaAtual?.Prioridade switch
+    {
+        PrioridadeComanda.Alta => "#925600", PrioridadeComanda.Urgente => "#B71C1C", _ => "#28653F"
+    };
+    partial void OnComandaAtualChanged(Comanda? value)
+    {
+        OnPropertyChanged(nameof(TempoComandaAtual));
+        OnPropertyChanged(nameof(CorPrioridadeAtual));
+        AtualizarResumoPedido();
+    }
+    public void AtualizarCronometros()
+    {
+        var agora = _relogio.UtcNow;
+        foreach (var slot in Slots)
+            if (slot.AbertaEm is DateTime abertura) slot.TempoFormatado = ComandaSlotItem.FormatarTempo(abertura, agora);
+        OnPropertyChanged(nameof(TempoComandaAtual));
+    }
+    [RelayCommand]
+    private void AlterarPrioridade(PrioridadeComanda prioridade)
+    {
+        if (!Exigir("editar-pedido")) return;
+        if (ComandaAtual is null) return;
+        try
+        {
+            ComandaAtual = _comandas.DefinirPrioridade(ComandaAtual.Id, prioridade);
+            OnPropertyChanged(nameof(ComandaAtual));
+            OnPropertyChanged(nameof(CorPrioridadeAtual));
+            AtualizarComandasAbertas();
+            Mensagem = "Prioridade alterada para " + NomePrioridade(prioridade) + ".";
+        }
+        catch (Exception ex)
+        {
+            _logger?.Error(ex, "Falha ao alterar prioridade");
+            Mensagem = "Não foi possível alterar a prioridade. Tente novamente.";
+        }
+    }
+    public void AtualizarCategorias() => CarregarCategorias();
+
+    private void CarregarCategorias()
+    {
+        var categoriaSelecionadaId = CategoriaCatalogo?.Id;
+        Categorias.Clear();
+        foreach (var categoria in _listarCategoriasAtivas.Executar())
+        {
+            Categorias.Add(categoria);
+        }
+        if (categoriaSelecionadaId is not null)
+        {
+            CategoriaCatalogo = Categorias.FirstOrDefault(c => c.Id == categoriaSelecionadaId);
+        }
+        PesquisarCatalogo();
+    }
+}

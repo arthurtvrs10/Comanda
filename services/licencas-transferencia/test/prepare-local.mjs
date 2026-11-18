@@ -1,0 +1,11 @@
+import {writeFileSync,mkdirSync} from 'node:fs';
+const dir=new URL('../../../artifacts/transfer-local/',import.meta.url);mkdirSync(dir,{recursive:true});
+const pair=await crypto.subtle.generateKey({name:'RSA-PSS',modulusLength:2048,publicExponent:new Uint8Array([1,0,1]),hash:'SHA-256'},true,['sign','verify']);
+const pem='-----BEGIN PUBLIC KEY-----\n'+Buffer.from(await crypto.subtle.exportKey('spki',pair.publicKey)).toString('base64')+'\n-----END PUBLIC KEY-----';
+const tokenData=Buffer.from(JSON.stringify({Versao:1,Id:'transfer-local-synthetic',Computador:'A'.repeat(64),Cliente:'Cliente sintético de teste',Inicio:'2026-01-01T00:00:00-03:00',Vencimento:null}));
+const license=tokenData.toString('base64')+'.'+Buffer.from(await crypto.subtle.sign({name:'RSA-PSS',saltLength:32},pair.privateKey,tokenData)).toString('base64');
+writeFileSync(new URL('public.pem',dir),pem);writeFileSync(new URL('license.txt',dir),license);
+writeFileSync(new URL('.dev.vars',dir),'TRANSFER_KEY="'+Buffer.from(crypto.getRandomValues(new Uint8Array(32))).toString('hex')+'"\n');
+writeFileSync(new URL('worker.mjs',dir),`import {createHandler} from '../../services/licencas-transferencia/src/transfer.mjs';\nimport pem from './public.pem';\nexport default {fetch:createHandler(pem)};\n`);
+writeFileSync(new URL('wrangler.toml',dir),`name = "vcomanda-transfer-local-test"\nmain = "worker.mjs"\ncompatibility_date = "2026-10-30"\n[observability]\nenabled = false\n[[rules]]\ntype = "Text"\nglobs = ["**/*.pem"]\nfallthrough = true\n[[d1_databases]]\nbinding = "DB"\ndatabase_name = "transfer-local"\ndatabase_id = "00000000-0000-0000-0000-000000000001"\n`);
+console.log('Preparado teste local com chave sintética; nenhuma chave de produção lida.');

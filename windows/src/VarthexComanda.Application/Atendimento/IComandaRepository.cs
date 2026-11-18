@@ -1,0 +1,35 @@
+using VarthexComanda.Domain;
+
+namespace VarthexComanda.Application.Atendimento;
+
+public interface IComandaRepository
+{
+    long ObterMaiorCodigoPedido() => 0;
+    IReadOnlyList<Comanda> ListarAbertas();
+    ComandaComItens? BuscarComItens(int comandaId);
+    Comanda AbrirComanda(int numero, DateTime agora);
+    Comanda DefinirNomeCliente(int comandaId, string? nome);
+    Comanda DefinirDadosPedido(int comandaId,string? responsavel,string? cliente,TipoPedido tipo,string? observacao)=>throw new NotSupportedException();
+    Comanda DefinirMesa(int comandaId, int? numeroMesa);
+    Comanda DefinirOrigemCliente(int comandaId, string? origem);
+    ComandaComItens JuntarComandas(int origemId, int destinoId, DateTime agora);
+    Comanda DefinirPrioridade(int comandaId, PrioridadeComanda prioridade);
+    Comanda MoverPara(int comandaId, int numero);
+    Comanda DefinirQuantidadePessoas(int comandaId, int quantidade);
+    ComandaComItens AdicionarItem(int comandaId, Produto produto, decimal quantidade, DateTime agora, string? observacao = null);
+    ComandaComItens AdicionarItem(int comandaId, Produto produto, decimal quantidade, DateTime agora, string? observacao, string? operador)
+        => AdicionarItem(comandaId, produto, quantidade, agora, observacao);
+    ComandaComItens AdicionarItem(int comandaId, Produto produto, decimal quantidade, DateTime agora, string? observacao, string? operador, IReadOnlyList<Guid> complementos)
+        => complementos.Count == 0 ? AdicionarItem(comandaId,produto,quantidade,agora,observacao,operador) : throw new NotSupportedException("Este repositório não suporta complementos.");
+    Comanda DefinirBloqueio(int comandaId, bool bloqueada) => throw new NotSupportedException();
+    Comanda DefinirAtendimento(int comandaId, string? operador, string? responsavel, string? observacao) => throw new NotSupportedException();
+    ComandaComItens TransferirItens(int origemId, int destinoId, IReadOnlyCollection<int> itens, bool copiar, DateTime agora) => throw new NotSupportedException();
+    ComandaComItens Recalcular(int comandaId) => throw new NotSupportedException();
+    void RegistrarImpressao(int comandaId, IReadOnlyDictionary<int, decimal> quantidades, bool cozinha) => throw new NotSupportedException();
+    ComandaComItens AlterarQuantidade(int itemId, decimal quantidade, DateTime agora);
+    ComandaComItens RemoverItem(int itemId, DateTime agora);
+    Comanda CancelarComanda(int comandaId, DateTime agora);
+    Comanda RegistrarPagamento(int comandaId,PagamentoRegistrado pagamento) => throw new NotSupportedException();
+    Comanda RemoverRegistroPagamento(int comandaId,Guid id) => throw new NotSupportedException();
+    Venda EncerrarComanda(int comandaId, DateTime agora, FormaPagamento? formaPagamento = null);
+}

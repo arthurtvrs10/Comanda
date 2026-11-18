@@ -1,0 +1,42 @@
+{
+  "status": "previa aguardando aprovacao das categorias e simbolos",
+  "canvas": [
+    1080,
+    1080
+  ],
+  "backgroundSource": "fundos/abertura-original.png",
+  "backgroundCropPixels": [
+    0,
+    700,
+    1200,
+    1200
+  ],
+  "backgroundOverlay": {
+    "color": "#000000",
+    "alpha": 71,
+    "alphaScale": 255
+  },
+  "backgroundEffects": "Textura e gradientes preservados do raster original; sem regeneracao",
+  "iconColor": "#FFFFFF",
+  "iconBoxApproxPixels": [
+    330,
+    340,
+    420,
+    400
+  ],
+  "brandSymbolWidthPixels": 450,
+  "brandSymbolSource": "brand/comanda-varthex/exportacoes/simbolo/branca/png/comanda-simbolo-branca-1024px.png",
+  "pictograms": "Desenhos geometricos proprios na amostra; nenhuma colecao externa",
+  "previewFont": "Segoe UI",
+  "legibilityPreviewPixels": [
+    48,
+    64,
+    96
+  ],
+  "provisionalCategories": [
+    "Duvidas",
+    "Treinamento",
+    "Suporte"
+  ],
+  "reproduction": "arquivos-de-trabalho/criar.ps1; fundos/fundo-mestre.png compartilhado em todas as composicoes"
+}

@@ -1,0 +1,8 @@
+# Oportunidades para experimentar
+São hipóteses de produto. Os resultados da primeira visita determinarão sua ordem final.
+| ID / prioridade | Dor e referência | Mudança sobre o legado | Experimento e decisão proposta | Destino |
+| --- | --- | --- | --- | --- |
+| O1 · primeira visita | Garçom confunde pessoas na mesma mesa. Chef Hábil e Lavu. | Código existente com contexto destacado antes de confirmar. Esforço baixo; risco de apelidos repetidos. | Perguntar como distingue duas pessoas de mesmo nome. Comparar código com código + mesa em cinco tarefas; avançar se houver zero troca e 4/5 sem ajuda. | RF04–05 / H04–05 / S01 e S03 |
+| O2 · primeira visita | Caixa reconstrói consumo quando uma pessoa sai. Sischef e Square. | Promover saldo por comanda e manter a segunda aberta. Esforço médio; risco de cobrar o grupo inteiro. | Medir tempo de dez saídas. Ensaiar Ana e Bia; exigir conciliação exata e comparar a mediana com a linha de base. | RF06 / H06 / S04 |
+| O3 · pesquisar | Porções compartilhadas geram disputa do centavo. Square e SpotOn. | Legado já calcula divisão e seleciona itens ao receber. A transferência entre contas individuais exige regra adicional. Esforço alto. | Perguntar como atribuem porção de R$ 10 entre três pessoas; contar episódios. Só propor implementação com dor repetida e regra de R$ 3,34 + 3,33 + 3,33 aceita. | H01 / S01; implementação pendente |
+| O4 · após MVP | Mudança de mesa quebra identificação por assento. Aldelo. | Conservar ID individual ao trocar localização opcional. Esforço médio; risco de atribuição antiga em outro dispositivo. | Simular mudança com dois operadores. Exigir saldo e autoria preservados antes de incluir no atendimento. | RF04–05 / S03, revisão no P01 |

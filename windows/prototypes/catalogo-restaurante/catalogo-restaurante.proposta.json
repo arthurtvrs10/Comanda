@@ -1,0 +1,130 @@
+[
+  {
+    "Categoria": "Refeições",
+    "Nome": "Marmita por unidade",
+    "PrecoCentavos": 2200,
+    "Unidade": "UN",
+    "Foto": "marmita.png",
+    "Fonte": "https://rondonoticias.com.br/noticia/geral/56760/programa-prato-facil-inicia-atendimento-com-refeicoes-a-r-2-reais"
+  },
+  {
+    "Categoria": "Refeições",
+    "Nome": "Marmita por quilo",
+    "PrecoCentavos": 5490,
+    "Unidade": "KG",
+    "Foto": "marmita.png",
+    "Fonte": "https://rondonoticias.com.br/noticia/geral/56760/programa-prato-facil-inicia-atendimento-com-refeicoes-a-r-2-reais"
+  },
+  {
+    "Categoria": "Porções",
+    "Nome": "Batata frita — porção",
+    "PrecoCentavos": 1800,
+    "Unidade": "UN",
+    "Foto": "batata.png",
+    "Fonte": "https://www.tripadvisor.com.br/Restaurants-g1231719-Sobral_State_of_Ceara.html"
+  },
+  {
+    "Categoria": "Doces",
+    "Nome": "Pudim — fatia",
+    "PrecoCentavos": 800,
+    "Unidade": "UN",
+    "Foto": "pudim.png",
+    "Fonte": "https://receitatodahora.com.br/pudim-de-leite-condensado-com-furinhos/"
+  },
+  {
+    "Categoria": "Bebidas",
+    "Nome": "Coca-Cola 2 L",
+    "PrecoCentavos": 1400,
+    "Unidade": "UN",
+    "Foto": "coca2.png",
+    "Fonte": "https://www.lojasmel.com/refrigerante-pet-2-litros-55209-cocacola/p"
+  },
+  {
+    "Categoria": "Bebidas",
+    "Nome": "Coca-Cola 1,5 L",
+    "PrecoCentavos": 1100,
+    "Unidade": "UN",
+    "Foto": "coca15.png",
+    "Fonte": "https://marche.com.br/products/coca-cola-sabor-original-pet-1-5-litros"
+  },
+  {
+    "Categoria": "Bebidas",
+    "Nome": "Fanta Laranja 2 L",
+    "PrecoCentavos": 1200,
+    "Unidade": "UN",
+    "Foto": "fanta.png",
+    "Fonte": "https://www.extramercado.com.br/produto/12767/refrigerante-laranja-fanta-garrafa-2l"
+  },
+  {
+    "Categoria": "Bebidas",
+    "Nome": "Guaraná Antarctica 2 L",
+    "PrecoCentavos": 1200,
+    "Unidade": "UN",
+    "Foto": "guarana.png",
+    "Fonte": "https://www.paodeacucar.com/produto/44656/refrigerante-guarana-antarctica-garrafa-2l"
+  },
+  {
+    "Categoria": "Bebidas",
+    "Nome": "Coca-Cola KS 290 ml",
+    "PrecoCentavos": 500,
+    "Unidade": "UN",
+    "Foto": "ks.png",
+    "Fonte": "https://www.loja.fernandaobebidas.com.br/produto/coca-cola-media-290ml-ret-ks"
+  },
+  {
+    "Categoria": "Bebidas",
+    "Nome": "Coca-Cola lata 350 ml",
+    "PrecoCentavos": 600,
+    "Unidade": "UN",
+    "Foto": "lata.png",
+    "Fonte": "https://www.bretas.com.br/refrigerante-coca-cola-lata-350ml/p"
+  },
+  {
+    "Categoria": "Bebidas",
+    "Nome": "Monster Original 473 ml",
+    "PrecoCentavos": 1400,
+    "Unidade": "UN",
+    "Foto": "monster.png",
+    "Fonte": "https://www.boasupermercados.com.br/bebida-energetica-monster-energy-lata-473ml/p"
+  },
+  {
+    "Categoria": "Bebidas",
+    "Nome": "Água sem gás 500 ml",
+    "PrecoCentavos": 400,
+    "Unidade": "UN",
+    "Foto": "agua.png",
+    "Fonte": "https://superkan.com.br/agua-mineral-natural-sem-gas-crystal-500ml/7894900530001/d"
+  },
+  {
+    "Categoria": "Bebidas",
+    "Nome": "Suco de laranja na hora 300 ml",
+    "PrecoCentavos": 800,
+    "Unidade": "UN",
+    "Foto": "suco.png",
+    "Fonte": "https://www.agrolink.com.br/noticias/quem-tem-diabetes-pode-tomar-suco-de-laranja-_474312.html"
+  },
+  {
+    "Categoria": "Bebidas",
+    "Nome": "Suco de laranja na hora 500 ml",
+    "PrecoCentavos": 1200,
+    "Unidade": "UN",
+    "Foto": "suco.png",
+    "Fonte": "https://www.agrolink.com.br/noticias/quem-tem-diabetes-pode-tomar-suco-de-laranja-_474312.html"
+  },
+  {
+    "Categoria": "Doces",
+    "Nome": "Balinha de iogurte — unidade",
+    "PrecoCentavos": 50,
+    "Unidade": "UN",
+    "Foto": "bala.png",
+    "Fonte": "https://www.embalagemfacil.com.br/bala-mastigavel-de-yogurte-morango-dori-100g-1und"
+  },
+  {
+    "Categoria": "Doces",
+    "Nome": "Paçoca rolha — pacote 55 g",
+    "PrecoCentavos": 300,
+    "Unidade": "UN",
+    "Foto": "pacoca.png",
+    "Fonte": "https://rafinhaalimentos.com.br/rafinha-doce-atacado-pacoca-rolha-140x55gr-2128.html"
+  }
+]

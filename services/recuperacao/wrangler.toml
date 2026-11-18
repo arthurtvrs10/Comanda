@@ -1,0 +1,20 @@
+name = "vcomanda-recuperacao"
+main = "src/worker.mjs"
+compatibility_date = "2026-10-30"
+workers_dev = true
+
+[observability]
+enabled = true
+
+[triggers]
+crons = ["17 * * * *"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "vcomanda-recuperacao"
+# Banco já criado na conta Cloudflare do VComanda. O ID não é um segredo.
+database_id = "b192d554-0eb7-4b94-8332-55aa83707b07"
+migrations_dir = "migrations"
+
+# Configurar por `wrangler secret put`: RESEND_API_KEY, EMAIL_FROM,
+# OTP_PEPPER e SIGNING_PRIVATE_KEY (RSA PKCS8 PEM, 2048 bits ou mais).

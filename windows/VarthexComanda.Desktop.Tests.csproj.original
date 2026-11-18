@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Fixtures/recuperacao-webcrypto.json" />
+    <PackageReference Include="coverlet.collector" Version="6.0.4" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+    <Content Include="..\..\..\demo-restaurante\catalogo.json" Link="demo-restaurante\catalogo.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\..\demo-restaurante\fotos\*.png" Link="demo-restaurante\fotos\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\..\demo\catalogo.json" Link="demo\catalogo.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\..\demo\fotos\*.png" Link="demo\fotos\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\VarthexComanda.Application.Tests\VarthexComanda.Application.Tests.csproj" />
+    <!-- Domain.Tests e Infrastructure.Tests entram so para a rastreabilidade dos casos (CT01-CT22) enxergar
+         todos os assemblies de teste; Infrastructure.Tests tambem cede o BancoDeHomologacao ao teste do CT09. -->
+    <ProjectReference Include="..\VarthexComanda.Domain.Tests\VarthexComanda.Domain.Tests.csproj" />
+  </ItemGroup>
+
+</Project>

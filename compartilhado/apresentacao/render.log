@@ -1,0 +1,276 @@
+
+> comanda-apresentacao@1.0.0 render
+> remotion render src/index.tsx Comanda ../outputs/apresentacao/comanda-apresentacao.mp4 --codec=h264 --crf=16 --concurrency=2
+
+Bundling 6%
+Bundling 19%
+Bundling 65%
+Bundling 70%
+Bundling 75%
+Bundling 80%
+Bundling 85%
+Bundling 91%
+Bundling 98%
+Bundling 100%
+Getting composition
+Composition          Comanda
+Codec                h264
+Output               ../outputs/apresentacao/comanda-apresentacao.mp4
+Concurrency          2x
+Rendered 0/240
+Rendered 1/240, time remaining: 2m 32s
+Rendered 2/240, time remaining: 1m 15s
+Rendered 3/240, time remaining: 56s
+Rendered 4/240, time remaining: 43s
+Rendered 5/240, time remaining: 37s
+Rendered 6/240, time remaining: 33s
+Rendered 7/240, time remaining: 30s
+Rendered 8/240, time remaining: 27s
+Rendered 9/240, time remaining: 25s
+Rendered 10/240, time remaining: 25s
+Rendered 11/240, time remaining: 22s
+Rendered 12/240, time remaining: 22s
+Rendered 13/240, time remaining: 20s
+Rendered 14/240, time remaining: 20s
+Rendered 15/240, time remaining: 19s
+Rendered 16/240, time remaining: 19s
+Rendered 17/240, time remaining: 18s
+Rendered 18/240, time remaining: 18s
+Rendered 19/240, time remaining: 17s
+Rendered 20/240, time remaining: 17s
+Rendered 21/240, time remaining: 16s
+Rendered 22/240, time remaining: 16s
+Rendered 23/240, time remaining: 15s
+Rendered 24/240, time remaining: 15s
+Rendered 25/240, time remaining: 15s
+Rendered 26/240, time remaining: 15s
+Rendered 27/240, time remaining: 14s
+Rendered 28/240, time remaining: 14s
+Rendered 29/240, time remaining: 13s
+Rendered 30/240, time remaining: 13s
+Rendered 31/240, time remaining: 13s
+Rendered 32/240, time remaining: 13s
+Rendered 33/240, time remaining: 12s
+Rendered 34/240, time remaining: 12s
+Rendered 35/240, time remaining: 12s
+Rendered 36/240, time remaining: 12s
+Rendered 37/240, time remaining: 11s
+Rendered 38/240, time remaining: 11s
+Rendered 39/240, time remaining: 11s
+Rendered 40/240, time remaining: 11s
+Rendered 41/240, time remaining: 11s
+Rendered 42/240, time remaining: 11s
+Rendered 43/240, time remaining: 10s
+Rendered 44/240, time remaining: 10s
+Rendered 45/240, time remaining: 10s
+Rendered 46/240, time remaining: 10s
+Rendered 47/240, time remaining: 10s
+Rendered 48/240, time remaining: 10s
+Rendered 49/240, time remaining: 10s
+Rendered 50/240, time remaining: 10s
+Rendered 51/240, time remaining: 9s
+Rendered 52/240, time remaining: 9s
+Rendered 53/240, time remaining: 9s
+Rendered 54/240, time remaining: 9s
+Rendered 55/240, time remaining: 9s
+Rendered 56/240, time remaining: 9s
+Rendered 57/240, time remaining: 9s
+Rendered 58/240, time remaining: 9s
+Rendered 59/240, time remaining: 8s
+Rendered 60/240, time remaining: 8s
+Rendered 61/240, time remaining: 8s
+Rendered 62/240, time remaining: 8s
+Rendered 63/240, time remaining: 8s
+Rendered 64/240, time remaining: 8s
+Rendered 65/240, time remaining: 8s
+Rendered 66/240, time remaining: 8s
+Rendered 67/240, time remaining: 8s
+Rendered 68/240, time remaining: 8s
+Rendered 69/240, time remaining: 7s
+Rendered 70/240, time remaining: 7s
+Rendered 71/240, time remaining: 7s
+Rendered 72/240, time remaining: 7s
+Rendered 73/240, time remaining: 7s
+Rendered 74/240, time remaining: 7s
+Rendered 75/240, time remaining: 7s
+Rendered 76/240, time remaining: 7s
+Rendered 76/240, time remaining: 7s
+Rendered 77/240, time remaining: 7s
+Rendered 78/240, time remaining: 7s
+Rendered 79/240, time remaining: 7s
+Rendered 80/240, time remaining: 7s
+Rendered 81/240, time remaining: 7s
+Rendered 82/240, time remaining: 6s
+Rendered 83/240, time remaining: 6s
+Rendered 84/240, time remaining: 6s
+Rendered 85/240, time remaining: 6s
+Rendered 86/240, time remaining: 6s
+Rendered 87/240, time remaining: 6s
+Rendered 88/240, time remaining: 6s
+Rendered 89/240, time remaining: 6s
+Rendered 90/240, time remaining: 6s
+Rendered 90/240, time remaining: 6s
+Rendered 91/240, time remaining: 6s
+Rendered 92/240, time remaining: 6s
+Rendered 93/240, time remaining: 6s
+Rendered 94/240, time remaining: 6s
+Rendered 95/240, time remaining: 6s
+Rendered 96/240, time remaining: 6s
+Rendered 97/240, time remaining: 6s
+Rendered 98/240, time remaining: 6s
+Rendered 99/240, time remaining: 6s
+Rendered 100/240, time remaining: 6s
+Rendered 101/240, time remaining: 5s
+Rendered 102/240, time remaining: 5s
+Rendered 103/240, time remaining: 5s
+Rendered 104/240, time remaining: 5s
+Rendered 105/240, time remaining: 5s
+Rendered 106/240, time remaining: 5s
+Rendered 106/240, time remaining: 5s
+Rendered 107/240, time remaining: 5s
+Rendered 108/240, time remaining: 5s
+Rendered 109/240, time remaining: 5s
+Rendered 110/240, time remaining: 5s
+Rendered 111/240, time remaining: 5s
+Rendered 112/240, time remaining: 5s
+Rendered 113/240, time remaining: 5s
+Rendered 114/240, time remaining: 5s
+Rendered 115/240, time remaining: 5s
+Rendered 116/240, time remaining: 5s
+Rendered 117/240, time remaining: 5s
+Rendered 118/240, time remaining: 5s
+Rendered 119/240, time remaining: 4s
+Rendered 120/240, time remaining: 4s
+Rendered 121/240, time remaining: 4s
+Rendered 122/240, time remaining: 4s
+Rendered 122/240, time remaining: 4s
+Rendered 123/240, time remaining: 4s
+Rendered 124/240, time remaining: 4s
+Rendered 125/240, time remaining: 4s
+Rendered 126/240, time remaining: 4s
+Rendered 127/240, time remaining: 4s
+Rendered 128/240, time remaining: 4s
+Rendered 129/240, time remaining: 4s
+Rendered 130/240, time remaining: 4s
+Rendered 131/240, time remaining: 4s
+Rendered 132/240, time remaining: 4s
+Rendered 133/240, time remaining: 4s
+Rendered 134/240, time remaining: 4s
+Rendered 135/240, time remaining: 4s
+Rendered 136/240, time remaining: 4s
+Rendered 137/240, time remaining: 4s
+Rendered 138/240, time remaining: 4s
+Rendered 138/240, time remaining: 4s
+Rendered 139/240, time remaining: 4s
+Rendered 140/240, time remaining: 4s
+Rendered 141/240, time remaining: 3s
+Rendered 142/240, time remaining: 3s
+Rendered 143/240, time remaining: 3s
+Rendered 144/240, time remaining: 3s
+Rendered 145/240, time remaining: 3s
+Rendered 146/240, time remaining: 3s
+Rendered 147/240, time remaining: 3s
+Rendered 148/240, time remaining: 3s
+Rendered 149/240, time remaining: 3s
+Rendered 149/240, time remaining: 3s
+Rendered 150/240, time remaining: 3s
+Rendered 151/240, time remaining: 3s
+Rendered 152/240, time remaining: 3s
+Rendered 153/240, time remaining: 3s
+Rendered 154/240, time remaining: 3s
+Rendered 155/240, time remaining: 3s
+Rendered 156/240, time remaining: 3s
+Rendered 157/240, time remaining: 2s
+Rendered 158/240, time remaining: 2s
+Rendered 159/240, time remaining: 2s
+Rendered 160/240, time remaining: 2s
+Rendered 161/240, time remaining: 2s
+Rendered 162/240, time remaining: 2s
+Rendered 163/240, time remaining: 2s
+Rendered 164/240, time remaining: 2s
+Rendered 165/240, time remaining: 2s
+Rendered 165/240, time remaining: 2s
+Rendered 166/240, time remaining: 2s
+Rendered 167/240, time remaining: 2s
+Rendered 168/240, time remaining: 2s
+Rendered 169/240, time remaining: 2s
+Rendered 170/240, time remaining: 2s
+Rendered 171/240, time remaining: 2s
+Rendered 172/240, time remaining: 2s
+Rendered 173/240, time remaining: 2s
+Rendered 174/240, time remaining: 2s
+Rendered 175/240, time remaining: 2s
+Rendered 176/240, time remaining: 2s
+Rendered 177/240, time remaining: 2s
+Rendered 178/240, time remaining: 2s
+Rendered 179/240, time remaining: 2s
+Rendered 180/240, time remaining: 2s
+Rendered 181/240, time remaining: 2s
+Rendered 181/240, time remaining: 2s
+Rendered 182/240, time remaining: 1s
+Rendered 183/240, time remaining: 1s
+Rendered 184/240, time remaining: 1s
+Rendered 185/240, time remaining: 1s
+Rendered 186/240, time remaining: 1s
+Rendered 187/240, time remaining: 1s
+Rendered 188/240, time remaining: 1s
+Rendered 189/240, time remaining: 1s
+Rendered 190/240, time remaining: 1s
+Rendered 191/240, time remaining: 1s
+Rendered 192/240, time remaining: 1s
+Rendered 193/240, time remaining: 1s
+Rendered 194/240, time remaining: 1s
+Rendered 195/240, time remaining: 1s
+Rendered 196/240, time remaining: 1s
+Rendered 196/240, time remaining: 1s
+Rendered 197/240, time remaining: 1s
+Rendered 198/240, time remaining: 1s
+Rendered 199/240, time remaining: 1s
+Rendered 200/240, time remaining: 1s
+Rendered 201/240, time remaining: 1s
+Rendered 202/240, time remaining: 1s
+Rendered 203/240, time remaining: 1s
+Rendered 204/240, time remaining: 1s
+Rendered 205/240, time remaining: 1s
+Rendered 206/240, time remaining: 1s
+Rendered 207/240, time remaining: 1s
+Rendered 208/240, time remaining: 1s
+Rendered 209/240, time remaining: 1s
+Rendered 210/240, time remaining: 1s
+Rendered 211/240, time remaining: 0s
+Rendered 211/240, time remaining: 0s
+Rendered 212/240, time remaining: 0s
+Rendered 213/240, time remaining: 0s
+Rendered 214/240, time remaining: 0s
+Rendered 215/240, time remaining: 0s
+Rendered 216/240, time remaining: 0s
+Rendered 217/240, time remaining: 0s
+Rendered 218/240, time remaining: 0s
+Rendered 219/240, time remaining: 0s
+Rendered 220/240, time remaining: 0s
+Rendered 220/240, time remaining: 0s
+Rendered 221/240, time remaining: 0s
+Rendered 222/240, time remaining: 0s
+Rendered 223/240, time remaining: 0s
+Rendered 224/240, time remaining: 0s
+Rendered 225/240, time remaining: 0s
+Rendered 226/240, time remaining: 0s
+Rendered 227/240, time remaining: 0s
+Rendered 228/240, time remaining: 0s
+Rendered 228/240, time remaining: 0s
+Rendered 229/240, time remaining: 0s
+Rendered 230/240, time remaining: 0s
+Rendered 231/240, time remaining: 0s
+Rendered 232/240, time remaining: 0s
+Rendered 233/240, time remaining: 0s
+Rendered 234/240, time remaining: 0s
+Rendered 235/240, time remaining: 0s
+Rendered 236/240, time remaining: 0s
+Rendered 237/240, time remaining: 0s
+Rendered 238/240, time remaining: 0s
+Rendered 238/240, time remaining: 0s
+Rendered 239/240, time remaining: 0s
+Encoded 140/240
+Encoded 192/240
+Encoded 240/240
+○                    ../outputs/apresentacao/comanda-apresentacao.mp4 4.7 MB

@@ -1,0 +1,74 @@
+[
+  {
+    "Origem": "brand",
+    "Destino": "compartilhado/brand",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Origem": "doc_springweb",
+    "Destino": "compartilhado/planejamento-web/doc_springweb",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Origem": "docs",
+    "Destino": "compartilhado/planejamento-web/docs",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Origem": "downloads",
+    "Destino": "mobile/downloads",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Origem": "prototypes/licencas-mobile",
+    "Destino": "mobile/prototypes/licencas-mobile",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Origem": "prototypes/marmoraria",
+    "Destino": "compartilhado/outros-projetos/marmoraria",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Origem": "prototypes/cardapioweb-ref.png",
+    "Destino": "compartilhado/referencias/cardapioweb-ref.png",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Origem": "outputs/apresentacao",
+    "Destino": "compartilhado/apresentacao",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Origem": "outputs/financas-pessoais",
+    "Destino": "compartilhado/outros-projetos/financas-pessoais",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Origem": "outputs/limpeza-financeira",
+    "Destino": "compartilhado/outros-projetos/limpeza-financeira",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Origem": "outputs/prospeccao-gama",
+    "Destino": "compartilhado/outros-projetos/prospeccao-gama",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Origem": "DESIGN.md",
+    "Destino": "windows/DESIGN.md",
+    "Status": "Movido",
+    "Erro": null
+  }
+]

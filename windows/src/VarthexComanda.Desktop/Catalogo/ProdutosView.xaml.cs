@@ -1,0 +1,238 @@
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.ComponentModel;
+using System.Globalization;
+using System.Windows.Data;
+using Microsoft.Win32;
+
+namespace VarthexComanda.Desktop.Catalogo;
+
+public partial class ProdutosView : UserControl
+{
+    private Window? _dialogo;
+
+    public ProdutosView(ProdutosViewModel viewModel)
+    {
+        InitializeComponent();
+        DataContext = viewModel;
+        if(viewModel.CatalogoComplementos)
+        {
+            viewModel.PesquisarCommand.Execute(null);
+            GrupoComplementosProduto.Visibility=Visibility.Collapsed;
+            GrupoCategoriaEMedida.Visibility=Visibility.Collapsed;GrupoEstoqueComplemento.Visibility=Visibility.Visible;
+            foreach(var coluna in TabelaProdutos.Columns.Where(c=>Equals(c.Header,"Categoria")||Equals(c.Header,"Medida")).ToArray())TabelaProdutos.Columns.Remove(coluna);
+            TabelaProdutos.Columns.Insert(2,new DataGridTextColumn { Header="Estoque disponível",Binding=new Binding("EstoqueDescricao"),SortMemberPath="QuantidadeEstoque",Width=150,ElementStyle=(Style)FindResource("NumeroTabela") });
+            CampoVendaQuilo.Visibility=Visibility.Collapsed;CampoVendaLitro.Visibility=Visibility.Collapsed;RotuloMedidaProduto.Text="Medida do complemento";
+            BotaoNovoProduto.ToolTip="Adicionar complemento";
+            System.Windows.Automation.AutomationProperties.SetName(BotaoNovoProduto,"Novo complemento");
+            System.Windows.Automation.AutomationProperties.SetName(CampoBuscaProduto,"Buscar complemento");
+            CampoBuscaProduto.ToolTip="Pesquisar complemento (Ctrl+F)";
+            System.Windows.Automation.AutomationProperties.SetName(CampoNomeProduto,"Nome do complemento");
+            System.Windows.Automation.AutomationProperties.SetName(SeletorCategoriaProduto,"Categoria do complemento");
+            System.Windows.Automation.AutomationProperties.SetName(CampoPrecoProduto,"Preço adicional do complemento");
+            TextoDisponibilidade.Text="Cadastre os complementos e o estoque aqui. Para definir onde podem ser escolhidos, abra Produtos, edite o produto e clique em Configurar complementos.";
+            foreach(var coluna in TabelaProdutos.Columns)
+                if(Equals(coluna.Header,"Preço venda"))coluna.Header="Preço adicional";
+                else if(Equals(coluna.Header,"Status venda"))coluna.Header="Status";
+        }
+    }
+
+    protected override void OnPreviewKeyDown(KeyEventArgs e)
+    {
+        base.OnPreviewKeyDown(e);
+        if (ModalProduto.Visibility == Visibility.Visible)
+        {
+            if (e.Key == Key.Escape) { FecharModal(); e.Handled = true; }
+            if (e.KeyboardDevice.Modifiers.HasFlag(ModifierKeys.Control)) e.Handled = true;
+            return;
+        }
+        if (!e.Handled && e.Key == Key.F
+            && e.KeyboardDevice.Modifiers.HasFlag(ModifierKeys.Control)
+            && !e.KeyboardDevice.Modifiers.HasFlag(ModifierKeys.Alt))
+        {
+            CampoBuscaProduto.Focus();
+            CampoBuscaProduto.SelectAll();
+            e.Handled = true;
+        }
+    }
+
+    private void NovoProduto_Click(object sender, RoutedEventArgs e)
+    {
+        ((ProdutosViewModel)DataContext).NovoCommand.Execute(null);
+        AbrirModal();
+    }
+
+    public void AbrirNovoProduto() => NovoProduto_Click(this, new RoutedEventArgs());
+
+    private void EditarProduto_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button { DataContext: VarthexComanda.Domain.Produto produto })
+        {
+            ((ProdutosViewModel)DataContext).ProdutoSelecionado = produto;
+            AbrirModal();
+        }
+    }
+
+    private void EditarSelecionado_Click(object sender,RoutedEventArgs e)
+    {
+        if(TabelaProdutos.SelectedItem is not VarthexComanda.Domain.Produto produto)return;
+        ((ProdutosViewModel)DataContext).ProdutoSelecionado=produto;AbrirModal();
+    }
+    private void TabelaProdutos_MouseDoubleClick(object sender,MouseButtonEventArgs e)
+    {
+        if(ItemsControl.ContainerFromElement(TabelaProdutos,e.OriginalSource as DependencyObject) is DataGridRow)EditarSelecionado_Click(sender,e);
+    }
+    private void TabelaProdutos_KeyDown(object sender,KeyEventArgs e)
+    {
+        if(e.Key==Key.Enter){EditarSelecionado_Click(sender,e);e.Handled=true;}
+        else if(e.Key==Key.F2){NovoProduto_Click(sender,e);e.Handled=true;}
+    }
+    private void TabelaProdutos_Sorting(object sender, DataGridSortingEventArgs e)
+    {
+        if (e.Column.SortMemberPath != "CategoriaId" ||
+            CollectionViewSource.GetDefaultView(TabelaProdutos.ItemsSource) is not ListCollectionView lista) return;
+        e.Handled = true;
+        var direcao = e.Column.SortDirection == ListSortDirection.Ascending
+            ? ListSortDirection.Descending : ListSortDirection.Ascending;
+        var nomes = ((ProdutosViewModel)DataContext).Categorias.ToDictionary(c => c.Id, c => c.Nome);
+        var comparacao = CultureInfo.GetCultureInfo("pt-BR").CompareInfo;
+        var sinal = direcao == ListSortDirection.Ascending ? 1 : -1;
+        foreach (var coluna in TabelaProdutos.Columns) coluna.SortDirection = null;
+        lista.SortDescriptions.Clear();
+        lista.CustomSort = Comparer<VarthexComanda.Domain.Produto>.Create((a, b) =>
+        {
+            var ordem = comparacao.Compare(nomes.GetValueOrDefault(a.CategoriaId??0, ""),
+                nomes.GetValueOrDefault(b.CategoriaId??0, ""), CompareOptions.IgnoreCase);
+            return ordem == 0 ? a.Id.CompareTo(b.Id) : sinal * ordem;
+        });
+        e.Column.SortDirection = direcao;
+    }
+    private void OpcoesProdutos_Click(object sender,RoutedEventArgs e)
+    {
+        var menu=new ContextMenu { PlacementTarget=(Button)sender };
+        var limpar=new MenuItem { Header="Limpar pesquisa e filtro",Command=((ProdutosViewModel)DataContext).LimparFiltroCommand };menu.Items.Add(limpar);
+        if(((ProdutosViewModel)DataContext).CatalogoComplementos)
+        {
+            var atualizar=new MenuItem { Header="Atualizar estoque",Command=((ProdutosViewModel)DataContext).PesquisarCommand };menu.Items.Add(atualizar);menu.IsOpen=true;return;
+        }
+        var categorias=new MenuItem { Header="Filtrar por categoria" };
+        foreach(var categoria in ((ProdutosViewModel)DataContext).Categorias){var item=new MenuItem { Header=categoria.Nome };item.Click+=(_,_)=>((ProdutosViewModel)DataContext).CategoriaFiltro=categoria;categorias.Items.Add(item);}
+        menu.Items.Add(categorias);menu.IsOpen=true;
+    }
+    private void AbrirModal()
+    {
+        EncerrarNovaCategoria();
+        var vm = (ProdutosViewModel)DataContext;
+        vm.AdiarFotoAteSalvar = true;
+        var formulario = (Border)ModalProduto.Children[0];
+        ModalProduto.Children.Remove(formulario);
+        formulario.Width = double.NaN;
+        formulario.Margin = new Thickness(0);
+        formulario.HorizontalAlignment = HorizontalAlignment.Stretch;
+        formulario.VerticalAlignment = VerticalAlignment.Stretch;
+        _dialogo = new Window
+        {
+            Title = vm.CatalogoComplementos ? (vm.TemProdutoSelecionado ? "Editar complemento" : "Novo complemento") : (vm.TemProdutoSelecionado ? "Editar produto" : "Novo produto"),
+            Owner = Window.GetWindow(this), WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            Width = Math.Min(820,SystemParameters.WorkArea.Width), Height = Math.Min(700, SystemParameters.WorkArea.Height - 30),
+            MinWidth = 760, MinHeight = 520, ResizeMode = ResizeMode.CanResize,
+            ShowInTaskbar = false, Content = formulario, DataContext = vm,
+            Background = TemaInterface.Pincel("#FFFFFF")
+        };
+        _dialogo.PreviewKeyDown += (_, e) =>
+        {
+            if (e.Key == Key.Escape)
+            {
+                if (CampoNovaCategoria.Visibility == Visibility.Visible) EncerrarNovaCategoria();
+                else _dialogo.Close();
+                e.Handled = true;
+            }
+        };
+        _dialogo.ContentRendered += (_, _) => CampoNomeProduto.Focus();
+        try { _dialogo.ShowDialog(); }
+        finally
+        {
+            _dialogo.Content = null;
+            _dialogo = null;
+            ModalProduto.Children.Add(formulario);
+            vm.AdiarFotoAteSalvar = false;
+            vm.NovoCommand.Execute(null);
+            CampoBuscaProduto.Focus();
+        }
+    }
+
+    private void Cancelar_Click(object sender, RoutedEventArgs e) => FecharModal();
+    private void FecharModal() => _dialogo?.Close();
+
+    private void Gravar_Click(object sender, RoutedEventArgs e)
+    {
+        // O comando do botão é executado depois de Click.
+        Dispatcher.BeginInvoke(new Action(() =>
+        {
+            var vm = (ProdutosViewModel)DataContext;
+            if (vm.ProdutoSelecionado is null && string.IsNullOrEmpty(vm.Mensagem)
+                && string.IsNullOrEmpty(vm.NomeProduto)) FecharModal();
+        }));
+    }
+
+    private void NovaCategoria_Click(object sender, RoutedEventArgs e)
+    {
+        if (CampoNovaCategoria.Visibility == Visibility.Visible) { ConfirmarNovaCategoria(); return; }
+        ((ProdutosViewModel)DataContext).NovaCategoriaNome = string.Empty;
+        SeletorCategoriaProduto.Visibility = Visibility.Collapsed;
+        CampoNovaCategoria.Visibility = Visibility.Visible;
+        BotaoNovaCategoria.ToolTip = "Confirmar nova categoria (Enter)";
+        System.Windows.Automation.AutomationProperties.SetName(BotaoNovaCategoria, "Confirmar nova categoria");
+        ((System.Windows.Shapes.Path)BotaoNovaCategoria.Content).Data = System.Windows.Media.Geometry.Parse("M0,8 L6,14 L16,2");
+        CampoNovaCategoria.Focus();
+    }
+
+    private void CampoNovaCategoria_KeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Enter) { ConfirmarNovaCategoria(); e.Handled = true; }
+    }
+
+    private void ConfirmarNovaCategoria()
+    {
+        var vm = (ProdutosViewModel)DataContext;
+        vm.AdicionarCategoriaCommand.Execute(null);
+        if (string.IsNullOrEmpty(vm.Mensagem)) EncerrarNovaCategoria();
+    }
+
+    private void EncerrarNovaCategoria()
+    {
+        CampoNovaCategoria.Visibility = Visibility.Collapsed;
+        SeletorCategoriaProduto.Visibility = Visibility.Visible;
+        BotaoNovaCategoria.ToolTip = "Adicionar nova categoria";
+        System.Windows.Automation.AutomationProperties.SetName(BotaoNovaCategoria, "Adicionar nova categoria");
+        ((System.Windows.Shapes.Path)BotaoNovaCategoria.Content).Data = System.Windows.Media.Geometry.Parse("M8,0 V16 M0,8 H16");
+        SeletorCategoriaProduto.Focus();
+    }
+
+    private void ConfigurarComplementos_Click(object sender,RoutedEventArgs e)
+    {
+        var vm=(ProdutosViewModel)DataContext;
+        if(vm.CatalogoComplementos)return;
+        if(vm.Autorizar?.Invoke()==false)return;
+        if(vm.UnidadeProduto!=VarthexComanda.Domain.UnidadeVenda.Unidade)
+        { vm.Mensagem="Complementos estão disponíveis para produtos vendidos por unidade.";return; }
+        var janela=new JanelaComplementosProduto(vm.GruposComplementosProduto,vm.ComplementosParaVinculo())
+        { Owner=_dialogo??Window.GetWindow(this),Title="Complementos de "+(string.IsNullOrWhiteSpace(vm.NomeProduto)?"novo produto":vm.NomeProduto) };
+        if(janela.ShowDialog()==true)vm.GruposComplementosProduto=janela.Resultado;
+    }
+
+    private void EscolherFoto_Click(object sender, RoutedEventArgs e)
+    {
+        var dialogo = new OpenFileDialog
+        {
+            Title = "Escolher foto do produto",
+            Filter = "Imagens (*.jpg;*.jpeg;*.png;*.bmp)|*.jpg;*.jpeg;*.png;*.bmp"
+        };
+
+        if (dialogo.ShowDialog() == true && DataContext is ProdutosViewModel viewModel)
+        {
+            viewModel.DefinirFoto(dialogo.FileName);
+        }
+    }
+}

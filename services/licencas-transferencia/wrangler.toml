@@ -1,0 +1,17 @@
+name = "vcomanda-licencas-transferencia"
+main = "src/worker.mjs"
+compatibility_date = "2026-10-30"
+workers_dev = true
+[observability]
+enabled = false
+[triggers]
+crons = ["*/10 * * * *"]
+[[rules]]
+type = "Text"
+globs = ["**/*.pem"]
+fallthrough = true
+[[d1_databases]]
+binding = "DB"
+database_name = "vcomanda-licencas-transferencia"
+database_id = "PENDING"
+migrations_dir = "migrations"

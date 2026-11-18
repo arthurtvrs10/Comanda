@@ -1,0 +1,1626 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Comanda por Varthex — Sistema de Mesas e Atendimento 100% Offline</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Montserrat:wght@600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #FF5934;
+      --primary-hover: #E84522;
+      --primary-subtle: #FFF0EB;
+      --navy: #17252C;
+      --navy-dark: #0F191E;
+      --navy-light: #24353E;
+      --surface-light: #F4F5F6;
+      --surface-white: #FFFFFF;
+      --surface-card: #FFFFFF;
+      --ink: #17252C;
+      --ink-muted: #535D65;
+      --ink-light: #859099;
+      --accent-green: #245640;
+      --accent-green-light: #E6F4EA;
+      --accent-green-text: #1E8E3E;
+      --accent-red: #D93025;
+      --accent-red-light: #FCE8E6;
+      --border: #E2E8F0;
+      --border-dark: #2A3B44;
+      --shadow-sm: 0 2px 4px rgba(23, 37, 44, 0.04);
+      --shadow-md: 0 8px 24px rgba(23, 37, 44, 0.08);
+      --shadow-lg: 0 16px 40px rgba(23, 37, 44, 0.12);
+      --shadow-xl: 0 24px 60px rgba(23, 37, 44, 0.18);
+      --radius-sm: 6px;
+      --radius-md: 12px;
+      --radius-lg: 20px;
+      --radius-xl: 32px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--surface-light);
+      color: var(--ink);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Utilitários */
+    .container {
+      width: 100%;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-primary {
+      background: var(--primary-subtle);
+      color: var(--primary);
+      border: 1px solid rgba(255, 89, 52, 0.2);
+    }
+
+    .badge-navy {
+      background: rgba(255, 255, 255, 0.1);
+      color: #FFFFFF;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .badge-green {
+      background: var(--accent-green-light);
+      color: var(--accent-green-text);
+      border: 1px solid rgba(30, 142, 62, 0.2);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 16px 28px;
+      font-size: 15px;
+      font-weight: 700;
+      border-radius: var(--radius-sm);
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: none;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: #FFFFFF;
+      box-shadow: 0 4px 14px rgba(255, 89, 52, 0.35);
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(255, 89, 52, 0.45);
+    }
+
+    .btn-secondary {
+      background-color: #FFFFFF;
+      color: var(--navy);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--surface-light);
+      border-color: #CBD5E1;
+    }
+
+    .btn-whatsapp {
+      background-color: #25D366;
+      color: #FFFFFF;
+      box-shadow: 0 4px 14px rgba(37, 211, 102, 0.3);
+    }
+
+    .btn-whatsapp:hover {
+      background-color: #20BA5C;
+    }
+
+    .btn-lg {
+      padding: 18px 36px;
+      font-size: 16px;
+      font-family: 'Montserrat', sans-serif;
+      letter-spacing: 0.3px;
+    }
+
+    /* Header & Topbar */
+    .topbar {
+      background: var(--navy-dark);
+      color: #A0B0BA;
+      font-size: 13px;
+      padding: 8px 0;
+      text-align: center;
+      border-bottom: 1px solid var(--border-dark);
+      font-weight: 500;
+    }
+    .topbar strong {
+      color: var(--primary);
+    }
+
+    .navbar {
+      background: var(--navy);
+      border-bottom: 1px solid var(--border-dark);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+    }
+
+    .navbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 76px;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .nav-logo-icon {
+      width: 38px;
+      height: 38px;
+      background: var(--primary);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 900;
+      font-size: 20px;
+    }
+
+    .nav-logo-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .nav-logo-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+      color: #FFFFFF;
+      line-height: 1.1;
+      letter-spacing: -0.5px;
+    }
+
+    .nav-logo-sub {
+      font-size: 11px;
+      font-weight: 600;
+      color: #859099;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: #C3CCD2;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      transition: color 0.15s ease;
+    }
+
+    .nav-links a:hover {
+      color: #FFFFFF;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    /* Hero Section */
+    .hero {
+      background: linear-gradient(180deg, var(--navy) 0%, #1A2A32 60%, var(--surface-light) 100%);
+      color: #FFFFFF;
+      padding: 70px 0 90px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 1.2fr;
+      gap: 48px;
+      align-items: center;
+    }
+
+    .hero-content {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .hero-social-proof {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 6px 16px;
+      border-radius: 999px;
+      width: fit-content;
+      font-size: 13px;
+      color: #E2E8F0;
+    }
+
+    .hero-stars {
+      color: #FBBF24;
+      letter-spacing: 2px;
+      font-weight: 700;
+    }
+
+    .hero-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 46px;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -1px;
+      color: #FFFFFF;
+    }
+
+    .hero-title span.highlight {
+      color: var(--primary);
+      position: relative;
+    }
+
+    .hero-subtitle {
+      font-size: 18px;
+      line-height: 1.6;
+      color: #C3CCD2;
+      font-weight: 400;
+      max-width: 540px;
+    }
+
+    .hero-ctas {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 16px;
+      margin-top: 8px;
+    }
+
+    .hero-guarantee {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-size: 13px;
+      color: #8E9BA5;
+    }
+
+    .hero-guarantee-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .hero-guarantee-item svg {
+      color: #22C55E;
+    }
+
+    /* Mockup Hero em Perspectiva */
+    .hero-mockup-wrapper {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .laptop-frame {
+      width: 100%;
+      background: #0A0F12;
+      border-radius: 18px 18px 4px 4px;
+      padding: 12px 12px 0 12px;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1);
+      position: relative;
+    }
+
+    .laptop-notch {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 8px;
+    }
+
+    .laptop-cam {
+      width: 6px;
+      height: 6px;
+      background: #1E293B;
+      border-radius: 50%;
+    }
+
+    .laptop-screen {
+      background: #000;
+      border-radius: 8px 8px 0 0;
+      overflow: hidden;
+      aspect-ratio: 16 / 10;
+      position: relative;
+    }
+
+    .laptop-screen img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .laptop-base {
+      height: 16px;
+      background: linear-gradient(180deg, #334155 0%, #1E293B 100%);
+      border-radius: 0 0 16px 16px;
+      position: relative;
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+    }
+
+    .laptop-base::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90px;
+      height: 5px;
+      background: #0F172A;
+      border-radius: 0 0 4px 4px;
+    }
+
+    /* Telefone Pareado no Hero */
+    .phone-floating {
+      position: absolute;
+      right: -24px;
+      bottom: -32px;
+      width: 180px;
+      background: #000;
+      border: 3px solid #334155;
+      border-radius: 28px;
+      padding: 6px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1);
+      z-index: 10;
+      animation: floatSlow 6s ease-in-out infinite;
+    }
+
+    @keyframes floatSlow {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .phone-screen {
+      border-radius: 22px;
+      overflow: hidden;
+      aspect-ratio: 9 / 19.5;
+      background: #17252C;
+    }
+
+    .phone-screen img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .floating-tag {
+      position: absolute;
+      top: 20px;
+      left: -20px;
+      background: #FFFFFF;
+      color: var(--navy);
+      padding: 10px 18px;
+      border-radius: 12px;
+      box-shadow: var(--shadow-xl);
+      font-weight: 700;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 20;
+      border: 1px solid var(--border);
+    }
+
+    .floating-tag-icon {
+      width: 28px;
+      height: 28px;
+      background: var(--accent-green-light);
+      color: var(--accent-green-text);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+    }
+
+    /* Trust & Metrics Bar */
+    .metrics-bar {
+      padding: 40px 0;
+      margin-top: -30px;
+      position: relative;
+      z-index: 20;
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      background: #FFFFFF;
+      padding: 32px 36px;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border);
+    }
+
+    .metric-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      border-right: 1px solid var(--border);
+      padding-right: 20px;
+    }
+
+    .metric-item:last-child {
+      border-right: none;
+      padding-right: 0;
+    }
+
+    .metric-value {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--navy);
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+
+    .metric-value span.highlight {
+      color: var(--primary);
+    }
+
+    .metric-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--ink);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .metric-desc {
+      font-size: 13px;
+      color: var(--ink-muted);
+      line-height: 1.4;
+    }
+
+    /* Section Headers */
+    .section {
+      padding: 90px 0;
+    }
+
+    .section-header {
+      text-align: center;
+      max-width: 760px;
+      margin: 0 auto 54px;
+    }
+
+    .section-tag {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .section-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 38px;
+      font-weight: 800;
+      color: var(--navy);
+      line-height: 1.2;
+      letter-spacing: -0.8px;
+      margin-bottom: 16px;
+    }
+
+    .section-subtitle {
+      font-size: 17px;
+      color: var(--ink-muted);
+      line-height: 1.6;
+    }
+
+    /* =================================================== */
+    /* MOCKUPS SHOWCASE — O FOCO PRINCIPAL DO PROTÓTIPO */
+    /* =================================================== */
+    .showcase-section {
+      background: #FFFFFF;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .mockup-card-big {
+      background: var(--surface-light);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 48px;
+      margin-bottom: 48px;
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 48px;
+      align-items: center;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .mockup-card-big.reversed {
+      grid-template-columns: 1fr 1.3fr;
+    }
+
+    .mockup-card-big.reversed .mockup-visual {
+      order: 2;
+    }
+
+    .mockup-card-big.reversed .mockup-info {
+      order: 1;
+    }
+
+    .mockup-visual {
+      position: relative;
+    }
+
+    .display-device {
+      background: #0A0F12;
+      border-radius: 14px;
+      padding: 10px;
+      box-shadow: var(--shadow-xl);
+      border: 1px solid rgba(0, 0, 0, 0.2);
+    }
+
+    .display-device-bar {
+      height: 20px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding-left: 6px;
+      margin-bottom: 6px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #334155;
+    }
+    .dot.red { background: #EF4444; }
+    .dot.yellow { background: #F59E0B; }
+    .dot.green { background: #10B981; }
+
+    .display-device-screen {
+      background: #17252C;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .display-device-screen img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .mockup-info {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .mockup-num {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .mockup-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 30px;
+      font-weight: 800;
+      color: var(--navy);
+      line-height: 1.25;
+      letter-spacing: -0.5px;
+    }
+
+    .mockup-desc {
+      font-size: 16px;
+      color: var(--ink-muted);
+      line-height: 1.6;
+    }
+
+    .feature-bullets {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 6px;
+    }
+
+    .feature-bullet {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 14.5px;
+      color: var(--ink);
+    }
+
+    .feature-bullet-icon {
+      width: 22px;
+      height: 22px;
+      background: var(--accent-green-light);
+      color: var(--accent-green-text);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-weight: 800;
+      font-size: 12px;
+      margin-top: 2px;
+    }
+
+    .feature-bullet strong {
+      color: var(--navy);
+    }
+
+    /* Mockups Grid Duplo (Celular + Fechamento) */
+    .mockups-duo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      margin-top: 20px;
+    }
+
+    .mockup-card-half {
+      background: var(--surface-light);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 36px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .phone-center-frame {
+      max-width: 240px;
+      margin: 0 auto;
+      background: #000;
+      border: 4px solid #1E293B;
+      border-radius: 36px;
+      padding: 8px;
+      box-shadow: var(--shadow-xl);
+    }
+
+    .phone-center-screen {
+      border-radius: 28px;
+      overflow: hidden;
+      aspect-ratio: 9 / 19.5;
+      background: #17252C;
+    }
+
+    .phone-center-screen img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Antes vs Depois */
+    .contrast-section {
+      background: var(--surface-light);
+    }
+
+    .contrast-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+    }
+
+    .contrast-card {
+      border-radius: var(--radius-lg);
+      padding: 36px;
+      border: 1px solid var(--border);
+    }
+
+    .contrast-card.before {
+      background: #FFFFFF;
+      border-top: 4px solid var(--accent-red);
+    }
+
+    .contrast-card.after {
+      background: #FFFFFF;
+      border-top: 4px solid var(--accent-green-text);
+      box-shadow: var(--shadow-md);
+      position: relative;
+    }
+
+    .contrast-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .contrast-header h3 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .contrast-card.before .contrast-header h3 { color: var(--accent-red); }
+    .contrast-card.after .contrast-header h3 { color: var(--accent-green-text); }
+
+    .contrast-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .contrast-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .contrast-item-icon {
+      font-size: 16px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    /* Tabela Comparativa */
+    .comparison-section {
+      background: #FFFFFF;
+    }
+
+    .comparison-table-wrapper {
+      background: #FFFFFF;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+    }
+
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    .comparison-table th, 
+    .comparison-table td {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .comparison-table th {
+      background: var(--surface-light);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--navy);
+    }
+
+    .comparison-table th.col-highlight {
+      background: var(--navy);
+      color: #FFFFFF;
+      text-align: center;
+      width: 25%;
+    }
+
+    .comparison-table td.col-highlight {
+      background: #FFFBF9;
+      border-left: 2px solid var(--primary);
+      border-right: 2px solid var(--primary);
+      text-align: center;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    .comparison-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .tag-yes {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--accent-green-light);
+      color: var(--accent-green-text);
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .tag-no {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--accent-red-light);
+      color: var(--accent-red);
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    /* Mascote & Human Proof */
+    .mascot-banner {
+      background: var(--navy);
+      color: #FFFFFF;
+      border-radius: var(--radius-xl);
+      padding: 56px 64px;
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 48px;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      margin-top: 30px;
+    }
+
+    .mascot-banner-img {
+      width: 100%;
+      height: auto;
+      max-width: 240px;
+      filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.4));
+    }
+
+    .mascot-banner-content h3 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 32px;
+      font-weight: 800;
+      margin-bottom: 12px;
+      line-height: 1.25;
+    }
+
+    .mascot-banner-content p {
+      font-size: 17px;
+      color: #C3CCD2;
+      line-height: 1.6;
+      margin-bottom: 24px;
+      max-width: 620px;
+    }
+
+    /* FAQ */
+    .faq-section {
+      background: var(--surface-light);
+    }
+
+    .faq-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .faq-item {
+      background: #FFFFFF;
+      border-radius: var(--radius-md);
+      padding: 24px 28px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .faq-question {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .faq-question svg {
+      color: var(--primary);
+      flex-shrink: 0;
+    }
+
+    .faq-answer {
+      font-size: 15px;
+      color: var(--ink-muted);
+      line-height: 1.6;
+    }
+
+    /* CTA Final */
+    .final-cta {
+      background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy) 100%);
+      color: #FFFFFF;
+      padding: 100px 0;
+      text-align: center;
+      position: relative;
+    }
+
+    .final-cta-inner {
+      max-width: 780px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .final-cta-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 44px;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -1px;
+    }
+
+    .final-cta-sub {
+      font-size: 18px;
+      color: #C3CCD2;
+      line-height: 1.6;
+    }
+
+    /* Footer */
+    .footer {
+      background: #0A0F12;
+      color: #718096;
+      font-size: 13px;
+      padding: 40px 0;
+      border-top: 1px solid var(--border-dark);
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 24px;
+      list-style: none;
+    }
+
+    .footer-links a {
+      color: #A0AEC0;
+      text-decoration: none;
+    }
+
+    .footer-links a:hover {
+      color: #FFFFFF;
+    }
+
+    /* Responsivo Básico */
+    @media (max-width: 1024px) {
+      .hero-grid { grid-template-columns: 1fr; }
+      .metrics-grid { grid-template-columns: 1fr 1fr; }
+      .mockup-card-big, .mockup-card-big.reversed { grid-template-columns: 1fr; }
+      .mockups-duo-grid { grid-template-columns: 1fr; }
+      .contrast-grid { grid-template-columns: 1fr; }
+      .faq-grid { grid-template-columns: 1fr; }
+      .mascot-banner { grid-template-columns: 1fr; text-align: center; }
+      .mascot-banner-img { margin: 0 auto; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Announcement Bar -->
+  <div class="topbar">
+    ⚡ <strong>Lançamento Versão 1.4:</strong> Comanda Mobile para Celular e Impressão Térmica de 58mm e 80mm integradas. <span>100% Offline no seu PC.</span>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container navbar-inner">
+      <a href="#" class="nav-logo">
+        <div class="nav-logo-icon">C</div>
+        <div class="nav-logo-text">
+          <span class="nav-logo-title">Comanda</span>
+          <span class="nav-logo-sub">por Varthex</span>
+        </div>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="#mockups">Telas do Sistema</a></li>
+        <li><a href="#beneficios">Por que a Comanda?</a></li>
+        <li><a href="#comparativo">Comparativo</a></li>
+        <li><a href="#perguntas">Dúvidas Frequentes</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <a href="https://wa.me/5511999999999" class="btn btn-secondary" style="padding: 10px 18px; font-size: 13px;">
+          💬 WhatsApp
+        </a>
+        <a href="#testar" class="btn btn-primary" style="padding: 10px 22px; font-size: 13px;">
+          🚀 Testar Grátis
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="hero">
+    <div class="container hero-grid">
+      <div class="hero-content">
+        <div class="hero-social-proof">
+          <span class="hero-stars">★★★★★</span>
+          <span><strong>4.9/5</strong> · Mais de 500 restaurantes e lanchonetes</span>
+        </div>
+
+        <h1 class="hero-title">
+          Seu atendimento flui.<br>
+          Seu caixa nunca para.<br>
+          <span class="highlight">100% offline no PC.</span>
+        </h1>
+
+        <p class="hero-subtitle">
+          Diga adeus às comandas de papel perdidas e aos sistemas web lentos que travam quando a internet cai. A Comanda integra mesas, celular do garçom e fechamento de caixa sem cobrar comissão por pedido.
+        </p>
+
+        <div class="hero-ctas">
+          <a href="#testar" class="btn btn-primary btn-lg">
+            🚀 COMEÇAR TESTE GRÁTIS DE 7 DIAS
+          </a>
+          <a href="#mockups" class="btn btn-secondary btn-lg" style="background: rgba(255,255,255,0.08); color: #fff; border-color: rgba(255,255,255,0.2);">
+            ▶ Ver Telas do Sistema
+          </a>
+        </div>
+
+        <div class="hero-guarantee">
+          <div class="hero-guarantee-item">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Sem necessidade de cartão</span>
+          </div>
+          <div class="hero-guarantee-item">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Instalação guiada em 2 min</span>
+          </div>
+          <div class="hero-guarantee-item">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Windows x64 nativo</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mockup Hero em Perspectiva com Laptop e Celular Real -->
+      <div class="hero-mockup-wrapper">
+        <div class="floating-tag">
+          <div class="floating-tag-icon">⚡</div>
+          <div>
+            <div style="font-size: 11px; text-transform: uppercase; color: #64748B;">Operação Local</div>
+            <div><strong>Zero Travamento</strong></div>
+          </div>
+        </div>
+
+        <div class="laptop-frame">
+          <div class="laptop-notch"><div class="laptop-cam"></div></div>
+          <div class="laptop-screen">
+            <img src="../site/public/assets/sistema.webp" alt="Tela principal do sistema Comanda por Varthex">
+          </div>
+          <div class="laptop-base"></div>
+        </div>
+
+        <div class="phone-floating">
+          <div class="phone-screen">
+            <img src="../site/public/assets/atendimento-celular.webp" alt="Comanda Mobile no Celular">
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Metrics / Trust Bar -->
+  <section class="metrics-bar">
+    <div class="container">
+      <div class="metrics-grid">
+        <div class="metric-item">
+          <div class="metric-value">0% <span class="highlight">Taxa</span></div>
+          <div class="metric-label">Sem comissões</div>
+          <div class="metric-desc">Fique com 100% do valor de cada pedido vendido.</div>
+        </div>
+        <div class="metric-item">
+          <div class="metric-value">100% <span class="highlight">Offline</span></div>
+          <div class="metric-label">Banco local no PC</div>
+          <div class="metric-desc">Se a internet cair, seu caixa e atendimento continuam normais.</div>
+        </div>
+        <div class="metric-item">
+          <div class="metric-value">&lt; 2 <span class="highlight">min</span></div>
+          <div class="metric-label">Instalação Rápida</div>
+          <div class="metric-desc">Baixe o instalador e comece a lançar comandas hoje mesmo.</div>
+        </div>
+        <div class="metric-item">
+          <div class="metric-value">58 / 80<span class="highlight">mm</span></div>
+          <div class="metric-label">Impressão Térmica</div>
+          <div class="metric-desc">Impressão automática para conta do cliente e cozinha.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================================================== -->
+  <!-- SEÇÃO PRINCIPAL DE MOCKUPS DO SISTEMA EM DETALHES   -->
+  <!-- =================================================== -->
+  <section class="section showcase-section" id="mockups">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Mockups e Telas Reais</span>
+        <h2 class="section-title">Construído para quem vive a correria real do balcão</h2>
+        <p class="section-subtitle">
+          Nada de telas genéricas ou ilustrações abstratas. Veja exatamente como é a interface da Comanda na tela do seu computador e no celular da sua equipe.
+        </p>
+      </div>
+
+      <!-- MOCKUP 1: Grade de Mesas & Atendimento -->
+      <div class="mockup-card-big">
+        <div class="mockup-visual">
+          <div class="display-device">
+            <div class="display-device-bar">
+              <span class="dot red"></span>
+              <span class="dot yellow"></span>
+              <span class="dot green"></span>
+              <span style="font-size: 11px; color: #64748B; margin-left: 8px; font-family: monospace;">Comanda - Mesas e Atendimento [Windows]</span>
+            </div>
+            <div class="display-device-screen">
+              <img src="../site/public/assets/atendimento.webp" alt="Grade de Mesas e Atendimento da Comanda">
+            </div>
+          </div>
+        </div>
+
+        <div class="mockup-info">
+          <span class="mockup-num">MÓDULO 01 · SALÃO & BALCÃO</span>
+          <h3 class="mockup-title">Grade visual de comandas com status em tempo real</h3>
+          <p class="mockup-desc">
+            Bata o olho e saiba instantaneamente quais mesas estão livres, ocupadas ou pedindo a conta. Chega de gritaria ou confusão entre garçom e caixa.
+          </p>
+          <ul class="feature-bullets">
+            <li class="feature-bullet">
+              <span class="feature-bullet-icon">✓</span>
+              <div><strong>Status por cores padronizadas:</strong> Verde para mesas livres, laranja para comandas abertas e amarelo para fechamento iminente.</div>
+            </li>
+            <li class="feature-bullet">
+              <span class="feature-bullet-icon">✓</span>
+              <div><strong>Atalhos de teclado ultra-rápidos:</strong> Pressione F1 para atendimento, F2 para cozinha e F3 para gerência. Não precisa nem tirar a mão do teclado.</div>
+            </li>
+            <li class="feature-bullet">
+              <span class="feature-bullet-icon">✓</span>
+              <div><strong>Controle de tempo e consumo:</strong> Acompanhe o valor acumulado e o tempo de permanência de cada mesa para evitar mesas esquecidas.</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- MOCKUP 2: Comanda Mobile & Fechamento em Grid Duplo -->
+      <div class="mockups-duo-grid">
+        
+        <!-- Mockup Celular -->
+        <div class="mockup-card-half">
+          <div class="phone-center-frame">
+            <div class="phone-center-screen">
+              <img src="../site/public/assets/atendimento-celular.webp" alt="Comanda Mobile no Smartphone">
+            </div>
+          </div>
+          <div class="mockup-info">
+            <span class="mockup-num">MÓDULO 02 · COMANDA MOBILE</span>
+            <h3 class="mockup-title" style="font-size: 24px;">Garçom lança direto no celular na mesa do cliente</h3>
+            <p class="mockup-desc" style="font-size: 15px;">
+              Elimine o bloco de papel. O garçom anota o pedido no celular, adiciona observações ("sem cebola", "bem passado") e o pedido já aparece na cozinha e no caixa.
+            </p>
+            <ul class="feature-bullets">
+              <li class="feature-bullet">
+                <span class="feature-bullet-icon">✓</span>
+                <div><strong>Funciona no Wi-Fi local:</strong> Não gasta dados móveis e não para se a internet da rua cair.</div>
+              </li>
+              <li class="feature-bullet">
+                <span class="feature-bullet-icon">✓</span>
+                <div><strong>Fotos dos lanches e pratos:</strong> Cardápio limpo com fotos e categorias para atendimento ágil.</div>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Mockup Fechamento de Conta -->
+        <div class="mockup-card-half">
+          <div class="display-device">
+            <div class="display-device-bar">
+              <span class="dot red"></span>
+              <span class="dot yellow"></span>
+              <span class="dot green"></span>
+              <span style="font-size: 11px; color: #64748B; margin-left: 8px; font-family: monospace;">Fechamento de Conta e Divisão</span>
+            </div>
+            <div class="display-device-screen">
+              <img src="../site/public/assets/pagamento.webp" alt="Tela de Fechamento e Pagamento da Comanda">
+            </div>
+          </div>
+          <div class="mockup-info">
+            <span class="mockup-num">MÓDULO 03 · CAIXA & PAGAMENTOS</span>
+            <h3 class="mockup-title" style="font-size: 24px;">Divida a conta em 3 segundos sem errar centavos</h3>
+            <p class="mockup-desc" style="font-size: 15px;">
+              A mesa quer dividir em 4 amigos? Um quer pagar no Pix e outro no cartão? A Comanda resolve pagamentos mistos e parciais com cálculo automático de troco.
+            </p>
+            <ul class="feature-bullets">
+              <li class="feature-bullet">
+                <span class="feature-bullet-icon">✓</span>
+                <div><strong>Divisão por pessoa ou por itens:</strong> Cada cliente paga exatamente o que consumiu.</div>
+              </li>
+              <li class="feature-bullet">
+                <span class="feature-bullet-icon">✓</span>
+                <div><strong>Impressão de conferência térmica:</strong> Imprima a prévia da conta com 1 toque antes de fechar.</div>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- MOCKUP 3: Histórico & Fechamento de Caixa -->
+      <div class="mockup-card-big reversed" style="margin-top: 48px; margin-bottom: 0;">
+        <div class="mockup-visual">
+          <div class="display-device">
+            <div class="display-device-bar">
+              <span class="dot red"></span>
+              <span class="dot yellow"></span>
+              <span class="dot green"></span>
+              <span style="font-size: 11px; color: #64748B; margin-left: 8px; font-family: monospace;">Relatórios e Histórico de Vendas</span>
+            </div>
+            <div class="display-device-screen">
+              <img src="../site/public/assets/historico.webp" alt="Histórico de Vendas e Fechamento de Caixa">
+            </div>
+          </div>
+        </div>
+
+        <div class="mockup-info">
+          <span class="mockup-num">MÓDULO 04 · GESTÃO FINANCEIRA</span>
+          <h3 class="mockup-title">Fechamento de caixa à prova de furos e exportação Excel</h3>
+          <p class="mockup-desc">
+            No final do expediente, feche o caixa com precisão absoluta. Tenha o resumo de quanto entrou em dinheiro, Pix, cartão de débito e crédito, com histórico auditável.
+          </p>
+          <ul class="feature-bullets">
+            <li class="feature-bullet">
+              <span class="feature-bullet-icon">✓</span>
+              <div><strong>Ticket médio e totalizadores em tempo real:</strong> Saiba exatamente quanto faturou em cada dia ou turno.</div>
+            </li>
+            <li class="feature-bullet">
+              <span class="feature-bullet-icon">✓</span>
+              <div><strong>Exportação para Excel:</strong> Envie os dados diretamente para o seu contador com 1 clique.</div>
+            </li>
+            <li class="feature-bullet">
+              <span class="feature-bullet-icon">✓</span>
+              <div><strong>Backup local protegido:</strong> Seus dados financeiros nunca saem da sua máquina e ficam salvos em segurança.</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- =================================================== -->
+  <!-- ANTES VS DEPOIS — O CONTRASTE OPERACIONAL           -->
+  <!-- =================================================== -->
+  <section class="section contrast-section" id="beneficios">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">O Contraste no Seu Balcão</span>
+        <h2 class="section-title">O que muda no seu restaurante com a Comanda</h2>
+        <p class="section-subtitle">
+          Veja a diferença prática entre a rotina improvisada e um balcão moderno operando com software profissional.
+        </p>
+      </div>
+
+      <div class="contrast-grid">
+        <!-- Antes -->
+        <div class="contrast-card before">
+          <div class="contrast-header">
+            <span style="font-size: 24px;">❌</span>
+            <h3>Sem a Comanda (A Dor)</h3>
+          </div>
+          <ul class="contrast-list">
+            <li class="contrast-item">
+              <span class="contrast-item-icon">⚠️</span>
+              <div><strong>Comandas em papel perdidas ou ilegíveis:</strong> Cozinha atrasa pedidos e garçom esquece o que o cliente pediu.</div>
+            </li>
+            <li class="contrast-item">
+              <span class="contrast-item-icon">⚠️</span>
+              <div><strong>Internet cai e o caixa para:</strong> Sistemas em nuvem deixam seus clientes presos na fila esperando para pagar.</div>
+            </li>
+            <li class="contrast-item">
+              <span class="contrast-item-icon">⚠️</span>
+              <div><strong>Comissões abusivas por pedido:</strong> Parte expressiva do seu faturamento fica nas mãos de intermediários.</div>
+            </li>
+            <li class="contrast-item">
+              <span class="contrast-item-icon">⚠️</span>
+              <div><strong>Fechamento de caixa que demora horas:</strong> Contagem manual com calculadora, notas fiscais perdidas e divergências no caixa.</div>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Depois -->
+        <div class="contrast-card after">
+          <div class="contrast-header">
+            <span style="font-size: 24px;">✅</span>
+            <h3>Com a Comanda (O Alívio)</h3>
+          </div>
+          <ul class="contrast-list">
+            <li class="contrast-item">
+              <span class="contrast-item-icon">🚀</span>
+              <div><strong>Pedido na cozinha em 3 segundos:</strong> Garçom lança no celular e a impressão sai instantaneamente na produção.</div>
+            </li>
+            <li class="contrast-item">
+              <span class="contrast-item-icon">🛡️</span>
+              <div><strong>Operação 100% offline:</strong> O banco local continua rodando perfeitamente mesmo sem sinal de internet.</div>
+            </li>
+            <li class="contrast-item">
+              <span class="contrast-item-icon">💰</span>
+              <div><strong>Zero taxa sobre vendas:</strong> Você paga apenas a licença do software e fica com 100% do seu lucro.</div>
+            </li>
+            <li class="contrast-item">
+              <span class="contrast-item-icon">⚡</span>
+              <div><strong>Fechamento de caixa em 1 clique:</strong> Totais por Pix, cartão e dinheiro conferidos automaticamente na tela.</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================================================== -->
+  <!-- TABELA COMPARATIVA — COMANDA VS CONCORRENTES        -->
+  <!-- =================================================== -->
+  <section class="section comparison-section" id="comparativo">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Transparência Total</span>
+        <h2 class="section-title">Comanda vs Outros Sistemas do Mercado</h2>
+        <p class="section-subtitle">
+          Compare as funcionalidades e descubra por que a Comanda é a escolha ideal para pequenos e médios estabelecimentos.
+        </p>
+      </div>
+
+      <div class="comparison-table-wrapper">
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th style="width: 45%;">Funcionalidade / Benefício</th>
+              <th class="col-highlight">Comanda por Varthex</th>
+              <th style="width: 30%; text-align: center;">Sistemas em Nuvem Típicos</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <strong>Funciona 100% sem internet (Offline)</strong><br>
+                <small style="color: var(--ink-muted);">Se a conexão cair, o caixa e o lançamento de comandas continuam funcionando?</small>
+              </td>
+              <td class="col-highlight"><span class="tag-yes">✓ SIM (Banco Local)</span></td>
+              <td style="text-align: center;"><span class="tag-no">❌ NÃO (Fica travado)</span></td>
+            </tr>
+            <tr>
+              <td>
+                <strong>Comissão percentual sobre pedidos</strong><br>
+                <small style="color: var(--ink-muted);">Cobra porcentagem sobre as vendas do seu restaurante?</small>
+              </td>
+              <td class="col-highlight"><span class="tag-yes">✓ ZERO COMISSÃO</span></td>
+              <td style="text-align: center;"><span class="tag-no">Cobram até 3% a 10%</span></td>
+            </tr>
+            <tr>
+              <td>
+                <strong>Velocidade de clique e navegação</strong><br>
+                <small style="color: var(--ink-muted);">Software nativo instalado no Windows ou página web no navegador?</small>
+              </td>
+              <td class="col-highlight"><span class="tag-yes">✓ Instantâneo (Nativo x64)</span></td>
+              <td style="text-align: center;"><span class="tag-no">Lento (Navegador/Web)</span></td>
+            </tr>
+            <tr>
+              <td>
+                <strong>Comanda Mobile no Celular do Garçom</strong><br>
+                <small style="color: var(--ink-muted);">Lançamento direto na mesa pelo smartphone em rede Wi-Fi local.</small>
+              </td>
+              <td class="col-highlight"><span class="tag-yes">✓ Incluso e sem taxas</span></td>
+              <td style="text-align: center;"><span class="tag-no">Cobrado à parte</span></td>
+            </tr>
+            <tr>
+              <td>
+                <strong>Atalhos de Teclado Operacionais (F1 / F2 / F3)</strong><br>
+                <small style="color: var(--ink-muted);">Agilidade extrema no caixa para atender clientes com filas.</small>
+              </td>
+              <td class="col-highlight"><span class="tag-yes">✓ Sim, completo</span></td>
+              <td style="text-align: center;"><span class="tag-no">Apenas cliques de mouse</span></td>
+            </tr>
+            <tr>
+              <td>
+                <strong>Impressão Térmica de Cupom (58mm e 80mm)</strong><br>
+                <small style="color: var(--ink-muted);">Compatível com impressoras térmicas comuns do mercado.</small>
+              </td>
+              <td class="col-highlight"><span class="tag-yes">✓ Sim, pré-configurado</span></td>
+              <td style="text-align: center;">Configuração complexa</td>
+            </tr>
+            <tr>
+              <td>
+                <strong>Divisão de Conta e Recebimentos Mistos</strong><br>
+                <small style="color: var(--ink-muted);">Dividir pagamento em dinheiro, Pix e múltiplos cartões na mesma comanda.</small>
+              </td>
+              <td class="col-highlight"><span class="tag-yes">✓ Em 3 cliques</span></td>
+              <td style="text-align: center;">Burocrático e confuso</td>
+            </tr>
+            <tr>
+              <td>
+                <strong>Suporte Humanizado Direto no WhatsApp</strong><br>
+                <small style="color: var(--ink-muted);">Fale diretamente com nossa equipe técnica quando tiver dúvidas.</small>
+              </td>
+              <td class="col-highlight"><span class="tag-yes">✓ WhatsApp Direto</span></td>
+              <td style="text-align: center;"><span class="tag-no">Robôs e chamados lentos</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Mascote Banner -->
+      <div class="mascot-banner">
+        <img src="../site/public/assets/mascote.webp" alt="Mascote Comanda: Comanda laranja com avental dando joinha" class="mascot-banner-img">
+        <div class="mascot-banner-content">
+          <h3>Quer ver como a Comanda funciona no seu computador?</h3>
+          <p>
+            Nossa equipe prepara uma demonstração ao vivo e tira todas as suas dúvidas pelo WhatsApp. Você testa o sistema na prática sem compromisso algum.
+          </p>
+          <a href="https://wa.me/5511999999999" class="btn btn-whatsapp btn-lg">
+            💬 CONVERSAR NO WHATSAPP COM NOSSA EQUIPE
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================================================== -->
+  <!-- PERGUNTAS FREQUENTES (FAQ)                          -->
+  <!-- =================================================== -->
+  <section class="section faq-section" id="perguntas">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Tire Suas Dúvidas</span>
+        <h2 class="section-title">Perguntas Frequentes sobre a Comanda</h2>
+        <p class="section-subtitle">
+          Tudo o que você precisa saber antes de começar seu teste gratuito.
+        </p>
+      </div>
+
+      <div class="faq-grid">
+        <div class="faq-item">
+          <div class="faq-question">
+            <span>Funciona realmente sem internet?</span>
+          </div>
+          <div class="faq-answer">
+            <strong>Sim!</strong> A Comanda foi projetada como um aplicativo desktop nativo para Windows. O banco de dados fica gravado com segurança no seu próprio computador. Se o provedor de internet cair ou oscilar, seu atendimento e suas vendas não param nem por um segundo.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">
+            <span>O celular do garçom precisa de internet externa?</span>
+          </div>
+          <div class="faq-answer">
+            <strong>Não.</strong> O celular do garçom se conecta diretamente ao computador principal através do roteador Wi-Fi local do seu restaurante. Mesmo sem conexão de internet com a rua, os pedidos enviados pelo celular caem instantaneamente no computador.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">
+            <span>Quais impressoras de cupom são compatíveis?</span>
+          </div>
+          <div class="faq-answer">
+            A Comanda suporta impressoras térmicas não-fiscais padrão de 58 mm e 80 mm (como Bematech, Elgin, Epson, Daruma, etc.). Você pode imprimir a prévia da conta para o cliente e as fichas de preparo para a cozinha.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">
+            <span>Preciso cadastrar cartão de crédito para testar?</span>
+          </div>
+          <div class="faq-answer">
+            <strong>Não precisa de cartão de crédito.</strong> Você pode baixar e testar todas as funcionalidades do sistema gratuitamente por 7 dias. Só contrata se gostar e sentir que o sistema realmente organizou sua rotina.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">
+            <span>E se eu já uso outro sistema ou anoto em cadernos?</span>
+          </div>
+          <div class="faq-answer">
+            A interface da Comanda é tão simples e intuitiva que você e sua equipe aprenderão a operá-la em menos de 10 minutos. O cadastro de produtos é rápido e direto, com suporte guiado pelo nosso time.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">
+            <span>Qual é a configuração mínima do computador?</span>
+          </div>
+          <div class="faq-answer">
+            A Comanda é extremamente leve! Roda com fluidez em qualquer computador ou notebook básico com Windows 10 ou 11 (64 bits), 4 GB de memória RAM e 500 MB de espaço em disco.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================================================== -->
+  <!-- FINAL CALL TO ACTION                                -->
+  <!-- =================================================== -->
+  <section class="final-cta" id="testar">
+    <div class="container final-cta-inner">
+      <span class="badge badge-primary">Comece Hoje Mesmo</span>
+      <h2 class="final-cta-title">Pronto para colocar ordem no seu atendimento e no seu caixa?</h2>
+      <p class="final-cta-sub">
+        Junte-se a centenas de proprietários de restaurantes que trocaram o papel e os sistemas lentos pela agilidade da Comanda. Instale em 2 minutos.
+      </p>
+
+      <div style="display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; margin-top: 10px;">
+        <a href="#testar" class="btn btn-primary btn-lg" style="font-size: 18px; padding: 20px 44px;">
+          🚀 BAIXAR O SISTEMA E TESTAR GRÁTIS
+        </a>
+        <a href="https://wa.me/5511999999999" class="btn btn-whatsapp btn-lg">
+          💬 Falar no WhatsApp com Especialista
+        </a>
+      </div>
+
+      <p style="font-size: 13px; color: #8E9BA5; margin-top: 8px;">
+        Windows x64 · Versão 1.4 · Instalação rápida · Suporte técnico dedicado
+      </p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div>
+        <strong>Comanda</strong> — Uma solução desenvolvida por <strong>Varthex</strong>.
+        <div style="font-size: 12px; margin-top: 4px; color: #4A5568;">
+          Todos os direitos reservados. Feito com foco na velocidade da gastronomia brasileira.
+        </div>
+      </div>
+      <ul class="footer-links">
+        <li><a href="../site/app/termos">Termos de Uso</a></li>
+        <li><a href="../site/app/privacidade">Política de Privacidade</a></li>
+        <li><a href="https://wa.me/5511999999999">Suporte</a></li>
+      </ul>
+    </div>
+  </footer>
+
+</body>
+</html>

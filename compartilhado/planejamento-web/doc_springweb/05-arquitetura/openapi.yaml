@@ -1,0 +1,780 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "VComanda Web • contrato proposto do MVP",
+    "version": "0.1.0"
+  },
+  "servers": [
+    {
+      "url": "/api/v1"
+    }
+  ],
+  "security": [
+    {
+      "sessao": []
+    }
+  ],
+  "paths": {
+    "/produtos": {
+      "get": {
+        "operationId": "listarCatalogo",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Operação confirmada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Produto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão expirada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Perfil sem permissão",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Registro ausente no local",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Código ocupado ou chave incompatível",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "Versão desatualizada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Quantidade, saldo ou estado inválido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/comandas": {
+      "post": {
+        "operationId": "abrirComanda",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Operação confirmada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Comanda"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão expirada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Perfil sem permissão",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Registro ausente no local",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Código ocupado ou chave incompatível",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "Versão desatualizada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Quantidade, saldo ou estado inválido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Abrir"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/comandas/{id}": {
+      "get": {
+        "operationId": "consultarComanda",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação confirmada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Comanda"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão expirada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Perfil sem permissão",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Registro ausente no local",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Código ocupado ou chave incompatível",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "Versão desatualizada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Quantidade, saldo ou estado inválido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/comandas/{id}/itens": {
+      "post": {
+        "operationId": "lancarItem",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação confirmada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Comanda"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão expirada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Perfil sem permissão",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Registro ausente no local",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Código ocupado ou chave incompatível",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "Versão desatualizada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Quantidade, saldo ou estado inválido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Item"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/comandas/{id}/recebimentos": {
+      "post": {
+        "operationId": "registrarPagamentoExterno",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação confirmada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Comanda"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão expirada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Perfil sem permissão",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Registro ausente no local",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Código ocupado ou chave incompatível",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "Versão desatualizada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Quantidade, saldo ou estado inválido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Receber"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/comandas/{id}/fechamento": {
+      "post": {
+        "operationId": "fecharComanda",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação confirmada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Venda"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sessão expirada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Perfil sem permissão",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Registro ausente no local",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Código ocupado ou chave incompatível",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "Versão desatualizada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Quantidade, saldo ou estado inválido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erro"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "sessao": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "sessao"
+      }
+    },
+    "schemas": {
+      "Abrir": {
+        "type": "object",
+        "properties": {
+          "numero": {
+            "type": "integer"
+          },
+          "mesa": {
+            "type": "integer"
+          },
+          "nome": {
+            "type": "string"
+          },
+          "tipo": {
+            "type": "string",
+            "enum": [
+              "LOCAL_MESA",
+              "SALAO",
+              "BALCAO",
+              "PARA_LEVAR",
+              "DELIVERY"
+            ]
+          }
+        },
+        "required": [
+          "numero",
+          "tipo"
+        ]
+      },
+      "Item": {
+        "type": "object",
+        "properties": {
+          "produtoId": {
+            "type": "string"
+          },
+          "quantidade": {
+            "type": "string",
+            "example": "0.250"
+          }
+        },
+        "required": [
+          "produtoId",
+          "quantidade"
+        ]
+      },
+      "Receber": {
+        "type": "object",
+        "properties": {
+          "forma": {
+            "type": "string",
+            "enum": [
+              "DINHEIRO",
+              "PIX",
+              "DEBITO",
+              "CREDITO"
+            ]
+          },
+          "aplicadoCentavos": {
+            "type": "integer"
+          },
+          "recebidoCentavos": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "forma",
+          "aplicadoCentavos"
+        ]
+      },
+      "Comanda": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "numero": {
+            "type": "integer"
+          },
+          "versao": {
+            "type": "integer"
+          },
+          "status": {
+            "type": "string"
+          },
+          "totalCentavos": {
+            "type": "integer"
+          },
+          "saldoCentavos": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "numero",
+          "versao",
+          "status",
+          "totalCentavos",
+          "saldoCentavos"
+        ]
+      },
+      "Produto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "nome": {
+            "type": "string"
+          },
+          "unidade": {
+            "type": "string"
+          },
+          "precoCentavos": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "nome",
+          "unidade",
+          "precoCentavos"
+        ]
+      },
+      "Venda": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "comandaId": {
+            "type": "string"
+          },
+          "totalCentavos": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "comandaId",
+          "totalCentavos"
+        ]
+      },
+      "Erro": {
+        "type": "object",
+        "properties": {
+          "codigo": {
+            "type": "string"
+          },
+          "mensagem": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "codigo",
+          "mensagem"
+        ]
+      }
+    }
+  }
+}

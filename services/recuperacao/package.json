@@ -1,0 +1,6 @@
+{
+  "name": "vcomanda-recuperacao",
+  "private": true,
+  "type": "module",
+  "scripts": { "test": "node --test test/*.test.mjs", "bundle:dashboard": "node build-dashboard.mjs", "dev": "wrangler dev", "deploy": "wrangler deploy" }
+}

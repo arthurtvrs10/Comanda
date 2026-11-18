@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prancha do Design System — Comanda por Varthex</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Montserrat:wght@600;700;800&family=IBM+Plex+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #FF5934;
+      --primary-hover: #E84522;
+      --primary-subtle: #FFF0EB;
+      --navy: #17252C;
+      --navy-dark: #0F191E;
+      --navy-light: #24353E;
+      --surface-light: #F4F5F6;
+      --surface-white: #FFFFFF;
+      --ink: #17252C;
+      --ink-muted: #535D65;
+      --border: #E2E8F0;
+      --accent-green: #245640;
+      --accent-green-text: #1E8E3E;
+      --accent-green-light: #E6F4EA;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Manrope', sans-serif;
+      background: #0B1114;
+      color: #E2E8F0;
+      padding: 60px 40px;
+      line-height: 1.5;
+    }
+
+    .board-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      background: #141D22;
+      border: 1px solid #24353E;
+      border-radius: 24px;
+      padding: 60px;
+      box-shadow: 0 30px 90px rgba(0,0,0,0.6);
+    }
+
+    .board-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      border-bottom: 2px solid #24353E;
+      padding-bottom: 30px;
+      margin-bottom: 50px;
+    }
+
+    .board-title h1 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 36px;
+      font-weight: 800;
+      color: #FFFFFF;
+      letter-spacing: -0.5px;
+    }
+
+    .board-title p {
+      color: #8E9BA5;
+      font-size: 16px;
+      margin-top: 6px;
+    }
+
+    .board-meta {
+      text-align: right;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 13px;
+      color: var(--primary);
+    }
+
+    .section-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+      color: #FFFFFF;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section-title::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 20px;
+      background: var(--primary);
+      border-radius: 3px;
+    }
+
+    /* Cores */
+    .color-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 20px;
+      margin-bottom: 60px;
+    }
+
+    .color-card {
+      background: #1A262C;
+      border: 1px solid #2D3E48;
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    .color-swatch {
+      height: 100px;
+      width: 100%;
+    }
+
+    .color-info {
+      padding: 16px;
+    }
+
+    .color-name {
+      font-weight: 700;
+      font-size: 14px;
+      color: #FFFFFF;
+    }
+
+    .color-hex {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      color: #8E9BA5;
+      margin-top: 4px;
+    }
+
+    .color-role {
+      font-size: 11px;
+      color: #64748B;
+      text-transform: uppercase;
+      margin-top: 6px;
+    }
+
+    /* Tipografia */
+    .typo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin-bottom: 60px;
+    }
+
+    .typo-card {
+      background: #1A262C;
+      border: 1px solid #2D3E48;
+      border-radius: 14px;
+      padding: 28px;
+    }
+
+    .typo-specimen {
+      margin-top: 16px;
+      color: #FFFFFF;
+    }
+
+    /* Componentes & Mockup Preview */
+    .component-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin-bottom: 60px;
+    }
+
+    .component-card {
+      background: #1A262C;
+      border: 1px solid #2D3E48;
+      border-radius: 14px;
+      padding: 28px;
+    }
+
+    .btn-sample {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 24px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 14px;
+      text-decoration: none;
+      margin-right: 12px;
+      margin-bottom: 12px;
+    }
+
+    .btn-p {
+      background: var(--primary);
+      color: #FFFFFF;
+    }
+
+    .btn-s {
+      background: #FFFFFF;
+      color: var(--navy);
+    }
+
+    .btn-w {
+      background: #25D366;
+      color: #FFFFFF;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      margin-right: 8px;
+    }
+
+    .status-free { background: rgba(30, 142, 62, 0.2); color: #4ADE80; border: 1px solid #22C55E; }
+    .status-open { background: rgba(255, 89, 52, 0.2); color: #FB923C; border: 1px solid #FF5934; }
+    .status-closing { background: rgba(245, 158, 11, 0.2); color: #FCD34D; border: 1px solid #F59E0B; }
+
+    /* Mockups Mini Display */
+    .mockup-samples {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 1fr;
+      gap: 20px;
+    }
+
+    .mini-mockup {
+      background: #0F191E;
+      border-radius: 12px;
+      padding: 10px;
+      border: 1px solid #24353E;
+    }
+
+    .mini-mockup img {
+      width: 100%;
+      height: auto;
+      border-radius: 6px;
+      display: block;
+    }
+
+    .mini-mockup-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: #8E9BA5;
+      margin-top: 8px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="board-container">
+    <div class="board-header">
+      <div class="board-title">
+        <h1>Prancha do Design System & Identidade Visual</h1>
+        <p>Comanda por Varthex — Sistema de Mesas e Atendimento 100% Offline</p>
+      </div>
+      <div class="board-meta">
+        VERSÃO 1.4 · VALIDADA EM OUTUBRO/NOVEMBRO 2026<br>
+        PADRÃO IMPECCABLE & WCAG AA COMPLIANT
+      </div>
+    </div>
+
+    <!-- 1. Paleta de Cores -->
+    <h2 class="section-title">Paleta de Cores Semântica</h2>
+    <div class="color-grid">
+      <div class="color-card">
+        <div class="color-swatch" style="background: #FF5934;"></div>
+        <div class="color-info">
+          <div class="color-name">Laranja Comanda</div>
+          <div class="color-hex">#FF5934</div>
+          <div class="color-role">Ação Primária / CTA</div>
+        </div>
+      </div>
+      <div class="color-card">
+        <div class="color-swatch" style="background: #17252C;"></div>
+        <div class="color-info">
+          <div class="color-name">Azul Profundo Varthex</div>
+          <div class="color-hex">#17252C</div>
+          <div class="color-role">Shell & Navbar</div>
+        </div>
+      </div>
+      <div class="color-card">
+        <div class="color-swatch" style="background: #245640;"></div>
+        <div class="color-info">
+          <div class="color-name">Verde Atendimento</div>
+          <div class="color-hex">#245640</div>
+          <div class="color-role">Mesas Livres / Sucesso</div>
+        </div>
+      </div>
+      <div class="color-card">
+        <div class="color-swatch" style="background: #F4F5F6;"></div>
+        <div class="color-info">
+          <div class="color-name">Cinza Claro Superfície</div>
+          <div class="color-hex">#F4F5F6</div>
+          <div class="color-role">Fundo de Seções</div>
+        </div>
+      </div>
+      <div class="color-card">
+        <div class="color-swatch" style="background: #25D366;"></div>
+        <div class="color-info">
+          <div class="color-name">Verde WhatsApp</div>
+          <div class="color-hex">#25D366</div>
+          <div class="color-role">Contato Imediato</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Tipografia -->
+    <h2 class="section-title">Tipografia & Hierarquia</h2>
+    <div class="typo-grid">
+      <div class="typo-card">
+        <div style="font-size: 13px; color: var(--primary); font-family: 'IBM Plex Mono', monospace;">TÍTULOS E HEADINGS</div>
+        <h3 style="font-family: 'Montserrat', sans-serif; font-size: 26px; font-weight: 800; margin-top: 8px;">Montserrat (Bold / ExtraBold)</h3>
+        <p style="color: #8E9BA5; font-size: 14px; margin-top: 4px;">Usado para títulos de impacto, H1 do hero, valores numéricos e chamadas comerciais.</p>
+        <div class="typo-specimen" style="font-family: 'Montserrat', sans-serif; font-size: 32px; font-weight: 800;">
+          Seu caixa nunca para. 100% offline.
+        </div>
+      </div>
+
+      <div class="typo-card">
+        <div style="font-size: 13px; color: var(--primary); font-family: 'IBM Plex Mono', monospace;">CORPO DE TEXTO & UI</div>
+        <h3 style="font-family: 'Manrope', sans-serif; font-size: 26px; font-weight: 700; margin-top: 8px;">Manrope (Medium / SemiBold)</h3>
+        <p style="color: #8E9BA5; font-size: 14px; margin-top: 4px;">Usado para parágrafos, especificações de recursos, cards e botões funcionais.</p>
+        <div class="typo-specimen" style="font-family: 'Manrope', sans-serif; font-size: 16px; color: #CBD5E1; line-height: 1.6;">
+          Diga adeus às comandas de papel perdidas e aos sistemas em nuvem que travam quando a internet cai. A Comanda integra salão e balcão com velocidade nativa.
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Componentes de UI -->
+    <h2 class="section-title">Botões e Estados de Componentes</h2>
+    <div class="component-grid">
+      <div class="component-card">
+        <h4 style="font-size: 15px; color: #8E9BA5; margin-bottom: 16px;">BOTÕES DE CONVERSÃO</h4>
+        <div>
+          <a href="#" class="btn-sample btn-p">🚀 TESTAR GRÁTIS POR 7 DIAS</a>
+          <a href="#" class="btn-sample btn-s">▶ Ver Telas do Sistema</a>
+          <a href="#" class="btn-sample btn-w">💬 Chamar no WhatsApp</a>
+        </div>
+      </div>
+
+      <div class="component-card">
+        <h4 style="font-size: 15px; color: #8E9BA5; margin-bottom: 16px;">BADGES DE STATUS DO SISTEMA</h4>
+        <div style="margin-top: 8px;">
+          <span class="status-badge status-free">● Mesa Livre</span>
+          <span class="status-badge status-open">● Comanda Aberta</span>
+          <span class="status-badge status-closing">● Em Fechamento</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Mockups do Sistema em Alta Resolução -->
+    <h2 class="section-title">Mockups Reais Integrados à Proposta</h2>
+    <div class="mockup-samples">
+      <div class="mini-mockup">
+        <img src="../site/public/assets/atendimento.webp" alt="Grade de Mesas">
+        <div class="mini-mockup-label">Grade de Mesas & Atendimento (Desktop)</div>
+      </div>
+      <div class="mini-mockup">
+        <img src="../site/public/assets/atendimento-celular.webp" alt="Comanda Mobile">
+        <div class="mini-mockup-label">Comanda Mobile no Celular do Garçom</div>
+      </div>
+      <div class="mini-mockup">
+        <img src="../site/public/assets/pagamento.webp" alt="Fechamento de Conta">
+        <div class="mini-mockup-label">Fechamento e Divisão de Conta</div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

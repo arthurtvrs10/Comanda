@@ -1,0 +1,15 @@
+{
+  "publicKey": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAthvDOZQUqe6N2kfFaQpP5DmYC7U4ZIKMIY6Yv8gXouBJ7VBkGTEkgQJl8v+vqu/0+w7Bgh9QRrNrjsuxAR21nJoHUfxXC/Zk4msneJzxm+bnsFJCkJ4JJY8nQRAZu4+KbHOpcIR5gmiU29YsjMG3AzgmSRzKBorZP6654ZyMA/050g5xEPiOfIRp71OauED3rkwZ50g2oyY8HIAtpw0VddJZhPu1ofsfeJ9uqXa7hODA/WujBf2MLeM/md002gqay4oliinjiw/GHTA4ASaklGLKoRkClumB3TtL5wwGCVBTj/go5a2HnqCJlLw6gVvdsOMIkBoIEPIDcxRRGUd35wIDAQAB\n-----END PUBLIC KEY-----",
+  "credential": "KioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKg==",
+  "claims": {
+    "aud": "vcomanda-gestor-reset",
+    "installationId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "challengeId": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "nonce": "cccccccccccccccccccccccccccccccc",
+    "credentialHash": "4ac5b1038ff9a79b5ed7a8cbbb97f2b658871d6a02c0d12e1aec4bba51ec19d9",
+    "iat": 1800000000,
+    "exp": 1800000600,
+    "jti": "test-only"
+  },
+  "grant": "v1.eyJhdWQiOiJ2Y29tYW5kYS1nZXN0b3ItcmVzZXQiLCJpbnN0YWxsYXRpb25JZCI6ImFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhIiwiY2hhbGxlbmdlSWQiOiJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYiIsIm5vbmNlIjoiY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2MiLCJjcmVkZW50aWFsSGFzaCI6IjRhYzViMTAzOGZmOWE3OWI1ZWQ3YThjYmJiOTdmMmI2NTg4NzFkNmEwMmMwZDEyZTFhZWM0YmJhNTFlYzE5ZDkiLCJpYXQiOjE4MDAwMDAwMDAsImV4cCI6MTgwMDAwMDYwMCwianRpIjoidGVzdC1vbmx5In0.S_vyAq_U8vd4bo1s9_VKIJkcF1cVMIHHjJSzBLL1x0_7MdoHMpAYftn0N_csXWdaeqrPqnSZdg9LbgRBFJuIyV_p275WzWSIaLuHcF5ZOFuZEEkMncYSsVMEREAUftRlYFh29mXV2qrKfET9HyUIp7E1EJjX4kNs1379GmIX5jAxVCmslFsV2WkOKwxbgRE3O3tZlVZMAE-ZfQM6oLYA186SxvigDwPYe7BXrMN1ZyYc19GmJmlVYD9fXtka5WkYshJdzyCJ95UtymrlXjuvpDEWqGSat-IizAFQpGv7LYG-gEh1vUarAv25nB7Ey6Y26h3pxb7Q4W9DbcPPldp1lw"
+}

@@ -1,0 +1,2348 @@
+[
+  {
+    "Source": "scripts",
+    "Target": "windows/scripts",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "backend",
+    "Target": "windows/backend",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "docs/database",
+    "Target": "windows/docs/database",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "docs/design",
+    "Target": "windows/docs/design",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "docs/docs",
+    "Target": "windows/docs/docs",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "docs/documentos",
+    "Target": "windows/docs/documentos",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "docs/homologacao",
+    "Target": "windows/docs/homologacao",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "docs/scripts",
+    "Target": "windows/docs/scripts",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "docs/templates",
+    "Target": "windows/docs/templates",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "docs/.gitignore",
+    "Target": "windows/docs/.gitignore",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "docs/AGENTS.md",
+    "Target": "windows/docs/AGENTS.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "docs/CHANGELOG.md",
+    "Target": "windows/docs/CHANGELOG.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "docs/CONTRIBUTING.md",
+    "Target": "windows/docs/CONTRIBUTING.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "docs/MANIFEST.md",
+    "Target": "windows/docs/MANIFEST.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "docs/README.md",
+    "Target": "windows/docs/README.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-09-16-base-tecnica-design.md",
+    "Target": "windows/specs/2026-09-16-base-tecnica-design.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-09-16-base-tecnica-plan.md",
+    "Target": "windows/specs/2026-09-16-base-tecnica-plan.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-09-17-catalogo-design.md",
+    "Target": "windows/specs/2026-09-17-catalogo-design.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-09-17-catalogo-plan.md",
+    "Target": "windows/specs/2026-09-17-catalogo-plan.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-09-17-comandas-design.md",
+    "Target": "windows/specs/2026-09-17-comandas-design.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-09-17-comandas-plan.md",
+    "Target": "windows/specs/2026-09-17-comandas-plan.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-09-18-atendimento-redesign-design.md",
+    "Target": "windows/specs/2026-09-18-atendimento-redesign-design.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-09-18-atendimento-redesign-plan.md",
+    "Target": "windows/specs/2026-09-18-atendimento-redesign-plan.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-09-18-backup-design.md",
+    "Target": "windows/specs/2026-09-18-backup-design.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-09-18-backup-plan.md",
+    "Target": "windows/specs/2026-09-18-backup-plan.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-09-18-configuracoes-design.md",
+    "Target": "windows/specs/2026-09-18-configuracoes-design.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-09-18-configuracoes-plan.md",
+    "Target": "windows/specs/2026-09-18-configuracoes-plan.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-09-18-encerramento-design.md",
+    "Target": "windows/specs/2026-09-18-encerramento-design.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-09-18-encerramento-plan.md",
+    "Target": "windows/specs/2026-09-18-encerramento-plan.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-09-18-historico-design.md",
+    "Target": "windows/specs/2026-09-18-historico-design.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-09-18-historico-plan.md",
+    "Target": "windows/specs/2026-09-18-historico-plan.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-09-19-foto-produto-design.md",
+    "Target": "windows/specs/2026-09-19-foto-produto-design.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-09-19-foto-produto-plan.md",
+    "Target": "windows/specs/2026-09-19-foto-produto-plan.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-09-20-etapa7-publicacao-design.md",
+    "Target": "windows/specs/2026-09-20-etapa7-publicacao-design.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-09-20-etapa7-publicacao-plan.md",
+    "Target": "windows/specs/2026-09-20-etapa7-publicacao-plan.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-09-20-etapa7-robustez-design.md",
+    "Target": "windows/specs/2026-09-20-etapa7-robustez-design.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-09-20-etapa7-robustez-plan.md",
+    "Target": "windows/specs/2026-09-20-etapa7-robustez-plan.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-09-20-etapa7-teclado-design.md",
+    "Target": "windows/specs/2026-09-20-etapa7-teclado-design.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-09-20-etapa7-teclado-plan.md",
+    "Target": "windows/specs/2026-09-20-etapa7-teclado-plan.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-09-21-etapa7-acabamento-design.md",
+    "Target": "windows/specs/2026-09-21-etapa7-acabamento-design.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-09-21-etapa7-acabamento-plan.md",
+    "Target": "windows/specs/2026-09-21-etapa7-acabamento-plan.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-09-21-etapa8-homologacao-design.md",
+    "Target": "windows/specs/2026-09-21-etapa8-homologacao-design.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-09-21-etapa8-homologacao-plan.md",
+    "Target": "windows/specs/2026-09-21-etapa8-homologacao-plan.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-19-reconstrucao-funcional.md",
+    "Target": "windows/specs/2026-10-19-reconstrucao-funcional.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-20-comandos-configuracao.md",
+    "Target": "windows/specs/2026-10-20-comandos-configuracao.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-20-configuracoes-sistema.md",
+    "Target": "windows/specs/2026-10-20-configuracoes-sistema.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-20-editor-produtos.md",
+    "Target": "windows/specs/2026-10-20-editor-produtos.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-20-painel-senhas.md",
+    "Target": "windows/specs/2026-10-20-painel-senhas.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-20-ribbon-temas.md",
+    "Target": "windows/specs/2026-10-20-ribbon-temas.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-21-backup-sincronizado.md",
+    "Target": "windows/specs/2026-10-21-backup-sincronizado.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-21-cabecalhos-modais.md",
+    "Target": "windows/specs/2026-10-21-cabecalhos-modais.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-21-cartoes-fotos-personalizar-item.md",
+    "Target": "windows/specs/2026-10-21-cartoes-fotos-personalizar-item.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-21-categoria-ajuda.md",
+    "Target": "windows/specs/2026-10-21-categoria-ajuda.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-21-icones-centralizados.md",
+    "Target": "windows/specs/2026-10-21-icones-centralizados.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-21-janela-interna-produtos.md",
+    "Target": "windows/specs/2026-10-21-janela-interna-produtos.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-21-janelas-hover.md",
+    "Target": "windows/specs/2026-10-21-janelas-hover.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-21-localizador-modelo-consumer.md",
+    "Target": "windows/specs/2026-10-21-localizador-modelo-consumer.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-21-menu-comanda.md",
+    "Target": "windows/specs/2026-10-21-menu-comanda.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-21-numeracao-comandas.md",
+    "Target": "windows/specs/2026-10-21-numeracao-comandas.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-21-ordenacao-produtos.md",
+    "Target": "windows/specs/2026-10-21-ordenacao-produtos.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-21-prioridades-localizador-modal-backup.md",
+    "Target": "windows/specs/2026-10-21-prioridades-localizador-modal-backup.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-21-progresso-backup-onedrive.md",
+    "Target": "windows/specs/2026-10-21-progresso-backup-onedrive.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-21-revisao-interface.md",
+    "Target": "windows/specs/2026-10-21-revisao-interface.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-22-atualizacao-release-1.4.0.md",
+    "Target": "windows/specs/2026-10-22-atualizacao-release-1.4.0.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-22-configuracoes-seguranca-release.md",
+    "Target": "windows/specs/2026-10-22-configuracoes-seguranca-release.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-22-drive-oauth-medidas-venda.md",
+    "Target": "windows/specs/2026-10-22-drive-oauth-medidas-venda.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-22-fechamento-comanda.md",
+    "Target": "windows/specs/2026-10-22-fechamento-comanda.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-22-fluxo-pagamentos.md",
+    "Target": "windows/specs/2026-10-22-fluxo-pagamentos.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-22-fundo-padrao-varthex.md",
+    "Target": "windows/specs/2026-10-22-fundo-padrao-varthex.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-22-historico-pedidos.md",
+    "Target": "windows/specs/2026-10-22-historico-pedidos.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-22-release-1.4.0.md",
+    "Target": "windows/specs/2026-10-22-release-1.4.0.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-22-remocao-tela-inicial.md",
+    "Target": "windows/specs/2026-10-22-remocao-tela-inicial.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-22-tela-abertura.md",
+    "Target": "windows/specs/2026-10-22-tela-abertura.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-23-avisos-inicio-renovacao.md",
+    "Target": "windows/specs/2026-10-23-avisos-inicio-renovacao.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-23-balcao-kds-cores.md",
+    "Target": "windows/specs/2026-10-23-balcao-kds-cores.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-23-cozinha-kds-desktop.md",
+    "Target": "windows/specs/2026-10-23-cozinha-kds-desktop.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-23-movimento-workspace.md",
+    "Target": "windows/specs/2026-10-23-movimento-workspace.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-23-principal-servidor-local.md",
+    "Target": "windows/specs/2026-10-23-principal-servidor-local.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-23-release-pagamentos-avisos.md",
+    "Target": "windows/specs/2026-10-23-release-pagamentos-avisos.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-23-release-recompilacao.md",
+    "Target": "windows/specs/2026-10-23-release-recompilacao.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-23-web-comanda-catalogo-fotos.md",
+    "Target": "windows/specs/2026-10-23-web-comanda-catalogo-fotos.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-24-registros-kds-limite-catalogo.md",
+    "Target": "windows/specs/2026-10-24-registros-kds-limite-catalogo.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-24-release-1.4.1-defender.md",
+    "Target": "windows/specs/2026-10-24-release-1.4.1-defender.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-24-release-1.4.1.md",
+    "Target": "windows/specs/2026-10-24-release-1.4.1.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-24-release-1.4.2.md",
+    "Target": "windows/specs/2026-10-24-release-1.4.2.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-24-servidor-automatico-informacoes.md",
+    "Target": "windows/specs/2026-10-24-servidor-automatico-informacoes.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-25-release-1.4.3.md",
+    "Target": "windows/specs/2026-10-25-release-1.4.3.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-28-prototipo-fluxo-pagamento.md",
+    "Target": "windows/specs/2026-10-28-prototipo-fluxo-pagamento.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-28-release-1.4.4.md",
+    "Target": "windows/specs/2026-10-28-release-1.4.4.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-29-kds-kanban.md",
+    "Target": "windows/specs/2026-10-29-kds-kanban.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-29-layout-ticket-cozinha.md",
+    "Target": "windows/specs/2026-10-29-layout-ticket-cozinha.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-29-primeiros-passos-integrado.md",
+    "Target": "windows/specs/2026-10-29-primeiros-passos-integrado.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-30-auditoria-integracao-interface.md",
+    "Target": "windows/specs/2026-10-30-auditoria-integracao-interface.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-30-backup-onedrive-padrao.md",
+    "Target": "windows/specs/2026-10-30-backup-onedrive-padrao.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-30-chamadas-mesas-homologacao.md",
+    "Target": "windows/specs/2026-10-30-chamadas-mesas-homologacao.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-30-qrcodes-mesas-chamar-garcom.md",
+    "Target": "windows/specs/2026-10-30-qrcodes-mesas-chamar-garcom.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-30-release-1.4.6.md",
+    "Target": "windows/specs/2026-10-30-release-1.4.6.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "specs/2026-10-30-release-1.4.7.md",
+    "Target": "windows/specs/2026-10-30-release-1.4.7.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "downloads/RELEASE-1.4.0.md",
+    "Target": "windows/downloads/RELEASE-1.4.0.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "downloads/RELEASE-1.4.1.md",
+    "Target": "windows/downloads/RELEASE-1.4.1.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "downloads/RELEASE-1.4.10.md",
+    "Target": "windows/downloads/RELEASE-1.4.10.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "downloads/RELEASE-1.4.2.md",
+    "Target": "windows/downloads/RELEASE-1.4.2.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "downloads/RELEASE-1.4.3.md",
+    "Target": "windows/downloads/RELEASE-1.4.3.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "downloads/RELEASE-1.4.4.md",
+    "Target": "windows/downloads/RELEASE-1.4.4.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "downloads/RELEASE-1.4.5.md",
+    "Target": "windows/downloads/RELEASE-1.4.5.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "downloads/RELEASE-1.4.6.md",
+    "Target": "windows/downloads/RELEASE-1.4.6.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "downloads/RELEASE-1.4.7.md",
+    "Target": "windows/downloads/RELEASE-1.4.7.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "downloads/RELEASE-1.4.8.md",
+    "Target": "windows/downloads/RELEASE-1.4.8.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "downloads/RELEASE-1.4.9.md",
+    "Target": "windows/downloads/RELEASE-1.4.9.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/ajuda-aplicada",
+    "Target": "windows/artifacts/ajuda-aplicada",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/ajuda-compacta",
+    "Target": "windows/artifacts/ajuda-compacta",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/ajuda-icone",
+    "Target": "windows/artifacts/ajuda-icone",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/ajuda-numeracao",
+    "Target": "windows/artifacts/ajuda-numeracao",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/ajuda-suporte",
+    "Target": "windows/artifacts/ajuda-suporte",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/ajuda-toggle",
+    "Target": "windows/artifacts/ajuda-toggle",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/area-trabalho",
+    "Target": "windows/artifacts/area-trabalho",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/arraste",
+    "Target": "windows/artifacts/arraste",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/ativacao-preview",
+    "Target": "windows/artifacts/ativacao-preview",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/balcao-kds",
+    "Target": "windows/artifacts/balcao-kds",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/catalogo-acoes-cartao",
+    "Target": "windows/artifacts/catalogo-acoes-cartao",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/codigo-barras",
+    "Target": "windows/artifacts/codigo-barras",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/configuracao-preview",
+    "Target": "windows/artifacts/configuracao-preview",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/configuracao-ribbon",
+    "Target": "windows/artifacts/configuracao-ribbon",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/configuracoes-compactas",
+    "Target": "windows/artifacts/configuracoes-compactas",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/configuracoes-sistema",
+    "Target": "windows/artifacts/configuracoes-sistema",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/cores-painel",
+    "Target": "windows/artifacts/cores-painel",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/cozinhas-saida",
+    "Target": "windows/artifacts/cozinhas-saida",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/demo-1.2.3",
+    "Target": "windows/artifacts/demo-1.2.3",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/demo-1.3.0",
+    "Target": "windows/artifacts/demo-1.3.0",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/emissor",
+    "Target": "windows/artifacts/emissor",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/emissor-licencas-1.1.0",
+    "Target": "windows/artifacts/emissor-licencas-1.1.0",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/engrenagem-corrigida",
+    "Target": "windows/artifacts/engrenagem-corrigida",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/gestao-previas",
+    "Target": "windows/artifacts/gestao-previas",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/gestao-separada-previas",
+    "Target": "windows/artifacts/gestao-separada-previas",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/grade-comandas",
+    "Target": "windows/artifacts/grade-comandas",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/icones-centralizados",
+    "Target": "windows/artifacts/icones-centralizados",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/icones-coloridos",
+    "Target": "windows/artifacts/icones-coloridos",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/icones-varthex",
+    "Target": "windows/artifacts/icones-varthex",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/janela-interna",
+    "Target": "windows/artifacts/janela-interna",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/janelas-hover",
+    "Target": "windows/artifacts/janelas-hover",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/janelas-largura-total",
+    "Target": "windows/artifacts/janelas-largura-total",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/kds-desktop",
+    "Target": "windows/artifacts/kds-desktop",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/limpeza-publicacao",
+    "Target": "windows/artifacts/limpeza-publicacao",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/menu-produtos",
+    "Target": "windows/artifacts/menu-produtos",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/minha-assinatura",
+    "Target": "windows/artifacts/minha-assinatura",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/numeracao",
+    "Target": "windows/artifacts/numeracao-anterior",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/origens-fundo",
+    "Target": "windows/artifacts/origens-fundo",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/painel-ajustado",
+    "Target": "windows/artifacts/painel-ajustado",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/painel-produtos",
+    "Target": "windows/artifacts/painel-produtos",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/painel-senhas",
+    "Target": "windows/artifacts/painel-senhas",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/preview-icones",
+    "Target": "windows/artifacts/preview-icones",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/produtos-alinhados",
+    "Target": "windows/artifacts/produtos-alinhados",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/produtos-ordenacao",
+    "Target": "windows/artifacts/produtos-ordenacao",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/produtos-tabela",
+    "Target": "windows/artifacts/produtos-tabela",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/publish",
+    "Target": "windows/artifacts/publish",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/reconstrucao-funcional",
+    "Target": "windows/artifacts/reconstrucao-funcional",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/registros-atendimento",
+    "Target": "windows/artifacts/registros-atendimento",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/release-1.2.1",
+    "Target": "windows/artifacts/release-1.2.1",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/release-1.3.0",
+    "Target": "windows/artifacts/release-1.3.0",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/release-1.4.0",
+    "Target": "windows/artifacts/release-1.4.0",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/release-1.4.0-atualizada",
+    "Target": "windows/artifacts/release-1.4.0-atualizada",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/release-1.4.0-pagamentos",
+    "Target": "windows/artifacts/release-1.4.0-pagamentos",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/release-1.4.0-revisada",
+    "Target": "windows/artifacts/release-1.4.0-revisada",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/release-1.4.0-seguranca",
+    "Target": "windows/artifacts/release-1.4.0-seguranca",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/release-1.4.1-20261024",
+    "Target": "windows/artifacts/release-1.4.1-20261024",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/release-1.4.1-20261024-demo",
+    "Target": "windows/artifacts/release-1.4.1-20261024-demo",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/release-1.4.1-defender-demo",
+    "Target": "windows/artifacts/release-1.4.1-defender-demo",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/release-1.4.1-defender-normal",
+    "Target": "windows/artifacts/release-1.4.1-defender-normal",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/release-1.4.2-20261024",
+    "Target": "windows/artifacts/release-1.4.2-20261024",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/release-1.4.2-20261024-demo",
+    "Target": "windows/artifacts/release-1.4.2-20261024-demo",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/release-1.4.3",
+    "Target": "windows/artifacts/release-1.4.3",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/release-1.4.4",
+    "Target": "windows/artifacts/release-1.4.4",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/release-20261023-final",
+    "Target": "windows/artifacts/release-20261023-final",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/release-20261023-final-demo",
+    "Target": "windows/artifacts/release-20261023-final-demo",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/release-atual",
+    "Target": "windows/artifacts/release-atual",
+    "Status": "Preservado no caminho oficial",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/release148",
+    "Target": "windows/artifacts/release148",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/release149",
+    "Target": "windows/artifacts/release149",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/releases",
+    "Target": "windows/artifacts/releases",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/revisao-interface",
+    "Target": "windows/artifacts/revisao-interface",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/ribbon",
+    "Target": "windows/artifacts/ribbon",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/rollback-release-v1.4.2-20261025",
+    "Target": "windows/artifacts/rollback-release-v1.4.2-20261025",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/rollback-ux-20261025",
+    "Target": "windows/artifacts/rollback-ux-20261025",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/seguranca-1.4.1",
+    "Target": "windows/artifacts/seguranca-1.4.1",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/servidor-automatico",
+    "Target": "windows/artifacts/servidor-automatico",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/servidor-inicial",
+    "Target": "windows/artifacts/servidor-inicial",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/teste-dados",
+    "Target": "windows/artifacts/teste-dados",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/testes-publicacao",
+    "Target": "windows/artifacts/testes-publicacao",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/tools",
+    "Target": "windows/artifacts/tools",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/ux-simples-previas",
+    "Target": "windows/artifacts/ux-simples-previas",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/workflow-release",
+    "Target": "windows/artifacts/workflow-release",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/build-1.2.2.log",
+    "Target": "windows/artifacts/build-1.2.2.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/build-demo-1.3.0.log",
+    "Target": "windows/artifacts/build-demo-1.3.0.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/build-demo.log",
+    "Target": "windows/artifacts/build-demo.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/build-release-1.3.0.log",
+    "Target": "windows/artifacts/build-release-1.3.0.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/clean-demo.log",
+    "Target": "windows/artifacts/clean-demo.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/demo-1.3.0-build.log",
+    "Target": "windows/artifacts/demo-1.3.0-build.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/emissor110-defender.log",
+    "Target": "windows/artifacts/emissor110-defender.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/geracao-instalador-atual.log",
+    "Target": "windows/artifacts/geracao-instalador-atual.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/integrar-transferencia-windows.py",
+    "Target": "windows/artifacts/integrar-transferencia-windows.py",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/release-1.2.2.md",
+    "Target": "windows/artifacts/release-1.2.2.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/release-1.3.0-build.log",
+    "Target": "windows/artifacts/release-1.3.0-build.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/release-1.4.2-demo-build.log",
+    "Target": "windows/artifacts/release-1.4.2-demo-build.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/release-demo-1.2.3.md",
+    "Target": "windows/artifacts/release-demo-1.2.3.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/release-v1.2.0.md",
+    "Target": "windows/artifacts/release-v1.2.0.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/seam-transfer-windows.py",
+    "Target": "windows/artifacts/seam-transfer-windows.py",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/test-1.2.2-final.log",
+    "Target": "windows/artifacts/test-1.2.2-final.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/test-1.2.2-verified.log",
+    "Target": "windows/artifacts/test-1.2.2-verified.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/test-1.2.2.log",
+    "Target": "windows/artifacts/test-1.2.2.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/test-demo-desktop.log",
+    "Target": "windows/artifacts/test-demo-desktop.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/test-demo-verified.log",
+    "Target": "windows/artifacts/test-demo-verified.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/test-demo.log",
+    "Target": "windows/artifacts/test-demo.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/Varthex-Licencas-Windows-1.1.0.zip",
+    "Target": "windows/artifacts/Varthex-Licencas-Windows-1.1.0.zip",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/Varthex-Licencas-Windows-1.1.0.zip.sha256",
+    "Target": "windows/artifacts/Varthex-Licencas-Windows-1.1.0.zip.sha256",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/VarthexComanda-1.0.0-win-x64.zip",
+    "Target": "windows/artifacts/VarthexComanda-1.0.0-win-x64.zip",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/VarthexComanda-1.1.0-win-x64.zip",
+    "Target": "windows/artifacts/VarthexComanda-1.1.0-win-x64.zip",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/VarthexComanda-1.2.0-win-x64.zip",
+    "Target": "windows/artifacts/VarthexComanda-1.2.0-win-x64.zip",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/auditoria-cores",
+    "Target": "windows/outputs/auditoria-cores",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/avisos-inicio",
+    "Target": "windows/outputs/avisos-inicio",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/backup-sincronizado",
+    "Target": "windows/outputs/backup-sincronizado",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/categorias-maiusculas",
+    "Target": "windows/outputs/categorias-maiusculas",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/comanda-ajustes-neutros",
+    "Target": "windows/outputs/comanda-ajustes-neutros",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/comanda-background-escuro",
+    "Target": "windows/outputs/comanda-background-escuro",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/comanda-cores-aplicadas",
+    "Target": "windows/outputs/comanda-cores-aplicadas",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/comanda-identidade",
+    "Target": "windows/outputs/comanda-identidade",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/comanda-paleta-v2",
+    "Target": "windows/outputs/comanda-paleta-v2",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/comanda-validacao",
+    "Target": "windows/outputs/comanda-validacao",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/configuracoes-design",
+    "Target": "windows/outputs/configuracoes-design",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/diagnostics",
+    "Target": "windows/outputs/diagnostics",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/historico-recaptura",
+    "Target": "windows/outputs/historico-recaptura",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/historico-vendas-padrao",
+    "Target": "windows/outputs/historico-vendas-padrao",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/login-blur",
+    "Target": "windows/outputs/login-blur",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/login-centralizado",
+    "Target": "windows/outputs/login-centralizado",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/login-sistema",
+    "Target": "windows/outputs/login-sistema",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/modelos-bloqueio",
+    "Target": "windows/outputs/modelos-bloqueio",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/notinhas-implementadas",
+    "Target": "windows/outputs/notinhas-implementadas",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/pagamento-icones",
+    "Target": "windows/outputs/pagamento-icones",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/pagamento-itens",
+    "Target": "windows/outputs/pagamento-itens",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/pagamento-misto",
+    "Target": "windows/outputs/pagamento-misto",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/pagamento-referencia",
+    "Target": "windows/outputs/pagamento-referencia",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/pagamento-revisao",
+    "Target": "windows/outputs/pagamento-revisao",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/previa-notinhas",
+    "Target": "windows/outputs/previa-notinhas",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/revisao-visual",
+    "Target": "windows/outputs/revisao-visual",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/servidor-baseline",
+    "Target": "windows/outputs/servidor-baseline",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/servidor-previa",
+    "Target": "windows/outputs/servidor-previa",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/splash-baseline",
+    "Target": "windows/outputs/splash-baseline",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/staging-fechamento",
+    "Target": "windows/outputs/staging-fechamento",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/video-2026-10-23",
+    "Target": "windows/outputs/video-2026-10-23",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/release-1.4.0-anterior.json",
+    "Target": "windows/outputs/release-1.4.0-anterior.json",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/release-1.4.0-anterior.md",
+    "Target": "windows/outputs/release-1.4.0-anterior.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/release-1.4.0-atualizada-capturas.log",
+    "Target": "windows/outputs/release-1.4.0-atualizada-capturas.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/release-1.4.0-atualizada-desktop-final.log",
+    "Target": "windows/outputs/release-1.4.0-atualizada-desktop-final.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/release-1.4.0-atualizada-documentacao.log",
+    "Target": "windows/outputs/release-1.4.0-atualizada-documentacao.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/release-1.4.0-atualizada-instaladores.log",
+    "Target": "windows/outputs/release-1.4.0-atualizada-instaladores.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/release-1.4.0-atualizada-testes.log",
+    "Target": "windows/outputs/release-1.4.0-atualizada-testes.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/release-1.4.0-atualizada.md",
+    "Target": "windows/outputs/release-1.4.0-atualizada.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/release-1.4.0-captura-historico.log",
+    "Target": "windows/outputs/release-1.4.0-captura-historico.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/release-1.4.0-desktop-final.log",
+    "Target": "windows/outputs/release-1.4.0-desktop-final.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/release-1.4.0-instaladores-final.log",
+    "Target": "windows/outputs/release-1.4.0-instaladores-final.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/release-1.4.0-instaladores.log",
+    "Target": "windows/outputs/release-1.4.0-instaladores.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/release-1.4.0-publicada.json",
+    "Target": "windows/outputs/release-1.4.0-publicada.json",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/release-1.4.0-revisada-demo.log",
+    "Target": "windows/outputs/release-1.4.0-revisada-demo.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/release-1.4.0-revisada-instaladores.log",
+    "Target": "windows/outputs/release-1.4.0-revisada-instaladores.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/release-1.4.0-testes.log",
+    "Target": "windows/outputs/release-1.4.0-testes.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/release-demo-20261023.log",
+    "Target": "windows/outputs/release-demo-20261023.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/release-pagamento-demo.log",
+    "Target": "windows/outputs/release-pagamento-demo.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/release-pagamento-documentacao.log",
+    "Target": "windows/outputs/release-pagamento-documentacao.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/release-pagamento-instalador.log",
+    "Target": "windows/outputs/release-pagamento-instalador.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/release-pagamento-publicada.json",
+    "Target": "windows/outputs/release-pagamento-publicada.json",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/release-pagamento-testes.log",
+    "Target": "windows/outputs/release-pagamento-testes.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/release-pagamentos-anterior.json",
+    "Target": "windows/outputs/release-pagamentos-anterior.json",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/release-seguranca-demo.log",
+    "Target": "windows/outputs/release-seguranca-demo.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/release-seguranca-instalador.log",
+    "Target": "windows/outputs/release-seguranca-instalador.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/release-seguranca-notas.md",
+    "Target": "windows/outputs/release-seguranca-notas.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/revisao-completa.log",
+    "Target": "windows/outputs/revisao-completa.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/revisao-desktop-final.log",
+    "Target": "windows/outputs/revisao-desktop-final.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/revisao-documentacao.log",
+    "Target": "windows/outputs/revisao-documentacao.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/revisao-foco.log",
+    "Target": "windows/outputs/revisao-foco.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/servidor-automatico-compilacao.log",
+    "Target": "windows/outputs/servidor-automatico-compilacao.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/servidor-automatico-confirmacao.log",
+    "Target": "windows/outputs/servidor-automatico-confirmacao.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/servidor-automatico-docs.log",
+    "Target": "windows/outputs/servidor-automatico-docs.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/servidor-automatico-http.log",
+    "Target": "windows/outputs/servidor-automatico-http.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/servidor-automatico-publicacao.log",
+    "Target": "windows/outputs/servidor-automatico-publicacao.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/servidor-automatico-regressao.log",
+    "Target": "windows/outputs/servidor-automatico-regressao.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/servidor-automatico-telas-depois.log",
+    "Target": "windows/outputs/servidor-automatico-telas-depois.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/servidor-automatico-telas.log",
+    "Target": "windows/outputs/servidor-automatico-telas.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/servidor-build.log",
+    "Target": "windows/outputs/servidor-build.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/servidor-capturas-confirmacao.log",
+    "Target": "windows/outputs/servidor-capturas-confirmacao.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/servidor-detect.json",
+    "Target": "windows/outputs/servidor-detect.json",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/servidor-docs-validacao.log",
+    "Target": "windows/outputs/servidor-docs-validacao.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/servidor-encerramento-diagnostico.log",
+    "Target": "windows/outputs/servidor-encerramento-diagnostico.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/servidor-ferramenta-diagnostico.log",
+    "Target": "windows/outputs/servidor-ferramenta-diagnostico.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/servidor-guardas.log",
+    "Target": "windows/outputs/servidor-guardas.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/servidor-janelas-final.log",
+    "Target": "windows/outputs/servidor-janelas-final.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/servidor-janelas-testes.log",
+    "Target": "windows/outputs/servidor-janelas-testes.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/servidor-menu-commit.patch",
+    "Target": "windows/outputs/servidor-menu-commit.patch",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/servidor-pilhas.txt",
+    "Target": "windows/outputs/servidor-pilhas.txt",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/servidor-previa.log",
+    "Target": "windows/outputs/servidor-previa.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/servidor-publicacao.log",
+    "Target": "windows/outputs/servidor-publicacao.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/servidor-regressao-final.log",
+    "Target": "windows/outputs/servidor-regressao-final.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/servidor-regressao.log",
+    "Target": "windows/outputs/servidor-regressao.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/servidor-ribbon-testes.log",
+    "Target": "windows/outputs/servidor-ribbon-testes.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/servidor-testes-final.log",
+    "Target": "windows/outputs/servidor-testes-final.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/servidor-testes.log",
+    "Target": "windows/outputs/servidor-testes.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/trace-pagamento.txt",
+    "Target": "windows/outputs/trace-pagamento.txt",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/verificar-release-publicada.py",
+    "Target": "windows/outputs/verificar-release-publicada.py",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/web-comanda-desktop.log",
+    "Target": "windows/outputs/web-comanda-desktop.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/web-comanda-detect.json",
+    "Target": "windows/outputs/web-comanda-detect.json",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/web-comanda-docs-validacao.log",
+    "Target": "windows/outputs/web-comanda-docs-validacao.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/web-comanda-fluxo.log",
+    "Target": "windows/outputs/web-comanda-fluxo.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/web-comanda-http.log",
+    "Target": "windows/outputs/web-comanda-http.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/web-comanda-publicacao.log",
+    "Target": "windows/outputs/web-comanda-publicacao.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/workspace-antes.log",
+    "Target": "windows/outputs/workspace-antes.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/workspace-depois.log",
+    "Target": "windows/outputs/workspace-depois.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/workspace-desktop-final.log",
+    "Target": "windows/outputs/workspace-desktop-final.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/workspace-desktop-isolado.log",
+    "Target": "windows/outputs/workspace-desktop-isolado.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/workspace-docs-validacao.log",
+    "Target": "windows/outputs/workspace-docs-validacao.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/workspace-publicacao.log",
+    "Target": "windows/outputs/workspace-publicacao.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/workspace-telas-antes.log",
+    "Target": "windows/outputs/workspace-telas-antes.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/workspace-telas-depois.log",
+    "Target": "windows/outputs/workspace-telas-depois.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/workspace-telas-desktop-final.log",
+    "Target": "windows/outputs/workspace-telas-desktop-final.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/workspace-telas-docs-validacao.log",
+    "Target": "windows/outputs/workspace-telas-docs-validacao.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/workspace-telas-publicacao.log",
+    "Target": "windows/outputs/workspace-telas-publicacao.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "prototypes/primeira-configuracao",
+    "Target": "windows/prototypes/primeira-configuracao",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/abertura-5seg-doc.patch",
+    "Target": "windows/outputs/abertura-5seg-doc.patch",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/abertura-5seg-focados.log",
+    "Target": "windows/outputs/abertura-5seg-focados.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/abertura-5seg-patch.py",
+    "Target": "windows/outputs/abertura-5seg-patch.py",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/abertura-5seg-testes.log",
+    "Target": "windows/outputs/abertura-5seg-testes.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/abertura-build.log",
+    "Target": "windows/outputs/abertura-build.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/abertura-docs-somente.patch",
+    "Target": "windows/outputs/abertura-docs-somente.patch",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/abertura-regressao.log",
+    "Target": "windows/outputs/abertura-regressao.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/abertura-somente.patch",
+    "Target": "windows/outputs/abertura-somente.patch",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/abertura-testes.log",
+    "Target": "windows/outputs/abertura-testes.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/ajustar-ribbon-servidor.py",
+    "Target": "windows/outputs/ajustar-ribbon-servidor.py",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/atualizar-links-release.py",
+    "Target": "windows/outputs/atualizar-links-release.py",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/aviso-urgencia-testes.log",
+    "Target": "windows/outputs/aviso-urgencia-testes.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/avisos-inicio-documentacao.log",
+    "Target": "windows/outputs/avisos-inicio-documentacao.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/avisos-inicio-final.log",
+    "Target": "windows/outputs/avisos-inicio-final.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/avisos-inicio-testes.log",
+    "Target": "windows/outputs/avisos-inicio-testes.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/balcao-aplicacao.log",
+    "Target": "windows/outputs/balcao-aplicacao.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/balcao-editor-real.log",
+    "Target": "windows/outputs/balcao-editor-real.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/balcao-kds-compilacao.log",
+    "Target": "windows/outputs/balcao-kds-compilacao.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/balcao-kds-confirmacao.log",
+    "Target": "windows/outputs/balcao-kds-confirmacao.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/balcao-kds-desktop-final.log",
+    "Target": "windows/outputs/balcao-kds-desktop-final.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/balcao-kds-docs-validacao.log",
+    "Target": "windows/outputs/balcao-kds-docs-validacao.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/balcao-kds-publicacao.log",
+    "Target": "windows/outputs/balcao-kds-publicacao.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/balcao-kds-regressao-final.log",
+    "Target": "windows/outputs/balcao-kds-regressao-final.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/balcao-kds-telas.log",
+    "Target": "windows/outputs/balcao-kds-telas.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/cartao-build.log",
+    "Target": "windows/outputs/cartao-build.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/changelog-antes-separar.md",
+    "Target": "windows/outputs/changelog-antes-separar.md",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/documentar-servidor.py",
+    "Target": "windows/outputs/documentar-servidor.py",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/historico-pedidos-build.log",
+    "Target": "windows/outputs/historico-pedidos-build.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/historico-pedidos-recaptura.log",
+    "Target": "windows/outputs/historico-pedidos-recaptura.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/historico-pedidos-regressao.log",
+    "Target": "windows/outputs/historico-pedidos-regressao.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/historico-pedidos-sqlite.log",
+    "Target": "windows/outputs/historico-pedidos-sqlite.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/historico-pedidos-testes.log",
+    "Target": "windows/outputs/historico-pedidos-testes.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/kds-build-infra.log",
+    "Target": "windows/outputs/kds-build-infra.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/kds-build.log",
+    "Target": "windows/outputs/kds-build.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/kds-desktop.log",
+    "Target": "windows/outputs/kds-desktop.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/kds-docs-validacao.log",
+    "Target": "windows/outputs/kds-docs-validacao.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/kds-migracao.log",
+    "Target": "windows/outputs/kds-migracao.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/kds-persistencia.log",
+    "Target": "windows/outputs/kds-persistencia.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/kds-publicacao.log",
+    "Target": "windows/outputs/kds-publicacao.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/kds-regressao.log",
+    "Target": "windows/outputs/kds-regressao.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/pagamento-desktop-final.log",
+    "Target": "windows/outputs/pagamento-desktop-final.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/pagamento-documentacao.log",
+    "Target": "windows/outputs/pagamento-documentacao.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/pagamento-icones-final.log",
+    "Target": "windows/outputs/pagamento-icones-final.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/pagamento-icones-suite.log",
+    "Target": "windows/outputs/pagamento-icones-suite.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/pagamento-icones-testes.log",
+    "Target": "windows/outputs/pagamento-icones-testes.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/pagamento-icones-validacao.log",
+    "Target": "windows/outputs/pagamento-icones-validacao.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/pagamento-icones-visual.log",
+    "Target": "windows/outputs/pagamento-icones-visual.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/pagamento-itens-final.log",
+    "Target": "windows/outputs/pagamento-itens-final.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/pagamento-itens-testes.log",
+    "Target": "windows/outputs/pagamento-itens-testes.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/pagamento-itens-validado.log",
+    "Target": "windows/outputs/pagamento-itens-validado.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/pagamento-misto-completo.log",
+    "Target": "windows/outputs/pagamento-misto-completo.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/pagamento-misto-final.log",
+    "Target": "windows/outputs/pagamento-misto-final.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/pagamento-misto-testes.log",
+    "Target": "windows/outputs/pagamento-misto-testes.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/pagamento-referencia-build.log",
+    "Target": "windows/outputs/pagamento-referencia-build.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/pagamento-referencia-documentacao.log",
+    "Target": "windows/outputs/pagamento-referencia-documentacao.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/pagamento-referencia-final.log",
+    "Target": "windows/outputs/pagamento-referencia-final.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/pagamento-referencia-pronto.log",
+    "Target": "windows/outputs/pagamento-referencia-pronto.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/pagamento-referencia-testes.log",
+    "Target": "windows/outputs/pagamento-referencia-testes.log",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/preparar-patch-abertura.py",
+    "Target": "windows/outputs/preparar-patch-abertura.py",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/preparar-patch-docs-abertura.py",
+    "Target": "windows/outputs/preparar-patch-docs-abertura.py",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/atualizar-fluxo-release.py",
+    "Target": "windows/artifacts/atualizar-fluxo-release.py",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/melhorar-guardas.py",
+    "Target": "windows/artifacts/melhorar-guardas.py",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/readme-screenshots-only.patch",
+    "Target": "windows/artifacts/readme-screenshots-only.patch",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/readme-screenshots.patch",
+    "Target": "windows/artifacts/readme-screenshots.patch",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/revisar-documentacao.ps1",
+    "Target": "windows/artifacts/revisar-documentacao.ps1",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "artifacts/workflow-publicacao.py",
+    "Target": "windows/artifacts/workflow-publicacao.py",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "prototypes/catalogo-restaurante",
+    "Target": "windows/prototypes/catalogo-restaurante",
+    "Status": "Movido",
+    "Erro": null
+  },
+  {
+    "Source": "outputs/mobile-site-preview",
+    "Target": "site/outputs/mobile-site-preview",
+    "Status": "Movido",
+    "Erro": null
+  }
+]

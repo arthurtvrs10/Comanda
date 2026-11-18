@@ -1,0 +1,4 @@
+# Ondas e riscos
+Onda A (S01–S04): validar identificação e caixa individual; risco dominante é atribuição à pessoa errada. Onda B (S05–S06): recuperar impressão, relatórios, edições, modalidades e configuração. Onda C (S07–S08): dados, restauração, suporte e decisão por local. O inventário C01–C12 vincula cada capacidade ao backlog.
+ 
+Antes de encerrar a onda B, confrontar operação real com cadastro, impressão de cozinha e fichas, painel de senhas, permissões, ativação, backup sincronizado, exportação e atalhos. Para cada diferença registrar ID da capacidade, versão, impacto, dono, correção e teste. Gestor decide prioridade, caixa valida valores, dev resolve inconsistências. Registrar separadamente cada módulo atualmente restrito; inclusão depende de autorização explícita individual e nova estimativa.

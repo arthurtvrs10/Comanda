@@ -1,0 +1,58 @@
+{
+  "marmita": {
+    "imagem": "https://rnstatic.sfo3.digitaloceanspaces.com/Upload/Noticias/Materia/18-05-2021-10-10-33.jpg",
+    "pagina": "https://rondonoticias.com.br/noticia/geral/56760/programa-prato-facil-inicia-atendimento-com-refeicoes-a-r-2-reais"
+  },
+  "coca2": {
+    "imagem": "https://lojasmel1.vtexassets.com/arquivos/ids/156250/Refrigerante_Pet_2_Litros_-_Coca-Cola_0.jpg?v=638031921412770000",
+    "pagina": "https://www.lojasmel.com/refrigerante-pet-2-litros-55209-cocacola/p"
+  },
+  "coca15": {
+    "imagem": "https://cdn.shopify.com/s/files/1/0587/8487/4575/files/01f76d74-0529-47b4-86c3-65465cc67ee8.png?v=1757030906",
+    "pagina": "https://marche.com.br/products/coca-cola-sabor-original-pet-1-5-litros"
+  },
+  "fanta": {
+    "imagem": "https://static.extramercado.com.br/img/uploads/1/955/33321955.png?im=Resize%2Cwidth%3D200",
+    "pagina": "https://www.extramercado.com.br/produto/12767/refrigerante-laranja-fanta-garrafa-2l"
+  },
+  "guarana": {
+    "imagem": "https://www.paodeacucar.com/img/uploads/1/88/33036088.jpg",
+    "pagina": "https://www.paodeacucar.com/produto/44656/refrigerante-guarana-antarctica-garrafa-2l"
+  },
+  "ks": {
+    "imagem": "https://cdn.awsli.com.br/800x800/2650/2650877/produto/2367111205e53f28a69.jpg",
+    "pagina": "https://www.loja.fernandaobebidas.com.br/produto/coca-cola-media-290ml-ret-ks"
+  },
+  "lata": {
+    "imagem": "https://bretas.vtexassets.com/arquivos/ids/201501-800-auto?aspect=true&height=auto&v=638376352002870000&width=800",
+    "pagina": "https://www.bretas.com.br/refrigerante-coca-cola-lata-350ml/p"
+  },
+  "monster": {
+    "imagem": "https://boa.vtexassets.com/arquivos/ids/600950/Bebida-Energetica-Monster-Energy-Lata-473ml.jpg?v=639077385134230000",
+    "pagina": "https://www.boasupermercados.com.br/bebida-energetica-monster-energy-lata-473ml/p"
+  },
+  "agua": {
+    "imagem": "https://img.superhoje.com/img.produtos/7894900530001/img_1200_1.png",
+    "pagina": "https://superkan.com.br/agua-mineral-natural-sem-gas-crystal-500ml/7894900530001/d"
+  },
+  "suco": {
+    "imagem": "https://www.agrolink.com.br/upload/imagens-resizes/ff907f81d0c441ddaee850a9d76f1e61_1200x800.jpg",
+    "pagina": "https://www.agrolink.com.br/noticias/quem-tem-diabetes-pode-tomar-suco-de-laranja-_474312.html"
+  },
+  "bala": {
+    "imagem": "https://images.tcdn.com.br/img/img_prod/1098943/bala_mastigavel_de_yogurte_morango_dori_100g_1und_30613_3_7dc0fe43189269203d718bf594d002e9.jpg",
+    "pagina": "https://www.embalagemfacil.com.br/bala-mastigavel-de-yogurte-morango-dori-100g-1und"
+  },
+  "pacoca": {
+    "imagem": "https://rafinhaalimentos.com.br/media/catalog/product/cache/f7e57eaec4cbc1f73df85f438e834d41/3/0/3073_3.jpg",
+    "pagina": "https://rafinhaalimentos.com.br/rafinha-doce-atacado-pacoca-rolha-140x55gr-2128.html"
+  },
+  "pudim": {
+    "imagem": "https://receitatodahora.com.br/wp-content/uploads/2018/08/pudim-de-leite-condensado-com-furinhos-1200x746.jpg",
+    "pagina": "https://receitatodahora.com.br/pudim-de-leite-condensado-com-furinhos/"
+  },
+  "batata": {
+    "imagem": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1a/96/32/ad/photo3jpg.jpg?h=800&s=1&w=1200",
+    "pagina": "https://www.tripadvisor.com.br/Restaurants-g1231719-Sobral_State_of_Ceara.html"
+  }
+}

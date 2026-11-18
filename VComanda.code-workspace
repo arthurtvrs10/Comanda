@@ -1,0 +1,6 @@
+{
+  "folders": [
+    { "name": "Windows", "path": "windows" },
+    { "name": "Site", "path": "site" }
+  ]
+}
